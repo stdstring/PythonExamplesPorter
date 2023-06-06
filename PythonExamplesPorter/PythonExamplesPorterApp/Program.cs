@@ -20,7 +20,17 @@ namespace PythonExamplesPorterApp
                     Console.WriteLine(config.Help);
                     break;
                 case ConfigResult.MainConfig config:
-                    RunPorter(config.Data);
+                    switch (ConfigDataChecker.Check(config.Data))
+                    {
+                        case (true, _):
+                            RunPorter(config.Data);
+                            break;
+                        case (false, var problems):
+                            Console.WriteLine("There are the following problems with data:");
+                            foreach (String problem in problems)
+                                Console.WriteLine(problem);
+                            break;
+                    }
                     break;
             }
         }
