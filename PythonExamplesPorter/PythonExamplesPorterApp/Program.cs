@@ -1,4 +1,7 @@
 ﻿using PythonExamplesPorterApp.Config;
+using PythonExamplesPorterApp.Logger;
+using PythonExamplesPorterApp.Processor;
+using PythonExamplesPorterApp.Utils;
 
 namespace PythonExamplesPorterApp
 {
@@ -37,6 +40,10 @@ namespace PythonExamplesPorterApp
 
         private static void RunPorter(ConfigData configData)
         {
+            PrerequisitesManager.Run();
+            ILogger logger = new ConsoleLogger(LogLevel.Info);
+            ProjectProcessor projectProcessor = new ProjectProcessor(logger);
+            projectProcessor.Process(configData.Source);
             Console.WriteLine("That's all folks !!!");
         }
 
