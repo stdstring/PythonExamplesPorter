@@ -1,4 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
+using PythonExamplesPorterApp.Converter;
 using PythonExamplesPorterApp.Logger;
 
 namespace PythonExamplesPorterApp.Processor
@@ -7,7 +8,7 @@ namespace PythonExamplesPorterApp.Processor
     {
         public FileProcessor(ILogger logger)
         {
-            Logger = logger;
+            _logger = logger;
         }
 
         public void Process(String filename)
@@ -15,22 +16,23 @@ namespace PythonExamplesPorterApp.Processor
             throw new NotImplementedException();
         }
 
-        public void Process(Document file, Compilation compilation)
+        public void Process(String relativeFilename, Document file, Compilation compilation)
         {
-            Logger.LogInfo($"Processing of the file {file.FilePath} is started");
-            ProcessImpl(file, compilation);
-            Logger.LogInfo($"Processing of the file {file.FilePath} is finished");
+            _logger.LogInfo($"Processing of the file {relativeFilename} is started");
+            ProcessImpl(relativeFilename, file, compilation);
+            _logger.LogInfo($"Processing of the file {relativeFilename} is finished");
         }
 
-        private void ProcessImpl(Document file, Compilation compilation)
+        private void ProcessImpl(String relativeFilename, Document file, Compilation compilation)
         {
             SyntaxTree? tree = file.GetSyntaxTreeAsync().Result;
             if (tree == null)
                 throw new InvalidOperationException();
             SemanticModel model = compilation.GetSemanticModel(tree);
-            // ...
+            FileConverter converter = new FileConverter(_logger);
+            converter.Convert(relativeFilename, tree, model);
         }
 
-        private ILogger Logger { get; }
+        private readonly ILogger _logger;
     }
 }
