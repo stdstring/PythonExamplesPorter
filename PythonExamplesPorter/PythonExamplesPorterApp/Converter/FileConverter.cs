@@ -31,36 +31,56 @@ namespace PythonExamplesPorterApp.Converter
 
         public override void VisitClassDeclaration(ClassDeclarationSyntax node)
         {
+            String logHead = $"    We try to process {node.Identifier.Text} class ...";
             SyntaxNode? parentDecl = node.Parent;
             // we don't process class which aren't nested into namespaces
             if (parentDecl == null)
+            {
+                _logger.LogInfo($"{logHead} skipped for absence parent namespace");
                 return;
+            }
             // we don't process nested class
             if (!parentDecl.IsKind(SyntaxKind.NamespaceDeclaration))
+            {
+                _logger.LogInfo($"{logHead} skipped for nested class");
                 return;
+            }
             SyntaxList<AttributeListSyntax> attributes = node.AttributeLists;
             // we don't process classes not marked by NUnit.Framework.TestFixtureAttribute attribute
             if (!ContainAttribute(attributes, "NUnit.Framework.TestFixtureAttribute"))
+            {
+                _logger.LogInfo($"{logHead} skipped for class non marked by NUnit.Framework.TestFixtureAttribute attribute");
                 return;
-            _logger.LogInfo($"    We can process {node.Identifier.Text} class");
+            }
+            _logger.LogInfo($"{logHead} processed");
             base.VisitClassDeclaration(node);
         }
 
         public override void VisitMethodDeclaration(MethodDeclarationSyntax node)
         {
+            String logHead = $"        We try to process {node.Identifier.Text} method ...";
             Boolean isPublic = node.Modifiers.Any(modifier => modifier.IsKind(SyntaxKind.PublicKeyword));
             Boolean isStatic = node.Modifiers.Any(modifier => modifier.IsKind(SyntaxKind.StaticKeyword));
             // we don't process nonpublic methods
             if (!isPublic)
+            {
+                _logger.LogInfo($"{logHead} skipped for nonpublic method");
                 return;
+            }
             // we don't process static methods
             if (isStatic)
+            {
+                _logger.LogInfo($"{logHead} skipped for static method");
                 return;
+            }
             SyntaxList<AttributeListSyntax> attributes = node.AttributeLists;
             // we don't process methods not marked by NUnit.Framework.TestAttribute attribute
             if (!ContainAttribute(attributes, "NUnit.Framework.TestAttribute"))
+            {
+                _logger.LogInfo($"{logHead} skipped for method non marked by NUnit.Framework.TestAttribute attribute");
                 return;
-            _logger.LogInfo($"        We can process {node.Identifier.Text} method");
+            }
+            _logger.LogInfo($"{logHead} processed");
             base.VisitMethodDeclaration(node);
         }
 
