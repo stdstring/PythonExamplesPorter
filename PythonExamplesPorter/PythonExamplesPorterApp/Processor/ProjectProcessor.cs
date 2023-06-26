@@ -35,18 +35,12 @@ namespace PythonExamplesPorterApp.Processor
             foreach (Document document in project.Documents.Where(doc => doc.SourceCodeKind == SourceCodeKind.Regular))
             {
                 // TODO (std_string) : check if file must be ignored
-                String documentRelativeFilename = GetRelativeFilename(projectDir, document.FilePath!);
+                String documentRelativeFilename = Path.GetRelativePath(projectDir, document.FilePath!);
                 _fileProcessor.Process(documentRelativeFilename, document, compilation);
             }
         }
 
         private readonly ILogger _logger;
         private readonly FileProcessor _fileProcessor;
-
-        // TODO (std_string) : think about place
-        private static String GetRelativeFilename(String projectDir, String filename)
-        {
-            return filename.Substring(projectDir.Length + 1);
-        }
     }
 }
