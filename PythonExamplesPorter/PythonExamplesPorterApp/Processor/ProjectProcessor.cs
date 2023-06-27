@@ -1,5 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.MSBuild;
+using PythonExamplesPorterApp.Config;
 using PythonExamplesPorterApp.Logger;
 using PythonExamplesPorterApp.Utils;
 
@@ -7,10 +8,10 @@ namespace PythonExamplesPorterApp.Processor
 {
     internal class ProjectProcessor
     {
-        public ProjectProcessor(ILogger logger)
+        public ProjectProcessor(ConfigData configData, ILogger logger)
         {
             _logger = logger;
-            _fileProcessor = new FileProcessor(logger);
+            _fileProcessor = new FileProcessor(configData, logger);
         }
 
         public void Process(String projectFilename)

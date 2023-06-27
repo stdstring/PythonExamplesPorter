@@ -17,12 +17,15 @@ namespace PythonExamplesPorterApp.DestStorage
             foreach (String decorator in _decorators)
                 writer.WriteLine($"{baseIndentation}{decorator}");
             writer.WriteLine($"{baseIndentation}def {_methodName}(self):");
+            if (_errorReason != null)
+            {
+                writer.WriteLine($"{bodyIndentation}raise NotImplementedError(\"{_errorReason}\")");
+                return;
+            }
             foreach (String bodyLine in _body)
                 writer.WriteLine($"{bodyIndentation}{bodyLine}");
-            if (_errorReason != null)
-                writer.WriteLine($"{bodyIndentation}raise NotImplementedError(\"{_errorReason}\")");
-            if (_body.IsEmpty() && _errorReason == null)
-                writer.WriteLine($"{bodyIndentation}raise NotImplementedError(\"Unsupported functionality\")");
+            if (_body.IsEmpty())
+                writer.WriteLine($"{bodyIndentation}pass");
         }
 
         public void AddDecorator(String decorator)

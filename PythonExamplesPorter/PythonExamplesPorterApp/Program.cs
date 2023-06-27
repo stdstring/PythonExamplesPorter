@@ -42,7 +42,7 @@ namespace PythonExamplesPorterApp
         {
             PrerequisitesManager.Run();
             ILogger logger = new ConsoleLogger(LogLevel.Info);
-            ProjectProcessor projectProcessor = new ProjectProcessor(logger);
+            ProjectProcessor projectProcessor = new ProjectProcessor(configData, logger);
             projectProcessor.Process(configData.Source);
             Console.WriteLine("That's all folks !!!");
         }

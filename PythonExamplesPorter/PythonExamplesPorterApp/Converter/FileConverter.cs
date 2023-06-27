@@ -1,32 +1,46 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using PythonExamplesPorterApp.Config;
+using PythonExamplesPorterApp.DestStorage;
 using PythonExamplesPorterApp.Logger;
 
 namespace PythonExamplesPorterApp.Converter
 {
     internal class FileConverter
     {
-        public FileConverter(ILogger logger)
+        public FileConverter(ConfigData configData, ILogger logger)
         {
+            _configData = configData;
             _logger = logger;
         }
 
         public void Convert(String relativeFilePath, SyntaxTree tree, SemanticModel model)
         {
-            FileConverterSyntaxWalker converter = new FileConverterSyntaxWalker(model, _logger);
+            String destRelativePath = PathTransformer.TransformPath(relativeFilePath);
+            String destPath = Path.Combine(_configData.DestDirectory, destRelativePath);
+            FileStorage currentFile = new FileStorage(destPath);
+            FileConverterSyntaxWalker converter = new FileConverterSyntaxWalker(model, currentFile, _logger);
             converter.Visit(tree.GetRoot());
+            if (currentFile.IsEmpty())
+                return;
+            String? destDirectory = Path.GetDirectoryName(destPath);
+            if (destDirectory != null)
+                Directory.CreateDirectory(destDirectory);
+            currentFile.Save();
         }
 
+        private readonly ConfigData _configData;
         private readonly ILogger _logger;
     }
 
     internal class FileConverterSyntaxWalker : CSharpSyntaxWalker
     {
-        public FileConverterSyntaxWalker(SemanticModel model, ILogger logger)
+        public FileConverterSyntaxWalker(SemanticModel model, FileStorage currentFile, ILogger logger)
         {
             _logger = logger;
             _model = model;
+            _currentFile = currentFile;
         }
 
         public override void VisitClassDeclaration(ClassDeclarationSyntax node)
@@ -53,6 +67,10 @@ namespace PythonExamplesPorterApp.Converter
                 return;
             }
             _logger.LogInfo($"{logHead} processed");
+            String destClassName = NameTransformer.TransformClassName(node.Identifier.Text);
+            _currentClass = _currentFile.CreateClassStorage(destClassName);
+            _currentFile.AddImport("unittest");
+            _currentClass.AddBaseClass("unittest.TestCase");
             base.VisitClassDeclaration(node);
         }
 
@@ -81,6 +99,13 @@ namespace PythonExamplesPorterApp.Converter
                 return;
             }
             _logger.LogInfo($"{logHead} processed");
+            if (_currentClass == null)
+                throw new InvalidOperationException($"Unknown class for method {node.Identifier.Text}");
+            String destMethodName = NameTransformer.TransformMethodName(node.Identifier.Text);
+            if (!destMethodName.StartsWith("test_"))
+                destMethodName = "test_" + destMethodName;
+            _currentMethod = _currentClass.CreateMethodStorage(destMethodName);
+            _currentMethod.SetError("we don't support this functionality yet");
             base.VisitMethodDeclaration(node);
         }
 
@@ -111,5 +136,8 @@ namespace PythonExamplesPorterApp.Converter
 
         private readonly ILogger _logger;
         private readonly SemanticModel _model;
+        private readonly FileStorage _currentFile;
+        private ClassStorage? _currentClass;
+        private MethodStorage? _currentMethod;
     }
 }

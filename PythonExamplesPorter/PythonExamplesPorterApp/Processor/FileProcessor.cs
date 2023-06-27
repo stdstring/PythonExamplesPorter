@@ -1,4 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
+using PythonExamplesPorterApp.Config;
 using PythonExamplesPorterApp.Converter;
 using PythonExamplesPorterApp.Logger;
 
@@ -6,8 +7,9 @@ namespace PythonExamplesPorterApp.Processor
 {
     internal class FileProcessor
     {
-        public FileProcessor(ILogger logger)
+        public FileProcessor(ConfigData configData, ILogger logger)
         {
+            _configData = configData;
             _logger = logger;
         }
 
@@ -29,10 +31,11 @@ namespace PythonExamplesPorterApp.Processor
             if (tree == null)
                 throw new InvalidOperationException();
             SemanticModel model = compilation.GetSemanticModel(tree);
-            FileConverter converter = new FileConverter(_logger);
+            FileConverter converter = new FileConverter(_configData, _logger);
             converter.Convert(relativeFilename, tree, model);
         }
 
+        private readonly ConfigData _configData;
         private readonly ILogger _logger;
     }
 }

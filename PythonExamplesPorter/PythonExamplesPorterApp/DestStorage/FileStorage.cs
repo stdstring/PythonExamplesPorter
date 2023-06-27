@@ -1,4 +1,6 @@
-﻿namespace PythonExamplesPorterApp.DestStorage
+﻿using PythonExamplesPorterApp.Utils;
+
+namespace PythonExamplesPorterApp.DestStorage
 {
     internal class FileStorage
     {
@@ -43,10 +45,12 @@
 
         public ClassStorage CreateClassStorage(String className)
         {
-            ClassStorage classStorage = new ClassStorage(className, _indentation + StorageDef.IndentationDelta);
+            ClassStorage classStorage = new ClassStorage(className, _indentation + (_indentation > 0 ? StorageDef.IndentationDelta : 0));
             _classes.Add(classStorage);
             return classStorage;
         }
+
+        public Boolean IsEmpty() => _classes.IsEmpty();
 
         private readonly String _filePath;
         private readonly Int32 _indentation;
