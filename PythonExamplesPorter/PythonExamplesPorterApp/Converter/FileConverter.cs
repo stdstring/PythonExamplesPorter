@@ -9,16 +9,16 @@ namespace PythonExamplesPorterApp.Converter
 {
     internal class FileConverter
     {
-        public FileConverter(ConfigData configData, ILogger logger)
+        public FileConverter(AppConfig appConfig, ILogger logger)
         {
-            _configData = configData;
+            _appConfig = appConfig;
             _logger = logger;
         }
 
         public void Convert(String relativeFilePath, SyntaxTree tree, SemanticModel model)
         {
             String destRelativePath = PathTransformer.TransformPath(relativeFilePath);
-            String destPath = Path.Combine(_configData.DestDirectory, destRelativePath);
+            String destPath = Path.Combine(_appConfig.ConfigData.BaseConfig!.DestDirectory, destRelativePath);
             FileStorage currentFile = new FileStorage(destPath);
             FileConverterSyntaxWalker converter = new FileConverterSyntaxWalker(model, currentFile, _logger);
             converter.Visit(tree.GetRoot());
@@ -30,7 +30,7 @@ namespace PythonExamplesPorterApp.Converter
             currentFile.Save();
         }
 
-        private readonly ConfigData _configData;
+        private readonly AppConfig _appConfig;
         private readonly ILogger _logger;
     }
 

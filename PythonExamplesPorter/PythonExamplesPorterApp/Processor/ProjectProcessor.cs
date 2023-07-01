@@ -8,10 +8,10 @@ namespace PythonExamplesPorterApp.Processor
 {
     internal class ProjectProcessor
     {
-        public ProjectProcessor(ConfigData configData, ILogger logger)
+        public ProjectProcessor(AppConfig appConfig, ILogger logger)
         {
             _logger = logger;
-            _fileProcessor = new FileProcessor(configData, logger);
+            _fileProcessor = new FileProcessor(appConfig, logger);
         }
 
         public void Process(String projectFilename)

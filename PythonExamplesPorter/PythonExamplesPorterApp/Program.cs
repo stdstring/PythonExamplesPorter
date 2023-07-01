@@ -23,10 +23,11 @@ namespace PythonExamplesPorterApp
                     Console.WriteLine(config.Help);
                     break;
                 case ConfigResult.MainConfig config:
-                    switch (ConfigDataChecker.Check(config.Data))
+                    AppConfig appConfig = AppConfigFactory.Create(config);
+                    switch (AppConfigChecker.Check(appConfig))
                     {
                         case (true, _):
-                            RunPorter(config.Data);
+                            RunPorter(appConfig);
                             break;
                         case (false, var problems):
                             Console.WriteLine("There are the following problems with data:");
@@ -38,12 +39,12 @@ namespace PythonExamplesPorterApp
             }
         }
 
-        private static void RunPorter(ConfigData configData)
+        private static void RunPorter(AppConfig appConfig)
         {
             PrerequisitesManager.Run();
             ILogger logger = new ConsoleLogger(LogLevel.Info);
-            ProjectProcessor projectProcessor = new ProjectProcessor(configData, logger);
-            projectProcessor.Process(configData.Source);
+            ProjectProcessor projectProcessor = new ProjectProcessor(appConfig, logger);
+            projectProcessor.Process(appConfig.ConfigData.BaseConfig!.Source);
             Console.WriteLine("That's all folks !!!");
         }
 

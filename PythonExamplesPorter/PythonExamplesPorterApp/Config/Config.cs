@@ -1,14 +1,14 @@
-﻿namespace PythonExamplesPorterApp.Config
-{
-    internal record ConfigData(String Source, String DestDirectory);
+﻿using System.Xml.Serialization;
 
+namespace PythonExamplesPorterApp.Config
+{
     internal abstract record ConfigResult
     {
         internal record VersionConfig(String Version) : ConfigResult;
 
         internal record HelpConfig(String Help) : ConfigResult;
 
-        internal record MainConfig(ConfigData Data) : ConfigResult;
+        internal record MainConfig(String ConfigPath) : ConfigResult;
 
         internal record WrongConfig(String Help) : ConfigResult;
     }
@@ -22,45 +22,18 @@
                 [] => new ConfigResult.HelpConfig(Help),
                 [HelpKey] => new ConfigResult.HelpConfig(Help),
                 [VersionKey] => new ConfigResult.HelpConfig(Version),
-                _ => ProcessMainConfig(args)
+                [var arg] when arg.StartsWith(ConfigKey) => ProcessMainConfig(arg),
+                _ => new ConfigResult.WrongConfig(Help)
             };
         }
 
-        private static ConfigResult ProcessMainConfig(String[] args)
+        private static ConfigResult ProcessMainConfig(String arg)
         {
-            const Char keyValueDelimiter = '=';
-            IDictionary<String, String> configData = new Dictionary<String, String>();
-            foreach (String arg in args)
-            {
-                switch (arg.Split(keyValueDelimiter))
-                {
-                    case {Length: 2} parts:
-                        configData[parts[0]] = parts[1];
-                        break;
-                    default:
-                        return new ConfigResult.WrongConfig(Help);
-                }
-            }
-            if (!CheckConfigKeys(configData))
-                return new ConfigResult.WrongConfig(Help);
-            ConfigData data = new ConfigData(configData[SourceKey], configData[DestKey]);
-            return new ConfigResult.MainConfig(data);
+            String configPath = arg.Substring(ConfigKey.Length);
+            return new ConfigResult.MainConfig(configPath);
         }
 
-        private static bool CheckConfigKeys(IDictionary<String, String> configData)
-        {
-            // check mandatory keys
-            String[] mandatoryKeys = {SourceKey, DestKey};
-            if (mandatoryKeys.Any(key => !configData.ContainsKey(key) || String.IsNullOrEmpty(configData[key])))
-                return false;
-            // check actual keys
-            ISet<String> allKeys = new HashSet<String> {SourceKey, DestKey};
-            return configData.Keys.All(allKeys.Contains);
-        }
-
-        public const String SourceKey = "--source";
-
-        public const String DestKey = "--dest";
+        public const String ConfigKey = "--config=";
 
         public const String HelpKey = "--help";
 
@@ -68,8 +41,24 @@
 
         public const String Version = "0.0.1";
 
-        public const String Help = "Usage: <app> " +
-                                   "--source=<source project file(.csproj)> " +
-                                   "--dest=<dest directory>";
+        public const String Help = "Usage: <app> --config=<path to config file>";
+    }
+
+    internal record AppConfig(String BaseDirectory, ConfigData ConfigData);
+
+    internal static class AppConfigFactory
+    {
+        public static AppConfig Create(ConfigResult.MainConfig config)
+        {
+            using (StreamReader reader = new StreamReader(config.ConfigPath))
+            {
+                XmlSerializer serializer = new XmlSerializer(typeof(ConfigData));
+                ConfigData? configData = serializer.Deserialize(reader) as ConfigData;
+                if (configData == null)
+                    throw new InvalidOperationException("Bad config data");
+                String baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+                return new AppConfig(baseDirectory, configData);
+            }
+        }
     }
 }

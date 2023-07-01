@@ -1,20 +1,21 @@
 ﻿namespace PythonExamplesPorterApp.Config
 {
-    internal static class ConfigDataChecker
+    internal static class AppConfigChecker
     {
-        public static Tuple<Boolean, String[]> Check(ConfigData data)
+        public static Tuple<Boolean, String[]> Check(AppConfig appConfig)
         {
             Boolean result = true;
             String[] supportedSourcesByExtension = {".csproj"};
             IList<String> problems = new List<String>();
-            switch (File.Exists(data.Source))
+            String source = appConfig.ConfigData.BaseConfig!.Source;
+            switch (File.Exists(source))
             {
                 case false:
-                    problems.Add($"\"{data.Source}\" must be existing file");
+                    problems.Add($"\"{source}\" must be existing file");
                     result = false;
                     break;
                 case true:
-                    switch (Path.GetExtension(data.Source))
+                    switch (Path.GetExtension(source))
                     {
                         case "":
                             problems.Add($"We don't support sources (files) without extension");
@@ -27,9 +28,11 @@
                     }
                     break;
             }
-            if (Directory.Exists(data.DestDirectory) && !IsEmpty(data.DestDirectory))
+
+            String destDirectory = appConfig.ConfigData.BaseConfig.DestDirectory;
+            if (Directory.Exists(destDirectory) && !IsEmpty(destDirectory))
             {
-                problems.Add($"\"{data.DestDirectory}\" must be non existing or empty directory");
+                problems.Add($"\"{destDirectory}\" must be non existing or empty directory");
                 result = false;
             }
             return new Tuple<Boolean, String[]>(result, problems.ToArray());

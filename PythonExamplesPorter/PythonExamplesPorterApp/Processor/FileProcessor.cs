@@ -7,9 +7,9 @@ namespace PythonExamplesPorterApp.Processor
 {
     internal class FileProcessor
     {
-        public FileProcessor(ConfigData configData, ILogger logger)
+        public FileProcessor(AppConfig appConfig, ILogger logger)
         {
-            _configData = configData;
+            _appConfig = appConfig;
             _logger = logger;
         }
 
@@ -31,11 +31,11 @@ namespace PythonExamplesPorterApp.Processor
             if (tree == null)
                 throw new InvalidOperationException();
             SemanticModel model = compilation.GetSemanticModel(tree);
-            FileConverter converter = new FileConverter(_configData, _logger);
+            FileConverter converter = new FileConverter(_appConfig, _logger);
             converter.Convert(relativeFilename, tree, model);
         }
 
-        private readonly ConfigData _configData;
+        private readonly AppConfig _appConfig;
         private readonly ILogger _logger;
     }
 }
