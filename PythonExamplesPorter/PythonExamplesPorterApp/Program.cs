@@ -1,4 +1,5 @@
 ﻿using PythonExamplesPorterApp.Config;
+using PythonExamplesPorterApp.Ignored;
 using PythonExamplesPorterApp.Logger;
 using PythonExamplesPorterApp.Processor;
 using PythonExamplesPorterApp.Utils;
@@ -43,7 +44,8 @@ namespace PythonExamplesPorterApp
         {
             PrerequisitesManager.Run();
             ILogger logger = new ConsoleLogger(LogLevel.Info);
-            ProjectProcessor projectProcessor = new ProjectProcessor(appConfig, logger);
+            IgnoredEntitiesManager ignoredManager = new IgnoredEntitiesManager(appConfig.ConfigData.IgnoredEntities);
+            ProjectProcessor projectProcessor = new ProjectProcessor(appConfig, ignoredManager, logger);
             projectProcessor.Process(appConfig.ConfigData.BaseConfig!.Source);
             Console.WriteLine("That's all folks !!!");
         }

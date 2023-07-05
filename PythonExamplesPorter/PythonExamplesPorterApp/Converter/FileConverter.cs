@@ -3,15 +3,17 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using PythonExamplesPorterApp.Config;
 using PythonExamplesPorterApp.DestStorage;
+using PythonExamplesPorterApp.Ignored;
 using PythonExamplesPorterApp.Logger;
 
 namespace PythonExamplesPorterApp.Converter
 {
     internal class FileConverter
     {
-        public FileConverter(AppConfig appConfig, ILogger logger)
+        public FileConverter(AppConfig appConfig, IgnoredEntitiesManager ignoredManager, ILogger logger)
         {
             _appConfig = appConfig;
+            _ignoredManager = ignoredManager;
             _logger = logger;
         }
 
@@ -20,7 +22,7 @@ namespace PythonExamplesPorterApp.Converter
             String destRelativePath = PathTransformer.TransformPath(relativeFilePath);
             String destPath = Path.Combine(_appConfig.ConfigData.BaseConfig!.DestDirectory, destRelativePath);
             FileStorage currentFile = new FileStorage(destPath);
-            FileConverterSyntaxWalker converter = new FileConverterSyntaxWalker(model, currentFile, _logger);
+            FileConverterSyntaxWalker converter = new FileConverterSyntaxWalker(model, currentFile, _ignoredManager, _logger);
             converter.Visit(tree.GetRoot());
             if (currentFile.IsEmpty())
                 return;
@@ -31,26 +33,35 @@ namespace PythonExamplesPorterApp.Converter
         }
 
         private readonly AppConfig _appConfig;
+        private readonly IgnoredEntitiesManager _ignoredManager;
         private readonly ILogger _logger;
     }
 
     internal class FileConverterSyntaxWalker : CSharpSyntaxWalker
     {
-        public FileConverterSyntaxWalker(SemanticModel model, FileStorage currentFile, ILogger logger)
+        public FileConverterSyntaxWalker(SemanticModel model, FileStorage currentFile, IgnoredEntitiesManager ignoredManager, ILogger logger)
         {
-            _logger = logger;
             _model = model;
             _currentFile = currentFile;
+            _ignoredManager = ignoredManager;
+            _logger = logger;
         }
 
         public override void VisitClassDeclaration(ClassDeclarationSyntax node)
         {
             String logHead = $"    We try to process {node.Identifier.Text} class ...";
+            INamedTypeSymbol? currentType = _model.GetDeclaredSymbol(node);
+            // we don't process class without semantic info
+            if (currentType == null)
+            {
+                _logger.LogInfo($"{logHead} skipped due to absence semantic info");
+                return;
+            }
             SyntaxNode? parentDecl = node.Parent;
             // we don't process class which aren't nested into namespaces
             if (parentDecl == null)
             {
-                _logger.LogInfo($"{logHead} skipped for absence parent namespace");
+                _logger.LogInfo($"{logHead} skipped due to absence parent namespace");
                 return;
             }
             // we don't process nested class
@@ -66,17 +77,49 @@ namespace PythonExamplesPorterApp.Converter
                 _logger.LogInfo($"{logHead} skipped for class non marked by NUnit.Framework.TestFixtureAttribute attribute");
                 return;
             }
+            // TODO (std_string) : think about using SymbolDisplayFormat
+            String currentTypeFullName = currentType.ToDisplayString();
+            // we don't process ignored class
+            if (_ignoredManager.IsIgnoredType(currentTypeFullName))
+            {
+                _logger.LogInfo($"{logHead} skipped because ignored class");
+                return;
+            }
             _logger.LogInfo($"{logHead} processed");
+            GenerateClassDeclaration(node);
+            base.VisitClassDeclaration(node);
+        }
+
+        private void GenerateClassDeclaration(ClassDeclarationSyntax node)
+        {
             String destClassName = NameTransformer.TransformClassName(node.Identifier.Text);
             _currentClass = _currentFile.CreateClassStorage(destClassName);
             _currentFile.AddImport("unittest");
             _currentClass.AddBaseClass("unittest.TestCase");
-            base.VisitClassDeclaration(node);
         }
 
         public override void VisitMethodDeclaration(MethodDeclarationSyntax node)
         {
             String logHead = $"        We try to process {node.Identifier.Text} method ...";
+            IMethodSymbol? currentMethod = _model.GetDeclaredSymbol(node);
+            // we don't process method without semantic info
+            if (currentMethod == null)
+            {
+                _logger.LogInfo($"{logHead} skipped due to absence semantic info");
+                return;
+            }
+            // we don't process method without parent
+            if (node.Parent == null)
+            {
+                _logger.LogInfo($"{logHead} skipped due to absence of method's parent");
+                return;
+            }
+            ISymbol? parent = _model.GetDeclaredSymbol(node.Parent);
+            if (parent == null)
+            {
+                _logger.LogInfo($"{logHead} skipped due to absence parent's semantic info");
+                return;
+            }
             Boolean isPublic = node.Modifiers.Any(modifier => modifier.IsKind(SyntaxKind.PublicKeyword));
             Boolean isStatic = node.Modifiers.Any(modifier => modifier.IsKind(SyntaxKind.StaticKeyword));
             // we don't process nonpublic methods
@@ -98,7 +141,21 @@ namespace PythonExamplesPorterApp.Converter
                 _logger.LogInfo($"{logHead} skipped for method non marked by NUnit.Framework.TestAttribute attribute");
                 return;
             }
+            String methodName = currentMethod.Name;
+            String parentFullName = parent.ToDisplayString();
+            // we don't process ignored method
+            if (_ignoredManager.IsIgnoredMethod($"{parentFullName}.{methodName}"))
+            {
+                _logger.LogInfo($"{logHead} skipped because ignored method");
+                return;
+            }
             _logger.LogInfo($"{logHead} processed");
+            GenerateMethodDeclaration(node);
+            base.VisitMethodDeclaration(node);
+        }
+
+        private void GenerateMethodDeclaration(MethodDeclarationSyntax node)
+        {
             if (_currentClass == null)
                 throw new InvalidOperationException($"Unknown class for method {node.Identifier.Text}");
             String destMethodName = NameTransformer.TransformMethodName(node.Identifier.Text);
@@ -106,7 +163,6 @@ namespace PythonExamplesPorterApp.Converter
                 destMethodName = "test_" + destMethodName;
             _currentMethod = _currentClass.CreateMethodStorage(destMethodName);
             _currentMethod.SetError("we don't support this functionality yet");
-            base.VisitMethodDeclaration(node);
         }
 
         private Boolean ContainAttribute(SyntaxList<AttributeListSyntax> attributes, String expectedFullName)
@@ -134,9 +190,10 @@ namespace PythonExamplesPorterApp.Converter
             return false;
         }
 
-        private readonly ILogger _logger;
         private readonly SemanticModel _model;
         private readonly FileStorage _currentFile;
+        private readonly IgnoredEntitiesManager _ignoredManager;
+        private readonly ILogger _logger;
         private ClassStorage? _currentClass;
         private MethodStorage? _currentMethod;
     }

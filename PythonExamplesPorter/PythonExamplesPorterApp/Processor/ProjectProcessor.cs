@@ -1,6 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.MSBuild;
 using PythonExamplesPorterApp.Config;
+using PythonExamplesPorterApp.Ignored;
 using PythonExamplesPorterApp.Logger;
 using PythonExamplesPorterApp.Utils;
 
@@ -8,10 +9,10 @@ namespace PythonExamplesPorterApp.Processor
 {
     internal class ProjectProcessor
     {
-        public ProjectProcessor(AppConfig appConfig, ILogger logger)
+        public ProjectProcessor(AppConfig appConfig, IgnoredEntitiesManager ignoredManager, ILogger logger)
         {
             _logger = logger;
-            _fileProcessor = new FileProcessor(appConfig, logger);
+            _fileProcessor = new FileProcessor(appConfig, ignoredManager, logger);
         }
 
         public void Process(String projectFilename)
@@ -35,9 +36,8 @@ namespace PythonExamplesPorterApp.Processor
             String projectDir = Path.GetDirectoryName(project.FilePath)!;
             foreach (Document document in project.Documents.Where(doc => doc.SourceCodeKind == SourceCodeKind.Regular))
             {
-                // TODO (std_string) : check if file must be ignored
-                String documentRelativeFilename = Path.GetRelativePath(projectDir, document.FilePath!);
-                _fileProcessor.Process(documentRelativeFilename, document, compilation);
+                String documentRelativePath = Path.GetRelativePath(projectDir, document.FilePath!);
+                _fileProcessor.Process(documentRelativePath, document, compilation);
             }
         }
 
