@@ -10,6 +10,9 @@ namespace PythonExamplesPorterApp.Config
 
         [XmlElement("IgnoredEntities")]
         public IgnoredEntities? IgnoredEntities { get; set; }
+
+        [XmlElement("HandmadeEntities")]
+        public HandmadeEntities? HandmadeEntities { get; set; }
     }
 
     [XmlRoot("BaseConfig")]
@@ -36,5 +39,40 @@ namespace PythonExamplesPorterApp.Config
         [XmlArray("Methods")]
         [XmlArrayItem("Method")]
         public String[]? Methods { get; set; }
+    }
+
+    [XmlRoot("HandmadeEntities")]
+    public class HandmadeEntities
+    {
+        [XmlArray("Types")]
+        [XmlArrayItem("Type")]
+        public HandmadeType[]? HandmadeTypes { get; set; }
+    }
+
+    [XmlRoot("HandmadeType")]
+    public class HandmadeType
+    {
+        [XmlAttribute("FullName")]
+        public String FullName { get; set; } = "";
+
+        [XmlElement("Source")]
+        public String Source { get; set; } = "";
+
+        [XmlElement("Dest")]
+        public String Dest { get; set; } = "";
+
+        [XmlArray("MemberMapping")]
+        [XmlArrayItem("Member")]
+        public HandmadeMemberMapping[]? MemberMappings { get; set; }
+    }
+
+    [XmlRoot("HandmadeMemberMapping")]
+    public class HandmadeMemberMapping
+    {
+        [XmlAttribute("SourceName")]
+        public String SourceName { get; set; } = "";
+
+        [XmlAttribute("DestName")]
+        public String DestName { get; set; } = "";
     }
 }
