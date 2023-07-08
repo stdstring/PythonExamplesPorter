@@ -1,4 +1,6 @@
 ﻿using System.Xml.Serialization;
+using PythonExamplesPorterApp.Handmade;
+using PythonExamplesPorterApp.Ignored;
 
 namespace PythonExamplesPorterApp.Config
 {
@@ -23,56 +25,5 @@ namespace PythonExamplesPorterApp.Config
 
         [XmlElement("Dest")]
         public String DestDirectory { get; set; } = "";
-    }
-
-    [XmlRoot("IgnoredEntities")]
-    public class IgnoredEntities
-    {
-        [XmlArray("Files")]
-        [XmlArrayItem("File")]
-        public String[]? Files { get; set; }
-
-        [XmlArray("Types")]
-        [XmlArrayItem("Type")]
-        public String[]? Types { get; set; }
-
-        [XmlArray("Methods")]
-        [XmlArrayItem("Method")]
-        public String[]? Methods { get; set; }
-    }
-
-    [XmlRoot("HandmadeEntities")]
-    public class HandmadeEntities
-    {
-        [XmlArray("Types")]
-        [XmlArrayItem("Type")]
-        public HandmadeType[]? HandmadeTypes { get; set; }
-    }
-
-    [XmlRoot("HandmadeType")]
-    public class HandmadeType
-    {
-        [XmlAttribute("FullName")]
-        public String FullName { get; set; } = "";
-
-        [XmlElement("Source")]
-        public String Source { get; set; } = "";
-
-        [XmlElement("Dest")]
-        public String Dest { get; set; } = "";
-
-        [XmlArray("MemberMapping")]
-        [XmlArrayItem("Member")]
-        public HandmadeMemberMapping[]? MemberMappings { get; set; }
-    }
-
-    [XmlRoot("HandmadeMemberMapping")]
-    public class HandmadeMemberMapping
-    {
-        [XmlAttribute("SourceName")]
-        public String SourceName { get; set; } = "";
-
-        [XmlAttribute("DestName")]
-        public String DestName { get; set; } = "";
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System.Xml.Serialization;
 using NUnit.Framework;
 using PythonExamplesPorterApp.Config;
+using PythonExamplesPorterApp.Handmade;
+using PythonExamplesPorterApp.Ignored;
 
 namespace PythonExamplesPorterAppTests.Config
 {
