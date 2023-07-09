@@ -168,7 +168,7 @@ namespace PythonExamplesPorterAppTests.Config
                 BaseConfig = new BaseConfig {Source = "C:\\source\\someproj.csproj", DestDirectory = "C:\\dest\\examples"},
                 IgnoredEntities = new IgnoredEntities
                 {
-                    Files = new[] { "aa1.cs", "ab1.cs", "some_folder\\aa1.cs" },
+                    Files = new[] {"aa1.cs", "ab1.cs", "some_folder\\aa1.cs"},
                     Types = new []{"SomeNamespace.SomeType", "OtherNamespace.OtherType"},
                     Methods = new []{"SomeNamespace.SomeType.CheckAAA", "OtherNamespace.OtherType.CheckBBB"}
                 }

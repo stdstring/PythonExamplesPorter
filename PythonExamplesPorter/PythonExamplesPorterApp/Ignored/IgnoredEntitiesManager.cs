@@ -1,6 +1,4 @@
-﻿using PythonExamplesPorterApp.Config;
-
-namespace PythonExamplesPorterApp.Ignored
+﻿namespace PythonExamplesPorterApp.Ignored
 {
     internal class IgnoredEntitiesManager
     {
@@ -11,20 +9,11 @@ namespace PythonExamplesPorterApp.Ignored
             _ignoredMethods = new HashSet<String>(ignoredEntities?.Methods ?? Array.Empty<String>());
         }
 
-        public Boolean IsIgnoredFile(String relativePath)
-        {
-            return _ignoredFiles.Contains(relativePath);
-        }
+        public Boolean IsIgnoredFile(String relativePath) => _ignoredFiles.Contains(relativePath);
 
-        public Boolean IsIgnoredType(String fullName)
-        {
-            return _ignoredTypes.Contains(fullName);
-        }
+        public Boolean IsIgnoredType(String fullName) => _ignoredTypes.Contains(fullName);
 
-        public Boolean IsIgnoredMethod(String fullName)
-        {
-            return _ignoredMethods.Contains(fullName);
-        }
+        public Boolean IsIgnoredMethod(String fullName) => _ignoredMethods.Contains(fullName);
 
         private readonly ISet<String> _ignoredFiles;
         private readonly ISet<String> _ignoredTypes;
