@@ -44,6 +44,7 @@ namespace PythonExamplesPorterApp.Config
         public const String Help = "Usage: <app> --config=<path to config file>";
     }
 
+    // TODO (std_string) : think about duplication of BaseDirectory
     internal record AppConfig(String BaseDirectory, ConfigData ConfigData);
 
     internal static class AppConfigFactory
@@ -56,7 +57,9 @@ namespace PythonExamplesPorterApp.Config
                 ConfigData? configData = serializer.Deserialize(reader) as ConfigData;
                 if (configData == null)
                     throw new InvalidOperationException("Bad config data");
-                String baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+                if (configData.BaseConfig == null)
+                    throw new InvalidOperationException("Bad config data");
+                String baseDirectory = configData.BaseConfig.BaseDirectory ?? AppDomain.CurrentDomain.BaseDirectory;
                 return new AppConfig(baseDirectory, configData);
             }
         }

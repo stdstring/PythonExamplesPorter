@@ -25,5 +25,8 @@ namespace PythonExamplesPorterApp.Config
 
         [XmlElement("Dest")]
         public String DestDirectory { get; set; } = "";
+
+        [XmlElement("BaseDirectory")]
+        public String? BaseDirectory { get; set; }
     }
 }
