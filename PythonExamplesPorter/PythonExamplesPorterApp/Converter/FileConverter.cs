@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using PythonExamplesPorterApp.Config;
 using PythonExamplesPorterApp.DestStorage;
+using PythonExamplesPorterApp.Handmade;
 using PythonExamplesPorterApp.Ignored;
 using PythonExamplesPorterApp.Logger;
 
@@ -10,10 +11,14 @@ namespace PythonExamplesPorterApp.Converter
 {
     internal class FileConverter
     {
-        public FileConverter(AppConfig appConfig, IgnoredEntitiesManager ignoredManager, ILogger logger)
+        public FileConverter(AppConfig appConfig,
+                             IgnoredEntitiesManager ignoredManager,
+                             HandmadeEntitiesManager handmadeManager,
+                             ILogger logger)
         {
             _appConfig = appConfig;
             _ignoredManager = ignoredManager;
+            _handmadeManager = handmadeManager;
             _logger = logger;
         }
 
@@ -22,7 +27,7 @@ namespace PythonExamplesPorterApp.Converter
             String destRelativePath = PathTransformer.TransformPath(relativeFilePath);
             String destPath = Path.Combine(_appConfig.ConfigData.BaseConfig!.DestDirectory, destRelativePath);
             FileStorage currentFile = new FileStorage(destPath);
-            FileConverterSyntaxWalker converter = new FileConverterSyntaxWalker(model, currentFile, _ignoredManager, _logger);
+            FileConverterSyntaxWalker converter = new FileConverterSyntaxWalker(model, currentFile, _ignoredManager, _handmadeManager, _logger);
             converter.Visit(tree.GetRoot());
             if (currentFile.IsEmpty())
                 return;
@@ -34,16 +39,22 @@ namespace PythonExamplesPorterApp.Converter
 
         private readonly AppConfig _appConfig;
         private readonly IgnoredEntitiesManager _ignoredManager;
+        private readonly HandmadeEntitiesManager _handmadeManager;
         private readonly ILogger _logger;
     }
 
     internal class FileConverterSyntaxWalker : CSharpSyntaxWalker
     {
-        public FileConverterSyntaxWalker(SemanticModel model, FileStorage currentFile, IgnoredEntitiesManager ignoredManager, ILogger logger)
+        public FileConverterSyntaxWalker(SemanticModel model,
+                                         FileStorage currentFile,
+                                         IgnoredEntitiesManager ignoredManager,
+                                         HandmadeEntitiesManager handmadeManager,
+                                         ILogger logger)
         {
             _model = model;
             _currentFile = currentFile;
             _ignoredManager = ignoredManager;
+            _handmadeManager = handmadeManager;
             _logger = logger;
         }
 
@@ -86,16 +97,40 @@ namespace PythonExamplesPorterApp.Converter
                 return;
             }
             _logger.LogInfo($"{logHead} processed");
-            GenerateClassDeclaration(node);
+            GenerateClassDeclaration(node, currentType);
             base.VisitClassDeclaration(node);
         }
 
-        private void GenerateClassDeclaration(ClassDeclarationSyntax node)
+        private void GenerateClassDeclaration(ClassDeclarationSyntax node, INamedTypeSymbol currentType)
         {
+            String? baseClassFullName = GetBaseClassFullName(currentType);
             String destClassName = NameTransformer.TransformClassName(node.Identifier.Text);
             _currentClass = _currentFile.CreateClassStorage(destClassName);
-            _currentFile.AddImport("unittest");
-            _currentClass.AddBaseClass("unittest.TestCase");
+            if (baseClassFullName == null)
+            {
+                _currentFile.AddImport("unittest");
+                _currentClass.AddBaseClass("unittest.TestCase");
+            }
+            else
+            {
+                Int32 lastDotIndex = baseClassFullName.LastIndexOf('.');
+                String baseClassName = lastDotIndex == -1 ? baseClassFullName : baseClassFullName.Substring(lastDotIndex + 1);
+                _currentClass.AddBaseClass(baseClassName);
+                _handmadeManager.UseHandmadeType(baseClassFullName);
+            }
+        }
+
+        private String? GetBaseClassFullName(INamedTypeSymbol currentType)
+        {
+            INamedTypeSymbol? baseType = currentType.BaseType;
+            INamespaceSymbol? baseTypeNamespace = baseType?.ContainingNamespace;
+            String? baseTypeNamespaceName = baseTypeNamespace?.Name;
+            if (baseType == null)
+                return null;
+            if (baseTypeNamespaceName == null || baseTypeNamespaceName.StartsWith("System."))
+                return null;
+            // TODO (std_string) : think about using SymbolDisplayFormat
+            return baseType.ToDisplayString();
         }
 
         public override void VisitMethodDeclaration(MethodDeclarationSyntax node)
@@ -193,6 +228,7 @@ namespace PythonExamplesPorterApp.Converter
         private readonly SemanticModel _model;
         private readonly FileStorage _currentFile;
         private readonly IgnoredEntitiesManager _ignoredManager;
+        private readonly HandmadeEntitiesManager _handmadeManager;
         private readonly ILogger _logger;
         private ClassStorage? _currentClass;
         private MethodStorage? _currentMethod;

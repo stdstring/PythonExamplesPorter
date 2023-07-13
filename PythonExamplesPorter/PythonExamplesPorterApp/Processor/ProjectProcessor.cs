@@ -1,6 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.MSBuild;
 using PythonExamplesPorterApp.Config;
+using PythonExamplesPorterApp.Handmade;
 using PythonExamplesPorterApp.Ignored;
 using PythonExamplesPorterApp.Logger;
 using PythonExamplesPorterApp.Utils;
@@ -9,10 +10,13 @@ namespace PythonExamplesPorterApp.Processor
 {
     internal class ProjectProcessor
     {
-        public ProjectProcessor(AppConfig appConfig, IgnoredEntitiesManager ignoredManager, ILogger logger)
+        public ProjectProcessor(AppConfig appConfig,
+                                IgnoredEntitiesManager ignoredManager,
+                                HandmadeEntitiesManager handmadeManager,
+                                ILogger logger)
         {
             _logger = logger;
-            _fileProcessor = new FileProcessor(appConfig, ignoredManager, logger);
+            _fileProcessor = new FileProcessor(appConfig, ignoredManager, handmadeManager, logger);
         }
 
         public void Process(String projectFilename)

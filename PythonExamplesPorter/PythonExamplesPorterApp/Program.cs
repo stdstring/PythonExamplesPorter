@@ -1,4 +1,5 @@
 ﻿using PythonExamplesPorterApp.Config;
+using PythonExamplesPorterApp.Handmade;
 using PythonExamplesPorterApp.Ignored;
 using PythonExamplesPorterApp.Logger;
 using PythonExamplesPorterApp.Processor;
@@ -45,8 +46,11 @@ namespace PythonExamplesPorterApp
             PrerequisitesManager.Run();
             ILogger logger = new ConsoleLogger(LogLevel.Info);
             IgnoredEntitiesManager ignoredManager = new IgnoredEntitiesManager(appConfig.ConfigData.IgnoredEntities);
-            ProjectProcessor projectProcessor = new ProjectProcessor(appConfig, ignoredManager, logger);
+            HandmadeEntitiesManager handmadeManager = new HandmadeEntitiesManager(appConfig.ConfigData.HandmadeEntities);
+            ProjectProcessor projectProcessor = new ProjectProcessor(appConfig, ignoredManager, handmadeManager, logger);
             projectProcessor.Process(appConfig.ConfigData.BaseConfig!.Source);
+            HandmadePostProcessor handmadePostProcessor = new HandmadePostProcessor(appConfig);
+            handmadePostProcessor.Process(handmadeManager.GetUsedHandmadeTypes());
             Console.WriteLine("That's all folks !!!");
         }
 
