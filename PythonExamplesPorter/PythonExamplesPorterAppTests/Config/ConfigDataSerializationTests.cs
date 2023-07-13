@@ -27,6 +27,24 @@ namespace PythonExamplesPorterAppTests.Config
         }
 
         [Test]
+        public void DeserializeWithBaseConfigOnlyWithBaseDirectory()
+        {
+            const String source = "<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n" +
+                                  "<ConfigData>\r\n" +
+                                  "  <BaseConfig>\r\n" +
+                                  "    <Source>C:\\source\\someproj.csproj</Source>\r\n" +
+                                  "    <Dest>.\\result</Dest>\r\n" +
+                                  "    <BaseDirectory>C:\\dest\\examples</BaseDirectory>\r\n" +
+                                  "  </BaseConfig>\r\n" +
+                                  "</ConfigData>";
+            ConfigData expected = new ConfigData
+            {
+                BaseConfig = new BaseConfig {Source = "C:\\source\\someproj.csproj", DestDirectory = ".\\result", BaseDirectory = "C:\\dest\\examples"}
+            };
+            CheckDeserialization(expected, source);
+        }
+
+        [Test]
         public void DeserializeWithEmptyIgnoredEntities()
         {
             const String source = "<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n" +
@@ -351,6 +369,7 @@ namespace PythonExamplesPorterAppTests.Config
         {
             Assert.AreEqual(expected.Source, actual.Source);
             Assert.AreEqual(expected.DestDirectory, actual.DestDirectory);
+            Assert.AreEqual(expected.BaseDirectory, actual.BaseDirectory);
         }
 
         private void CheckIgnoredEntities(IgnoredEntities? expected, IgnoredEntities? actual)

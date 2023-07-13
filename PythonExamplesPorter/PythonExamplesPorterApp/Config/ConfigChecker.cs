@@ -28,11 +28,17 @@
                     }
                     break;
             }
-
-            String destDirectory = appConfig.ConfigData.BaseConfig.DestDirectory;
-            if (Directory.Exists(destDirectory) && !IsEmpty(destDirectory))
+            String baseDirectory = appConfig.BaseDirectory;
+            if (!Directory.Exists(baseDirectory))
             {
-                problems.Add($"\"{destDirectory}\" must be non existing or empty directory");
+                problems.Add($"\"{baseDirectory}\" must be existing directory");
+                result = false;
+            }
+            String destDirectory = appConfig.ConfigData.BaseConfig.DestDirectory;
+            String resultDirectory = Path.Combine(baseDirectory, destDirectory);
+            if (Directory.Exists(resultDirectory) && !IsEmpty(resultDirectory))
+            {
+                problems.Add($"\"{resultDirectory}\" must be non existing or empty directory");
                 result = false;
             }
             return new Tuple<Boolean, String[]>(result, problems.ToArray());

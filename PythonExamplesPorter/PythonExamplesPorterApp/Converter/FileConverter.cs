@@ -25,15 +25,14 @@ namespace PythonExamplesPorterApp.Converter
         public void Convert(String relativeFilePath, SyntaxTree tree, SemanticModel model)
         {
             String destRelativePath = PathTransformer.TransformPath(relativeFilePath);
-            String destPath = Path.Combine(_appConfig.ConfigData.BaseConfig!.DestDirectory, destRelativePath);
+            String destDirectory = Path.Combine(_appConfig.BaseDirectory, _appConfig.ConfigData.BaseConfig!.DestDirectory);
+            String destPath = Path.Combine(destDirectory, destRelativePath);
             FileStorage currentFile = new FileStorage(destPath);
             FileConverterSyntaxWalker converter = new FileConverterSyntaxWalker(model, currentFile, _ignoredManager, _handmadeManager, _logger);
             converter.Visit(tree.GetRoot());
             if (currentFile.IsEmpty())
                 return;
-            String? destDirectory = Path.GetDirectoryName(destPath);
-            if (destDirectory != null)
-                Directory.CreateDirectory(destDirectory);
+            Directory.CreateDirectory(destDirectory);
             currentFile.Save();
         }
 
