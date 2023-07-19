@@ -60,6 +60,37 @@ namespace PythonExamplesPorterAppTests.Config
                 BaseConfig = new BaseConfig {Source = "C:\\source\\someproj.csproj", DestDirectory = "C:\\dest\\examples"},
                 IgnoredEntities = new IgnoredEntities
                 {
+                    Directories = Array.Empty<String>(),
+                    Files = Array.Empty<String>(),
+                    Types = Array.Empty<String>(),
+                    Methods = Array.Empty<String>()
+                }
+            };
+            CheckDeserialization(expected, source);
+        }
+
+        [Test]
+        public void DeserializeWithIgnoredDirectories()
+        {
+            const String source = "<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n" +
+                                  "<ConfigData>\r\n" +
+                                  "  <BaseConfig>\r\n" +
+                                  "    <Source>C:\\source\\someproj.csproj</Source>\r\n" +
+                                  "    <Dest>C:\\dest\\examples</Dest>\r\n" +
+                                  "  </BaseConfig>\r\n" +
+                                  "  <IgnoredEntities>\r\n" +
+                                  "    <Directories>" +
+                                  "      <Directory>SomeFolder1</Directory>" +
+                                  "      <Directory>SomeFolder2\\OtherFolder</Directory>" +
+                                  "    </Directories>" +
+                                  "  </IgnoredEntities>\r\n" +
+                                  "</ConfigData>";
+            ConfigData expected = new ConfigData
+            {
+                BaseConfig = new BaseConfig {Source = "C:\\source\\someproj.csproj", DestDirectory = "C:\\dest\\examples"},
+                IgnoredEntities = new IgnoredEntities
+                {
+                    Directories = new[] {"SomeFolder1", "SomeFolder2\\OtherFolder"},
                     Files = Array.Empty<String>(),
                     Types = Array.Empty<String>(),
                     Methods = Array.Empty<String>()
@@ -90,7 +121,8 @@ namespace PythonExamplesPorterAppTests.Config
                 BaseConfig = new BaseConfig {Source = "C:\\source\\someproj.csproj", DestDirectory = "C:\\dest\\examples"},
                 IgnoredEntities = new IgnoredEntities
                 {
-                    Files = new[] { "aa1.cs", "ab1.cs", "some_folder\\aa1.cs" },
+                    Directories = Array.Empty<String>(),
+                    Files = new[] {"aa1.cs", "ab1.cs", "some_folder\\aa1.cs"},
                     Types = Array.Empty<String>(),
                     Methods = Array.Empty<String>()
                 }
@@ -119,6 +151,7 @@ namespace PythonExamplesPorterAppTests.Config
                 BaseConfig = new BaseConfig {Source = "C:\\source\\someproj.csproj", DestDirectory = "C:\\dest\\examples"},
                 IgnoredEntities = new IgnoredEntities
                 {
+                    Directories = Array.Empty<String>(),
                     Files = Array.Empty<String>(),
                     Types = new []{"SomeNamespace.SomeType", "OtherNamespace.OtherType"},
                     Methods = Array.Empty<String>()
@@ -148,6 +181,7 @@ namespace PythonExamplesPorterAppTests.Config
                 BaseConfig = new BaseConfig {Source = "C:\\source\\someproj.csproj", DestDirectory = "C:\\dest\\examples"},
                 IgnoredEntities = new IgnoredEntities
                 {
+                    Directories = Array.Empty<String>(),
                     Files = Array.Empty<String>(),
                     Types = Array.Empty<String>(),
                     Methods = new []{"SomeNamespace.SomeType.CheckAAA", "OtherNamespace.OtherType.CheckBBB"}
@@ -166,6 +200,10 @@ namespace PythonExamplesPorterAppTests.Config
                                   "    <Dest>C:\\dest\\examples</Dest>\r\n" +
                                   "  </BaseConfig>\r\n" +
                                   "  <IgnoredEntities>\r\n" +
+                                  "    <Directories>" +
+                                  "      <Directory>SomeFolder1</Directory>" +
+                                  "      <Directory>SomeFolder2\\OtherFolder</Directory>" +
+                                  "    </Directories>" +
                                   "    <Files>\r\n" +
                                   "      <File>aa1.cs</File>\r\n" +
                                   "      <File>ab1.cs</File>\r\n" +
@@ -186,6 +224,7 @@ namespace PythonExamplesPorterAppTests.Config
                 BaseConfig = new BaseConfig {Source = "C:\\source\\someproj.csproj", DestDirectory = "C:\\dest\\examples"},
                 IgnoredEntities = new IgnoredEntities
                 {
+                    Directories = new[] {"SomeFolder1", "SomeFolder2\\OtherFolder"},
                     Files = new[] {"aa1.cs", "ab1.cs", "some_folder\\aa1.cs"},
                     Types = new []{"SomeNamespace.SomeType", "OtherNamespace.OtherType"},
                     Methods = new []{"SomeNamespace.SomeType.CheckAAA", "OtherNamespace.OtherType.CheckBBB"}
@@ -279,6 +318,10 @@ namespace PythonExamplesPorterAppTests.Config
                                   "    <Dest>C:\\dest\\examples</Dest>\r\n" +
                                   "  </BaseConfig>\r\n" +
                                   "  <IgnoredEntities>\r\n" +
+                                  "    <Directories>" +
+                                  "      <Directory>SomeFolder1</Directory>" +
+                                  "      <Directory>SomeFolder2\\OtherFolder</Directory>" +
+                                  "    </Directories>" +
                                   "    <Files>\r\n" +
                                   "      <File>aa1.cs</File>\r\n" +
                                   "      <File>ab1.cs</File>\r\n" +
@@ -315,7 +358,8 @@ namespace PythonExamplesPorterAppTests.Config
                 BaseConfig = new BaseConfig {Source = "C:\\source\\someproj.csproj", DestDirectory = "C:\\dest\\examples"},
                 IgnoredEntities = new IgnoredEntities
                 {
-                    Files = new[] { "aa1.cs", "ab1.cs", "some_folder\\aa1.cs" },
+                    Directories = new[] {"SomeFolder1", "SomeFolder2\\OtherFolder"},
+                    Files = new[] {"aa1.cs", "ab1.cs", "some_folder\\aa1.cs"},
                     Types = new []{"SomeNamespace.SomeType", "OtherNamespace.OtherType"},
                     Methods = new []{"SomeNamespace.SomeType.CheckAAA", "OtherNamespace.OtherType.CheckBBB"}
                 },
@@ -378,6 +422,7 @@ namespace PythonExamplesPorterAppTests.Config
                 Assert.IsNull(actual);
             else
             {
+                CheckCollections(expected.Directories!, actual!.Directories);
                 CheckCollections(expected.Files!, actual!.Files);
                 CheckCollections(expected.Types!, actual.Types);
                 CheckCollections(expected.Methods!, actual.Methods);

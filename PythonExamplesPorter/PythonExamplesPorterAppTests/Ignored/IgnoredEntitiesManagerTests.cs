@@ -28,6 +28,30 @@ namespace PythonExamplesPorterAppTests.Ignored
             Assert.AreEqual(false, managerForEmpty.IsIgnoredFile(filename));
         }
 
+        [TestCase("ba1.cs", false)]
+        [TestCase("SomeFolder1\\ba2.cs", true)]
+        [TestCase("SomeFolder2\\ba3.cs", false)]
+        [TestCase("SomeFolder2\\OtherFolder.cs", false)]
+        [TestCase("SomeFolder2\\OtherFolder\\ba4.cs", true)]
+        public void IsIgnoredFileViaDirectory(String filename, Boolean expectedResult)
+        {
+            IgnoredEntitiesManager manager = new IgnoredEntitiesManager(_ignoredEntities);
+            Assert.AreEqual(expectedResult, manager.IsIgnoredFile(filename));
+        }
+
+        [TestCase("ba1.cs")]
+        [TestCase("SomeFolder1\\ba2.cs")]
+        [TestCase("SomeFolder2\\ba3.cs")]
+        [TestCase("SomeFolder2\\OtherFolder.cs")]
+        [TestCase("SomeFolder2\\OtherFolder\\ba4.cs")]
+        public void IsIgnoredFileViaDirectoryForEmpty(String filename)
+        {
+            IgnoredEntitiesManager managerForNull = new IgnoredEntitiesManager(null);
+            IgnoredEntitiesManager managerForEmpty = new IgnoredEntitiesManager(new IgnoredEntities());
+            Assert.AreEqual(false, managerForNull.IsIgnoredFile(filename));
+            Assert.AreEqual(false, managerForEmpty.IsIgnoredFile(filename));
+        }
+
         [TestCase("SomeNamespace.SomeType", true)]
         [TestCase("SomeNamespace.OtherType", false)]
         [TestCase("SomeType", false)]
@@ -84,6 +108,7 @@ namespace PythonExamplesPorterAppTests.Ignored
 
         private readonly IgnoredEntities _ignoredEntities = new IgnoredEntities
         {
+            Directories = new[] {"SomeFolder1", "SomeFolder2\\OtherFolder"},
             Files = new[] {"aa1.cs", "ab1.cs", "some_folder\\aa1.cs"},
             Types = new[] {"SomeNamespace.SomeType", "OtherNamespace.OtherType"},
             Methods = new[] {"SomeNamespace.SomeType.CheckAAA", "OtherNamespace.OtherType.CheckBBB"}

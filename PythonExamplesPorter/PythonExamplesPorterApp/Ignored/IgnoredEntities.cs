@@ -5,6 +5,10 @@ namespace PythonExamplesPorterApp.Ignored
     [XmlRoot("IgnoredEntities")]
     public class IgnoredEntities
     {
+        [XmlArray("Directories")]
+        [XmlArrayItem("Directory")]
+        public String[]? Directories { get; set; }
+
         [XmlArray("Files")]
         [XmlArrayItem("File")]
         public String[]? Files { get; set; }
