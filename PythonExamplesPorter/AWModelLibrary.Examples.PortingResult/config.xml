@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-16"?>
+<ConfigData>
+  <BaseConfig>
+    <Source>..\..\..\..\AWModelLibrary.Examples\AWModelLibrary.Examples.csproj</Source>
+    <Dest>.\ApiExamples</Dest>
+    <BaseDirectory>..\..\..\..\AWModelLibrary.Examples.PortingResult</BaseDirectory>
+  </BaseConfig>
+  <IgnoredEntities>
+    <Directories>
+      <Directory>obj</Directory>
+    </Directories>
+  </IgnoredEntities>
+  <HandmadeEntities>
+    <Types>
+      <Type FullName="ApiExamples.ApiExampleBase">
+        <Source>Handmade\api_example_base.py</Source>
+        <Dest>api_example_base.py</Dest>
+      </Type>
+    </Types>
+  </HandmadeEntities>
+</ConfigData>
