@@ -16,35 +16,44 @@ namespace PythonExamplesPorterApp
 
         public static Int32 MainImpl(String[] args, TextWriter outputWriter, TextWriter errorWriter)
         {
-            outputWriter.WriteLine(AppDescription);
-            switch (ConfigParser.Parse(args))
+            try
             {
-                case ConfigResult.VersionConfig config:
-                    outputWriter.WriteLine($"Version: {config.Version}");
-                    break;
-                case ConfigResult.HelpConfig config:
-                    outputWriter.WriteLine(config.Help);
-                    break;
-                case ConfigResult.WrongConfig config:
-                    errorWriter.WriteLine(WrongConfig);
-                    outputWriter.WriteLine(config.Help);
-                    return 666;
-                case ConfigResult.MainConfig config:
-                    AppConfig appConfig = AppConfigFactory.Create(config);
-                    switch (AppConfigChecker.Check(appConfig))
-                    {
-                        case (true, _):
-                            RunPorter(appConfig, outputWriter, errorWriter);
-                            break;
-                        case (false, var problems):
-                            errorWriter.WriteLine("There are the following problems with data:");
-                            foreach (String problem in problems)
-                                errorWriter.WriteLine(problem);
-                            return 666;
-                    }
-                    break;
+                outputWriter.WriteLine(AppDescription);
+                switch (ConfigParser.Parse(args))
+                {
+                    case ConfigResult.VersionConfig config:
+                        outputWriter.WriteLine($"Version: {config.Version}");
+                        break;
+                    case ConfigResult.HelpConfig config:
+                        outputWriter.WriteLine(config.Help);
+                        break;
+                    case ConfigResult.WrongConfig config:
+                        errorWriter.WriteLine(WrongConfig);
+                        outputWriter.WriteLine(config.Help);
+                        return 666;
+                    case ConfigResult.MainConfig config:
+                        AppConfig appConfig = AppConfigFactory.Create(config);
+                        switch (AppConfigChecker.Check(appConfig))
+                        {
+                            case (true, _):
+                                RunPorter(appConfig, outputWriter, errorWriter);
+                                break;
+                            case (false, var problems):
+                                errorWriter.WriteLine("There are the following problems with data:");
+                                foreach (String problem in problems)
+                                    errorWriter.WriteLine(problem);
+                                return 666;
+                        }
+                        break;
+                }
+                return 0;
             }
-            return 0;
+            catch (Exception err)
+            {
+                errorWriter.WriteLine("Unhandled exception:");
+                errorWriter.WriteLine(err.ToString());
+                return 999;
+            }
         }
 
         private static void RunPorter(AppConfig appConfig, TextWriter outputWriter, TextWriter errorWriter)

@@ -9,6 +9,16 @@
     <Directories>
       <Directory>obj</Directory>
     </Directories>
+    <Files>
+      <File>DocumentOther.cs</File>
+    </Files>
+    <Types>
+      <Type>ApiExamples.DocumentBuilderAdvanced</Type>
+      <Type>ApiExamples.DocumentAdvanced</Type>
+    </Types>
+    <Methods>
+      <Method>ApiExamples.Document.AdvancedCreate</Method>
+    </Methods>
   </IgnoredEntities>
   <HandmadeEntities>
     <Types>

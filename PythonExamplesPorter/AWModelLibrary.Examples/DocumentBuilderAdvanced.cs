@@ -2,10 +2,10 @@
 
 namespace ApiExamples
 {
+    // ignored class
     [TestFixture]
     public class DocumentBuilderAdvanced : ApiExampleBase
     {
-        // ignored class
         [Test]
         public void Create()
         {

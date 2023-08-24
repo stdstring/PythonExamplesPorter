@@ -13,11 +13,10 @@ namespace PythonExamplesPorterAppTests
         [Ignore("Don't work properly now")]
         public void CheckPortingResultNotWorking()
         {
-            const String configPath = "../../../../AWModelLibrary.Examples.PortingResult/config.xml";
             using (StringWriter outputWriter = new StringWriter())
             using (StringWriter errorWriter = new StringWriter())
             {
-                String configArg = $"--config={configPath}";
+                String configArg = $"--config={ConfigPath}";
                 Int32 returnCode = Program.MainImpl(new[] {configArg}, outputWriter, errorWriter);
                 Assert.AreEqual(0, returnCode);
             }
@@ -26,13 +25,53 @@ namespace PythonExamplesPorterAppTests
         [Test]
         public void CheckPortingResult()
         {
-            const String configPath = "../../../../AWModelLibrary.Examples.PortingResult/config.xml";
-            String configArg = $"--config=\"{configPath}\"";
+            String configArg = $"--config=\"{ConfigPath}\"";
             ExecutionResult result = ExecutionHelper.Execute(new[]{configArg});
             Assert.AreEqual(0, result.ExitCode);
             Assert.IsTrue(String.IsNullOrEmpty(result.Error));
             Console.WriteLine(result.Output);
         }
+
+        [Test]
+        public void GetPorterVersion()
+        {
+            String versionArg = "--version";
+            ExecutionResult result = ExecutionHelper.Execute(new[] {versionArg});
+            CheckResult(result, 0, "C# to Python example porter\r\n0.0.1\r\n", "");
+        }
+
+        [Test]
+        public void GetPorterHelp()
+        {
+            String helpArg = "--help";
+            ExecutionResult result = ExecutionHelper.Execute(new[] {helpArg});
+            CheckResult(result, 0, "C# to Python example porter\r\nUsage: <app> --config=<path to config file>\r\n", "");
+        }
+
+        [Test]
+        public void ProcessWrongArgs()
+        {
+            String someArg = "--some-arg";
+            ExecutionResult result = ExecutionHelper.Execute(new[] {someArg});
+            CheckResult(result, 666, "C# to Python example porter\r\nUsage: <app> --config=<path to config file>\r\n", "Wrong config data");
+        }
+
+        [Test]
+        public void ProcessWrongConfig()
+        {
+            String configArg = "--config=\"./SomeUnknownConfig.cfg\"";
+            ExecutionResult result = ExecutionHelper.Execute(new[]{configArg});
+            CheckResult(result, 999, "C# to Python example porter\r\n", "Unhandled exception:\r\nSystem.IO.FileNotFoundException:");
+        }
+
+        private void CheckResult(ExecutionResult result, Int32 exitCode, String output, String error)
+        {
+            Assert.AreEqual(exitCode, result.ExitCode);
+            Assert.AreEqual(output, result.Output);
+            Assert.IsTrue(result.Error.StartsWith(error));
+        }
+
+        const String ConfigPath = "../../../../AWModelLibrary.Examples.PortingResult/config.xml";
     }
 
     internal record ExecutionResult(Int32 ExitCode, String Output, String Error);
