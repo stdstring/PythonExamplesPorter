@@ -9,6 +9,14 @@ namespace PythonExamplesPorterAppTests
     [TestFixture]
     public class IntegrationTests
     {
+        [SetUp]
+        public void SetUp()
+        {
+            const String destDirectory = ".\\ApiExamples";
+            if (Directory.Exists(destDirectory))
+                Directory.Delete(destDirectory, true);
+        }
+
         [Test]
         [Ignore("Don't work properly now")]
         public void CheckPortingResultNotWorking()
@@ -23,13 +31,31 @@ namespace PythonExamplesPorterAppTests
         }
 
         [Test]
+        [Explicit]
+        public void CheckPortingExpectedData()
+        {
+            String? configRoot = Path.GetDirectoryName(ExpectedDataConfigPath);
+            Assert.IsNotNull(configRoot);
+            String destDirectory = Path.Combine(configRoot!, ExpectedDestDirectory);
+            if (Directory.Exists(destDirectory))
+                Directory.Delete(destDirectory, true);
+            String configArg = $"--config=\"{ExpectedDataConfigPath}\"";
+            ExecutionResult result = ExecutionHelper.Execute(new[] {configArg});
+            Assert.AreEqual(0, result.ExitCode);
+            Assert.IsTrue(String.IsNullOrEmpty(result.Error));
+        }
+
+        [Test]
         public void CheckPortingResult()
         {
             String configArg = $"--config=\"{ConfigPath}\"";
             ExecutionResult result = ExecutionHelper.Execute(new[]{configArg});
             Assert.AreEqual(0, result.ExitCode);
             Assert.IsTrue(String.IsNullOrEmpty(result.Error));
-            Console.WriteLine(result.Output);
+            String? configRoot = Path.GetDirectoryName(ExpectedDataConfigPath);
+            Assert.IsNotNull(configRoot);
+            String expectedDestDirectory = Path.Combine(configRoot!, ExpectedDestDirectory);
+            CheckDirectoryTree(expectedDestDirectory, ActualDestDirectory);
         }
 
         [Test]
@@ -71,7 +97,55 @@ namespace PythonExamplesPorterAppTests
             Assert.IsTrue(result.Error.StartsWith(error));
         }
 
+        private void CheckDirectoryTree(String expectedDirectory, String actualDirectory)
+        {
+            String[] expectedFiles = Directory.GetFiles(expectedDirectory);
+            String[] actualFiles = Directory.GetFiles(actualDirectory);
+            Assert.AreEqual(expectedFiles.Length,
+                            actualFiles.Length,
+                            $"Directories {expectedDirectory} and {actualDirectory} has different count of files");
+            for (Int32 index = 0; index < expectedFiles.Length; ++index)
+            {
+                String expectedName = new FileInfo(expectedFiles[index]).Name;
+                String actualName = new FileInfo(actualFiles[index]).Name;
+                Assert.AreEqual(expectedName,
+                                actualName,
+                                $"Expects file with name {expectedName}, but actual are {actualName}");
+                CheckFileContent(expectedFiles[index], actualFiles[index]);
+            }
+            String[] expectedSubdirs = Directory.GetDirectories(expectedDirectory);
+            String[] actualSubdirs = Directory.GetDirectories(actualDirectory);
+            Assert.AreEqual(expectedSubdirs.Length,
+                            actualSubdirs.Length,
+                            $"Directories {expectedDirectory} and {actualDirectory} has different count of subdirectories");
+            for (Int32 index = 0; index < expectedSubdirs.Length; ++index)
+            {
+                String expectedName = new DirectoryInfo(expectedSubdirs[index]).Name;
+                String actualName = new DirectoryInfo(actualSubdirs[index]).Name;
+                Assert.AreEqual(expectedName,
+                                actualName,
+                                $"Expects subdirectory with name {expectedName}, but actual are {actualName}");
+                CheckFileContent(expectedSubdirs[index], actualSubdirs[index]);
+            }
+        }
+
+        private void CheckFileContent(String expectedFilepath, String actualFilepath)
+        {
+            String[] expectedLines = File.ReadAllLines(expectedFilepath);
+            String[] actualLines = File.ReadAllLines(actualFilepath);
+            Assert.AreEqual(expectedLines.Length, actualLines.Length, $"Files {expectedFilepath} and {actualFilepath} are differ by line count");
+            for (Int32 index = 0; index < expectedLines.Length; ++index)
+            {
+                Assert.AreEqual(expectedLines[index],
+                                actualLines[index],
+                                $"Files {expectedFilepath} and {actualFilepath} have different lines with index {index}");
+            }
+        }
+
         const String ConfigPath = "../../../../AWModelLibrary.Examples.PortingResult/config.xml";
+        const String ExpectedDataConfigPath = "../../../../AWModelLibrary.Examples.PortingResult/configForGenerateExpected.xml";
+        private const String ExpectedDestDirectory = "./ExpectedApiExamples";
+        private const String ActualDestDirectory = "./ApiExamples";
     }
 
     internal record ExecutionResult(Int32 ExitCode, String Output, String Error);

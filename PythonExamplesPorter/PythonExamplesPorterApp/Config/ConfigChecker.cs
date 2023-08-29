@@ -1,4 +1,6 @@
-﻿namespace PythonExamplesPorterApp.Config
+﻿using PythonExamplesPorterApp.Utils;
+
+namespace PythonExamplesPorterApp.Config
 {
     internal static class AppConfigChecker
     {
@@ -7,7 +9,7 @@
             Boolean result = true;
             String[] supportedSourcesByExtension = {".csproj"};
             IList<String> problems = new List<String>();
-            String source = appConfig.ConfigData.BaseConfig!.Source;
+            String source = appConfig.ConfigData.BaseConfig!.Source.ResolveTargetPath(appConfig);
             switch (File.Exists(source))
             {
                 case false:
@@ -28,17 +30,10 @@
                     }
                     break;
             }
-            String baseDirectory = appConfig.BaseDirectory;
-            if (!Directory.Exists(baseDirectory))
+            String destDirectory = appConfig.ConfigData.BaseConfig.DestDirectory.ResolveTargetPath(appConfig);
+            if (Directory.Exists(destDirectory) && !IsEmpty(destDirectory))
             {
-                problems.Add($"\"{baseDirectory}\" must be existing directory");
-                result = false;
-            }
-            String destDirectory = appConfig.ConfigData.BaseConfig.DestDirectory;
-            String resultDirectory = Path.Combine(baseDirectory, destDirectory);
-            if (Directory.Exists(resultDirectory) && !IsEmpty(resultDirectory))
-            {
-                problems.Add($"\"{resultDirectory}\" must be non existing or empty directory");
+                problems.Add($"\"{destDirectory}\" must be non existing or empty directory");
                 result = false;
             }
             return new Tuple<Boolean, String[]>(result, problems.ToArray());

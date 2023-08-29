@@ -10,36 +10,43 @@ namespace PythonExamplesPorterAppTests.Config
     public class ConfigDataSerializationTests
     {
         [Test]
-        public void DeserializeWithBaseConfigOnly()
+        public void DeserializeWithAppRelativeBaseConfigOnly()
         {
             const String source = "<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n" +
                                   "<ConfigData>\r\n" +
                                   "  <BaseConfig>\r\n" +
-                                  "    <Source>C:\\source\\someproj.csproj</Source>\r\n" +
-                                  "    <Dest>C:\\dest\\examples</Dest>\r\n" +
+                                  "    <Source RelativePathBase=\"app\">..\\source\\someproj.csproj</Source>\r\n" +
+                                  "    <Dest RelativePathBase=\"app\">..\\dest\\examples</Dest>\r\n" +
                                   "  </BaseConfig>\r\n" +
                                   "</ConfigData>";
             ConfigData expected = new ConfigData
             {
-                BaseConfig = new BaseConfig {Source = "C:\\source\\someproj.csproj", DestDirectory = "C:\\dest\\examples"}
+                BaseConfig = new BaseConfig
+                {
+                    Source = new TargetPath(RelativePathBase.App, "..\\source\\someproj.csproj"),
+                    DestDirectory = new TargetPath(RelativePathBase.App, "..\\dest\\examples")
+                }
             };
             CheckDeserialization(expected, source);
         }
 
         [Test]
-        public void DeserializeWithBaseConfigOnlyWithBaseDirectory()
+        public void DeserializeWithConfigRelativeBaseConfigOnly()
         {
             const String source = "<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n" +
                                   "<ConfigData>\r\n" +
                                   "  <BaseConfig>\r\n" +
-                                  "    <Source>C:\\source\\someproj.csproj</Source>\r\n" +
-                                  "    <Dest>.\\result</Dest>\r\n" +
-                                  "    <BaseDirectory>C:\\dest\\examples</BaseDirectory>\r\n" +
+                                  "    <Source RelativePathBase=\"config\">..\\source\\someproj.csproj</Source>\r\n" +
+                                  "    <Dest RelativePathBase=\"config\">..\\dest\\examples</Dest>\r\n" +
                                   "  </BaseConfig>\r\n" +
                                   "</ConfigData>";
             ConfigData expected = new ConfigData
             {
-                BaseConfig = new BaseConfig {Source = "C:\\source\\someproj.csproj", DestDirectory = ".\\result", BaseDirectory = "C:\\dest\\examples"}
+                BaseConfig = new BaseConfig
+                {
+                    Source = new TargetPath(RelativePathBase.Config, "..\\source\\someproj.csproj"),
+                    DestDirectory = new TargetPath(RelativePathBase.Config, "..\\dest\\examples")
+                }
             };
             CheckDeserialization(expected, source);
         }
@@ -50,14 +57,18 @@ namespace PythonExamplesPorterAppTests.Config
             const String source = "<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n" +
                                   "<ConfigData>\r\n" +
                                   "  <BaseConfig>\r\n" +
-                                  "    <Source>C:\\source\\someproj.csproj</Source>\r\n" +
-                                  "    <Dest>C:\\dest\\examples</Dest>\r\n" +
+                                  "    <Source RelativePathBase=\"app\">..\\source\\someproj.csproj</Source>\r\n" +
+                                  "    <Dest RelativePathBase=\"app\">..\\dest\\examples</Dest>\r\n" +
                                   "  </BaseConfig>\r\n" +
                                   "  <IgnoredEntities/>\r\n" +
                                   "</ConfigData>";
             ConfigData expected = new ConfigData
             {
-                BaseConfig = new BaseConfig {Source = "C:\\source\\someproj.csproj", DestDirectory = "C:\\dest\\examples"},
+                BaseConfig = new BaseConfig
+                {
+                    Source = new TargetPath(RelativePathBase.App, "..\\source\\someproj.csproj"),
+                    DestDirectory = new TargetPath(RelativePathBase.App, "..\\dest\\examples")
+                },
                 IgnoredEntities = new IgnoredEntities
                 {
                     Directories = Array.Empty<String>(),
@@ -75,8 +86,8 @@ namespace PythonExamplesPorterAppTests.Config
             const String source = "<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n" +
                                   "<ConfigData>\r\n" +
                                   "  <BaseConfig>\r\n" +
-                                  "    <Source>C:\\source\\someproj.csproj</Source>\r\n" +
-                                  "    <Dest>C:\\dest\\examples</Dest>\r\n" +
+                                  "    <Source RelativePathBase=\"app\">..\\source\\someproj.csproj</Source>\r\n" +
+                                  "    <Dest RelativePathBase=\"app\">..\\dest\\examples</Dest>\r\n" +
                                   "  </BaseConfig>\r\n" +
                                   "  <IgnoredEntities>\r\n" +
                                   "    <Directories>" +
@@ -87,7 +98,11 @@ namespace PythonExamplesPorterAppTests.Config
                                   "</ConfigData>";
             ConfigData expected = new ConfigData
             {
-                BaseConfig = new BaseConfig {Source = "C:\\source\\someproj.csproj", DestDirectory = "C:\\dest\\examples"},
+                BaseConfig = new BaseConfig
+                {
+                    Source = new TargetPath(RelativePathBase.App, "..\\source\\someproj.csproj"),
+                    DestDirectory = new TargetPath(RelativePathBase.App, "..\\dest\\examples")
+                },
                 IgnoredEntities = new IgnoredEntities
                 {
                     Directories = new[] {"SomeFolder1", "SomeFolder2\\OtherFolder"},
@@ -105,8 +120,8 @@ namespace PythonExamplesPorterAppTests.Config
             const String source = "<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n" +
                                   "<ConfigData>\r\n" +
                                   "  <BaseConfig>\r\n" +
-                                  "    <Source>C:\\source\\someproj.csproj</Source>\r\n" +
-                                  "    <Dest>C:\\dest\\examples</Dest>\r\n" +
+                                  "    <Source RelativePathBase=\"app\">..\\source\\someproj.csproj</Source>\r\n" +
+                                  "    <Dest RelativePathBase=\"app\">..\\dest\\examples</Dest>\r\n" +
                                   "  </BaseConfig>\r\n" +
                                   "  <IgnoredEntities>\r\n" +
                                   "    <Files>\r\n" +
@@ -118,7 +133,11 @@ namespace PythonExamplesPorterAppTests.Config
                                   "</ConfigData>";
             ConfigData expected = new ConfigData
             {
-                BaseConfig = new BaseConfig {Source = "C:\\source\\someproj.csproj", DestDirectory = "C:\\dest\\examples"},
+                BaseConfig = new BaseConfig
+                {
+                    Source = new TargetPath(RelativePathBase.App, "..\\source\\someproj.csproj"),
+                    DestDirectory = new TargetPath(RelativePathBase.App, "..\\dest\\examples")
+                },
                 IgnoredEntities = new IgnoredEntities
                 {
                     Directories = Array.Empty<String>(),
@@ -136,8 +155,8 @@ namespace PythonExamplesPorterAppTests.Config
             const String source = "<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n" +
                                   "<ConfigData>\r\n" +
                                   "  <BaseConfig>\r\n" +
-                                  "    <Source>C:\\source\\someproj.csproj</Source>\r\n" +
-                                  "    <Dest>C:\\dest\\examples</Dest>\r\n" +
+                                  "    <Source RelativePathBase=\"app\">..\\source\\someproj.csproj</Source>\r\n" +
+                                  "    <Dest RelativePathBase=\"app\">..\\dest\\examples</Dest>\r\n" +
                                   "  </BaseConfig>\r\n" +
                                   "  <IgnoredEntities>\r\n" +
                                   "    <Types>\r\n" +
@@ -148,7 +167,11 @@ namespace PythonExamplesPorterAppTests.Config
                                   "</ConfigData>";
             ConfigData expected = new ConfigData
             {
-                BaseConfig = new BaseConfig {Source = "C:\\source\\someproj.csproj", DestDirectory = "C:\\dest\\examples"},
+                BaseConfig = new BaseConfig
+                {
+                    Source = new TargetPath(RelativePathBase.App, "..\\source\\someproj.csproj"),
+                    DestDirectory = new TargetPath(RelativePathBase.App, "..\\dest\\examples")
+                },
                 IgnoredEntities = new IgnoredEntities
                 {
                     Directories = Array.Empty<String>(),
@@ -166,8 +189,8 @@ namespace PythonExamplesPorterAppTests.Config
             const String source = "<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n" +
                                   "<ConfigData>\r\n" +
                                   "  <BaseConfig>\r\n" +
-                                  "    <Source>C:\\source\\someproj.csproj</Source>\r\n" +
-                                  "    <Dest>C:\\dest\\examples</Dest>\r\n" +
+                                  "    <Source RelativePathBase=\"app\">..\\source\\someproj.csproj</Source>\r\n" +
+                                  "    <Dest RelativePathBase=\"app\">..\\dest\\examples</Dest>\r\n" +
                                   "  </BaseConfig>\r\n" +
                                   "  <IgnoredEntities>\r\n" +
                                   "    <Methods>\r\n" +
@@ -178,7 +201,11 @@ namespace PythonExamplesPorterAppTests.Config
                                   "</ConfigData>";
             ConfigData expected = new ConfigData
             {
-                BaseConfig = new BaseConfig {Source = "C:\\source\\someproj.csproj", DestDirectory = "C:\\dest\\examples"},
+                BaseConfig = new BaseConfig
+                {
+                    Source = new TargetPath(RelativePathBase.App, "..\\source\\someproj.csproj"),
+                    DestDirectory = new TargetPath(RelativePathBase.App, "..\\dest\\examples")
+                },
                 IgnoredEntities = new IgnoredEntities
                 {
                     Directories = Array.Empty<String>(),
@@ -196,8 +223,8 @@ namespace PythonExamplesPorterAppTests.Config
             const String source = "<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n" +
                                   "<ConfigData>\r\n" +
                                   "  <BaseConfig>\r\n" +
-                                  "    <Source>C:\\source\\someproj.csproj</Source>\r\n" +
-                                  "    <Dest>C:\\dest\\examples</Dest>\r\n" +
+                                  "    <Source RelativePathBase=\"app\">..\\source\\someproj.csproj</Source>\r\n" +
+                                  "    <Dest RelativePathBase=\"app\">..\\dest\\examples</Dest>\r\n" +
                                   "  </BaseConfig>\r\n" +
                                   "  <IgnoredEntities>\r\n" +
                                   "    <Directories>" +
@@ -221,7 +248,11 @@ namespace PythonExamplesPorterAppTests.Config
                                   "</ConfigData>";
             ConfigData expected = new ConfigData
             {
-                BaseConfig = new BaseConfig {Source = "C:\\source\\someproj.csproj", DestDirectory = "C:\\dest\\examples"},
+                BaseConfig = new BaseConfig
+                {
+                    Source = new TargetPath(RelativePathBase.App, "..\\source\\someproj.csproj"),
+                    DestDirectory = new TargetPath(RelativePathBase.App, "..\\dest\\examples")
+                },
                 IgnoredEntities = new IgnoredEntities
                 {
                     Directories = new[] {"SomeFolder1", "SomeFolder2\\OtherFolder"},
@@ -239,14 +270,18 @@ namespace PythonExamplesPorterAppTests.Config
             const String source = "<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n" +
                                   "<ConfigData>\r\n" +
                                   "  <BaseConfig>\r\n" +
-                                  "    <Source>C:\\source\\someproj.csproj</Source>\r\n" +
-                                  "    <Dest>C:\\dest\\examples</Dest>\r\n" +
+                                  "    <Source RelativePathBase=\"app\">..\\source\\someproj.csproj</Source>\r\n" +
+                                  "    <Dest RelativePathBase=\"app\">..\\dest\\examples</Dest>\r\n" +
                                   "  </BaseConfig>\r\n" +
                                   "  <HandmadeEntities/>\r\n" +
                                   "</ConfigData>";
             ConfigData expected = new ConfigData
             {
-                BaseConfig = new BaseConfig {Source = "C:\\source\\someproj.csproj", DestDirectory = "C:\\dest\\examples"},
+                BaseConfig = new BaseConfig
+                {
+                    Source = new TargetPath(RelativePathBase.App, "..\\source\\someproj.csproj"),
+                    DestDirectory = new TargetPath(RelativePathBase.App, "..\\dest\\examples")
+                },
                 HandmadeEntities = new HandmadeEntities{HandmadeTypes = Array.Empty<HandmadeType>()}
             };
             CheckDeserialization(expected, source);
@@ -258,8 +293,8 @@ namespace PythonExamplesPorterAppTests.Config
             const String source = "<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n" +
                                   "<ConfigData>\r\n" +
                                   "  <BaseConfig>\r\n" +
-                                  "    <Source>C:\\source\\someproj.csproj</Source>\r\n" +
-                                  "    <Dest>C:\\dest\\examples</Dest>\r\n" +
+                                  "    <Source RelativePathBase=\"app\">..\\source\\someproj.csproj</Source>\r\n" +
+                                  "    <Dest RelativePathBase=\"app\">..\\dest\\examples</Dest>\r\n" +
                                   "  </BaseConfig>\r\n" +
                                   "  <HandmadeEntities>\r\n" +
                                   "    <Types>\r\n" +
@@ -280,7 +315,11 @@ namespace PythonExamplesPorterAppTests.Config
                                   "</ConfigData>";
             ConfigData expected = new ConfigData
             {
-                BaseConfig = new BaseConfig {Source = "C:\\source\\someproj.csproj", DestDirectory = "C:\\dest\\examples"},
+                BaseConfig = new BaseConfig
+                {
+                    Source = new TargetPath(RelativePathBase.App, "..\\source\\someproj.csproj"),
+                    DestDirectory = new TargetPath(RelativePathBase.App, "..\\dest\\examples")
+                },
                 HandmadeEntities = new HandmadeEntities
                 {
                     HandmadeTypes = new []
@@ -314,8 +353,8 @@ namespace PythonExamplesPorterAppTests.Config
             const String source = "<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n" +
                                   "<ConfigData>\r\n" +
                                   "  <BaseConfig>\r\n" +
-                                  "    <Source>C:\\source\\someproj.csproj</Source>\r\n" +
-                                  "    <Dest>C:\\dest\\examples</Dest>\r\n" +
+                                  "    <Source RelativePathBase=\"app\">..\\source\\someproj.csproj</Source>\r\n" +
+                                  "    <Dest RelativePathBase=\"app\">..\\dest\\examples</Dest>\r\n" +
                                   "  </BaseConfig>\r\n" +
                                   "  <IgnoredEntities>\r\n" +
                                   "    <Directories>" +
@@ -355,7 +394,11 @@ namespace PythonExamplesPorterAppTests.Config
                                   "</ConfigData>";
             ConfigData expected = new ConfigData
             {
-                BaseConfig = new BaseConfig {Source = "C:\\source\\someproj.csproj", DestDirectory = "C:\\dest\\examples"},
+                BaseConfig = new BaseConfig
+                {
+                    Source = new TargetPath(RelativePathBase.App, "..\\source\\someproj.csproj"),
+                    DestDirectory = new TargetPath(RelativePathBase.App, "..\\dest\\examples")
+                },
                 IgnoredEntities = new IgnoredEntities
                 {
                     Directories = new[] {"SomeFolder1", "SomeFolder2\\OtherFolder"},
@@ -409,11 +452,18 @@ namespace PythonExamplesPorterAppTests.Config
             CheckHandmadeEntities(expected.HandmadeEntities, actual.HandmadeEntities);
         }
 
+        private void CheckTargetPath(TargetPath expected, TargetPath actual)
+        {
+            Assert.AreEqual(expected.RelativePathBase, actual.RelativePathBase);
+            Assert.AreEqual(expected.Path, actual.Path);
+        }
+
         private void CheckBaseConfig(BaseConfig expected, BaseConfig actual)
         {
-            Assert.AreEqual(expected.Source, actual.Source);
-            Assert.AreEqual(expected.DestDirectory, actual.DestDirectory);
-            Assert.AreEqual(expected.BaseDirectory, actual.BaseDirectory);
+            Assert.IsNotNull(actual.Source);
+            CheckTargetPath(expected.Source!, actual.Source!);
+            Assert.IsNotNull(actual.DestDirectory);
+            CheckTargetPath(expected.DestDirectory!, actual.DestDirectory!);
         }
 
         private void CheckIgnoredEntities(IgnoredEntities? expected, IgnoredEntities? actual)
@@ -423,7 +473,7 @@ namespace PythonExamplesPorterAppTests.Config
             else
             {
                 CheckCollections(expected.Directories!, actual!.Directories);
-                CheckCollections(expected.Files!, actual!.Files);
+                CheckCollections(expected.Files!, actual.Files);
                 CheckCollections(expected.Types!, actual.Types);
                 CheckCollections(expected.Methods!, actual.Methods);
             }

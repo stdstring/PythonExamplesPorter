@@ -2,7 +2,7 @@
 <ConfigData>
   <BaseConfig>
     <Source RelativePathBase="config">..\AWModelLibrary.Examples\AWModelLibrary.Examples.csproj</Source>
-    <Dest RelativePathBase="app">.\ApiExamples</Dest>
+    <Dest RelativePathBase="config">.\ExpectedApiExamples</Dest>
   </BaseConfig>
   <IgnoredEntities>
     <Directories>

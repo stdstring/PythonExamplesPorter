@@ -4,6 +4,7 @@ using PythonExamplesPorterApp.DestStorage;
 using PythonExamplesPorterApp.Handmade;
 using PythonExamplesPorterApp.Ignored;
 using PythonExamplesPorterApp.Logger;
+using PythonExamplesPorterApp.Utils;
 
 namespace PythonExamplesPorterApp.Converter
 {
@@ -23,7 +24,7 @@ namespace PythonExamplesPorterApp.Converter
         public void Convert(String relativeFilePath, SyntaxTree tree, SemanticModel model)
         {
             String destRelativePath = PathTransformer.TransformPath(relativeFilePath);
-            String destDirectory = Path.Combine(_appConfig.BaseDirectory, _appConfig.ConfigData.BaseConfig!.DestDirectory);
+            String destDirectory = _appConfig.ConfigData.BaseConfig!.DestDirectory.ResolveTargetPath(_appConfig);
             String destPath = Path.Combine(destDirectory, destRelativePath);
             FileStorage currentFile = new FileStorage(destPath);
             FileConverterSyntaxWalker converter = new FileConverterSyntaxWalker(model, currentFile, _ignoredManager, _handmadeManager, _logger);

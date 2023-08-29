@@ -1,4 +1,5 @@
 ﻿using PythonExamplesPorterApp.Config;
+using PythonExamplesPorterApp.Utils;
 
 namespace PythonExamplesPorterApp.Handmade
 {
@@ -11,11 +12,10 @@ namespace PythonExamplesPorterApp.Handmade
 
         public void Process(HandmadeType[] usedTypes)
         {
-            String baseDirectory = _appConfig.BaseDirectory;
-            String destDirectory = Path.Combine(baseDirectory, _appConfig.ConfigData.BaseConfig!.DestDirectory);
+            String destDirectory = _appConfig.ConfigData.BaseConfig!.DestDirectory.ResolveTargetPath(_appConfig);
             foreach (HandmadeType usedType in usedTypes)
             {
-                String sourcePath = Path.Combine(baseDirectory, usedType.Source);
+                String sourcePath = Path.Combine(_appConfig.ConfigBaseDirectory, usedType.Source);
                 String destPath = Path.Combine(destDirectory, usedType.Dest);
                 File.Copy(sourcePath, destPath, true);
             }

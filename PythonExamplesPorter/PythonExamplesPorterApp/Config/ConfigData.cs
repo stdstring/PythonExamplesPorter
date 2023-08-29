@@ -17,16 +17,40 @@ namespace PythonExamplesPorterApp.Config
         public HandmadeEntities? HandmadeEntities { get; set; }
     }
 
+    public enum RelativePathBase
+    {
+        [XmlEnum(Name = "app")]
+        App = 0,
+        [XmlEnum(Name = "config")]
+        Config = 1
+    }
+
+    [XmlRoot("Source")]
+    public class TargetPath
+    {
+        public TargetPath()
+        {
+        }
+
+        public TargetPath(RelativePathBase relativePathBase, String path)
+        {
+            RelativePathBase = relativePathBase;
+            Path = path;
+        }
+
+        [XmlAttribute("RelativePathBase")]
+        public RelativePathBase RelativePathBase { get; set; }
+        [XmlText]
+        public String Path { get; set; } = "";
+    }
+
     [XmlRoot("BaseConfig")]
     public class BaseConfig
     {
         [XmlElement("Source")]
-        public String Source { get; set; } = "";
+        public TargetPath? Source { get; set; }
 
         [XmlElement("Dest")]
-        public String DestDirectory { get; set; } = "";
-
-        [XmlElement("BaseDirectory")]
-        public String? BaseDirectory { get; set; }
+        public TargetPath? DestDirectory { get; set; }
     }
 }

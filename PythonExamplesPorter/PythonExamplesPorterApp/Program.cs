@@ -63,7 +63,7 @@ namespace PythonExamplesPorterApp
             IgnoredEntitiesManager ignoredManager = new IgnoredEntitiesManager(appConfig.ConfigData.IgnoredEntities);
             HandmadeEntitiesManager handmadeManager = new HandmadeEntitiesManager(appConfig.ConfigData.HandmadeEntities);
             ProjectProcessor projectProcessor = new ProjectProcessor(appConfig, ignoredManager, handmadeManager, logger);
-            projectProcessor.Process(appConfig.ConfigData.BaseConfig!.Source);
+            projectProcessor.Process(appConfig.ConfigData.BaseConfig!.Source.ResolveTargetPath(appConfig));
             HandmadePostProcessor handmadePostProcessor = new HandmadePostProcessor(appConfig);
             handmadePostProcessor.Process(handmadeManager.GetUsedHandmadeTypes());
             outputWriter.WriteLine("That's all folks !!!");
