@@ -8,9 +8,9 @@ using PythonExamplesPorterApp.Logger;
 
 namespace PythonExamplesPorterApp.Converter;
 
-internal class FileConverterSyntaxWalker : CSharpSyntaxWalker
+internal class FileConverterVisitor : CSharpSyntaxWalker
 {
-    public FileConverterSyntaxWalker(SemanticModel model,
+    public FileConverterVisitor(SemanticModel model,
         FileStorage currentFile,
         IgnoredEntitiesManager ignoredManager,
         HandmadeEntitiesManager handmadeManager,
@@ -102,7 +102,7 @@ internal class FileConverterSyntaxWalker : CSharpSyntaxWalker
     {
         if (_currentClass == null)
             throw new InvalidOperationException($"Unknown class for method {node.Identifier.Text}");
-        MethodConverterSyntaxWalker methodConverter = new MethodConverterSyntaxWalker(_model, _currentClass, _ignoredManager, _logger);
+        MethodConverterVisitor methodConverter = new MethodConverterVisitor(_model, _currentClass, _ignoredManager, _logger);
         methodConverter.Visit(node);
         //base.VisitMethodDeclaration(node);
     }

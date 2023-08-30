@@ -27,7 +27,7 @@ namespace PythonExamplesPorterApp.Converter
             String destDirectory = _appConfig.ConfigData.BaseConfig!.DestDirectory.ResolveTargetPath(_appConfig);
             String destPath = Path.Combine(destDirectory, destRelativePath);
             FileStorage currentFile = new FileStorage(destPath);
-            FileConverterSyntaxWalker converter = new FileConverterSyntaxWalker(model, currentFile, _ignoredManager, _handmadeManager, _logger);
+            FileConverterVisitor converter = new FileConverterVisitor(model, currentFile, _ignoredManager, _handmadeManager, _logger);
             converter.Visit(tree.GetRoot());
             if (currentFile.IsEmpty())
                 return;

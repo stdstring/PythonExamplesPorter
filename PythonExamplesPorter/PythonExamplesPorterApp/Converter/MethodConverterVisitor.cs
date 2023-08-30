@@ -7,9 +7,9 @@ using PythonExamplesPorterApp.Logger;
 
 namespace PythonExamplesPorterApp.Converter;
 
-internal class MethodConverterSyntaxWalker : CSharpSyntaxWalker
+internal class MethodConverterVisitor : CSharpSyntaxWalker
 {
-    public MethodConverterSyntaxWalker(SemanticModel model,
+    public MethodConverterVisitor(SemanticModel model,
         ClassStorage currentClass,
         IgnoredEntitiesManager ignoredManager,
         ILogger logger)
