@@ -24,18 +24,12 @@ namespace PythonExamplesPorterApp.Converter
         public override void VisitLocalDeclarationStatement(LocalDeclarationStatementSyntax node)
         {
             foreach (VariableDeclaratorSyntax variable in node.Declaration.Variables)
-            {
-                String name = NameTransformer.TransformLocalVariableName(variable.Identifier.Text);
-                String initializer = variable.Initializer == null ? "None" : "<<<initializer expr>>>";
-                if (_currentMethod.HasError)
-                    return;
-                _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}{name} = {initializer}");
-            }
+                ProcessVariableDeclaration(variable);
         }
 
         public override void VisitExpressionStatement(ExpressionStatementSyntax node)
         {
-            _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}<<expression statement>>");
+            _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}<<<expression statement>>>");
         }
 
         public override void VisitForEachStatement(ForEachStatementSyntax node)
@@ -47,9 +41,24 @@ namespace PythonExamplesPorterApp.Converter
 
         public override void VisitForStatement(ForStatementSyntax node)
         {
-            //var loopVariables = node.Declaration.Variables;
-            _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}for <<<var>>> in range(<<<from>>>, <<<to>>>, <<<step>>>):");
+            _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}# for loop begin");
+            if (node.Declaration != null)
+            {
+                foreach (VariableDeclaratorSyntax variable in node.Declaration.Variables)
+                    ProcessVariableDeclaration(variable);
+            }
+            String condition = node.Condition == null ? "true" : "<<<condition>>>";
+            _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}while {condition}:");
+            if (_currentMethod.HasError)
+                return;
             VisitStatement(node.Statement, true);
+            if (_currentMethod.HasError)
+                return;
+            _indentation += StorageDef.IndentationDelta;
+            foreach (ExpressionSyntax incrementor in node.Incrementors)
+                _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}<<<increment expression>>>");
+            _indentation -= StorageDef.IndentationDelta;
+            _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}# for loop end");
         }
 
         public override void VisitIfStatement(IfStatementSyntax node)
@@ -173,6 +182,15 @@ namespace PythonExamplesPorterApp.Converter
                     VisitStatement(node.Else.Statement, true);
                     break;
             }
+        }
+
+        private void ProcessVariableDeclaration(VariableDeclaratorSyntax variable)
+        {
+            String name = NameTransformer.TransformLocalVariableName(variable.Identifier.Text);
+            String initializer = variable.Initializer == null ? "None" : "<<<initializer expr>>>";
+            if (_currentMethod.HasError)
+                return;
+            _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}{name} = {initializer}");
         }
 
         private Tuple<Boolean, String> CreateSwitchSectionCondition(SyntaxList<SwitchLabelSyntax> labels, String switchConditionVariable)
