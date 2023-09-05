@@ -12,8 +12,8 @@ namespace PythonExamplesPorterApp.DestStorage
 
         public void Save(TextWriter writer)
         {
-            String baseIndentation = new String(' ', _indentation);
-            String bodyIndentation = new String(' ', _indentation + StorageDef.IndentationDelta);
+            String baseIndentation = IndentationUtils.Create(_indentation);
+            String bodyIndentation = IndentationUtils.Create(_indentation + StorageDef.IndentationDelta);
             foreach (String decorator in _decorators)
                 writer.WriteLine($"{baseIndentation}{decorator}");
             writer.WriteLine($"{baseIndentation}def {_methodName}(self):");
@@ -44,6 +44,8 @@ namespace PythonExamplesPorterApp.DestStorage
         {
             _errorReason = errorReason;
         }
+
+        public Boolean HasError => _errorReason != null;
 
         private readonly String _methodName;
         private readonly Int32 _indentation;

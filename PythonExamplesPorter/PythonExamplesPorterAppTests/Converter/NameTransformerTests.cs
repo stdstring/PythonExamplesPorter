@@ -33,5 +33,13 @@ namespace PythonExamplesPorterAppTests.Converter
         {
             Assert.AreEqual(expectedResult, NameTransformer.TransformMethodName(source));
         }
+
+        [TestCase("data", "data")]
+        [TestCase("someData", "some_data")]
+        [TestCase("someDataValue", "some_data_value")]
+        public void TransformLocalVariableName(String source, String expectedResult)
+        {
+            Assert.AreEqual(expectedResult, NameTransformer.TransformLocalVariableName(source));
+        }
     }
 }

@@ -2,10 +2,10 @@
 
 class Document(ApiExampleBase):
     def test_create(self):
-        raise NotImplementedError("we don't support this functionality yet")
+        pass
 
     def test_load(self):
-        raise NotImplementedError("we don't support this functionality yet")
+        pass
 
     def test_save(self):
-        raise NotImplementedError("we don't support this functionality yet")
+        pass

@@ -12,8 +12,8 @@ namespace PythonExamplesPorterApp.DestStorage
 
         public void Save(TextWriter writer)
         {
-            String baseIndentation = new String(' ', _indentation);
-            String bodyIndentation = new String(' ', _indentation + StorageDef.IndentationDelta);
+            String baseIndentation = IndentationUtils.Create(_indentation);
+            String bodyIndentation = IndentationUtils.Create(_indentation + StorageDef.IndentationDelta);
             foreach (String decorator in _decorators)
                 writer.WriteLine($"{baseIndentation}{decorator}");
             String baseClassesPart = _baseClasses.IsEmpty() ? "" : $"({String.Join(",", _baseClasses)})";

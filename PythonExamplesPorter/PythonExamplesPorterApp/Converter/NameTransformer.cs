@@ -19,6 +19,11 @@ namespace PythonExamplesPorterApp.Converter
             return ConvertPascalCaseIntoSnakeCase(methodName);
         }
 
+        public static String TransformLocalVariableName(String variableName)
+        {
+            return ConvertPascalCaseIntoSnakeCase(variableName);
+        }
+
         private static String ConvertPascalCaseIntoSnakeCase(String name)
         {
             StringBuilder builder = new StringBuilder();
