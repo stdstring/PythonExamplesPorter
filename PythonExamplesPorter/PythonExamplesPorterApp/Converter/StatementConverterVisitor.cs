@@ -34,9 +34,11 @@ namespace PythonExamplesPorterApp.Converter
 
         public override void VisitForEachStatement(ForEachStatementSyntax node)
         {
+            _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}# for each loop begin");
             String enumerationVariable = NameTransformer.TransformLocalVariableName(node.Identifier.Text);
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}for {enumerationVariable} in <<<collection>>>:");
             VisitStatement(node.Statement, true);
+            _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}# for loop end");
         }
 
         public override void VisitForStatement(ForStatementSyntax node)
@@ -63,11 +65,14 @@ namespace PythonExamplesPorterApp.Converter
 
         public override void VisitIfStatement(IfStatementSyntax node)
         {
+            _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}# if begin");
             VisitIfStatementImpl(node, "if");
+            _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}# if end");
         }
 
         public override void VisitSwitchStatement(SwitchStatementSyntax node)
         {
+            _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}# switch begin");
             // TODO (std_string) : think about possible other definition of switchCondition variable
             const String switchConditionVariable = "switch_condition";
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}{switchConditionVariable} = <<<condition>>>");
@@ -87,28 +92,32 @@ namespace PythonExamplesPorterApp.Converter
                 if (hasDefaultLabel)
                 {
                     _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}else:");
-                    VisitStatements(statements, true);
+                    VisitSwitchSectionStatements(statements);
                 }
                 else
                 {
                     String switchSectionCondition = CreateSwitchSectionCondition(labels, switchConditionVariable);
                     String ifOperator = index == 0 ? "if" : "elif";
                     _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}{ifOperator} {switchSectionCondition}:");
-                    VisitStatements(sections[index].Statements, true);
+                    VisitSwitchSectionStatements(statements);
                 }
                 if (_currentMethod.HasError)
                     return;
             }
+            _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}# switch end");
         }
 
         public override void VisitWhileStatement(WhileStatementSyntax node)
         {
+            _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}# while begin");
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}while <<<condition>>>:");
             VisitStatement(node.Statement, true);
+            _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}# while end");
         }
 
         public override void VisitDoStatement(DoStatementSyntax node)
         {
+            _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}# do ... while begin");
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}while true:");
             VisitStatement(node.Statement, true);
             if (_currentMethod.HasError)
@@ -117,6 +126,7 @@ namespace PythonExamplesPorterApp.Converter
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}if <<<condition>>>:");
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation + StorageDef.IndentationDelta)}break");
             _indentation -= StorageDef.IndentationDelta;
+            _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}# do ... while end");
         }
 
         public override void VisitBreakStatement(BreakStatementSyntax node)
@@ -129,6 +139,13 @@ namespace PythonExamplesPorterApp.Converter
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}continue");
         }
 
+        public override void VisitReturnStatement(ReturnStatementSyntax node)
+        {
+            String delimiter = node.Expression == null ? "" : " ";
+            String expression = node.Expression == null ? "" : "<<<expression>>>";
+            _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}return{delimiter}{expression}");
+        }
+
         private void VisitStatements(SyntaxList<StatementSyntax> statements, bool indent)
         {
             foreach (StatementSyntax statement in statements)
@@ -137,6 +154,12 @@ namespace PythonExamplesPorterApp.Converter
                 if (_currentMethod.HasError)
                     return;
             }
+        }
+
+        private void VisitSwitchSectionStatements(SyntaxList<StatementSyntax> statements)
+        {
+            IEnumerable<StatementSyntax> filteredStatements = statements.Where(statement => !(statement is BreakStatementSyntax));
+            VisitStatements(new SyntaxList<StatementSyntax>(filteredStatements), true);
         }
 
         private void VisitStatement(StatementSyntax statement, bool indent)
@@ -155,7 +178,8 @@ namespace PythonExamplesPorterApp.Converter
                 SyntaxKind.DoStatement,
                 SyntaxKind.BreakStatement,
                 SyntaxKind.ContinueStatement,
-                SyntaxKind.Block
+                SyntaxKind.Block,
+                SyntaxKind.ReturnStatement
             };
             if (!knownStatements.Contains(statement.Kind()))
             {
@@ -210,7 +234,7 @@ namespace PythonExamplesPorterApp.Converter
             return totalCondition;
         }
 
-        private Int32 _indentation = 0;
+        private Int32 _indentation;
         private readonly SemanticModel _model;
         private readonly MethodStorage _currentMethod;
         private readonly ILogger _logger;

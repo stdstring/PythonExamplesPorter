@@ -36,7 +36,7 @@ namespace PythonExamplesPorterApp.DestStorage
         public void AddBodyLine(String bodyLine)
         {
             if (_errorReason != null)
-                throw new InvalidOperationException($"Method {_methodName} raises {_errorReason} error");
+                return;
             _body.Add(bodyLine);
         }
 
