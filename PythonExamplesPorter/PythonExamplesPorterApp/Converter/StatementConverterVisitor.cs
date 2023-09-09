@@ -74,24 +74,26 @@ namespace PythonExamplesPorterApp.Converter
             SyntaxList<SwitchSectionSyntax> sections = node.Sections;
             for (Int32 index = 0; index < sections.Count; ++index)
             {
+                CheckResult sectionResult = SwitchSectionChecker.Check(sections[index]);
+                if (!sectionResult.Result)
+                {
+                    _logger.LogError(sectionResult.Reason);
+                    _currentMethod.SetError(sectionResult.Reason);
+                    return;
+                }
                 SyntaxList<SwitchLabelSyntax> labels = sections[index].Labels;
+                SyntaxList<StatementSyntax> statements = sections[index].Statements;
                 Boolean hasDefaultLabel = labels.Last() is DefaultSwitchLabelSyntax;
                 if (hasDefaultLabel)
                 {
                     _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}else:");
-                    VisitStatements(sections[index].Statements, true);
+                    VisitStatements(statements, true);
                 }
                 else
                 {
-                    Tuple<Boolean, String> switchSectionCondition = CreateSwitchSectionCondition(labels, switchConditionVariable);
-                    if (!switchSectionCondition.Item1)
-                    {
-                        _logger.LogError("Unsupported type of switch label");
-                        _currentMethod.SetError("unsupported type of switch label");
-                        return;
-                    }
+                    String switchSectionCondition = CreateSwitchSectionCondition(labels, switchConditionVariable);
                     String ifOperator = index == 0 ? "if" : "elif";
-                    _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}{ifOperator} {switchSectionCondition.Item2}:");
+                    _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}{ifOperator} {switchSectionCondition}:");
                     VisitStatements(sections[index].Statements, true);
                 }
                 if (_currentMethod.HasError)
@@ -157,8 +159,8 @@ namespace PythonExamplesPorterApp.Converter
             };
             if (!knownStatements.Contains(statement.Kind()))
             {
-                _logger.LogError($"Unsupported statement type in block: {statement.Kind()}");
-                _currentMethod.SetError($"unsupported statement type in block: {statement.Kind()}");
+                _logger.LogError($"Unsupported statement type: {statement.Kind()}");
+                _currentMethod.SetError($"unsupported statement type: {statement.Kind()}");
                 return;
             }
             Visit(statement);
@@ -193,24 +195,99 @@ namespace PythonExamplesPorterApp.Converter
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}{name} = {initializer}");
         }
 
-        private Tuple<Boolean, String> CreateSwitchSectionCondition(SyntaxList<SwitchLabelSyntax> labels, String switchConditionVariable)
+        private String CreateSwitchSectionCondition(SyntaxList<SwitchLabelSyntax> labels, String switchConditionVariable)
         {
             IList<String> conditions = new List<string>();
             foreach (SwitchLabelSyntax label in labels)
             {
                 if (label is CasePatternSwitchLabelSyntax)
-                    return new Tuple<Boolean, String>(false, "");
+                    throw new InvalidOperationException($"Unexpected type of switch label: CasePatternSwitchLabelSyntax");
                 conditions.Add($"{switchConditionVariable} == <<<switch label condition>>>");
             }
             if (conditions.Count == 1)
-                return new Tuple<Boolean, String>(true, conditions[0]);
+                return conditions[0];
             String totalCondition = String.Join(" and ", conditions.Select(condition => $"({condition})"));
-            return new Tuple<Boolean, String>(true, totalCondition);
+            return totalCondition;
         }
 
         private Int32 _indentation = 0;
         private readonly SemanticModel _model;
         private readonly MethodStorage _currentMethod;
         private readonly ILogger _logger;
+    }
+
+    internal record CheckResult(Boolean Result, String Reason = "");
+
+    internal static class SwitchSectionChecker
+    {
+        public static CheckResult Check(SwitchSectionSyntax switchSection)
+        {
+            CheckResult labelsResult = Check(switchSection.Labels);
+            if (!labelsResult.Result)
+                return labelsResult;
+            return Check(switchSection.Statements);
+        }
+
+        private static CheckResult Check(SyntaxList<SwitchLabelSyntax> labels)
+        {
+            foreach (SwitchLabelSyntax label in labels)
+            {
+                if (label is CasePatternSwitchLabelSyntax)
+                    return new CheckResult(Result: false, Reason: "Unsupported type of expression: pattern matching");
+            }
+            return new CheckResult(Result: true);
+        }
+
+        private static CheckResult Check(SyntaxList<StatementSyntax> statements)
+        {
+            return CheckStatements(statements, true);
+        }
+
+        private static CheckResult Check(StatementSyntax statement, Boolean allowBreak)
+        {
+            switch (statement)
+            {
+                case BreakStatementSyntax _ when !allowBreak:
+                    return new CheckResult(false, "Unsupported break statement usage");
+                case BreakStatementSyntax _:
+                case ForEachStatementSyntax _:
+                case ForStatementSyntax _:
+                case WhileStatementSyntax _:
+                case DoStatementSyntax _:
+                case LocalDeclarationStatementSyntax _:
+                case ExpressionStatementSyntax _:
+                case SwitchStatementSyntax _:
+                    return new CheckResult(true);
+                case BlockSyntax blockStatement:
+                    return CheckStatements(blockStatement.Statements, false);
+                case IfStatementSyntax ifStatement:
+                    return CheckIfStatement(ifStatement);
+                case ContinueStatementSyntax _:
+                    throw new InvalidOperationException("Unexpected continue operator in compiled code");
+                default:
+                    return new CheckResult(false, $"Unsupported statement type: {statement.Kind()}");
+            }
+        }
+
+        private static CheckResult CheckStatements(SyntaxList<StatementSyntax> statements, Boolean allowBreak)
+        {
+            foreach (StatementSyntax statement in statements)
+            {
+                CheckResult result = Check(statement, allowBreak);
+                if (!result.Result)
+                    return result;
+            }
+            return new CheckResult(true);
+        }
+
+        private static CheckResult CheckIfStatement(IfStatementSyntax ifStatement)
+        {
+            CheckResult thenResult = Check(ifStatement.Statement, false);
+            if (!thenResult.Result)
+                return thenResult;
+            if (ifStatement.Else == null)
+                return new CheckResult(true);
+            return Check(ifStatement.Else.Statement, false);
+        }
     }
 }
