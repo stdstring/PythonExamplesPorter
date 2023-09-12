@@ -91,8 +91,16 @@ namespace PythonExamplesPorterApp.Converter
                 currentMethod.SetError("absence of method's body");
                 return;
             }
-            StatementConverterVisitor statementConverter = new StatementConverterVisitor(_model, currentMethod, _logger);
-            statementConverter.VisitBlock(node.Body);
+            try
+            {
+                StatementConverterVisitor statementConverter = new StatementConverterVisitor(_model, currentMethod, _logger);
+                statementConverter.VisitBlock(node.Body);
+            }
+            catch (UnsupportedSyntaxException exc)
+            {
+                _logger.LogError(exc.Message);
+                currentMethod.SetError(exc.Message);
+            }
         }
 
         private readonly SemanticModel _model;

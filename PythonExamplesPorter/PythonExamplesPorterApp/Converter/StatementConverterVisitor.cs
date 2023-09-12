@@ -29,14 +29,16 @@ namespace PythonExamplesPorterApp.Converter
 
         public override void VisitExpressionStatement(ExpressionStatementSyntax node)
         {
-            _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}<<<expression statement>>>");
+            String expression = ConvertExpression(node.Expression);
+            _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}{expression}");
         }
 
         public override void VisitForEachStatement(ForEachStatementSyntax node)
         {
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}# for each loop begin");
             String enumerationVariable = NameTransformer.TransformLocalVariableName(node.Identifier.Text);
-            _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}for {enumerationVariable} in <<<collection>>>:");
+            String forEachExpression = ConvertExpression(node.Expression);
+            _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}for {enumerationVariable} in {forEachExpression}:");
             VisitStatement(node.Statement, true);
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}# for loop end");
         }
@@ -49,16 +51,15 @@ namespace PythonExamplesPorterApp.Converter
                 foreach (VariableDeclaratorSyntax variable in node.Declaration.Variables)
                     ProcessVariableDeclaration(variable);
             }
-            String condition = node.Condition == null ? "true" : "<<<condition>>>";
+            String condition = node.Condition == null ? "true" : ConvertExpression(node.Condition);
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}while {condition}:");
-            if (_currentMethod.HasError)
-                return;
             VisitStatement(node.Statement, true);
-            if (_currentMethod.HasError)
-                return;
             _indentation += StorageDef.IndentationDelta;
-            foreach (ExpressionSyntax incrementor in node.Incrementors)
-                _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}<<<increment expression>>>");
+            foreach (ExpressionSyntax incrementExpr in node.Incrementors)
+            {
+                String incrementExpression = ConvertExpression(incrementExpr);
+                _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}{incrementExpression}");
+            }
             _indentation -= StorageDef.IndentationDelta;
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}# for loop end");
         }
@@ -75,17 +76,14 @@ namespace PythonExamplesPorterApp.Converter
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}# switch begin");
             // TODO (std_string) : think about possible other definition of switchCondition variable
             const String switchConditionVariable = "switch_condition";
-            _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}{switchConditionVariable} = <<<condition>>>");
+            String switchCondition = ConvertExpression(node.Expression);
+            _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}{switchConditionVariable} = {switchCondition}");
             SyntaxList<SwitchSectionSyntax> sections = node.Sections;
             for (Int32 index = 0; index < sections.Count; ++index)
             {
                 CheckResult sectionResult = SwitchSectionChecker.Check(sections[index]);
                 if (!sectionResult.Result)
-                {
-                    _logger.LogError(sectionResult.Reason);
-                    _currentMethod.SetError(sectionResult.Reason);
-                    return;
-                }
+                    throw new UnsupportedSyntaxException(sectionResult.Reason);
                 SyntaxList<SwitchLabelSyntax> labels = sections[index].Labels;
                 SyntaxList<StatementSyntax> statements = sections[index].Statements;
                 Boolean hasDefaultLabel = labels.Last() is DefaultSwitchLabelSyntax;
@@ -101,8 +99,6 @@ namespace PythonExamplesPorterApp.Converter
                     _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}{ifOperator} {switchSectionCondition}:");
                     VisitSwitchSectionStatements(statements);
                 }
-                if (_currentMethod.HasError)
-                    return;
             }
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}# switch end");
         }
@@ -110,7 +106,8 @@ namespace PythonExamplesPorterApp.Converter
         public override void VisitWhileStatement(WhileStatementSyntax node)
         {
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}# while begin");
-            _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}while <<<condition>>>:");
+            String condition = ConvertExpression(node.Condition);
+            _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}while {condition}:");
             VisitStatement(node.Statement, true);
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}# while end");
         }
@@ -120,10 +117,9 @@ namespace PythonExamplesPorterApp.Converter
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}# do ... while begin");
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}while true:");
             VisitStatement(node.Statement, true);
-            if (_currentMethod.HasError)
-                return;
             _indentation += StorageDef.IndentationDelta;
-            _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}if <<<condition>>>:");
+            String condition = ConvertExpression(node.Condition);
+            _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}if {condition}:");
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation + StorageDef.IndentationDelta)}break");
             _indentation -= StorageDef.IndentationDelta;
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}# do ... while end");
@@ -142,18 +138,14 @@ namespace PythonExamplesPorterApp.Converter
         public override void VisitReturnStatement(ReturnStatementSyntax node)
         {
             String delimiter = node.Expression == null ? "" : " ";
-            String expression = node.Expression == null ? "" : "<<<expression>>>";
+            String expression = node.Expression == null ? "" : ConvertExpression(node.Expression);
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}return{delimiter}{expression}");
         }
 
         private void VisitStatements(SyntaxList<StatementSyntax> statements, bool indent)
         {
             foreach (StatementSyntax statement in statements)
-            {
                 VisitStatement(statement, indent);
-                if (_currentMethod.HasError)
-                    return;
-            }
         }
 
         private void VisitSwitchSectionStatements(SyntaxList<StatementSyntax> statements)
@@ -182,11 +174,7 @@ namespace PythonExamplesPorterApp.Converter
                 SyntaxKind.ReturnStatement
             };
             if (!knownStatements.Contains(statement.Kind()))
-            {
-                _logger.LogError($"Unsupported statement type: {statement.Kind()}");
-                _currentMethod.SetError($"unsupported statement type: {statement.Kind()}");
-                return;
-            }
+                throw new UnsupportedSyntaxException($"Unsupported statement type: {statement.Kind()}");
             Visit(statement);
             if (indent)
                 _indentation -= StorageDef.IndentationDelta;
@@ -194,7 +182,8 @@ namespace PythonExamplesPorterApp.Converter
 
         private void VisitIfStatementImpl(IfStatementSyntax node, String ifOperator)
         {
-            _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}{ifOperator} <<<condition>>>:");
+            String condition = ConvertExpression(node.Condition);
+            _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}{ifOperator} {condition}:");
             VisitStatement(node.Statement, true);
             switch (node.Else)
             {
@@ -213,9 +202,7 @@ namespace PythonExamplesPorterApp.Converter
         private void ProcessVariableDeclaration(VariableDeclaratorSyntax variable)
         {
             String name = NameTransformer.TransformLocalVariableName(variable.Identifier.Text);
-            String initializer = variable.Initializer == null ? "None" : "<<<initializer expr>>>";
-            if (_currentMethod.HasError)
-                return;
+            String initializer = variable.Initializer == null ? "None" : ConvertExpression(variable.Initializer.Value);
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}{name} = {initializer}");
         }
 
@@ -226,12 +213,30 @@ namespace PythonExamplesPorterApp.Converter
             {
                 if (label is CasePatternSwitchLabelSyntax)
                     throw new InvalidOperationException($"Unexpected type of switch label: CasePatternSwitchLabelSyntax");
-                conditions.Add($"{switchConditionVariable} == <<<switch label condition>>>");
+                if (label is DefaultSwitchLabelSyntax)
+                    throw new InvalidOperationException("Wrong hierarchy of case labels");
+                String value = label switch
+                {
+                    CaseSwitchLabelSyntax switchLabel => ConvertExpression(switchLabel.Value),
+                    CasePatternSwitchLabelSyntax _ => throw new InvalidOperationException("Unexpected type of switch label: CasePatternSwitchLabelSyntax"),
+                    DefaultSwitchLabelSyntax _ => throw new InvalidOperationException("Wrong hierarchy of case labels"),
+                    _ => throw new InvalidOperationException($"Unexpected type of label: {label.Kind()}")
+                };
+                conditions.Add($"{switchConditionVariable} == {value}");
             }
             if (conditions.Count == 1)
                 return conditions[0];
             String totalCondition = String.Join(" and ", conditions.Select(condition => $"({condition})"));
             return totalCondition;
+        }
+
+        private String ConvertExpression(ExpressionSyntax expression)
+        {
+            ExpressionConverter expressionConverter = new ExpressionConverter();
+            ConvertResult result = expressionConverter.Convert(expression);
+            if (!result.Result)
+                throw new UnsupportedSyntaxException(result.ErrorReason);
+            return result.Value;
         }
 
         private Int32 _indentation;
