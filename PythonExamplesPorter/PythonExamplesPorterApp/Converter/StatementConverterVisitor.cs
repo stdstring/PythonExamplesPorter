@@ -232,11 +232,16 @@ namespace PythonExamplesPorterApp.Converter
 
         private String ConvertExpression(ExpressionSyntax expression)
         {
-            ExpressionConverter expressionConverter = new ExpressionConverter();
+            ExpressionConverter expressionConverter = new ExpressionConverter(_model, _currentMethod.ImportStorage);
             ConvertResult result = expressionConverter.Convert(expression);
-            if (!result.Result)
-                throw new UnsupportedSyntaxException(result.ErrorReason);
-            return result.Value;
+            foreach (KeyValuePair<String, String> entry in result.ImportData)
+            {
+                if (String.IsNullOrEmpty(entry.Value))
+                    _currentMethod.ImportStorage.AddImport(entry.Key);
+                else
+                    _currentMethod.ImportStorage.AddImportWithAlias(entry.Key, entry.Value);
+            }
+            return result.Result;
         }
 
         private Int32 _indentation;

@@ -8,6 +8,7 @@ namespace PythonExamplesPorterApp.DestStorage
         {
             _filePath = filePath;
             _indentation = 0;
+            ImportStorage = new ImportStorage();
         }
 
         public void Save()
@@ -15,9 +16,7 @@ namespace PythonExamplesPorterApp.DestStorage
             using (StreamWriter writer = new StreamWriter(_filePath, false))
             {
                 writer.WriteLine("# -*- coding: utf-8 -*-");
-                foreach (String import in _imports)
-                    writer.WriteLine(import);
-                writer.WriteLine();
+                ImportStorage.Save(writer);
                 for (Int32 index = 0; index < _classes.Count; ++index)
                 {
                     if (index > 0)
@@ -27,35 +26,20 @@ namespace PythonExamplesPorterApp.DestStorage
             }
         }
 
-        public void AddImport(String import)
-        {
-            if (_importKeys.Contains(import))
-                return;
-            _importKeys.Add(import);
-            _imports.Add($"import {import}");
-        }
-
-        public void AddImportWithAlias(String import, String alias)
-        {
-            if (_importKeys.Contains(import))
-                return;
-            _importKeys.Add(import);
-            _imports.Add($"import {import} as {alias}");
-        }
-
         public ClassStorage CreateClassStorage(String className)
         {
-            ClassStorage classStorage = new ClassStorage(className, _indentation + (_indentation > 0 ? StorageDef.IndentationDelta : 0));
+            Int32 indentation = _indentation + (_indentation > 0 ? StorageDef.IndentationDelta : 0);
+            ClassStorage classStorage = new ClassStorage(className, indentation, ImportStorage);
             _classes.Add(classStorage);
             return classStorage;
         }
 
         public Boolean IsEmpty() => _classes.IsEmpty();
 
+        public ImportStorage ImportStorage { get; }
+
         private readonly String _filePath;
         private readonly Int32 _indentation;
-        private readonly IList<String> _imports = new List<String>();
-        private readonly ISet<String> _importKeys = new HashSet<String>();
         private readonly IList<ClassStorage> _classes = new List<ClassStorage>();
     }
 }

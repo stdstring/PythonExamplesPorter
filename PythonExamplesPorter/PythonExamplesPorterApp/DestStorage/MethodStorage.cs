@@ -4,10 +4,11 @@ namespace PythonExamplesPorterApp.DestStorage
 {
     internal class MethodStorage
     {
-        public MethodStorage(String methodName, Int32 indentation)
+        public MethodStorage(String methodName, Int32 indentation, ImportStorage importStorage)
         {
             _methodName = methodName;
             _indentation = indentation;
+            ImportStorage = importStorage;
         }
 
         public void Save(TextWriter writer)
@@ -46,6 +47,8 @@ namespace PythonExamplesPorterApp.DestStorage
         }
 
         public Boolean HasError => _errorReason != null;
+
+        public ImportStorage ImportStorage { get; }
 
         private readonly String _methodName;
         private readonly Int32 _indentation;

@@ -4,10 +4,11 @@ namespace PythonExamplesPorterApp.DestStorage
 {
     internal class ClassStorage
     {
-        public ClassStorage(String className, Int32 indentation)
+        public ClassStorage(String className, Int32 indentation, ImportStorage importStorage)
         {
             _className = className;
             _indentation = indentation;
+            ImportStorage = importStorage;
         }
 
         public void Save(TextWriter writer)
@@ -40,10 +41,13 @@ namespace PythonExamplesPorterApp.DestStorage
 
         public MethodStorage CreateMethodStorage(String methodName)
         {
-            MethodStorage currentMethod = new MethodStorage(methodName, _indentation + StorageDef.IndentationDelta);
+            Int32 indentation = _indentation + StorageDef.IndentationDelta;
+            MethodStorage currentMethod = new MethodStorage(methodName, indentation, ImportStorage);
             _methods.Add(currentMethod);
             return currentMethod;
         }
+
+        public ImportStorage ImportStorage { get; }
 
         private readonly String _className;
         private readonly Int32 _indentation;

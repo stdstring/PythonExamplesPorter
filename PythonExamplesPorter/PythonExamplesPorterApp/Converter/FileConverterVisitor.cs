@@ -73,7 +73,7 @@ namespace PythonExamplesPorterApp.Converter
             _currentClass = _currentFile.CreateClassStorage(destClassName);
             if (baseClassFullName == null)
             {
-                _currentFile.AddImport("unittest");
+                _currentFile.ImportStorage.AddImport("unittest");
                 _currentClass.AddBaseClass("unittest.TestCase");
             }
             else
