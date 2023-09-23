@@ -9,6 +9,11 @@ namespace PythonExamplesPorterApp.Converter
             return ConvertPascalCaseIntoSnakeCase(fileObjectName);
         }
 
+        public static String TransformNamespaceName(String namespaceName)
+        {
+            return namespaceName.ToLower();
+        }
+
         public static String TransformClassName(String className)
         {
             return className;

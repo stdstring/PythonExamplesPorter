@@ -16,6 +16,16 @@ namespace PythonExamplesPorterAppTests.Converter
             Assert.AreEqual(expectedResult, NameTransformer.TransformFileObjectName(source));
         }
 
+        [TestCase("SomeNamespace", "somenamespace")]
+        [TestCase("SomeNamespace.OtherNamespace", "somenamespace.othernamespace")]
+        [TestCase("SomeNamespace.OtherNamespace.AnotherNamespace", "somenamespace.othernamespace.anothernamespace")]
+        [TestCase("Namespace1", "namespace1")]
+        [TestCase("Namespace1.Namespace2", "namespace1.namespace2")]
+        public void TransformNamespaceName(String source, String expectedResult)
+        {
+            Assert.AreEqual(expectedResult, NameTransformer.TransformNamespaceName(source));
+        }
+
         [TestCase("Border", "Border")]
         [TestCase("ExBorder", "ExBorder")]
         [TestCase("ExSuperBorder", "ExSuperBorder")]
