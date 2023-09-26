@@ -10,30 +10,33 @@ namespace PythonExamplesPorterApp.Converter
 
     internal class ExpressionConverter
     {
-        public ExpressionConverter(SemanticModel model)
+        public ExpressionConverter(SemanticModel model, AppData appData)
         {
             _model = model;
+            _appData = appData;
         }
 
         public ConvertResult Convert(ExpressionSyntax expression)
         {
             StringBuilder buffer = new StringBuilder();
             IDictionary<String, String> importData = new Dictionary<String, String>();
-            ExpressionConverterVisitor visitor = new ExpressionConverterVisitor(_model, buffer, importData);
+            ExpressionConverterVisitor visitor = new ExpressionConverterVisitor(_model, buffer, importData, _appData);
             visitor.VisitExpression(expression);
             return new ConvertResult(buffer.ToString(), importData);
         }
 
         private readonly SemanticModel _model;
+        private readonly AppData _appData;
     }
 
     internal class ExpressionConverterVisitor : CSharpSyntaxWalker
     {
-        public ExpressionConverterVisitor(SemanticModel model, StringBuilder buffer, IDictionary<String, String> importData)
+        public ExpressionConverterVisitor(SemanticModel model, StringBuilder buffer, IDictionary<String, String> importData, AppData appData)
         {
             _model = model;
             _buffer = buffer;
             _importData = importData;
+            _appData = appData;
         }
 
         public void VisitExpression(ExpressionSyntax expression)
@@ -56,16 +59,15 @@ namespace PythonExamplesPorterApp.Converter
             if (!argumentsCheckResult.Result)
                 throw new UnsupportedSyntaxException(argumentsCheckResult.Reason);
             TypeSyntax type = node.Type;
-            TypeResolveResult resolveResult = new ExternalEntityResolver(_model).Resolve(type);
+            TypeResolveResult resolveResult = new ExternalEntityResolver(_model, _appData).Resolve(type);
             _importData.Add(resolveResult.ModuleName, "");
-            _buffer.Append(resolveResult.TypeName);
-            _buffer.Append("(");
+            _buffer.Append($"{resolveResult.ModuleName}.{resolveResult.TypeName}(");
             IReadOnlyList<ArgumentSyntax> arguments = argumentList?.Arguments ?? new SeparatedSyntaxList<ArgumentSyntax>();
             for (Int32 index = 0; index < arguments.Count; ++index)
             {
                 if (index > 0)
                     _buffer.Append(", ");
-                ExpressionConverter argumentConverter = new ExpressionConverter(_model);
+                ExpressionConverter argumentConverter = new ExpressionConverter(_model, _appData);
                 ConvertResult argumentResult = argumentConverter.Convert(arguments[index].Expression);
                 _buffer.Append(argumentResult.Result);
                 AppendImportData(argumentResult.ImportData);
@@ -85,6 +87,7 @@ namespace PythonExamplesPorterApp.Converter
         private readonly SemanticModel _model;
         private readonly StringBuilder _buffer;
         private readonly IDictionary<String, String> _importData;
+        private readonly AppData _appData;
     }
 
     internal record TypeResolveResult(String TypeName, String ModuleName);
@@ -92,15 +95,16 @@ namespace PythonExamplesPorterApp.Converter
     // TODO (std_string) : we must implement this functionality via Strategy pattern
     internal class ExternalEntityResolver
     {
-        public ExternalEntityResolver(SemanticModel model)
+        public ExternalEntityResolver(SemanticModel model, AppData appData)
         {
             _model = model;
+            _appData = appData;
         }
 
         public TypeResolveResult Resolve(TypeSyntax type)
         {
             // TODO (std_string) : think about check containing assemblies
-            String[] supportedTypesByNamespaces = {};
+            String[] supportedTypesByNamespaces = _appData.AppConfig.ConfigData.BaseConfig!.SourceDetails!.KnownNamespaces!;
             SymbolInfo symbolInfo = _model.GetSymbolInfo(type);
             ISymbol? typeInfo = symbolInfo.Symbol;
             if (typeInfo == null)
@@ -116,5 +120,6 @@ namespace PythonExamplesPorterApp.Converter
         }
 
         private readonly SemanticModel _model;
+        private readonly AppData _appData;
     }
 }

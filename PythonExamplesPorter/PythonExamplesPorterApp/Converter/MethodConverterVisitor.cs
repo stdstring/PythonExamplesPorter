@@ -2,22 +2,16 @@
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using PythonExamplesPorterApp.DestStorage;
-using PythonExamplesPorterApp.Ignored;
-using PythonExamplesPorterApp.Logger;
 
 namespace PythonExamplesPorterApp.Converter
 {
     internal class MethodConverterVisitor : CSharpSyntaxWalker
     {
-        public MethodConverterVisitor(SemanticModel model,
-            ClassStorage currentClass,
-            IgnoredEntitiesManager ignoredManager,
-            ILogger logger)
+        public MethodConverterVisitor(SemanticModel model, ClassStorage currentClass, AppData appData)
         {
             _model = model;
             _currentClass = currentClass;
-            _ignoredManager = ignoredManager;
-            _logger = logger;
+            _appData = appData;
         }
 
         public override void VisitMethodDeclaration(MethodDeclarationSyntax node)
@@ -27,19 +21,19 @@ namespace PythonExamplesPorterApp.Converter
             // we don't process method without semantic info
             if (currentMethod == null)
             {
-                _logger.LogInfo($"{logHead} skipped due to absence semantic info");
+                _appData.Logger.LogInfo($"{logHead} skipped due to absence semantic info");
                 return;
             }
             // we don't process method without parent
             if (node.Parent == null)
             {
-                _logger.LogInfo($"{logHead} skipped due to absence of method's parent");
+                _appData.Logger.LogInfo($"{logHead} skipped due to absence of method's parent");
                 return;
             }
             ISymbol? parent = _model.GetDeclaredSymbol(node.Parent);
             if (parent == null)
             {
-                _logger.LogInfo($"{logHead} skipped due to absence parent's semantic info");
+                _appData.Logger.LogInfo($"{logHead} skipped due to absence parent's semantic info");
                 return;
             }
             Boolean isPublic = node.Modifiers.Any(modifier => modifier.IsKind(SyntaxKind.PublicKeyword));
@@ -47,31 +41,31 @@ namespace PythonExamplesPorterApp.Converter
             // we don't process nonpublic methods
             if (!isPublic)
             {
-                _logger.LogInfo($"{logHead} skipped for nonpublic method");
+                _appData.Logger.LogInfo($"{logHead} skipped for nonpublic method");
                 return;
             }
             // we don't process static methods
             if (isStatic)
             {
-                _logger.LogInfo($"{logHead} skipped for static method");
+                _appData.Logger.LogInfo($"{logHead} skipped for static method");
                 return;
             }
             SyntaxList<AttributeListSyntax> attributes = node.AttributeLists;
             // we don't process methods not marked by NUnit.Framework.TestAttribute attribute
             if (!attributes.ContainAttribute(_model, "NUnit.Framework.TestAttribute"))
             {
-                _logger.LogInfo($"{logHead} skipped for method non marked by NUnit.Framework.TestAttribute attribute");
+                _appData.Logger.LogInfo($"{logHead} skipped for method non marked by NUnit.Framework.TestAttribute attribute");
                 return;
             }
             String methodName = currentMethod.Name;
             String parentFullName = parent.ToDisplayString();
             // we don't process ignored method
-            if (_ignoredManager.IsIgnoredMethod($"{parentFullName}.{methodName}"))
+            if (_appData.IgnoredManager.IsIgnoredMethod($"{parentFullName}.{methodName}"))
             {
-                _logger.LogInfo($"{logHead} skipped because ignored method");
+                _appData.Logger.LogInfo($"{logHead} skipped because ignored method");
                 return;
             }
-            _logger.LogInfo($"{logHead} processed");
+            _appData.Logger.LogInfo($"{logHead} processed");
             GenerateMethodDeclaration(node);
             base.VisitMethodDeclaration(node);
         }
@@ -87,25 +81,24 @@ namespace PythonExamplesPorterApp.Converter
             MethodStorage currentMethod = _currentClass.CreateMethodStorage(destMethodName);
             if (node.Body == null)
             {
-                _logger.LogError($"Bad {methodName} method: absence of body");
+                _appData.Logger.LogError($"Bad {methodName} method: absence of body");
                 currentMethod.SetError("absence of method's body");
                 return;
             }
             try
             {
-                StatementConverterVisitor statementConverter = new StatementConverterVisitor(_model, currentMethod, _logger);
+                StatementConverterVisitor statementConverter = new StatementConverterVisitor(_model, currentMethod, _appData);
                 statementConverter.VisitBlock(node.Body);
             }
             catch (UnsupportedSyntaxException exc)
             {
-                _logger.LogError(exc.Message);
+                _appData.Logger.LogError(exc.Message);
                 currentMethod.SetError(exc.Message);
             }
         }
 
         private readonly SemanticModel _model;
         private readonly ClassStorage _currentClass;
-        private readonly IgnoredEntitiesManager _ignoredManager;
-        private readonly ILogger _logger;
+        private readonly AppData _appData;
     }
 }

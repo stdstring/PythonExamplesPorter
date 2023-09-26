@@ -3,18 +3,17 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using PythonExamplesPorterApp.Checker;
 using PythonExamplesPorterApp.DestStorage;
-using PythonExamplesPorterApp.Logger;
 using PythonExamplesPorterApp.Utils;
 
 namespace PythonExamplesPorterApp.Converter
 {
     internal class StatementConverterVisitor : CSharpSyntaxWalker
     {
-        public StatementConverterVisitor(SemanticModel model, MethodStorage currentMethod, ILogger logger)
+        public StatementConverterVisitor(SemanticModel model, MethodStorage currentMethod, AppData appData)
         {
             _model = model;
             _currentMethod = currentMethod;
-            _logger = logger;
+            _appData = appData;
         }
 
         public override void VisitBlock(BlockSyntax node)
@@ -233,7 +232,7 @@ namespace PythonExamplesPorterApp.Converter
 
         private String ConvertExpression(ExpressionSyntax expression)
         {
-            ExpressionConverter expressionConverter = new ExpressionConverter(_model);
+            ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData);
             ConvertResult result = expressionConverter.Convert(expression);
             foreach (KeyValuePair<String, String> entry in result.ImportData)
             {
@@ -248,6 +247,6 @@ namespace PythonExamplesPorterApp.Converter
         private Int32 _indentation;
         private readonly SemanticModel _model;
         private readonly MethodStorage _currentMethod;
-        private readonly ILogger _logger;
+        private readonly AppData _appData;
     }
 }

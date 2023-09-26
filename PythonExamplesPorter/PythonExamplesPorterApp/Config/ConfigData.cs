@@ -44,11 +44,23 @@ namespace PythonExamplesPorterApp.Config
         public String Path { get; set; } = "";
     }
 
+    [XmlRoot("SourceDetails")]
+    public class SourceDetails
+    {
+        // TODO (std_string) : think about name of property (and name of element in config)
+        [XmlArray("KnownNamespaces")]
+        [XmlArrayItem("KnownNamespace")]
+        public String[]? KnownNamespaces { get; set; }
+    }
+
     [XmlRoot("BaseConfig")]
     public class BaseConfig
     {
         [XmlElement("Source")]
         public TargetPath? Source { get; set; }
+
+        [XmlElement("SourceDetails")]
+        public SourceDetails? SourceDetails { get; set; }
 
         [XmlElement("Dest")]
         public TargetPath? DestDirectory { get; set; }

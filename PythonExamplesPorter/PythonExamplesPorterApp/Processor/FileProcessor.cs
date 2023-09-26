@@ -1,23 +1,13 @@
 ﻿using Microsoft.CodeAnalysis;
-using PythonExamplesPorterApp.Config;
 using PythonExamplesPorterApp.Converter;
-using PythonExamplesPorterApp.Handmade;
-using PythonExamplesPorterApp.Ignored;
-using PythonExamplesPorterApp.Logger;
 
 namespace PythonExamplesPorterApp.Processor
 {
     internal class FileProcessor
     {
-        public FileProcessor(AppConfig appConfig,
-                             IgnoredEntitiesManager ignoredManager,
-                             HandmadeEntitiesManager handmadeManager,
-                             ILogger logger)
+        public FileProcessor(AppData appData)
         {
-            _appConfig = appConfig;
-            _ignoredManager = ignoredManager;
-            _handmadeManager = handmadeManager;
-            _logger = logger;
+            _appData = appData;
         }
 
         public void Process(String filename)
@@ -27,14 +17,14 @@ namespace PythonExamplesPorterApp.Processor
 
         public void Process(String relativeFilename, Document file, Compilation compilation)
         {
-            if (_ignoredManager.IsIgnoredFile(relativeFilename))
+            if (_appData.IgnoredManager.IsIgnoredFile(relativeFilename))
             {
-                _logger.LogInfo($"Processing of the file {relativeFilename} is skipped");
+                _appData.Logger.LogInfo($"Processing of the file {relativeFilename} is skipped");
                 return;
             }
-            _logger.LogInfo($"Processing of the file {relativeFilename} is started");
+            _appData.Logger.LogInfo($"Processing of the file {relativeFilename} is started");
             ProcessImpl(relativeFilename, file, compilation);
-            _logger.LogInfo($"Processing of the file {relativeFilename} is finished");
+            _appData.Logger.LogInfo($"Processing of the file {relativeFilename} is finished");
         }
 
         private void ProcessImpl(String relativeFilename, Document file, Compilation compilation)
@@ -43,13 +33,10 @@ namespace PythonExamplesPorterApp.Processor
             if (tree == null)
                 throw new InvalidOperationException();
             SemanticModel model = compilation.GetSemanticModel(tree);
-            FileConverter converter = new FileConverter(_appConfig, _ignoredManager, _handmadeManager, _logger);
+            FileConverter converter = new FileConverter(_appData);
             converter.Convert(relativeFilename, tree, model);
         }
 
-        private readonly AppConfig _appConfig;
-        private readonly IgnoredEntitiesManager _ignoredManager;
-        private readonly HandmadeEntitiesManager _handmadeManager;
-        private readonly ILogger _logger;
+        private readonly AppData _appData;
     }
 }

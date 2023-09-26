@@ -10,17 +10,11 @@ namespace PythonExamplesPorterApp.Converter
 {
     internal class FileConverterVisitor : CSharpSyntaxWalker
     {
-        public FileConverterVisitor(SemanticModel model,
-            FileStorage currentFile,
-            IgnoredEntitiesManager ignoredManager,
-            HandmadeEntitiesManager handmadeManager,
-            ILogger logger)
+        public FileConverterVisitor(SemanticModel model, FileStorage currentFile, AppData appData)
         {
             _model = model;
             _currentFile = currentFile;
-            _ignoredManager = ignoredManager;
-            _handmadeManager = handmadeManager;
-            _logger = logger;
+            _appData = appData;
         }
 
         public override void VisitClassDeclaration(ClassDeclarationSyntax node)
@@ -30,38 +24,38 @@ namespace PythonExamplesPorterApp.Converter
             // we don't process class without semantic info
             if (currentType == null)
             {
-                _logger.LogInfo($"{logHead} skipped due to absence semantic info");
+                _appData.Logger.LogInfo($"{logHead} skipped due to absence semantic info");
                 return;
             }
             SyntaxNode? parentDecl = node.Parent;
             // we don't process class which aren't nested into namespaces
             if (parentDecl == null)
             {
-                _logger.LogInfo($"{logHead} skipped due to absence parent namespace");
+                _appData.Logger.LogInfo($"{logHead} skipped due to absence parent namespace");
                 return;
             }
             // we don't process nested class
             if (!parentDecl.IsKind(SyntaxKind.NamespaceDeclaration))
             {
-                _logger.LogInfo($"{logHead} skipped for nested class");
+                _appData.Logger.LogInfo($"{logHead} skipped for nested class");
                 return;
             }
             SyntaxList<AttributeListSyntax> attributes = node.AttributeLists;
             // we don't process classes not marked by NUnit.Framework.TestFixtureAttribute attribute
             if (!attributes.ContainAttribute(_model, "NUnit.Framework.TestFixtureAttribute"))
             {
-                _logger.LogInfo($"{logHead} skipped for class non marked by NUnit.Framework.TestFixtureAttribute attribute");
+                _appData.Logger.LogInfo($"{logHead} skipped for class non marked by NUnit.Framework.TestFixtureAttribute attribute");
                 return;
             }
             // TODO (std_string) : think about using SymbolDisplayFormat
             String currentTypeFullName = currentType.ToDisplayString();
             // we don't process ignored class
-            if (_ignoredManager.IsIgnoredType(currentTypeFullName))
+            if (_appData.IgnoredManager.IsIgnoredType(currentTypeFullName))
             {
-                _logger.LogInfo($"{logHead} skipped because ignored class");
+                _appData.Logger.LogInfo($"{logHead} skipped because ignored class");
                 return;
             }
-            _logger.LogInfo($"{logHead} processed");
+            _appData.Logger.LogInfo($"{logHead} processed");
             GenerateClassDeclaration(node, currentType);
             base.VisitClassDeclaration(node);
         }
@@ -81,7 +75,7 @@ namespace PythonExamplesPorterApp.Converter
                 Int32 lastDotIndex = baseClassFullName.LastIndexOf('.');
                 String baseClassName = lastDotIndex == -1 ? baseClassFullName : baseClassFullName.Substring(lastDotIndex + 1);
                 _currentClass.AddBaseClass(baseClassName);
-                _handmadeManager.UseHandmadeType(baseClassFullName);
+                _appData.HandmadeManager.UseHandmadeType(baseClassFullName);
             }
         }
 
@@ -102,16 +96,13 @@ namespace PythonExamplesPorterApp.Converter
         {
             if (_currentClass == null)
                 throw new InvalidOperationException($"Unknown class for method {node.Identifier.Text}");
-            MethodConverterVisitor methodConverter = new MethodConverterVisitor(_model, _currentClass, _ignoredManager, _logger);
+            MethodConverterVisitor methodConverter = new MethodConverterVisitor(_model, _currentClass, _appData);
             methodConverter.Visit(node);
-            //base.VisitMethodDeclaration(node);
         }
 
         private readonly SemanticModel _model;
         private readonly FileStorage _currentFile;
-        private readonly IgnoredEntitiesManager _ignoredManager;
-        private readonly HandmadeEntitiesManager _handmadeManager;
-        private readonly ILogger _logger;
+        private readonly AppData _appData;
         private ClassStorage? _currentClass;
     }
 }

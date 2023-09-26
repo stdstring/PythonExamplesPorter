@@ -52,6 +52,37 @@ namespace PythonExamplesPorterAppTests.Config
         }
 
         [Test]
+        public void DeserializeWithBaseConfigWithSourceDetailsOnly()
+        {
+            const String source = "<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n" +
+                                  "<ConfigData>\r\n" +
+                                  "  <BaseConfig>\r\n" +
+                                  "    <Source RelativePathBase=\"app\">..\\source\\someproj.csproj</Source>\r\n" +
+                                  "    <SourceDetails>\r\n" +
+                                  "        <KnownNamespaces>\r\n" +
+                                  "            <KnownNamespace>RootNamespace.OtherNamespace</KnownNamespace>\r\n" +
+                                  "            <KnownNamespace>RootNamespace.AnotherNamespace</KnownNamespace>\r\n" +
+                                  "        </KnownNamespaces>\r\n" +
+                                  "    </SourceDetails>\r\n" +
+                                  "    <Dest RelativePathBase=\"app\">..\\dest\\examples</Dest>\r\n" +
+                                  "  </BaseConfig>\r\n" +
+                                  "</ConfigData>";
+            ConfigData expected = new ConfigData
+            {
+                BaseConfig = new BaseConfig
+                {
+                    Source = new TargetPath(RelativePathBase.App, "..\\source\\someproj.csproj"),
+                    SourceDetails = new SourceDetails
+                    {
+                        KnownNamespaces = new[]{"RootNamespace.OtherNamespace", "RootNamespace.AnotherNamespace"}
+                    },
+                    DestDirectory = new TargetPath(RelativePathBase.App, "..\\dest\\examples")
+                }
+            };
+            CheckDeserialization(expected, source);
+        }
+
+        [Test]
         public void DeserializeWithEmptyIgnoredEntities()
         {
             const String source = "<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n" +
@@ -105,7 +136,7 @@ namespace PythonExamplesPorterAppTests.Config
                 },
                 IgnoredEntities = new IgnoredEntities
                 {
-                    Directories = new[] {"SomeFolder1", "SomeFolder2\\OtherFolder"},
+                    Directories = new[]{"SomeFolder1", "SomeFolder2\\OtherFolder"},
                     Files = Array.Empty<String>(),
                     Types = Array.Empty<String>(),
                     Methods = Array.Empty<String>()
@@ -141,7 +172,7 @@ namespace PythonExamplesPorterAppTests.Config
                 IgnoredEntities = new IgnoredEntities
                 {
                     Directories = Array.Empty<String>(),
-                    Files = new[] {"aa1.cs", "ab1.cs", "some_folder\\aa1.cs"},
+                    Files = new[]{"aa1.cs", "ab1.cs", "some_folder\\aa1.cs"},
                     Types = Array.Empty<String>(),
                     Methods = Array.Empty<String>()
                 }
@@ -176,7 +207,7 @@ namespace PythonExamplesPorterAppTests.Config
                 {
                     Directories = Array.Empty<String>(),
                     Files = Array.Empty<String>(),
-                    Types = new []{"SomeNamespace.SomeType", "OtherNamespace.OtherType"},
+                    Types = new[]{"SomeNamespace.SomeType", "OtherNamespace.OtherType"},
                     Methods = Array.Empty<String>()
                 }
             };
@@ -211,7 +242,7 @@ namespace PythonExamplesPorterAppTests.Config
                     Directories = Array.Empty<String>(),
                     Files = Array.Empty<String>(),
                     Types = Array.Empty<String>(),
-                    Methods = new []{"SomeNamespace.SomeType.CheckAAA", "OtherNamespace.OtherType.CheckBBB"}
+                    Methods = new[]{"SomeNamespace.SomeType.CheckAAA", "OtherNamespace.OtherType.CheckBBB"}
                 }
             };
             CheckDeserialization(expected, source);
@@ -255,10 +286,10 @@ namespace PythonExamplesPorterAppTests.Config
                 },
                 IgnoredEntities = new IgnoredEntities
                 {
-                    Directories = new[] {"SomeFolder1", "SomeFolder2\\OtherFolder"},
-                    Files = new[] {"aa1.cs", "ab1.cs", "some_folder\\aa1.cs"},
-                    Types = new []{"SomeNamespace.SomeType", "OtherNamespace.OtherType"},
-                    Methods = new []{"SomeNamespace.SomeType.CheckAAA", "OtherNamespace.OtherType.CheckBBB"}
+                    Directories = new[]{"SomeFolder1", "SomeFolder2\\OtherFolder"},
+                    Files = new[]{"aa1.cs", "ab1.cs", "some_folder\\aa1.cs"},
+                    Types = new[]{"SomeNamespace.SomeType", "OtherNamespace.OtherType"},
+                    Methods = new[]{"SomeNamespace.SomeType.CheckAAA", "OtherNamespace.OtherType.CheckBBB"}
                 }
             };
             CheckDeserialization(expected, source);
@@ -322,7 +353,7 @@ namespace PythonExamplesPorterAppTests.Config
                 },
                 HandmadeEntities = new HandmadeEntities
                 {
-                    HandmadeTypes = new []
+                    HandmadeTypes = new[]
                     {
                         new HandmadeType
                         {
@@ -335,7 +366,7 @@ namespace PythonExamplesPorterAppTests.Config
                             FullName = "OtherNamespace.SomeTypeB",
                             Source = "SomeStorage\\some_typeb.py",
                             Dest = "utils\\some_typeb.py",
-                            MemberMappings = new []
+                            MemberMappings = new[]
                             {
                                 new HandmadeMemberMapping{SourceName = "GetXXX", DestName = "get_super_xxx_value"},
                                 new HandmadeMemberMapping{SourceName = "SomePath", DestName = "SOME_PATH"}
@@ -354,6 +385,12 @@ namespace PythonExamplesPorterAppTests.Config
                                   "<ConfigData>\r\n" +
                                   "  <BaseConfig>\r\n" +
                                   "    <Source RelativePathBase=\"app\">..\\source\\someproj.csproj</Source>\r\n" +
+                                  "    <SourceDetails>\r\n" +
+                                  "        <KnownNamespaces>\r\n" +
+                                  "            <KnownNamespace>RootNamespace.OtherNamespace</KnownNamespace>\r\n" +
+                                  "            <KnownNamespace>RootNamespace.AnotherNamespace</KnownNamespace>\r\n" +
+                                  "        </KnownNamespaces>\r\n" +
+                                  "    </SourceDetails>\r\n" +
                                   "    <Dest RelativePathBase=\"app\">..\\dest\\examples</Dest>\r\n" +
                                   "  </BaseConfig>\r\n" +
                                   "  <IgnoredEntities>\r\n" +
@@ -397,18 +434,22 @@ namespace PythonExamplesPorterAppTests.Config
                 BaseConfig = new BaseConfig
                 {
                     Source = new TargetPath(RelativePathBase.App, "..\\source\\someproj.csproj"),
+                    SourceDetails = new SourceDetails
+                    {
+                        KnownNamespaces = new[]{"RootNamespace.OtherNamespace", "RootNamespace.AnotherNamespace"}
+                    },
                     DestDirectory = new TargetPath(RelativePathBase.App, "..\\dest\\examples")
                 },
                 IgnoredEntities = new IgnoredEntities
                 {
-                    Directories = new[] {"SomeFolder1", "SomeFolder2\\OtherFolder"},
-                    Files = new[] {"aa1.cs", "ab1.cs", "some_folder\\aa1.cs"},
-                    Types = new []{"SomeNamespace.SomeType", "OtherNamespace.OtherType"},
-                    Methods = new []{"SomeNamespace.SomeType.CheckAAA", "OtherNamespace.OtherType.CheckBBB"}
+                    Directories = new[]{"SomeFolder1", "SomeFolder2\\OtherFolder"},
+                    Files = new[]{"aa1.cs", "ab1.cs", "some_folder\\aa1.cs"},
+                    Types = new[]{"SomeNamespace.SomeType", "OtherNamespace.OtherType"},
+                    Methods = new[]{"SomeNamespace.SomeType.CheckAAA", "OtherNamespace.OtherType.CheckBBB"}
                 },
                 HandmadeEntities = new HandmadeEntities
                 {
-                    HandmadeTypes = new []
+                    HandmadeTypes = new[]
                     {
                         new HandmadeType
                         {
@@ -421,7 +462,7 @@ namespace PythonExamplesPorterAppTests.Config
                             FullName = "OtherNamespace.SomeTypeB",
                             Source = "SomeStorage\\some_typeb.py",
                             Dest = "utils\\some_typeb.py",
-                            MemberMappings = new []
+                            MemberMappings = new[]
                             {
                                 new HandmadeMemberMapping{SourceName = "GetXXX", DestName = "get_super_xxx_value"},
                                 new HandmadeMemberMapping{SourceName = "SomePath", DestName = "SOME_PATH"}
@@ -458,12 +499,21 @@ namespace PythonExamplesPorterAppTests.Config
             Assert.AreEqual(expected.Path, actual.Path);
         }
 
+        private void CheckSourceDetails(SourceDetails? expected, SourceDetails? actual)
+        {
+            if (expected == null)
+                Assert.IsNull(actual);
+            else
+                CheckCollections(expected.KnownNamespaces!, actual!.KnownNamespaces);
+        }
+
         private void CheckBaseConfig(BaseConfig expected, BaseConfig actual)
         {
             Assert.IsNotNull(actual.Source);
             CheckTargetPath(expected.Source!, actual.Source!);
             Assert.IsNotNull(actual.DestDirectory);
             CheckTargetPath(expected.DestDirectory!, actual.DestDirectory!);
+            CheckSourceDetails(expected.SourceDetails, actual.SourceDetails);
         }
 
         private void CheckIgnoredEntities(IgnoredEntities? expected, IgnoredEntities? actual)

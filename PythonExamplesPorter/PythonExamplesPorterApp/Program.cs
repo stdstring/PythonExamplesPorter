@@ -62,7 +62,8 @@ namespace PythonExamplesPorterApp
             ILogger logger = new TextWriterLogger(outputWriter, errorWriter, LogLevel.Info);
             IgnoredEntitiesManager ignoredManager = new IgnoredEntitiesManager(appConfig.ConfigData.IgnoredEntities);
             HandmadeEntitiesManager handmadeManager = new HandmadeEntitiesManager(appConfig.ConfigData.HandmadeEntities);
-            ProjectProcessor projectProcessor = new ProjectProcessor(appConfig, ignoredManager, handmadeManager, logger);
+            AppData appData = new AppData(appConfig, ignoredManager, handmadeManager, logger);
+            ProjectProcessor projectProcessor = new ProjectProcessor(appData);
             projectProcessor.Process(appConfig.ConfigData.BaseConfig!.Source.ResolveTargetPath(appConfig));
             HandmadePostProcessor handmadePostProcessor = new HandmadePostProcessor(appConfig);
             handmadePostProcessor.Process(handmadeManager.GetUsedHandmadeTypes());
@@ -72,4 +73,6 @@ namespace PythonExamplesPorterApp
         private const String AppDescription = "C# to Python example porter";
         private const String WrongConfig = "Wrong config data";
     }
+
+    internal record AppData(AppConfig AppConfig, IgnoredEntitiesManager IgnoredManager, HandmadeEntitiesManager HandmadeManager, ILogger Logger);
 }

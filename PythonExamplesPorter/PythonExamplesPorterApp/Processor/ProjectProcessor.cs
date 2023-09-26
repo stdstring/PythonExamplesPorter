@@ -1,31 +1,24 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.MSBuild;
-using PythonExamplesPorterApp.Config;
-using PythonExamplesPorterApp.Handmade;
-using PythonExamplesPorterApp.Ignored;
-using PythonExamplesPorterApp.Logger;
 using PythonExamplesPorterApp.Utils;
 
 namespace PythonExamplesPorterApp.Processor
 {
     internal class ProjectProcessor
     {
-        public ProjectProcessor(AppConfig appConfig,
-                                IgnoredEntitiesManager ignoredManager,
-                                HandmadeEntitiesManager handmadeManager,
-                                ILogger logger)
+        public ProjectProcessor(AppData appData)
         {
-            _logger = logger;
-            _fileProcessor = new FileProcessor(appConfig, ignoredManager, handmadeManager, logger);
+            _appData = appData;
+            _fileProcessor = new FileProcessor(appData);
         }
 
         public void Process(String projectFilename)
         {
-            _logger.LogInfo($"Processing of the project {projectFilename} is started");
+            _appData.Logger.LogInfo($"Processing of the project {projectFilename} is started");
             MSBuildWorkspace workspace = MSBuildWorkspace.Create();
             Project project = workspace.OpenProjectAsync(projectFilename).Result;
             ProcessImpl(project);
-            _logger.LogInfo($"Processing of the project {projectFilename} is finished");
+            _appData.Logger.LogInfo($"Processing of the project {projectFilename} is finished");
         }
 
         private void ProcessImpl(Project project)
@@ -35,7 +28,7 @@ namespace PythonExamplesPorterApp.Processor
             Compilation? compilation = project.GetCompilationAsync().Result;
             if (compilation == null)
                 throw new InvalidOperationException();
-            if (!CompilationChecker.CheckCompilationErrors(project.FilePath, compilation, _logger))
+            if (!CompilationChecker.CheckCompilationErrors(project.FilePath, compilation, _appData.Logger))
                 throw new InvalidOperationException();
             String projectDir = Path.GetDirectoryName(project.FilePath)!;
             foreach (Document document in project.Documents.Where(doc => doc.SourceCodeKind == SourceCodeKind.Regular))
@@ -45,7 +38,7 @@ namespace PythonExamplesPorterApp.Processor
             }
         }
 
-        private readonly ILogger _logger;
+        private readonly AppData _appData;
         private readonly FileProcessor _fileProcessor;
     }
 }
