@@ -1,4 +1,5 @@
-﻿using PythonExamplesPorterApp.Config;
+﻿using PythonExamplesPorterApp.Common;
+using PythonExamplesPorterApp.Config;
 using PythonExamplesPorterApp.Handmade;
 using PythonExamplesPorterApp.Ignored;
 using PythonExamplesPorterApp.Logger;
@@ -64,8 +65,8 @@ namespace PythonExamplesPorterApp
             HandmadeEntitiesManager handmadeManager = new HandmadeEntitiesManager(appConfig.ConfigData.HandmadeEntities);
             AppData appData = new AppData(appConfig, ignoredManager, handmadeManager, logger);
             ProjectProcessor projectProcessor = new ProjectProcessor(appData);
-            projectProcessor.Process(appConfig.ConfigData.BaseConfig!.Source.ResolveTargetPath(appConfig));
-            HandmadePostProcessor handmadePostProcessor = new HandmadePostProcessor(appConfig);
+            projectProcessor.Process(appData.AppConfig.ResolveSource());
+            HandmadePostProcessor handmadePostProcessor = new HandmadePostProcessor(appData);
             handmadePostProcessor.Process(handmadeManager.GetUsedHandmadeTypes());
             outputWriter.WriteLine("That's all folks !!!");
         }
@@ -73,6 +74,4 @@ namespace PythonExamplesPorterApp
         private const String AppDescription = "C# to Python example porter";
         private const String WrongConfig = "Wrong config data";
     }
-
-    internal record AppData(AppConfig AppConfig, IgnoredEntitiesManager IgnoredManager, HandmadeEntitiesManager HandmadeManager, ILogger Logger);
 }

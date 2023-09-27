@@ -1,6 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
+using PythonExamplesPorterApp.Common;
+using PythonExamplesPorterApp.Config;
 using PythonExamplesPorterApp.DestStorage;
-using PythonExamplesPorterApp.Utils;
 
 namespace PythonExamplesPorterApp.Converter
 {
@@ -14,7 +15,7 @@ namespace PythonExamplesPorterApp.Converter
         public void Convert(String relativeFilePath, SyntaxTree tree, SemanticModel model)
         {
             String destRelativePath = PathTransformer.TransformPath(relativeFilePath);
-            String destDirectory = _appData.AppConfig.ConfigData.BaseConfig!.DestDirectory.ResolveTargetPath(_appData.AppConfig);
+            String destDirectory = _appData.AppConfig.ResolveDestDirectory();
             String destPath = Path.Combine(destDirectory, destRelativePath);
             FileStorage currentFile = new FileStorage(destPath);
             FileConverterVisitor converter = new FileConverterVisitor(model, currentFile, _appData);

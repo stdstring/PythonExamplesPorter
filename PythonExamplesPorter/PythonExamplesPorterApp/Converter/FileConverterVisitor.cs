@@ -1,10 +1,8 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using PythonExamplesPorterApp.Common;
 using PythonExamplesPorterApp.DestStorage;
-using PythonExamplesPorterApp.Handmade;
-using PythonExamplesPorterApp.Ignored;
-using PythonExamplesPorterApp.Logger;
 
 namespace PythonExamplesPorterApp.Converter
 {

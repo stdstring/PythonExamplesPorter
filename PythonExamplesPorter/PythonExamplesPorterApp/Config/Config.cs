@@ -1,6 +1,4 @@
-﻿using System.Xml.Serialization;
-
-namespace PythonExamplesPorterApp.Config
+﻿namespace PythonExamplesPorterApp.Config
 {
     internal abstract record ConfigResult
     {
@@ -42,25 +40,5 @@ namespace PythonExamplesPorterApp.Config
         public const String Version = "0.0.1";
 
         public const String Help = "Usage: <app> --config=<path to config file>";
-    }
-
-    internal record AppConfig(ConfigData ConfigData, String AppBaseDirectory, String ConfigBaseDirectory);
-
-    internal static class AppConfigFactory
-    {
-        public static AppConfig Create(ConfigResult.MainConfig config)
-        {
-            using (StreamReader reader = new StreamReader(config.ConfigPath))
-            {
-                XmlSerializer serializer = new XmlSerializer(typeof(ConfigData));
-                ConfigData? configData = serializer.Deserialize(reader) as ConfigData;
-                if (configData == null ||
-                    configData.BaseConfig == null)
-                    throw new InvalidOperationException("Bad config data");
-                String appBaseDirectory = Path.GetFullPath(AppDomain.CurrentDomain.BaseDirectory);
-                String configBaseDirectory = Path.GetFullPath(Path.GetDirectoryName(config.ConfigPath)!);
-                return new AppConfig(configData, appBaseDirectory, configBaseDirectory);
-            }
-        }
     }
 }

@@ -1,6 +1,4 @@
-﻿using PythonExamplesPorterApp.Utils;
-
-namespace PythonExamplesPorterApp.Config
+﻿namespace PythonExamplesPorterApp.Config
 {
     internal static class AppConfigChecker
     {
@@ -9,7 +7,7 @@ namespace PythonExamplesPorterApp.Config
             Boolean result = true;
             String[] supportedSourcesByExtension = {".csproj"};
             IList<String> problems = new List<String>();
-            String source = appConfig.ConfigData.BaseConfig!.Source.ResolveTargetPath(appConfig);
+            String source = appConfig.ResolveSource();
             switch (File.Exists(source))
             {
                 case false:
@@ -30,7 +28,7 @@ namespace PythonExamplesPorterApp.Config
                     }
                     break;
             }
-            String destDirectory = appConfig.ConfigData.BaseConfig.DestDirectory.ResolveTargetPath(appConfig);
+            String destDirectory = appConfig.ResolveDestDirectory();
             if (Directory.Exists(destDirectory) && !IsEmpty(destDirectory))
             {
                 problems.Add($"\"{destDirectory}\" must be non existing or empty directory");

@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace PythonExamplesPorterApp.Converter;
 
-internal static class SyntaxWalkerHelper
+internal static class SyntaxHelper
 {
     public static Boolean ContainAttribute(this SyntaxList<AttributeListSyntax> attributes, SemanticModel model, String expectedFullName)
     {

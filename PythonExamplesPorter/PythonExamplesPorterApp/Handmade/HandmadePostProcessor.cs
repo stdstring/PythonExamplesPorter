@@ -1,26 +1,26 @@
-﻿using PythonExamplesPorterApp.Config;
-using PythonExamplesPorterApp.Utils;
+﻿using PythonExamplesPorterApp.Common;
+using PythonExamplesPorterApp.Config;
 
 namespace PythonExamplesPorterApp.Handmade
 {
     internal class HandmadePostProcessor
     {
-        public HandmadePostProcessor(AppConfig appConfig)
+        public HandmadePostProcessor(AppData appData)
         {
-            _appConfig = appConfig;
+            _appData = appData;
         }
 
         public void Process(HandmadeType[] usedTypes)
         {
-            String destDirectory = _appConfig.ConfigData.BaseConfig!.DestDirectory.ResolveTargetPath(_appConfig);
+            String destDirectory = _appData.AppConfig.ResolveDestDirectory();
             foreach (HandmadeType usedType in usedTypes)
             {
-                String sourcePath = Path.Combine(_appConfig.ConfigBaseDirectory, usedType.Source);
+                String sourcePath = Path.Combine(_appData.AppConfig.ConfigBaseDirectory, usedType.Source);
                 String destPath = Path.Combine(destDirectory, usedType.Dest);
                 File.Copy(sourcePath, destPath, true);
             }
         }
 
-        private readonly AppConfig _appConfig;
+        private readonly AppData _appData;
     }
 }

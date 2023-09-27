@@ -3,6 +3,8 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using PythonExamplesPorterApp.Checker;
+using PythonExamplesPorterApp.Common;
+using PythonExamplesPorterApp.Config;
 
 namespace PythonExamplesPorterApp.Converter
 {
@@ -104,7 +106,7 @@ namespace PythonExamplesPorterApp.Converter
         public TypeResolveResult Resolve(TypeSyntax type)
         {
             // TODO (std_string) : think about check containing assemblies
-            String[] supportedTypesByNamespaces = _appData.AppConfig.ConfigData.BaseConfig!.SourceDetails!.KnownNamespaces!;
+            String[] supportedTypesByNamespaces = _appData.AppConfig.GetSourceDetails().KnownNamespaces ?? Array.Empty<String>();
             SymbolInfo symbolInfo = _model.GetSymbolInfo(type);
             ISymbol? typeInfo = symbolInfo.Symbol;
             if (typeInfo == null)
