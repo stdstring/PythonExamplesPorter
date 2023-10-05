@@ -1,5 +1,4 @@
 ﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis;
 
 namespace PythonExamplesPorterApp.Checker
 {
@@ -13,7 +12,7 @@ namespace PythonExamplesPorterApp.Checker
             return Check(switchSection.Statements);
         }
 
-        private static CheckResult Check(SyntaxList<SwitchLabelSyntax> labels)
+        private static CheckResult Check(IReadOnlyList<SwitchLabelSyntax> labels)
         {
             foreach (SwitchLabelSyntax label in labels)
             {
@@ -23,7 +22,7 @@ namespace PythonExamplesPorterApp.Checker
             return new CheckResult(Result: true);
         }
 
-        private static CheckResult Check(SyntaxList<StatementSyntax> statements)
+        private static CheckResult Check(IReadOnlyList<StatementSyntax> statements)
         {
             return CheckStatements(statements, true);
         }
@@ -54,7 +53,7 @@ namespace PythonExamplesPorterApp.Checker
             }
         }
 
-        private static CheckResult CheckStatements(SyntaxList<StatementSyntax> statements, Boolean allowBreak)
+        private static CheckResult CheckStatements(IReadOnlyList<StatementSyntax> statements, Boolean allowBreak)
         {
             foreach (StatementSyntax statement in statements)
             {

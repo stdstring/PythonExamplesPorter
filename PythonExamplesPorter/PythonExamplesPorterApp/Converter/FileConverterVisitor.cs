@@ -38,7 +38,7 @@ namespace PythonExamplesPorterApp.Converter
                 _appData.Logger.LogInfo($"{logHead} skipped for nested class");
                 return;
             }
-            SyntaxList<AttributeListSyntax> attributes = node.AttributeLists;
+            IReadOnlyList<AttributeListSyntax> attributes = node.AttributeLists;
             // we don't process classes not marked by NUnit.Framework.TestFixtureAttribute attribute
             if (!attributes.ContainAttribute(_model, "NUnit.Framework.TestFixtureAttribute"))
             {

@@ -6,7 +6,7 @@ namespace PythonExamplesPorterApp.Converter;
 
 internal static class SyntaxHelper
 {
-    public static Boolean ContainAttribute(this SyntaxList<AttributeListSyntax> attributes, SemanticModel model, String expectedFullName)
+    public static Boolean ContainAttribute(this IReadOnlyList<AttributeListSyntax> attributes, SemanticModel model, String expectedFullName)
     {
         foreach (AttributeListSyntax attributeList in attributes)
         {

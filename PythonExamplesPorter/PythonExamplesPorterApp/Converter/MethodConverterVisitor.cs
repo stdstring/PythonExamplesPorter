@@ -51,7 +51,7 @@ namespace PythonExamplesPorterApp.Converter
                 _appData.Logger.LogInfo($"{logHead} skipped for static method");
                 return;
             }
-            SyntaxList<AttributeListSyntax> attributes = node.AttributeLists;
+            IReadOnlyList<AttributeListSyntax> attributes = node.AttributeLists;
             // we don't process methods not marked by NUnit.Framework.TestAttribute attribute
             if (!attributes.ContainAttribute(_model, "NUnit.Framework.TestAttribute"))
             {

@@ -79,14 +79,14 @@ namespace PythonExamplesPorterApp.Converter
             const String switchConditionVariable = "switch_condition";
             String switchCondition = ConvertExpression(node.Expression);
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}{switchConditionVariable} = {switchCondition}");
-            SyntaxList<SwitchSectionSyntax> sections = node.Sections;
+            IReadOnlyList<SwitchSectionSyntax> sections = node.Sections;
             for (Int32 index = 0; index < sections.Count; ++index)
             {
                 CheckResult sectionResult = SwitchSectionChecker.Check(sections[index]);
                 if (!sectionResult.Result)
                     throw new UnsupportedSyntaxException(sectionResult.Reason);
-                SyntaxList<SwitchLabelSyntax> labels = sections[index].Labels;
-                SyntaxList<StatementSyntax> statements = sections[index].Statements;
+                IReadOnlyList<SwitchLabelSyntax> labels = sections[index].Labels;
+                IReadOnlyList<StatementSyntax> statements = sections[index].Statements;
                 Boolean hasDefaultLabel = labels.Last() is DefaultSwitchLabelSyntax;
                 if (hasDefaultLabel)
                 {
@@ -143,16 +143,16 @@ namespace PythonExamplesPorterApp.Converter
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}return{delimiter}{expression}");
         }
 
-        private void VisitStatements(SyntaxList<StatementSyntax> statements, bool indent)
+        private void VisitStatements(IReadOnlyList<StatementSyntax> statements, bool indent)
         {
             foreach (StatementSyntax statement in statements)
                 VisitStatement(statement, indent);
         }
 
-        private void VisitSwitchSectionStatements(SyntaxList<StatementSyntax> statements)
+        private void VisitSwitchSectionStatements(IReadOnlyList<StatementSyntax> statements)
         {
             IEnumerable<StatementSyntax> filteredStatements = statements.Where(statement => !(statement is BreakStatementSyntax));
-            VisitStatements(new SyntaxList<StatementSyntax>(filteredStatements), true);
+            VisitStatements(new List<StatementSyntax>(filteredStatements), true);
         }
 
         private void VisitStatement(StatementSyntax statement, bool indent)
@@ -207,7 +207,7 @@ namespace PythonExamplesPorterApp.Converter
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}{name} = {initializer}");
         }
 
-        private String CreateSwitchSectionCondition(SyntaxList<SwitchLabelSyntax> labels, String switchConditionVariable)
+        private String CreateSwitchSectionCondition(IReadOnlyList<SwitchLabelSyntax> labels, String switchConditionVariable)
         {
             IList<String> conditions = new List<string>();
             foreach (SwitchLabelSyntax label in labels)
