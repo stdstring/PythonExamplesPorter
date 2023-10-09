@@ -63,8 +63,7 @@ namespace PythonExamplesPorterApp.Converter
 
         public override void VisitObjectCreationExpression(ObjectCreationExpressionSyntax node)
         {
-            ArgumentListSyntax? argumentList = node.ArgumentList;
-            CheckResult argumentsCheckResult = ArgumentListChecker.Check(argumentList);
+            CheckResult argumentsCheckResult = ArgumentListChecker.Check(node.ArgumentList.GetArguments());
             if (!argumentsCheckResult.Result)
                 throw new UnsupportedSyntaxException(argumentsCheckResult.Reason);
             TypeSyntax type = node.Type;
@@ -77,21 +76,26 @@ namespace PythonExamplesPorterApp.Converter
                 throw new UnsupportedSyntaxException($"Unsupported type: {type}");
             ProcessTypeResolveData(data);
             ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData);
-            String[] arguments = ConvertArgumentList(expressionConverter, argumentList);
+            String[] arguments = ConvertArgumentList(expressionConverter, node.ArgumentList.GetArguments());
             _buffer.Append($"({String.Join(", ", arguments)})");
         }
 
         public override void VisitInvocationExpression(InvocationExpressionSyntax node)
         {
+            CheckResult argumentsCheckResult = ArgumentListChecker.Check(node.ArgumentList.GetArguments());
+            if (!argumentsCheckResult.Result)
+                throw new UnsupportedSyntaxException(argumentsCheckResult.Reason);
             ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData);
-            String[] arguments = ConvertArgumentList(expressionConverter, node.ArgumentList);
+            String[] arguments = ConvertArgumentList(expressionConverter, node.ArgumentList.GetArguments());
             switch (node.Expression)
             {
                 case MemberAccessExpressionSyntax memberAccessExpression:
                     ExpressionSyntax target = memberAccessExpression.Expression;
                     String targetDest = ConvertExpression(expressionConverter, target);
                     SimpleNameSyntax name = memberAccessExpression.Name;
-                    OperationResult<MethodCallResolveData> resolveResult = _externalEntityResolver.ResolveMethodCall(target, targetDest, name, arguments);
+                    MethodData methodData = new MethodData(target, name, node.ArgumentList.GetArguments());
+                    MethodRepresentation methodRepresentation = new MethodRepresentation(targetDest, arguments);
+                    OperationResult<MethodCallResolveData> resolveResult = _externalEntityResolver.ResolveMethodCall(methodData, methodRepresentation);
                     if (!resolveResult.Success)
                         throw new UnsupportedSyntaxException(resolveResult.Reason);
                     MethodCallResolveData methodCallData = resolveResult.Data!;
@@ -128,13 +132,11 @@ namespace PythonExamplesPorterApp.Converter
             }
         }
 
-        private String[] ConvertArgumentList(ExpressionConverter expressionConverter, ArgumentListSyntax? argumentList)
+        private String[] ConvertArgumentList(ExpressionConverter expressionConverter, IReadOnlyList<ArgumentSyntax> arguments)
         {
-            if (argumentList == null)
-                return Array.Empty<String>();
-            String[] dest = new String[argumentList.Arguments.Count];
-            for (Int32 index = 0; index < argumentList.Arguments.Count; ++index)
-                dest[index] = ConvertExpression(expressionConverter, argumentList.Arguments[index].Expression);
+            String[] dest = new String[arguments.Count];
+            for (Int32 index = 0; index < arguments.Count; ++index)
+                dest[index] = ConvertExpression(expressionConverter, arguments[index].Expression);
             return dest;
         }
 

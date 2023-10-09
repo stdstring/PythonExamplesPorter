@@ -2,32 +2,40 @@
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace PythonExamplesPorterApp.Converter;
-
-internal static class SyntaxHelper
+namespace PythonExamplesPorterApp.Converter
 {
-    public static Boolean ContainAttribute(this IReadOnlyList<AttributeListSyntax> attributes, SemanticModel model, String expectedFullName)
+    internal static class SyntaxHelper
     {
-        foreach (AttributeListSyntax attributeList in attributes)
+        public static Boolean ContainAttribute(this IReadOnlyList<AttributeListSyntax> attributes, SemanticModel model, String expectedFullName)
         {
-            foreach (AttributeSyntax attribute in attributeList.Attributes)
+            foreach (AttributeListSyntax attributeList in attributes)
             {
-                ISymbol? symbol = model.GetSymbolInfo(attribute.Name).Symbol;
-                if (symbol == null)
-                    return false;
-                if (symbol.Kind != SymbolKind.Method)
-                    return false;
-                INamedTypeSymbol? symbolType = symbol.ContainingType;
-                if (symbolType == null)
-                    return false;
-                if (symbolType.Kind != SymbolKind.NamedType)
-                    return false;
-                // TODO (std_string) : think about using SymbolDisplayFormat
-                String attributeFullName = symbolType.ToDisplayString();
-                if (String.Equals(expectedFullName, attributeFullName))
-                    return true;
+                foreach (AttributeSyntax attribute in attributeList.Attributes)
+                {
+                    ISymbol? symbol = model.GetSymbolInfo(attribute.Name).Symbol;
+                    if (symbol == null)
+                        return false;
+                    if (symbol.Kind != SymbolKind.Method)
+                        return false;
+                    INamedTypeSymbol? symbolType = symbol.ContainingType;
+                    if (symbolType == null)
+                        return false;
+                    if (symbolType.Kind != SymbolKind.NamedType)
+                        return false;
+                    // TODO (std_string) : think about using SymbolDisplayFormat
+                    String attributeFullName = symbolType.ToDisplayString();
+                    if (String.Equals(expectedFullName, attributeFullName))
+                        return true;
+                }
             }
+            return false;
         }
-        return false;
+
+        public static IReadOnlyList<ArgumentSyntax> GetArguments(this ArgumentListSyntax? argumentList)
+        {
+            if (argumentList == null)
+                return Array.Empty<ArgumentSyntax>();
+            return argumentList.Arguments;
+        }
     }
 }

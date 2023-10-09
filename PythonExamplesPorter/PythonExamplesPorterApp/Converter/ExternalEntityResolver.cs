@@ -1,4 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using PythonExamplesPorterApp.Common;
 using PythonExamplesPorterApp.Config;
@@ -6,6 +7,10 @@ using PythonExamplesPorterApp.Config;
 namespace PythonExamplesPorterApp.Converter
 {
     internal record TypeResolveData(String TypeName, String ModuleName);
+
+    internal record MethodData(ExpressionSyntax Target, SimpleNameSyntax Name, IReadOnlyList<ArgumentSyntax> Arguments);
+
+    internal record MethodRepresentation(String Target, String[] Arguments);
 
     internal record MethodCallResolveData(String Call, String ModuleName);
 
@@ -20,7 +25,7 @@ namespace PythonExamplesPorterApp.Converter
 
         public OperationResult<TypeResolveData> ResolveType(TypeSyntax type)
         {
-            SymbolInfo symbolInfo = _model.GetSymbolInfo(type);
+            SymbolInfo symbolInfo = ModelExtensions.GetSymbolInfo(_model, type);
             ISymbol? typeInfo = symbolInfo.Symbol;
             if (typeInfo == null)
                 return new OperationResult<TypeResolveData>(false, $"Unrecognizable type: {type}");
@@ -50,9 +55,9 @@ namespace PythonExamplesPorterApp.Converter
             return new OperationResult<TypeResolveData>(true, "", new TypeResolveData(destTypeName, destModuleName));
         }
 
-        public OperationResult<MethodCallResolveData> ResolveMethodCall(ExpressionSyntax target, String targetRepresentation, SimpleNameSyntax name, String[] arguments)
+        public OperationResult<MethodCallResolveData> ResolveMethodCall(MethodData data, MethodRepresentation representation)
         {
-            OperationResult<SourceType> targetTypeResult = ExtractMethodTargetType(target);
+            OperationResult<SourceType> targetTypeResult = ExtractMethodTargetType(data.Target);
             if (!targetTypeResult.Success)
                 return new OperationResult<MethodCallResolveData>(false, targetTypeResult.Reason);
             SourceType sourceType = targetTypeResult.Data!;
@@ -65,7 +70,7 @@ namespace PythonExamplesPorterApp.Converter
             };
             foreach (ResolveMethodCallHandler handler in handlers)
             {
-                OperationResult<MethodCallResolveData> result = handler(targetRepresentation, sourceType, name, arguments);
+                OperationResult<MethodCallResolveData> result = handler(data, sourceType, representation);
                 if (result.Success)
                     return result;
             }
@@ -74,11 +79,11 @@ namespace PythonExamplesPorterApp.Converter
 
         private record SourceType(String NamespaceName, String TypeName);
 
-        private delegate OperationResult<MethodCallResolveData> ResolveMethodCallHandler(String targetRepresentation, SourceType sourceType, SimpleNameSyntax name, String[] arguments);
+        private delegate OperationResult<MethodCallResolveData> ResolveMethodCallHandler(MethodData data, SourceType sourceType, MethodRepresentation representation);
 
         private OperationResult<SourceType> ExtractMethodTargetType(ExpressionSyntax target)
         {
-            return ExtractMethodTargetType(target, _model.GetSymbolInfo(target).Symbol);
+            return ExtractMethodTargetType(target, ModelExtensions.GetSymbolInfo(_model, target).Symbol);
         }
 
         private OperationResult<SourceType> ExtractMethodTargetType(ExpressionSyntax target, ISymbol? targetSymbol)
@@ -95,7 +100,7 @@ namespace PythonExamplesPorterApp.Converter
             };
         }
 
-        private OperationResult<MethodCallResolveData> ResolveMethodCallForKnownNamespace(String targetRepresentation, SourceType sourceType, SimpleNameSyntax name, String[] arguments)
+        private OperationResult<MethodCallResolveData> ResolveMethodCallForKnownNamespace(MethodData data, SourceType sourceType, MethodRepresentation representation)
         {
             // TODO (std_string) : think about check containing assemblies
             String[] knownNamespaces = _appData.AppConfig.GetSourceDetails().KnownNamespaces ?? Array.Empty<String>();
@@ -103,15 +108,16 @@ namespace PythonExamplesPorterApp.Converter
             Boolean isSupportedType = knownNamespaces.Any(sourceType.NamespaceName.StartsWith);
             if (!isSupportedType)
                 return new OperationResult<MethodCallResolveData>(false, $"Unsupported type: {typeFullName}");
-            SymbolInfo nameInfo = _model.GetSymbolInfo(name);
+            SimpleNameSyntax name = data.Name;
+            SymbolInfo nameInfo = ModelExtensions.GetSymbolInfo(_model, name);
             switch (nameInfo.Symbol)
             {
                 case null:
                     return new OperationResult<MethodCallResolveData>(false, $"Unrecognizable method \"{name.Identifier}\" for type \"{typeFullName}\"");
                 case IMethodSymbol methodSymbol:
                     String methodName = NameTransformer.TransformMethodName(methodSymbol.Name);
-                    String args = String.Join(", ", arguments);
-                    String methodCall = String.Concat(targetRepresentation, ".", methodName, "(", args, ")");
+                    String args = String.Join(", ", representation.Arguments);
+                    String methodCall = String.Concat(representation.Target, ".", methodName, "(", args, ")");
                     MethodCallResolveData resolveData = new MethodCallResolveData(methodCall, "");
                     return new OperationResult<MethodCallResolveData>(true, "", resolveData);
                 default:
@@ -119,27 +125,74 @@ namespace PythonExamplesPorterApp.Converter
             }
         }
 
-        private OperationResult<MethodCallResolveData> ResolveMethodCallForNUnit(String targetRepresentation, SourceType sourceType, SimpleNameSyntax name, String[] arguments)
+        private OperationResult<MethodCallResolveData> ResolveMethodCallForNUnit(MethodData data, SourceType sourceType, MethodRepresentation representation)
         {
+            OperationResult<MethodCallResolveData> GenerateAssertEqual(String arg0, String arg1, String? message = null)
+            {
+                String messagePart = message == null ? "" : $", msg={message}";
+                String methodCall = $"self.assertEqual({arg0}, {arg1}{messagePart})";
+                MethodCallResolveData resolveData = new MethodCallResolveData(methodCall, "unittest");
+                return new OperationResult<MethodCallResolveData>(true, "", resolveData);
+            }
+            OperationResult<MethodCallResolveData> GenerateAssertAlmostEqual(String arg0, String arg1, String delta)
+            {
+                String methodCall = $"self.assertAlmostEqual({arg0}, {arg1}, delta={delta})";
+                MethodCallResolveData resolveData = new MethodCallResolveData(methodCall, "unittest");
+                return new OperationResult<MethodCallResolveData>(true, "", resolveData);
+            }
+            OperationResult<MethodCallResolveData> ResolveAssertEqual()
+            {
+                switch (data.Arguments.Count)
+                {
+                    case 2:
+                        return GenerateAssertEqual(representation.Arguments[0], representation.Arguments[1]);
+                    case 3:
+                    {
+                        ExpressionSyntax lastArgument = data.Arguments.Last().Expression;
+                        switch (lastArgument)
+                        {
+                            case LiteralExpressionSyntax literalExpression when literalExpression.Kind() == SyntaxKind.StringLiteralExpression:
+                                return GenerateAssertEqual(representation.Arguments[0], representation.Arguments[1], literalExpression.Token.Text);
+                            case LiteralExpressionSyntax literalExpression when literalExpression.Kind() == SyntaxKind.NumericLiteralExpression:
+                                return GenerateAssertAlmostEqual(representation.Arguments[0], representation.Arguments[1], literalExpression.Token.Text);
+                            case IdentifierNameSyntax identifier:
+                                SymbolInfo identifierInfo = ModelExtensions.GetSymbolInfo(_model, identifier);
+                                switch (identifierInfo.Symbol)
+                                {
+                                    case null:
+                                        return new OperationResult<MethodCallResolveData>(false, $"Unrecognizable third argument in Assert.AreEqual: {identifier.Identifier}");
+                                    case ILocalSymbol localSymbol when localSymbol.Type.GetTypeFullName() == "System.String":
+                                        return GenerateAssertEqual(representation.Arguments[0], representation.Arguments[1], identifierInfo.Symbol.Name);
+                                    case ILocalSymbol localSymbol when localSymbol.Type.GetTypeFullName() == "System.Single":
+                                        return GenerateAssertAlmostEqual(representation.Arguments[0], representation.Arguments[1], identifierInfo.Symbol.Name);
+                                    case ILocalSymbol localSymbol when localSymbol.Type.GetTypeFullName() == "System.Double":
+                                        return GenerateAssertAlmostEqual(representation.Arguments[0], representation.Arguments[1], identifierInfo.Symbol.Name);
+                                    }
+                                return new OperationResult<MethodCallResolveData>(false, $"Unsupported third argument in Assert.AreEqual: {identifier.Identifier}");
+                            }
+                        return new OperationResult<MethodCallResolveData>(false, $"Unsupported third argument kind in Assert.AreEqual: {lastArgument.Kind()}");
+                    }
+                    default:
+                        return new OperationResult<MethodCallResolveData>(false, $"Unsupported arguments count in Assert.AreEqual: {data.Arguments.Count}");
+                }
+            }
             String typeFullName = $"{sourceType.NamespaceName}.{sourceType.TypeName}";
             if (!typeFullName.Equals("NUnit.Framework.Assert"))
                 return new OperationResult<MethodCallResolveData>(false, $"Unsupported type \"{typeFullName}\"");
-            SymbolInfo nameInfo = _model.GetSymbolInfo(name);
+            SimpleNameSyntax name = data.Name;
+            SymbolInfo nameInfo = ModelExtensions.GetSymbolInfo(_model, name);
             switch (nameInfo.Symbol)
             {
                 case null:
                     return new OperationResult<MethodCallResolveData>(false, $"Unrecognizable method \"{name.Identifier}\" for type \"{typeFullName}\"");
                 case IMethodSymbol{Name: "AreEqual"}:
-                    String args = String.Join(", ", arguments);
-                    String methodCall = String.Concat("self.assertEqual(", args, ")");
-                    MethodCallResolveData resolveData = new MethodCallResolveData(methodCall, "unittest");
-                    return new OperationResult<MethodCallResolveData>(true, "", resolveData);
+                    return ResolveAssertEqual();
                 default:
                     return new OperationResult<MethodCallResolveData>(false, $"Unsupported method \"{name.Identifier}\" for type \"{typeFullName}\"");
             }
         }
 
-        private OperationResult<MethodCallResolveData> ResolveMethodCallForSystem(String targetRepresentation, SourceType sourceType, SimpleNameSyntax name, String[] arguments)
+        private OperationResult<MethodCallResolveData> ResolveMethodCallForSystem(MethodData data, SourceType sourceType, MethodRepresentation representation)
         {
             return new OperationResult<MethodCallResolveData>(false, $"ResolveMethodCallForSystem: Not Implemented");
         }

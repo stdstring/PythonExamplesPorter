@@ -2,21 +2,20 @@
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace PythonExamplesPorterApp.Checker;
-
-internal static class ArgumentListChecker
+namespace PythonExamplesPorterApp.Checker
 {
-    public static CheckResult Check(ArgumentListSyntax? argumentList)
+    internal static class ArgumentListChecker
     {
-        if (argumentList == null)
-            return new CheckResult(true);
-        foreach (ArgumentSyntax argument in argumentList.Arguments)
+        public static CheckResult Check(IReadOnlyList<ArgumentSyntax> arguments)
         {
-            if (!argument.RefKindKeyword.IsKind(SyntaxKind.None))
-                return new CheckResult(false, "Unsupported argument kind: ref");
-            if (!argument.RefOrOutKeyword.IsKind(SyntaxKind.None))
-                return new CheckResult(false, "Unsupported argument kind: out");
+            foreach (ArgumentSyntax argument in arguments)
+            {
+                if (!argument.RefKindKeyword.IsKind(SyntaxKind.None))
+                    return new CheckResult(false, "Unsupported argument kind: ref");
+                if (!argument.RefOrOutKeyword.IsKind(SyntaxKind.None))
+                    return new CheckResult(false, "Unsupported argument kind: out");
+            }
+            return new CheckResult(true);
         }
-        return new CheckResult(true);
     }
 }
