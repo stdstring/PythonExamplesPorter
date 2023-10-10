@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Globalization;
+using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -54,6 +55,16 @@ namespace PythonExamplesPorterApp.Converter
                 case IdentifierNameSyntax node:
                     VisitIdentifierName(node);
                     break;
+                case LiteralExpressionSyntax node:
+                    String text = node.Token.Value switch
+                    {
+                        null => node.Token.Text,
+                        Double value => value.ToString(CultureInfo.InvariantCulture),
+                        Single value => value.ToString(CultureInfo.InvariantCulture),
+                        var value => value.ToString() ?? node.Token.Text
+                    };
+                    _buffer.Append(text);
+                    break;
                 default:
                     _buffer.Append("<<<some expression>>>");
                     //throw new UnsupportedSyntaxException($"Unsupported expression: {expression.Kind()}");
@@ -100,8 +111,7 @@ namespace PythonExamplesPorterApp.Converter
                         throw new UnsupportedSyntaxException(resolveResult.Reason);
                     MethodCallResolveData methodCallData = resolveResult.Data!;
                     _buffer.Append(methodCallData.Call);
-                    if (!String.IsNullOrEmpty(methodCallData.ModuleName))
-                        AppendImportData(methodCallData.ModuleName, "");
+                    AppendImportData(methodCallData.ModuleName, "");
                     break;
                 case IdentifierNameSyntax identifierExpression:
                     throw new UnsupportedSyntaxException($"Unsupported call of method named {identifierExpression.Identifier.ValueText}");
@@ -158,13 +168,15 @@ namespace PythonExamplesPorterApp.Converter
 
         private void AppendImportData(String moduleName, String aliasName)
         {
+            if (String.IsNullOrEmpty(moduleName))
+                return;
             if (!_importData.ContainsKey(moduleName))
                 _importData.Add(moduleName, aliasName);
         }
 
         private void ProcessTypeResolveData(TypeResolveData resolveData)
         {
-            _importData.Add(resolveData.ModuleName, "");
+            AppendImportData(resolveData.ModuleName, "");
             _buffer.Append($"{resolveData.ModuleName}.{resolveData.TypeName}");
         }
 

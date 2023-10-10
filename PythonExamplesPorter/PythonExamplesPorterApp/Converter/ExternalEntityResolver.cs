@@ -74,7 +74,7 @@ namespace PythonExamplesPorterApp.Converter
                 if (result.Success)
                     return result;
             }
-            return new OperationResult<MethodCallResolveData>(false, $"Unsupported target type type \"{typeFullName}\"");
+            return new OperationResult<MethodCallResolveData>(false, $"Unsupported target type \"{typeFullName}\"");
         }
 
         private record SourceType(String NamespaceName, String TypeName);
