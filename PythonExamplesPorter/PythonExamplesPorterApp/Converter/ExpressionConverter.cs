@@ -56,19 +56,15 @@ namespace PythonExamplesPorterApp.Converter
                     VisitIdentifierName(node);
                     break;
                 case LiteralExpressionSyntax node:
-                    String text = node.Token.Value switch
-                    {
-                        null => node.Token.Text,
-                        Double value => value.ToString(CultureInfo.InvariantCulture),
-                        Single value => value.ToString(CultureInfo.InvariantCulture),
-                        var value => value.ToString() ?? node.Token.Text
-                    };
-                    _buffer.Append(text);
+                    VisitLiteralExpression(node);
+                    break;
+                case BinaryExpressionSyntax node:
+                    VisitBinaryExpression(node);
                     break;
                 default:
-                    _buffer.Append("<<<some expression>>>");
-                    //throw new UnsupportedSyntaxException($"Unsupported expression: {expression.Kind()}");
-                    break;
+                    throw new UnsupportedSyntaxException($"Unsupported expression: {expression.Kind()}");
+                    //_buffer.Append("<<<some expression>>>");
+                    //break;
             }
         }
 
@@ -139,6 +135,38 @@ namespace PythonExamplesPorterApp.Converter
                     break;
                 default:
                     throw new UnsupportedSyntaxException($"Unsupported identifier with name = \"{node.Identifier}\" and kind = \"{node.Kind()}\"");
+            }
+        }
+
+        public override void VisitLiteralExpression(LiteralExpressionSyntax node)
+        {
+            String text = node.Token.Value switch
+            {
+                null => node.Token.Text,
+                Double value => value.ToString(CultureInfo.InvariantCulture),
+                Single value => value.ToString(CultureInfo.InvariantCulture),
+                // TODO (std_string) : there are problems with some unicode symbols - investigate their
+                String => node.Token.Text,
+                var value => value.ToString() ?? node.Token.Text
+            };
+            _buffer.Append(text);
+        }
+
+        public override void VisitBinaryExpression(BinaryExpressionSyntax node)
+        {
+            // TODO (std_string) : add check ability of applying binary expression for given arguments
+            switch (node.Kind())
+            {
+                case SyntaxKind.AddExpression:
+                    ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData);
+                    ConvertResult leftOperandResult = expressionConverter.Convert(node.Left);
+                    AppendImportData(leftOperandResult.ImportData);
+                    ConvertResult rightOperandResult = expressionConverter.Convert(node.Right);
+                    AppendImportData(rightOperandResult.ImportData);
+                    _buffer.Append($"{leftOperandResult.Result} + {rightOperandResult.Result}");
+                    break;
+                default:
+                    throw new UnsupportedSyntaxException($"Unsupported binary expression: \"{node.Kind()}\"");
             }
         }
 
