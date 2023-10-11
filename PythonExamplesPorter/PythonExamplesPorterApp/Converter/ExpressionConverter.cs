@@ -61,6 +61,9 @@ namespace PythonExamplesPorterApp.Converter
                 case BinaryExpressionSyntax node:
                     VisitBinaryExpression(node);
                     break;
+                case MemberAccessExpressionSyntax node:
+                    VisitMemberAccessExpression(node);
+                    break;
                 default:
                     throw new UnsupportedSyntaxException($"Unsupported expression: {expression.Kind()}");
                     //_buffer.Append("<<<some expression>>>");
@@ -92,22 +95,10 @@ namespace PythonExamplesPorterApp.Converter
             CheckResult argumentsCheckResult = ArgumentListChecker.Check(node.ArgumentList.GetArguments());
             if (!argumentsCheckResult.Result)
                 throw new UnsupportedSyntaxException(argumentsCheckResult.Reason);
-            ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData);
-            String[] arguments = ConvertArgumentList(expressionConverter, node.ArgumentList.GetArguments());
             switch (node.Expression)
             {
                 case MemberAccessExpressionSyntax memberAccessExpression:
-                    ExpressionSyntax target = memberAccessExpression.Expression;
-                    String targetDest = ConvertExpression(expressionConverter, target);
-                    SimpleNameSyntax name = memberAccessExpression.Name;
-                    MethodData methodData = new MethodData(target, name, node.ArgumentList.GetArguments());
-                    MethodRepresentation methodRepresentation = new MethodRepresentation(targetDest, arguments);
-                    OperationResult<MethodCallResolveData> resolveResult = _externalEntityResolver.ResolveMethodCall(methodData, methodRepresentation);
-                    if (!resolveResult.Success)
-                        throw new UnsupportedSyntaxException(resolveResult.Reason);
-                    MethodCallResolveData methodCallData = resolveResult.Data!;
-                    _buffer.Append(methodCallData.Call);
-                    AppendImportData(methodCallData.ModuleName, "");
+                    VisitMemberAccessExpressionImpl(memberAccessExpression, node.ArgumentList);
                     break;
                 case IdentifierNameSyntax identifierExpression:
                     throw new UnsupportedSyntaxException($"Unsupported call of method named {identifierExpression.Identifier.ValueText}");
@@ -168,6 +159,28 @@ namespace PythonExamplesPorterApp.Converter
                 default:
                     throw new UnsupportedSyntaxException($"Unsupported binary expression: \"{node.Kind()}\"");
             }
+        }
+
+        public override void VisitMemberAccessExpression(MemberAccessExpressionSyntax node)
+        {
+            VisitMemberAccessExpressionImpl(node, null);
+        }
+
+        private void VisitMemberAccessExpressionImpl(MemberAccessExpressionSyntax node, ArgumentListSyntax? argumentList)
+        {
+            ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData);
+            String[] arguments = ConvertArgumentList(expressionConverter, argumentList.GetArguments());
+            ExpressionSyntax target = node.Expression;
+            String targetDest = ConvertExpression(expressionConverter, target);
+            SimpleNameSyntax name = node.Name;
+            MethodData methodData = new MethodData(target, name, argumentList.GetArguments());
+            MethodRepresentation methodRepresentation = new MethodRepresentation(targetDest, arguments);
+            OperationResult<MethodCallResolveData> resolveResult = _externalEntityResolver.ResolveMethodCall(methodData, methodRepresentation);
+            if (!resolveResult.Success)
+                throw new UnsupportedSyntaxException(resolveResult.Reason);
+            MethodCallResolveData methodCallData = resolveResult.Data!;
+            _buffer.Append(methodCallData.Call);
+            AppendImportData(methodCallData.ModuleName, "");
         }
 
         private String[] ConvertArgumentList(ExpressionConverter expressionConverter, IReadOnlyList<ArgumentSyntax> arguments)

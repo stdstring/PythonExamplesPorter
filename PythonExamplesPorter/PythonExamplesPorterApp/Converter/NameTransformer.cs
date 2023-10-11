@@ -24,6 +24,21 @@ namespace PythonExamplesPorterApp.Converter
             return ConvertPascalCaseIntoSnakeCase(methodName);
         }
 
+        public static String TransformPropertyName(String propertyName)
+        {
+            return ConvertPascalCaseIntoSnakeCase(propertyName);
+        }
+
+        public static String TransformFieldName(String fieldName)
+        {
+            return ConvertPascalCaseIntoSnakeCase(fieldName);
+        }
+
+        public static String TransformEnumValueName(String fieldName)
+        {
+            return ConvertPascalCaseIntoSnakeCase(fieldName).ToUpper();
+        }
+
         public static String TransformLocalVariableName(String variableName)
         {
             return ConvertPascalCaseIntoSnakeCase(variableName);

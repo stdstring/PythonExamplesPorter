@@ -77,7 +77,12 @@ namespace PythonExamplesPorterApp.Converter
             return new OperationResult<MethodCallResolveData>(false, $"Unsupported target type \"{typeFullName}\"");
         }
 
-        private record SourceType(String NamespaceName, String TypeName);
+        private record SourceType(String NamespaceName, String TypeName)
+        {
+            public SourceType(INamedTypeSymbol typeSymbol) : this(typeSymbol.ContainingNamespace.ToDisplayString(), typeSymbol.Name)
+            {
+            }
+        }
 
         private delegate OperationResult<MethodCallResolveData> ResolveMethodCallHandler(MethodData data, SourceType sourceType, MethodRepresentation representation);
 
@@ -90,13 +95,11 @@ namespace PythonExamplesPorterApp.Converter
         {
             return targetSymbol switch
             {
-                null =>
-                    new OperationResult<SourceType>(false, $"Unrecognizable method target type for \"{target}\""),
+                null => new OperationResult<SourceType>(false, $"Unrecognizable method target type for \"{target}\""),
                 ILocalSymbol localSymbol => ExtractMethodTargetType(target, localSymbol.Type),
-                INamedTypeSymbol typeSymbol =>
-                    new OperationResult<SourceType>(true, "", new SourceType(typeSymbol.ContainingNamespace.ToDisplayString(), typeSymbol.Name)),
-                _ =>
-                    new OperationResult<SourceType>(false, $"Unsupported method target type for \"{target}\"")
+                INamedTypeSymbol typeSymbol => new OperationResult<SourceType>(true, "", new SourceType(typeSymbol)),
+                IPropertySymbol propertySymbol => new OperationResult<SourceType>(true, "", new SourceType(propertySymbol.ContainingType)),
+                _ => new OperationResult<SourceType>(false, $"Unsupported method target type for \"{target}\"")
             };
         }
 
@@ -114,12 +117,33 @@ namespace PythonExamplesPorterApp.Converter
             {
                 case null:
                     return new OperationResult<MethodCallResolveData>(false, $"Unrecognizable method \"{name.Identifier}\" for type \"{typeFullName}\"");
+                // TODO (std_string) : think about separation between methods, properties and fields
                 case IMethodSymbol methodSymbol:
+                {
                     String methodName = NameTransformer.TransformMethodName(methodSymbol.Name);
                     String args = String.Join(", ", representation.Arguments);
                     String methodCall = String.Concat(representation.Target, ".", methodName, "(", args, ")");
                     MethodCallResolveData resolveData = new MethodCallResolveData(methodCall, "");
                     return new OperationResult<MethodCallResolveData>(true, "", resolveData);
+                }
+                case IPropertySymbol propertySymbol:
+                {
+                    String propertyName = NameTransformer.TransformMethodName(propertySymbol.Name);
+                    String propertyCall = $"{representation.Target}.{propertyName}";
+                    MethodCallResolveData resolveData = new MethodCallResolveData(propertyCall, "");
+                    return new OperationResult<MethodCallResolveData>(true, "", resolveData);
+                }
+                case IFieldSymbol fieldSymbol:
+                {
+                    String fieldName = fieldSymbol.Type.TypeKind switch
+                    {
+                        TypeKind.Enum => NameTransformer.TransformEnumValueName(fieldSymbol.Name),
+                        _ => NameTransformer.TransformFieldName(fieldSymbol.Name)
+                    };
+                    String fieldCall = $"{representation.Target}.{fieldName}";
+                    MethodCallResolveData resolveData = new MethodCallResolveData(fieldCall, "");
+                    return new OperationResult<MethodCallResolveData>(true, "", resolveData);
+                }
                 default:
                     return new OperationResult<MethodCallResolveData>(false, $"Unsupported method \"{name.Identifier}\" for type \"{typeFullName}\"");
             }

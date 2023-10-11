@@ -44,6 +44,33 @@ namespace PythonExamplesPorterAppTests.Converter
             Assert.AreEqual(expectedResult, NameTransformer.TransformMethodName(source));
         }
 
+        [TestCase("Border", "border")]
+        [TestCase("BorderStart", "border_start")]
+        [TestCase("SuperBorderStart", "super_border_start")]
+        [TestCase("AbsoluteSuperBorderStart", "absolute_super_border_start")]
+        public void TransformPropertyName(String source, String expectedResult)
+        {
+            Assert.AreEqual(expectedResult, NameTransformer.TransformPropertyName(source));
+        }
+
+        [TestCase("Field", "field")]
+        [TestCase("BorderField", "border_field")]
+        [TestCase("SuperBorderField", "super_border_field")]
+        [TestCase("AbsoluteSuperBorderField", "absolute_super_border_field")]
+        public void TransformFieldName(String source, String expectedResult)
+        {
+            Assert.AreEqual(expectedResult, NameTransformer.TransformFieldName(source));
+        }
+
+        [TestCase("Item", "ITEM")]
+        [TestCase("BorderItem", "BORDER_ITEM")]
+        [TestCase("SuperBorderItem", "SUPER_BORDER_ITEM")]
+        [TestCase("AbsoluteSuperBorderItem", "ABSOLUTE_SUPER_BORDER_ITEM")]
+        public void TransformEnumValueName(String source, String expectedResult)
+        {
+            Assert.AreEqual(expectedResult, NameTransformer.TransformEnumValueName(source));
+        }
+
         [TestCase("data", "data")]
         [TestCase("someData", "some_data")]
         [TestCase("someDataValue", "some_data_value")]
