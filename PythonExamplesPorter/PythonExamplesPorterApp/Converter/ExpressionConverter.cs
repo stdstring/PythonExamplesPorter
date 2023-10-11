@@ -64,6 +64,9 @@ namespace PythonExamplesPorterApp.Converter
                 case MemberAccessExpressionSyntax node:
                     VisitMemberAccessExpression(node);
                     break;
+                case AssignmentExpressionSyntax node:
+                    VisitAssignmentExpression(node);
+                    break;
                 default:
                     throw new UnsupportedSyntaxException($"Unsupported expression: {expression.Kind()}");
                     //_buffer.Append("<<<some expression>>>");
@@ -164,6 +167,25 @@ namespace PythonExamplesPorterApp.Converter
         public override void VisitMemberAccessExpression(MemberAccessExpressionSyntax node)
         {
             VisitMemberAccessExpressionImpl(node, null);
+        }
+
+        public override void VisitAssignmentExpression(AssignmentExpressionSyntax node)
+        {
+            switch (node.Kind())
+            {
+                case SyntaxKind.SimpleAssignmentExpression:
+                {
+                    ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData);
+                    ConvertResult leftAssignmentResult = expressionConverter.Convert(node.Left);
+                    AppendImportData(leftAssignmentResult.ImportData);
+                    ConvertResult rightAssignmentResult = expressionConverter.Convert(node.Right);
+                    AppendImportData(rightAssignmentResult.ImportData);
+                    _buffer.Append($"{leftAssignmentResult.Result} = {rightAssignmentResult.Result}");
+                    break;
+                }
+                default:
+                    throw new UnsupportedSyntaxException($"Unsupported assignment expression: \"{node.Kind()}\"");
+            }
         }
 
         private void VisitMemberAccessExpressionImpl(MemberAccessExpressionSyntax node, ArgumentListSyntax? argumentList)
