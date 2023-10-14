@@ -47,11 +47,12 @@ namespace PythonExamplesPorterApp.Converter
         private static String ConvertPascalCaseIntoSnakeCase(String name)
         {
             StringBuilder builder = new StringBuilder();
-            foreach (char ch in name)
+            builder.Append(Char.ToLower(name[0]));
+            for (Int32 index = 1; index < name.Length; ++index)
             {
-                if (Char.IsUpper(ch) && builder.Length > 0)
+                if (Char.IsUpper(name[index]) && !Char.IsUpper(name[index - 1]))
                     builder.Append('_');
-                builder.Append(Char.ToLower(ch));
+                builder.Append(Char.ToLower(name[index]));
             }
             return builder.ToString();
         }

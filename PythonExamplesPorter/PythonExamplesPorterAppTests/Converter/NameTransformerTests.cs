@@ -11,6 +11,8 @@ namespace PythonExamplesPorterAppTests.Converter
         [TestCase("ExBorder", "ex_border")]
         [TestCase("ExSuperBorder", "ex_super_border")]
         [TestCase("ExAbsoluteSuperBorder", "ex_absolute_super_border")]
+        [TestCase("ABC23Border", "abc23_border")]
+        [TestCase("ExABC23Border", "ex_abc23_border")]
         public void TransformFileObjectName(String source, String expectedResult)
         {
             Assert.AreEqual(expectedResult, NameTransformer.TransformFileObjectName(source));
@@ -30,6 +32,8 @@ namespace PythonExamplesPorterAppTests.Converter
         [TestCase("ExBorder", "ExBorder")]
         [TestCase("ExSuperBorder", "ExSuperBorder")]
         [TestCase("ExAbsoluteSuperBorder", "ExAbsoluteSuperBorder")]
+        [TestCase("ABC23Border", "ABC23Border")]
+        [TestCase("ExABC23Border", "ExABC23Border")]
         public void TransformClassName(String source, String expectedResult)
         {
             Assert.AreEqual(expectedResult, NameTransformer.TransformClassName(source));
@@ -39,6 +43,8 @@ namespace PythonExamplesPorterAppTests.Converter
         [TestCase("CalculateBorder", "calculate_border")]
         [TestCase("CalculateSuperBorder", "calculate_super_border")]
         [TestCase("CalculateAbsoluteSuperBorder", "calculate_absolute_super_border")]
+        [TestCase("ABC23CalculateBorder", "abc23_calculate_border")]
+        [TestCase("CalculateABC23Border", "calculate_abc23_border")]
         public void TransformMethodName(String source, String expectedResult)
         {
             Assert.AreEqual(expectedResult, NameTransformer.TransformMethodName(source));
@@ -48,6 +54,8 @@ namespace PythonExamplesPorterAppTests.Converter
         [TestCase("BorderStart", "border_start")]
         [TestCase("SuperBorderStart", "super_border_start")]
         [TestCase("AbsoluteSuperBorderStart", "absolute_super_border_start")]
+        [TestCase("ABC23Border", "abc23_border")]
+        [TestCase("ExABC23Border", "ex_abc23_border")]
         public void TransformPropertyName(String source, String expectedResult)
         {
             Assert.AreEqual(expectedResult, NameTransformer.TransformPropertyName(source));
@@ -57,6 +65,8 @@ namespace PythonExamplesPorterAppTests.Converter
         [TestCase("BorderField", "border_field")]
         [TestCase("SuperBorderField", "super_border_field")]
         [TestCase("AbsoluteSuperBorderField", "absolute_super_border_field")]
+        [TestCase("ABC23Border", "abc23_border")]
+        [TestCase("ExABC23Border", "ex_abc23_border")]
         public void TransformFieldName(String source, String expectedResult)
         {
             Assert.AreEqual(expectedResult, NameTransformer.TransformFieldName(source));
@@ -66,6 +76,8 @@ namespace PythonExamplesPorterAppTests.Converter
         [TestCase("BorderItem", "BORDER_ITEM")]
         [TestCase("SuperBorderItem", "SUPER_BORDER_ITEM")]
         [TestCase("AbsoluteSuperBorderItem", "ABSOLUTE_SUPER_BORDER_ITEM")]
+        [TestCase("ABC23BorderItem", "ABC23_BORDER_ITEM")]
+        [TestCase("SuperABC23BorderItem", "SUPER_ABC23_BORDER_ITEM")]
         public void TransformEnumValueName(String source, String expectedResult)
         {
             Assert.AreEqual(expectedResult, NameTransformer.TransformEnumValueName(source));
@@ -74,6 +86,8 @@ namespace PythonExamplesPorterAppTests.Converter
         [TestCase("data", "data")]
         [TestCase("someData", "some_data")]
         [TestCase("someDataValue", "some_data_value")]
+        [TestCase("abc23Data", "abc23_data")]
+        [TestCase("someABC23Data", "some_abc23_data")]
         public void TransformLocalVariableName(String source, String expectedResult)
         {
             Assert.AreEqual(expectedResult, NameTransformer.TransformLocalVariableName(source));
