@@ -67,16 +67,17 @@ namespace PythonExamplesPorterApp.Converter
                 case AssignmentExpressionSyntax node:
                     VisitAssignmentExpression(node);
                     break;
+                case ElementAccessExpressionSyntax node:
+                    VisitElementAccessExpression(node);
+                    break;
                 default:
                     throw new UnsupportedSyntaxException($"Unsupported expression: {expression.Kind()}");
-                    //_buffer.Append("<<<some expression>>>");
-                    //break;
             }
         }
 
         public override void VisitObjectCreationExpression(ObjectCreationExpressionSyntax node)
         {
-            CheckResult argumentsCheckResult = ArgumentListChecker.Check(node.ArgumentList.GetArguments());
+            CheckResult argumentsCheckResult = node.ArgumentList.GetArguments().CheckForMethod();
             if (!argumentsCheckResult.Result)
                 throw new UnsupportedSyntaxException(argumentsCheckResult.Reason);
             TypeSyntax type = node.Type;
@@ -95,7 +96,7 @@ namespace PythonExamplesPorterApp.Converter
 
         public override void VisitInvocationExpression(InvocationExpressionSyntax node)
         {
-            CheckResult argumentsCheckResult = ArgumentListChecker.Check(node.ArgumentList.GetArguments());
+            CheckResult argumentsCheckResult = node.ArgumentList.GetArguments().CheckForMethod();
             if (!argumentsCheckResult.Result)
                 throw new UnsupportedSyntaxException(argumentsCheckResult.Reason);
             switch (node.Expression)
@@ -200,6 +201,19 @@ namespace PythonExamplesPorterApp.Converter
                 default:
                     throw new UnsupportedSyntaxException($"Unsupported assignment expression: \"{node.Kind()}\"");
             }
+        }
+
+        public override void VisitElementAccessExpression(ElementAccessExpressionSyntax node)
+        {
+            CheckResult argumentsCheckResult = node.ArgumentList.Arguments.CheckForElementAccess(_model);
+            if (!argumentsCheckResult.Result)
+                throw new UnsupportedSyntaxException(argumentsCheckResult.Reason);
+            ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData);
+            ConvertResult targetResult = expressionConverter.Convert(node.Expression);
+            AppendImportData(targetResult.ImportData);
+            ConvertResult argumentsAccessResult = expressionConverter.Convert(node.ArgumentList.Arguments[0].Expression);
+            AppendImportData(argumentsAccessResult.ImportData);
+            _buffer.Append($"{targetResult.Result}[{argumentsAccessResult.Result}]");
         }
 
         private void VisitMemberAccessExpressionImpl(MemberAccessExpressionSyntax node, ArgumentListSyntax? argumentList)
