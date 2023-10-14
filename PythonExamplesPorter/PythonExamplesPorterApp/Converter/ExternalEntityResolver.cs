@@ -61,7 +61,6 @@ namespace PythonExamplesPorterApp.Converter
             if (!targetTypeResult.Success)
                 return new OperationResult<MethodCallResolveData>(false, targetTypeResult.Reason);
             SourceType sourceType = targetTypeResult.Data!;
-            String typeFullName = $"{sourceType.NamespaceName}.{sourceType.TypeName}";
             IList<ResolveMethodCallHandler> handlers = new List<ResolveMethodCallHandler>
             {
                 ResolveMethodCallForKnownNamespace,
@@ -74,14 +73,7 @@ namespace PythonExamplesPorterApp.Converter
                 if (result.Success)
                     return result;
             }
-            return new OperationResult<MethodCallResolveData>(false, $"Unsupported target type \"{typeFullName}\"");
-        }
-
-        private record SourceType(String NamespaceName, String TypeName)
-        {
-            public SourceType(INamedTypeSymbol typeSymbol) : this(typeSymbol.ContainingNamespace.ToDisplayString(), typeSymbol.Name)
-            {
-            }
+            return new OperationResult<MethodCallResolveData>(false, $"Unsupported target type \"{sourceType.FullName}\"");
         }
 
         private delegate OperationResult<MethodCallResolveData> ResolveMethodCallHandler(MethodData data, SourceType sourceType, MethodRepresentation representation);
@@ -107,16 +99,15 @@ namespace PythonExamplesPorterApp.Converter
         {
             // TODO (std_string) : think about check containing assemblies
             String[] knownNamespaces = _appData.AppConfig.GetSourceDetails().KnownNamespaces ?? Array.Empty<String>();
-            String typeFullName = $"{sourceType.NamespaceName}.{sourceType.TypeName}";
             Boolean isSupportedType = knownNamespaces.Any(sourceType.NamespaceName.StartsWith);
             if (!isSupportedType)
-                return new OperationResult<MethodCallResolveData>(false, $"Unsupported type: {typeFullName}");
+                return new OperationResult<MethodCallResolveData>(false, $"Unsupported type: {sourceType.FullName}");
             SimpleNameSyntax name = data.Name;
             SymbolInfo nameInfo = ModelExtensions.GetSymbolInfo(_model, name);
             switch (nameInfo.Symbol)
             {
                 case null:
-                    return new OperationResult<MethodCallResolveData>(false, $"Unrecognizable method \"{name.Identifier}\" for type \"{typeFullName}\"");
+                    return new OperationResult<MethodCallResolveData>(false, $"Unrecognizable method \"{name.Identifier}\" for type \"{sourceType.FullName}\"");
                 // TODO (std_string) : think about separation between methods, properties and fields
                 case IMethodSymbol methodSymbol:
                 {
@@ -145,7 +136,7 @@ namespace PythonExamplesPorterApp.Converter
                     return new OperationResult<MethodCallResolveData>(true, "", resolveData);
                 }
                 default:
-                    return new OperationResult<MethodCallResolveData>(false, $"Unsupported method \"{name.Identifier}\" for type \"{typeFullName}\"");
+                    return new OperationResult<MethodCallResolveData>(false, $"Unsupported method \"{name.Identifier}\" for type \"{sourceType.FullName}\"");
             }
         }
 
@@ -200,19 +191,18 @@ namespace PythonExamplesPorterApp.Converter
                         return new OperationResult<MethodCallResolveData>(false, $"Unsupported arguments count in Assert.AreEqual: {data.Arguments.Count}");
                 }
             }
-            String typeFullName = $"{sourceType.NamespaceName}.{sourceType.TypeName}";
-            if (!typeFullName.Equals("NUnit.Framework.Assert"))
-                return new OperationResult<MethodCallResolveData>(false, $"Unsupported type \"{typeFullName}\"");
+            if (!sourceType.FullName.Equals("NUnit.Framework.Assert"))
+                return new OperationResult<MethodCallResolveData>(false, $"Unsupported type \"{sourceType.FullName}\"");
             SimpleNameSyntax name = data.Name;
             SymbolInfo nameInfo = ModelExtensions.GetSymbolInfo(_model, name);
             switch (nameInfo.Symbol)
             {
                 case null:
-                    return new OperationResult<MethodCallResolveData>(false, $"Unrecognizable method \"{name.Identifier}\" for type \"{typeFullName}\"");
+                    return new OperationResult<MethodCallResolveData>(false, $"Unrecognizable method \"{name.Identifier}\" for type \"{sourceType.FullName}\"");
                 case IMethodSymbol{Name: "AreEqual"}:
                     return ResolveAssertEqual();
                 default:
-                    return new OperationResult<MethodCallResolveData>(false, $"Unsupported method \"{name.Identifier}\" for type \"{typeFullName}\"");
+                    return new OperationResult<MethodCallResolveData>(false, $"Unsupported method \"{name.Identifier}\" for type \"{sourceType.FullName}\"");
             }
         }
 

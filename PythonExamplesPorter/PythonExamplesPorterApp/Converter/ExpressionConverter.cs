@@ -127,6 +127,18 @@ namespace PythonExamplesPorterApp.Converter
                         throw new UnsupportedSyntaxException(resolveResult.Reason);
                     ProcessTypeResolveData(resolveResult.Data!);
                     break;
+                case IPropertySymbol propertySymbol:
+                    // TODO (std_string) : think about smart (not straightforward) solution
+                    // TODO (std_string) : think about cases when property/method/etc in source type is absent in dest handmade type
+                    String name = propertySymbol.Name;
+                    SourceType containedType = new SourceType(propertySymbol.ContainingType);
+                    if (!_appData.HandmadeManager.IsHandmadeType(containedType.FullName))
+                        throw new UnsupportedSyntaxException($"Unsupported identifier with name = \"{node.Identifier}\" and kind = \"{node.Kind()}\"");
+                    IDictionary<String, String> mapping = _appData.HandmadeManager.GetHandmadeTypeMapping(containedType.FullName);
+                    if (mapping.ContainsKey(name))
+                        name = mapping[name];
+                    _buffer.Append(name);
+                    break;
                 default:
                     throw new UnsupportedSyntaxException($"Unsupported identifier with name = \"{node.Identifier}\" and kind = \"{node.Kind()}\"");
             }
