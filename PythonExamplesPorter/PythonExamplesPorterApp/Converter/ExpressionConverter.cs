@@ -151,7 +151,9 @@ namespace PythonExamplesPorterApp.Converter
                 null => node.Token.Text,
                 Double value => value.ToString(CultureInfo.InvariantCulture),
                 Single value => value.ToString(CultureInfo.InvariantCulture),
+                Boolean value => value ? "True" : "False",
                 // TODO (std_string) : there are problems with some unicode symbols - investigate their
+                String _ when node.Token.Text.StartsWith('@') => $"\"\"{node.Token.Text.Substring(1)}\"\"",
                 String => node.Token.Text,
                 var value => value.ToString() ?? node.Token.Text
             };
