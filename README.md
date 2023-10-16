@@ -18,11 +18,33 @@
 1. We will add infrastructure for processing of all top level test classes and their simple test methods.
 1. We will add support of ignoring different objects from porting process: files, test classes, test methods.
 1. We will add support of handmade implementation of base classes (for test classes) and ability of mapping names of their members.
-1. We will add support of base statements.
-1. We will add support of base expressions.
+1. We will add support of base statements: ```if .. else```, ```switch```, ```for```, ```foreach```, ```while```, ```do … while```, variable declarations, method calls.
+1. We will add support of base expressions (which are frequently using).
 1. We will add support different strategies for entities from different external sources (main library/libraries, .NET, other external libraries).
 1. In the current phase, we won't separate collection of source data and generation of destination data - we will implement all functionality in the AST processing methods.
-1. We will add some tests.
 
 ### Phase 1
+1. We will fix technical debt after Phase 0.
+1. We will add support of frequently used types/methods from system (.NET) and test (NUnit) libraries.
+1. We will create utility for demonstrating difference between ported and existing examples (only for fully ported examples).
+1. We will create integration tests.
+1. We will add support for tests marked by **TestCase** attribute.
+1. We will add infrastructure for processing single files.
+1. We will add support of some other statements: ```try … catch```, ```try … finally```, ```using``` etc.
+1. We will add support of some advanced expressions (which we use periodically): increment/decrement, assignment with modifications, string interpolation etc.
+1. We will add support of constructors, methods, properties and fields in the top level test classes (we don't support overloading in constructors and methods).
+1. We will add support of other classes/structures (non top level test classes) and inheritance (without support of interfaces).
+
+### Phase 2
+1. We will add infrastructure for processing pieces of code.
+1. We will add support of periodically and rarely used types/methods from system (.NET) and test (NUnit) libraries.
+1. We will add support of handmade classes.
+1. We will add support of handmade methods.
+1. We will add support for handmade pieces of code.
+1. We will add processing of comments.
+1. We will add processing of lambda expressions.
+1. We will add support of some advanced expressions, which we use rarely or nothing in examples (now).
+1. We will investigate ability of using intermediate code (for simplification of possible usage for examples on other languages).
+
+### Phase 3
 **Under construction**
