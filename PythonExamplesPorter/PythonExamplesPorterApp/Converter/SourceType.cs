@@ -4,7 +4,7 @@ namespace PythonExamplesPorterApp.Converter
 {
     internal record SourceType(String NamespaceName, String TypeName)
     {
-        public SourceType(INamedTypeSymbol typeSymbol) : this(typeSymbol.ContainingNamespace.ToDisplayString(), typeSymbol.Name)
+        public SourceType(ITypeSymbol typeSymbol) : this(typeSymbol.ContainingNamespace.ToDisplayString(), typeSymbol.Name)
         {
         }
 

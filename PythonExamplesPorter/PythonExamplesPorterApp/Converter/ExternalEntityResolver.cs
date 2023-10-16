@@ -80,7 +80,8 @@ namespace PythonExamplesPorterApp.Converter
 
         private OperationResult<SourceType> ExtractMethodTargetType(ExpressionSyntax target)
         {
-            return ExtractMethodTargetType(target, ModelExtensions.GetSymbolInfo(_model, target).Symbol);
+            SymbolInfo symbolInfo = _model.GetSymbolInfo(target);
+            return ExtractMethodTargetType(target, symbolInfo.Symbol);
         }
 
         private OperationResult<SourceType> ExtractMethodTargetType(ExpressionSyntax target, ISymbol? targetSymbol)
@@ -91,6 +92,9 @@ namespace PythonExamplesPorterApp.Converter
                 ILocalSymbol localSymbol => ExtractMethodTargetType(target, localSymbol.Type),
                 INamedTypeSymbol typeSymbol => new OperationResult<SourceType>(true, "", new SourceType(typeSymbol)),
                 IPropertySymbol propertySymbol => new OperationResult<SourceType>(true, "", new SourceType(propertySymbol.ContainingType)),
+                IMethodSymbol { ReturnsVoid: true } => new OperationResult<SourceType>(false, $"Bad method target type for \"{target}\""),
+                IMethodSymbol methodSymbol => ExtractMethodTargetType(target, methodSymbol.ReturnType),
+                IArrayTypeSymbol arrayType => ExtractMethodTargetType(target, arrayType.ElementType),
                 _ => new OperationResult<SourceType>(false, $"Unsupported method target type for \"{target}\"")
             };
         }
