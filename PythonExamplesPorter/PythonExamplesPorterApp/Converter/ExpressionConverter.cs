@@ -5,6 +5,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using PythonExamplesPorterApp.Checker;
 using PythonExamplesPorterApp.Common;
+using PythonExamplesPorterApp.Utils;
 
 namespace PythonExamplesPorterApp.Converter
 {
@@ -69,6 +70,15 @@ namespace PythonExamplesPorterApp.Converter
                     break;
                 case ElementAccessExpressionSyntax node:
                     VisitElementAccessExpression(node);
+                    break;
+                case ArrayCreationExpressionSyntax node:
+                    VisitArrayCreationExpression(node);
+                    break;
+                case ImplicitArrayCreationExpressionSyntax node:
+                    VisitImplicitArrayCreationExpression(node);
+                    break;
+                case InitializerExpressionSyntax node:
+                    VisitInitializerExpression(node);
                     break;
                 default:
                     throw new UnsupportedSyntaxException($"Unsupported expression: {expression.Kind()}");
@@ -209,6 +219,31 @@ namespace PythonExamplesPorterApp.Converter
             AppendResult(converter.Convert(node));
         }
 
+        public override void VisitArrayCreationExpression(ArrayCreationExpressionSyntax node)
+        {
+            ArrayCreationConverter converter = new ArrayCreationConverter(_model, _appData);
+            AppendResult(converter.Convert(node));
+        }
+
+        public override void VisitImplicitArrayCreationExpression(ImplicitArrayCreationExpressionSyntax node)
+        {
+            ArrayCreationConverter converter = new ArrayCreationConverter(_model, _appData);
+            AppendResult(converter.Convert(node));
+        }
+
+        public override void VisitInitializerExpression(InitializerExpressionSyntax node)
+        {
+            switch (node.Kind())
+            {
+                case SyntaxKind.ArrayInitializerExpression:
+                    ArrayCreationConverter converter = new ArrayCreationConverter(_model, _appData);
+                    AppendResult(converter.Convert(node));
+                    break;
+                default:
+                    throw new UnsupportedSyntaxException($"Unsupported initializer expression: \"{node.Kind()}\"");
+            }
+        }
+
         private void VisitMemberAccessExpressionImpl(MemberAccessExpressionSyntax node, ArgumentListSyntax? argumentList)
         {
             ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData);
@@ -316,6 +351,60 @@ namespace PythonExamplesPorterApp.Converter
         private ConvertResult ProcessStringArgSpecialCase(ElementAccessExpressionSyntax expression, String arg)
         {
             throw new UnsupportedSyntaxException($"Unsupported type of ElementAccessExpression argument - System.String in expression: \"{expression}\"");
+        }
+
+        private readonly SemanticModel _model;
+        private readonly AppData _appData;
+    }
+
+    internal class ArrayCreationConverter
+    {
+        public ArrayCreationConverter(SemanticModel model, AppData appData)
+        {
+            _model = model;
+            _appData = appData;
+        }
+
+        public ConvertResult Convert(ArrayCreationExpressionSyntax expression)
+        {
+            switch (expression.Initializer)
+            {
+                case null:
+                    return ConvertArrayCreationWithSize(expression);
+                case var initializer:
+                    return Convert(initializer);
+            }
+        }
+
+        public ConvertResult Convert(ImplicitArrayCreationExpressionSyntax expression)
+        {
+            return Convert(expression.Initializer);
+        }
+
+        public ConvertResult Convert(InitializerExpressionSyntax expression)
+        {
+            if (expression.Kind() != SyntaxKind.ArrayInitializerExpression)
+                throw new UnsupportedSyntaxException($"Bad usage of ArrayCreationConverter for expression: \"{expression}\"");
+            ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData);
+            ConvertResult[] convertResults = expression.Expressions.Select(expressionConverter.Convert).ToArray();
+            ImportData importData = new ImportData();
+            convertResults.Foreach(result => importData.Append(result.ImportData));
+            String[] initExpressions = convertResults.Select(result => result.Result).ToArray();
+            return new ConvertResult($"[{String.Join(", ", initExpressions)}]", importData);
+        }
+
+        private ConvertResult ConvertArrayCreationWithSize(ArrayCreationExpressionSyntax expression)
+        {
+            ImportData importData = new ImportData();
+            switch (expression.Type.RankSpecifiers)
+            {
+                case [{Sizes: [LiteralExpressionSyntax {Token.Value: 0}]}]:
+                    return new ConvertResult("[]", importData);
+                case [{Sizes: [LiteralExpressionSyntax {Token.Value: Int32 value}]}]:
+                    return new ConvertResult($"[None for i in range(0, {value})]", importData);
+                default:
+                    throw new UnsupportedSyntaxException($"Unsupported ranks in ArrayCreationExpression expression: \"{expression}\"");
+            }
         }
 
         private readonly SemanticModel _model;

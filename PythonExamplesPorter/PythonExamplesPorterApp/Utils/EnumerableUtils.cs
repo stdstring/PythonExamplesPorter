@@ -11,5 +11,11 @@
         {
             return source.Count == 0;
         }
+
+        public static void Foreach<TElement>(this IEnumerable<TElement> source, Action<TElement> action)
+        {
+            foreach (TElement element in source)
+                action(element);
+        }
     }
 }
