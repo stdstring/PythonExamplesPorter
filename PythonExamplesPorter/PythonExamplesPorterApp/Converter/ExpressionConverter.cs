@@ -8,7 +8,7 @@ using PythonExamplesPorterApp.Common;
 
 namespace PythonExamplesPorterApp.Converter
 {
-    internal record ConvertResult(String Result, IDictionary<String, String> ImportData);
+    internal record ConvertResult(String Result, ImportData ImportData);
 
     internal class ExpressionConverter
     {
@@ -21,7 +21,7 @@ namespace PythonExamplesPorterApp.Converter
         public ConvertResult Convert(ExpressionSyntax expression)
         {
             StringBuilder buffer = new StringBuilder();
-            IDictionary<String, String> importData = new Dictionary<String, String>();
+            ImportData importData = new ImportData();
             ExpressionConverterVisitor visitor = new ExpressionConverterVisitor(_model, buffer, importData, _appData);
             visitor.VisitExpression(expression);
             return new ConvertResult(buffer.ToString(), importData);
@@ -33,7 +33,7 @@ namespace PythonExamplesPorterApp.Converter
 
     internal class ExpressionConverterVisitor : CSharpSyntaxWalker
     {
-        public ExpressionConverterVisitor(SemanticModel model, StringBuilder buffer, IDictionary<String, String> importData, AppData appData)
+        public ExpressionConverterVisitor(SemanticModel model, StringBuilder buffer, ImportData importData, AppData appData)
         {
             _model = model;
             _appData = appData;
@@ -169,9 +169,9 @@ namespace PythonExamplesPorterApp.Converter
                 case SyntaxKind.AddExpression:
                     ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData);
                     ConvertResult leftOperandResult = expressionConverter.Convert(node.Left);
-                    AppendImportData(leftOperandResult.ImportData);
+                    _importData.Append(leftOperandResult.ImportData);
                     ConvertResult rightOperandResult = expressionConverter.Convert(node.Right);
-                    AppendImportData(rightOperandResult.ImportData);
+                    _importData.Append(rightOperandResult.ImportData);
                     _buffer.Append($"{leftOperandResult.Result} + {rightOperandResult.Result}");
                     break;
                 default:
@@ -192,9 +192,9 @@ namespace PythonExamplesPorterApp.Converter
                 {
                     ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData);
                     ConvertResult leftAssignmentResult = expressionConverter.Convert(node.Left);
-                    AppendImportData(leftAssignmentResult.ImportData);
+                    _importData.Append(leftAssignmentResult.ImportData);
                     ConvertResult rightAssignmentResult = expressionConverter.Convert(node.Right);
-                    AppendImportData(rightAssignmentResult.ImportData);
+                    _importData.Append(rightAssignmentResult.ImportData);
                     _buffer.Append($"{leftAssignmentResult.Result} = {rightAssignmentResult.Result}");
                     break;
                 }
@@ -205,15 +205,8 @@ namespace PythonExamplesPorterApp.Converter
 
         public override void VisitElementAccessExpression(ElementAccessExpressionSyntax node)
         {
-            CheckResult argumentsCheckResult = node.ArgumentList.Arguments.CheckForElementAccess(_model);
-            if (!argumentsCheckResult.Result)
-                throw new UnsupportedSyntaxException(argumentsCheckResult.Reason);
-            ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData);
-            ConvertResult targetResult = expressionConverter.Convert(node.Expression);
-            AppendImportData(targetResult.ImportData);
-            ConvertResult argumentsAccessResult = expressionConverter.Convert(node.ArgumentList.Arguments[0].Expression);
-            AppendImportData(argumentsAccessResult.ImportData);
-            _buffer.Append($"{targetResult.Result}[{argumentsAccessResult.Result}]");
+            ElementAccessExpressionConverter converter = new ElementAccessExpressionConverter(_model, _appData);
+            AppendResult(converter.Convert(node));
         }
 
         private void VisitMemberAccessExpressionImpl(MemberAccessExpressionSyntax node, ArgumentListSyntax? argumentList)
@@ -230,7 +223,7 @@ namespace PythonExamplesPorterApp.Converter
                 throw new UnsupportedSyntaxException(resolveResult.Reason);
             MethodCallResolveData methodCallData = resolveResult.Data!;
             _buffer.Append(methodCallData.Call);
-            AppendImportData(methodCallData.ModuleName, "");
+            _importData.Append(methodCallData.ModuleName, "");
         }
 
         private String[] ConvertArgumentList(ExpressionConverter expressionConverter, IReadOnlyList<ArgumentSyntax> arguments)
@@ -244,37 +237,88 @@ namespace PythonExamplesPorterApp.Converter
         private String ConvertExpression(ExpressionConverter expressionConverter, ExpressionSyntax expression)
         {
             ConvertResult result = expressionConverter.Convert(expression);
-            AppendImportData(result.ImportData);
+            _importData.Append(result.ImportData);
             return result.Result;
-        }
-
-        private void AppendImportData(IDictionary<String, String> importData)
-        {
-            foreach (KeyValuePair<String, String> importEntry in importData)
-            {
-                if (!_importData.ContainsKey(importEntry.Key))
-                    _importData.Add(importEntry);
-            }
-        }
-
-        private void AppendImportData(String moduleName, String aliasName)
-        {
-            if (String.IsNullOrEmpty(moduleName))
-                return;
-            if (!_importData.ContainsKey(moduleName))
-                _importData.Add(moduleName, aliasName);
         }
 
         private void ProcessTypeResolveData(TypeResolveData resolveData)
         {
-            AppendImportData(resolveData.ModuleName, "");
+            _importData.Append(resolveData.ModuleName, "");
             _buffer.Append($"{resolveData.ModuleName}.{resolveData.TypeName}");
+        }
+
+        private void AppendResult(ConvertResult result)
+        {
+            _buffer.Append(result.Result);
+            _importData.Append(result.ImportData);
         }
 
         private readonly SemanticModel _model;
         private readonly AppData _appData;
         private readonly ExternalEntityResolver _externalEntityResolver;
         private readonly StringBuilder _buffer;
-        private readonly IDictionary<String, String> _importData;
+        private readonly ImportData _importData;
+    }
+
+    internal class ImportData
+    {
+        public IDictionary<String, String> Data { get; private set; } = new Dictionary<String, String>();
+
+        public void Append(ImportData data)
+        {
+            Append(data.Data);
+        }
+
+        public void Append(IDictionary<String, String> data)
+        {
+            foreach (KeyValuePair<String, String> entry in data)
+                Append(entry.Key, entry.Value);
+        }
+
+        public void Append(String moduleName, String aliasName)
+        {
+            if (String.IsNullOrEmpty(moduleName))
+                return;
+            if (!Data.ContainsKey(moduleName))
+                Data.Add(moduleName, aliasName);
+        }
+    }
+
+    internal class ElementAccessExpressionConverter
+    {
+        public ElementAccessExpressionConverter(SemanticModel model, AppData appData)
+        {
+            _model = model;
+            _appData = appData;
+        }
+
+        public ConvertResult Convert(ElementAccessExpressionSyntax expression)
+        {
+            IReadOnlyList<ArgumentSyntax> arguments = expression.ArgumentList.Arguments;
+            if (arguments.Count != 1)
+                throw new UnsupportedSyntaxException($"Unsupported count of arguments for ElementAccessExpression: {arguments.Count} arguments");
+            ImportData importData = new ImportData();
+            ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData);
+            ConvertResult targetResult = expressionConverter.Convert(expression.Expression);
+            importData.Append(targetResult.ImportData);
+            switch (arguments[0].Expression)
+            {
+                case LiteralExpressionSyntax literalExpression when literalExpression.Kind() == SyntaxKind.NumericLiteralExpression:
+                    Int32 value = (Int32)literalExpression.Token.Value!;
+                    return new ConvertResult($"{targetResult.Result}[{value}]", importData);
+                case LiteralExpressionSyntax literalExpression when literalExpression.Kind() == SyntaxKind.StringLiteralExpression:
+                    return ProcessStringArgSpecialCase(expression, literalExpression.Token.Text);
+                default:
+                    throw new UnsupportedSyntaxException($"Unsupported kind ({arguments[0].Expression.Kind()}) of ElementAccessExpression argument in expression: \"{expression}\"");
+            }
+        }
+
+        private ConvertResult ProcessStringArgSpecialCase(ElementAccessExpressionSyntax expression, String arg)
+        {
+            throw new UnsupportedSyntaxException($"Unsupported type of ElementAccessExpression argument - System.String in expression: \"{expression}\"");
+        }
+
+        private readonly SemanticModel _model;
+        private readonly AppData _appData;
     }
 }

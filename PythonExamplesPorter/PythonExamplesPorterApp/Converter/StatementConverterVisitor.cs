@@ -235,7 +235,7 @@ namespace PythonExamplesPorterApp.Converter
         {
             ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData);
             ConvertResult result = expressionConverter.Convert(expression);
-            foreach (KeyValuePair<String, String> entry in result.ImportData)
+            foreach (KeyValuePair<String, String> entry in result.ImportData.Data)
             {
                 if (String.IsNullOrEmpty(entry.Value))
                     _currentMethod.ImportStorage.AddImport(entry.Key);

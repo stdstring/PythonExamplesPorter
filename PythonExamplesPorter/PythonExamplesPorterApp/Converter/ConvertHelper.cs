@@ -1,10 +1,9 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
+﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis;
 
 namespace PythonExamplesPorterApp.Converter
 {
-    internal static class SyntaxHelper
+    internal static class ConvertHelper
     {
         public static Boolean ContainAttribute(this IReadOnlyList<AttributeListSyntax> attributes, SemanticModel model, String expectedFullName)
         {
@@ -36,6 +35,12 @@ namespace PythonExamplesPorterApp.Converter
             if (argumentList == null)
                 return Array.Empty<ArgumentSyntax>();
             return argumentList.Arguments;
+        }
+
+        public static String GetTypeFullName(this ITypeSymbol type)
+        {
+            // TODO (std_string) : think about using SymbolDisplayFormat
+            return $"{type.ContainingNamespace.ToDisplayString()}.{type.Name}";
         }
     }
 }

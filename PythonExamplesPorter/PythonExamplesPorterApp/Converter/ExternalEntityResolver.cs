@@ -86,16 +86,17 @@ namespace PythonExamplesPorterApp.Converter
 
         private OperationResult<SourceType> ExtractMethodTargetType(ExpressionSyntax target, ISymbol? targetSymbol)
         {
+            // TODO (std_string) : think about formatting
             return targetSymbol switch
             {
-                null => new OperationResult<SourceType>(false, $"Unrecognizable method target type for \"{target}\""),
+                null => new OperationResult<SourceType>(false, $"Unrecognizable method target type for expression: \"{target}\""),
                 ILocalSymbol localSymbol => ExtractMethodTargetType(target, localSymbol.Type),
                 INamedTypeSymbol typeSymbol => new OperationResult<SourceType>(true, "", new SourceType(typeSymbol)),
-                IPropertySymbol propertySymbol => new OperationResult<SourceType>(true, "", new SourceType(propertySymbol.ContainingType)),
-                IMethodSymbol { ReturnsVoid: true } => new OperationResult<SourceType>(false, $"Bad method target type for \"{target}\""),
+                IPropertySymbol propertySymbol => new OperationResult<SourceType>(true, "", new SourceType(propertySymbol.Type)),
+                IMethodSymbol { ReturnsVoid: true } => new OperationResult<SourceType>(false, $"Unexpected method target type - void for expression: \"{target}\""),
                 IMethodSymbol methodSymbol => ExtractMethodTargetType(target, methodSymbol.ReturnType),
-                IArrayTypeSymbol arrayType => ExtractMethodTargetType(target, arrayType.ElementType),
-                _ => new OperationResult<SourceType>(false, $"Unsupported method target type for \"{target}\"")
+                IArrayTypeSymbol arrayType => new OperationResult<SourceType>(false, $"Unsupported method target type - {arrayType.ElementType.GetTypeFullName()}[] for expression: \"{target}\""),
+                _ => new OperationResult<SourceType>(false, $"Unsupported method target type for expression: \"{target}\"")
             };
         }
 
