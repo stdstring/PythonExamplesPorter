@@ -4,6 +4,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using PythonExamplesPorterApp.Checker;
 using PythonExamplesPorterApp.Common;
 using PythonExamplesPorterApp.DestStorage;
+using PythonExamplesPorterApp.Expressions;
 using PythonExamplesPorterApp.Utils;
 
 namespace PythonExamplesPorterApp.Converter

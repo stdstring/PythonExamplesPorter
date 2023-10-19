@@ -5,10 +5,34 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using PythonExamplesPorterApp.Checker;
 using PythonExamplesPorterApp.Common;
-using PythonExamplesPorterApp.Utils;
+using PythonExamplesPorterApp.Converter;
 
-namespace PythonExamplesPorterApp.Converter
+namespace PythonExamplesPorterApp.Expressions
 {
+    internal class ImportData
+    {
+        public IDictionary<String, String> Data { get; } = new Dictionary<String, String>();
+
+        public void Append(ImportData data)
+        {
+            Append(data.Data);
+        }
+
+        public void Append(IDictionary<String, String> data)
+        {
+            foreach (KeyValuePair<String, String> entry in data)
+                Append(entry.Key, entry.Value);
+        }
+
+        public void Append(String moduleName, String aliasName)
+        {
+            if (String.IsNullOrEmpty(moduleName))
+                return;
+            if (!Data.ContainsKey(moduleName))
+                Data.Add(moduleName, aliasName);
+        }
+    }
+
     internal record ConvertResult(String Result, ImportData ImportData);
 
     internal class ExpressionConverter
@@ -293,121 +317,5 @@ namespace PythonExamplesPorterApp.Converter
         private readonly ExternalEntityResolver _externalEntityResolver;
         private readonly StringBuilder _buffer;
         private readonly ImportData _importData;
-    }
-
-    internal class ImportData
-    {
-        public IDictionary<String, String> Data { get; private set; } = new Dictionary<String, String>();
-
-        public void Append(ImportData data)
-        {
-            Append(data.Data);
-        }
-
-        public void Append(IDictionary<String, String> data)
-        {
-            foreach (KeyValuePair<String, String> entry in data)
-                Append(entry.Key, entry.Value);
-        }
-
-        public void Append(String moduleName, String aliasName)
-        {
-            if (String.IsNullOrEmpty(moduleName))
-                return;
-            if (!Data.ContainsKey(moduleName))
-                Data.Add(moduleName, aliasName);
-        }
-    }
-
-    internal class ElementAccessExpressionConverter
-    {
-        public ElementAccessExpressionConverter(SemanticModel model, AppData appData)
-        {
-            _model = model;
-            _appData = appData;
-        }
-
-        public ConvertResult Convert(ElementAccessExpressionSyntax expression)
-        {
-            IReadOnlyList<ArgumentSyntax> arguments = expression.ArgumentList.Arguments;
-            if (arguments.Count != 1)
-                throw new UnsupportedSyntaxException($"Unsupported count of arguments for ElementAccessExpression: {arguments.Count} arguments");
-            ImportData importData = new ImportData();
-            ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData);
-            ConvertResult targetResult = expressionConverter.Convert(expression.Expression);
-            importData.Append(targetResult.ImportData);
-            switch (arguments[0].Expression)
-            {
-                case LiteralExpressionSyntax literalExpression when literalExpression.Kind() == SyntaxKind.NumericLiteralExpression:
-                    Int32 value = (Int32)literalExpression.Token.Value!;
-                    return new ConvertResult($"{targetResult.Result}[{value}]", importData);
-                case LiteralExpressionSyntax literalExpression when literalExpression.Kind() == SyntaxKind.StringLiteralExpression:
-                    return ProcessStringArgSpecialCase(expression, literalExpression.Token.Text);
-                default:
-                    throw new UnsupportedSyntaxException($"Unsupported kind ({arguments[0].Expression.Kind()}) of ElementAccessExpression argument in expression: \"{expression}\"");
-            }
-        }
-
-        private ConvertResult ProcessStringArgSpecialCase(ElementAccessExpressionSyntax expression, String arg)
-        {
-            throw new UnsupportedSyntaxException($"Unsupported type of ElementAccessExpression argument - System.String in expression: \"{expression}\"");
-        }
-
-        private readonly SemanticModel _model;
-        private readonly AppData _appData;
-    }
-
-    internal class ArrayCreationConverter
-    {
-        public ArrayCreationConverter(SemanticModel model, AppData appData)
-        {
-            _model = model;
-            _appData = appData;
-        }
-
-        public ConvertResult Convert(ArrayCreationExpressionSyntax expression)
-        {
-            switch (expression.Initializer)
-            {
-                case null:
-                    return ConvertArrayCreationWithSize(expression);
-                case var initializer:
-                    return Convert(initializer);
-            }
-        }
-
-        public ConvertResult Convert(ImplicitArrayCreationExpressionSyntax expression)
-        {
-            return Convert(expression.Initializer);
-        }
-
-        public ConvertResult Convert(InitializerExpressionSyntax expression)
-        {
-            if (expression.Kind() != SyntaxKind.ArrayInitializerExpression)
-                throw new UnsupportedSyntaxException($"Bad usage of ArrayCreationConverter for expression: \"{expression}\"");
-            ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData);
-            ConvertResult[] convertResults = expression.Expressions.Select(expressionConverter.Convert).ToArray();
-            ImportData importData = new ImportData();
-            convertResults.Foreach(result => importData.Append(result.ImportData));
-            String[] initExpressions = convertResults.Select(result => result.Result).ToArray();
-            return new ConvertResult($"[{String.Join(", ", initExpressions)}]", importData);
-        }
-
-        private ConvertResult ConvertArrayCreationWithSize(ArrayCreationExpressionSyntax expression)
-        {
-            ImportData importData = new ImportData();
-            switch (expression.Type.RankSpecifiers)
-            {
-                case [{Sizes: [LiteralExpressionSyntax {Token.Value: 0}]}]:
-                    return new ConvertResult("[]", importData);
-                case [{Sizes: [LiteralExpressionSyntax {Token.Value: Int32 value}]}]:
-                    return new ConvertResult($"[None for i in range(0, {value})]", importData);
-                default:
-                    throw new UnsupportedSyntaxException($"Unsupported ranks in ArrayCreationExpression expression: \"{expression}\"");
-            }
-        }
-
-        private readonly SemanticModel _model;
-        private readonly AppData _appData;
     }
 }

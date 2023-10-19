@@ -3,8 +3,9 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using PythonExamplesPorterApp.Common;
 using PythonExamplesPorterApp.Config;
+using PythonExamplesPorterApp.Converter;
 
-namespace PythonExamplesPorterApp.Converter
+namespace PythonExamplesPorterApp.Expressions
 {
     internal record TypeResolveData(String TypeName, String ModuleName);
 

@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis;
 
 namespace PythonExamplesPorterApp.Converter
 {
+    // TODO (std_string) : think about place
     internal static class ConvertHelper
     {
         public static Boolean ContainAttribute(this IReadOnlyList<AttributeListSyntax> attributes, SemanticModel model, String expectedFullName)
