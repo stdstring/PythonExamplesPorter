@@ -245,9 +245,9 @@ namespace PythonExamplesPorterApp.Expressions
         {
             return ExtractExpressionTypeSymbol(target) switch
             {
-                { Success: false, Reason: var reason } => new OperationResult<ITypeSymbol>(false, reason),
-                { Success: true, Data: IArrayTypeSymbol type } => new OperationResult<ITypeSymbol>(false, $"Unsupported member target type - {type.ElementType.GetTypeFullName()}[] for expression: \"{target}\""),
-                { Success: true, Data: var type } => new OperationResult<ITypeSymbol>(true, "", type)
+                {Success: false, Reason: var reason} => new OperationResult<ITypeSymbol>(false, reason),
+                {Success: true, Data: IArrayTypeSymbol type} => new OperationResult<ITypeSymbol>(false, $"Unsupported member target type - {type.ElementType.GetTypeFullName()}[] for expression: \"{target}\""),
+                {Success: true, Data: var type} => new OperationResult<ITypeSymbol>(true, "", type)
             };
         }
 
@@ -270,9 +270,10 @@ namespace PythonExamplesPorterApp.Expressions
                 null => new OperationResult<ITypeSymbol>(false, $"Unrecognizable type of expression: \"{expression}\""),
                 ILocalSymbol localSymbol => new OperationResult<ITypeSymbol>(true, "", localSymbol.Type),
                 IPropertySymbol propertySymbol => new OperationResult<ITypeSymbol>(true, "", propertySymbol.Type),
-                IMethodSymbol { ReturnsVoid: true } => new OperationResult<ITypeSymbol>(false, $"Unsupported type (void) of expression: \"{expression}\""),
+                IMethodSymbol {MethodKind: MethodKind.Constructor} methodSymbol => new OperationResult<ITypeSymbol>(true, "", methodSymbol.ContainingType),
+                IMethodSymbol {ReturnsVoid: true} => new OperationResult<ITypeSymbol>(false, $"Unsupported type (void) of expression: \"{expression}\""),
                 IMethodSymbol methodSymbol => new OperationResult<ITypeSymbol>(true, "", methodSymbol.ReturnType),
-                IArrayTypeSymbol arrayType => new OperationResult<ITypeSymbol>(true, "", arrayType),
+                IArrayTypeSymbol arrayTypeSymbol => new OperationResult<ITypeSymbol>(true, "", arrayTypeSymbol),
                 ITypeSymbol typeSymbol => new OperationResult<ITypeSymbol>(true, "", typeSymbol),
                 _ => new OperationResult<ITypeSymbol>(false, $"Unsupported type of expression: \"{expression}\"")
             };
