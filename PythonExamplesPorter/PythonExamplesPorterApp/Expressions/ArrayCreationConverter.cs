@@ -38,7 +38,7 @@ namespace PythonExamplesPorterApp.Expressions
             ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData);
             ConvertResult[] convertResults = expression.Expressions.Select(expressionConverter.Convert).ToArray();
             ImportData importData = new ImportData();
-            convertResults.Foreach(result => importData.Append((ImportData)result.ImportData));
+            convertResults.Foreach(result => importData.Append(result.ImportData));
             String[] initExpressions = convertResults.Select(result => result.Result).ToArray();
             return new ConvertResult($"[{String.Join(", ", initExpressions)}]", importData);
         }

@@ -9,11 +9,13 @@ namespace PythonExamplesPorterApp.Expressions
 {
     internal record TypeResolveData(String TypeName, String ModuleName);
 
-    internal record MethodData(ExpressionSyntax Target, SimpleNameSyntax Name, IReadOnlyList<ArgumentSyntax> Arguments);
+    internal record MemberData(ExpressionSyntax Target, SimpleNameSyntax Name, IReadOnlyList<ArgumentSyntax> Arguments);
 
-    internal record MethodRepresentation(String Target, String[] Arguments);
+    internal record MemberRepresentation(String Target, String[] Arguments);
 
-    internal record MethodCallResolveData(String Call, String ModuleName);
+    internal record MemberResolveData(String Member, String ModuleName);
+
+    internal record CastResolveData(String Cast, String ModuleName);
 
     // TODO (std_string) : we must implement this functionality via Strategy pattern
     internal class ExternalEntityResolver
@@ -56,79 +58,80 @@ namespace PythonExamplesPorterApp.Expressions
             return new OperationResult<TypeResolveData>(true, "", new TypeResolveData(destTypeName, destModuleName));
         }
 
-        public OperationResult<MethodCallResolveData> ResolveMethodCall(MethodData data, MethodRepresentation representation)
+        public OperationResult<MemberResolveData> ResolveMember(MemberData data, MemberRepresentation representation)
         {
-            OperationResult<SourceType> targetTypeResult = ExtractMethodTargetType(data.Target);
+            OperationResult<ITypeSymbol> targetTypeResult = ExtractExpressionType(data.Target);
             if (!targetTypeResult.Success)
-                return new OperationResult<MethodCallResolveData>(false, targetTypeResult.Reason);
-            SourceType sourceType = targetTypeResult.Data!;
-            IList<ResolveMethodCallHandler> handlers = new List<ResolveMethodCallHandler>
+                return new OperationResult<MemberResolveData>(false, targetTypeResult.Reason);
+            ITypeSymbol sourceType = targetTypeResult.Data!;
+            IList<ResolveMemberHandler> handlers = new List<ResolveMemberHandler>
             {
-                ResolveMethodCallForKnownNamespace,
-                ResolveMethodCallForNUnit,
-                ResolveMethodCallForSystem
+                ResolveMemberForKnownNamespace,
+                ResolveMemberForNUnit,
+                ResolveMemberCallForSystem
             };
-            foreach (ResolveMethodCallHandler handler in handlers)
+            foreach (ResolveMemberHandler handler in handlers)
             {
-                OperationResult<MethodCallResolveData> result = handler(data, sourceType, representation);
+                OperationResult<MemberResolveData> result = handler(data, sourceType, representation);
                 if (result.Success)
                     return result;
             }
-            return new OperationResult<MethodCallResolveData>(false, $"Unsupported target type \"{sourceType.FullName}\"");
+            return new OperationResult<MemberResolveData>(false, $"Unsupported target type \"{sourceType.GetTypeFullName()}\"");
         }
 
-        private delegate OperationResult<MethodCallResolveData> ResolveMethodCallHandler(MethodData data, SourceType sourceType, MethodRepresentation representation);
-
-        private OperationResult<SourceType> ExtractMethodTargetType(ExpressionSyntax target)
+        public OperationResult<CastResolveData> ResolveCast(TypeSyntax castType, ExpressionSyntax sourceExpression, String sourceRepresentation)
         {
-            SymbolInfo symbolInfo = _model.GetSymbolInfo(target);
-            return ExtractMethodTargetType(target, symbolInfo.Symbol);
-        }
-
-        private OperationResult<SourceType> ExtractMethodTargetType(ExpressionSyntax target, ISymbol? targetSymbol)
-        {
-            // TODO (std_string) : think about formatting
-            return targetSymbol switch
+            OperationResult<ITypeSymbol> targetTypeResult = ExtractExpressionType(castType);
+            if (!targetTypeResult.Success)
+                return new OperationResult<CastResolveData>(false, targetTypeResult.Reason);
+            ITypeSymbol castTypeSymbol = targetTypeResult.Data!;
+            IList<ResolveCastHandler> handlers = new List<ResolveCastHandler>
             {
-                null => new OperationResult<SourceType>(false, $"Unrecognizable method target type for expression: \"{target}\""),
-                ILocalSymbol localSymbol => ExtractMethodTargetType(target, localSymbol.Type),
-                INamedTypeSymbol typeSymbol => new OperationResult<SourceType>(true, "", new SourceType(typeSymbol)),
-                IPropertySymbol propertySymbol => new OperationResult<SourceType>(true, "", new SourceType(propertySymbol.Type)),
-                IMethodSymbol { ReturnsVoid: true } => new OperationResult<SourceType>(false, $"Unexpected method target type - void for expression: \"{target}\""),
-                IMethodSymbol methodSymbol => ExtractMethodTargetType(target, methodSymbol.ReturnType),
-                IArrayTypeSymbol arrayType => new OperationResult<SourceType>(false, $"Unsupported method target type - {arrayType.ElementType.GetTypeFullName()}[] for expression: \"{target}\""),
-                _ => new OperationResult<SourceType>(false, $"Unsupported method target type for expression: \"{target}\"")
+                ResolveCastForKnownNamespace,
+                ResolveCastForSystem
             };
+            foreach (ResolveCastHandler handler in handlers)
+            {
+                OperationResult<CastResolveData> result = handler(castTypeSymbol, sourceExpression, sourceRepresentation);
+                if (result.Success)
+                    return result;
+            }
+            return new OperationResult<CastResolveData>(false, $"Unsupported cast to type \"{castType}\"");
         }
 
-        private OperationResult<MethodCallResolveData> ResolveMethodCallForKnownNamespace(MethodData data, SourceType sourceType, MethodRepresentation representation)
+        private delegate OperationResult<MemberResolveData> ResolveMemberHandler(MemberData data, ITypeSymbol sourceType, MemberRepresentation representation);
+
+        private delegate OperationResult<CastResolveData> ResolveCastHandler(ITypeSymbol castTypeSymbol, ExpressionSyntax sourceExpression, String sourceRepresentation);
+
+        private OperationResult<MemberResolveData> ResolveMemberForKnownNamespace(MemberData data, ITypeSymbol sourceType, MemberRepresentation representation)
         {
+            String sourceTypeFullName = sourceType.GetTypeFullName();
             // TODO (std_string) : think about check containing assemblies
             String[] knownNamespaces = _appData.AppConfig.GetSourceDetails().KnownNamespaces ?? Array.Empty<String>();
-            Boolean isSupportedType = knownNamespaces.Any(sourceType.NamespaceName.StartsWith);
+            Boolean isSupportedType = knownNamespaces.Any(sourceTypeFullName.StartsWith);
             if (!isSupportedType)
-                return new OperationResult<MethodCallResolveData>(false, $"Unsupported type: {sourceType.FullName}");
+                return new OperationResult<MemberResolveData>(false, $"Unsupported type: {sourceTypeFullName}");
             SimpleNameSyntax name = data.Name;
             SymbolInfo nameInfo = ModelExtensions.GetSymbolInfo(_model, name);
             switch (nameInfo.Symbol)
             {
                 case null:
-                    return new OperationResult<MethodCallResolveData>(false, $"Unrecognizable method \"{name.Identifier}\" for type \"{sourceType.FullName}\"");
+                    return new OperationResult<MemberResolveData>(false, $"Unrecognizable member \"{name.Identifier}\" for type \"{sourceTypeFullName}\"");
                 // TODO (std_string) : think about separation between methods, properties and fields
                 case IMethodSymbol methodSymbol:
                 {
                     String methodName = NameTransformer.TransformMethodName(methodSymbol.Name);
                     String args = String.Join(", ", representation.Arguments);
                     String methodCall = String.Concat(representation.Target, ".", methodName, "(", args, ")");
-                    MethodCallResolveData resolveData = new MethodCallResolveData(methodCall, "");
-                    return new OperationResult<MethodCallResolveData>(true, "", resolveData);
+                    MemberResolveData resolveData = new MemberResolveData(methodCall, "");
+                    return new OperationResult<MemberResolveData>(true, "", resolveData);
                 }
                 case IPropertySymbol propertySymbol:
                 {
-                    String propertyName = NameTransformer.TransformMethodName(propertySymbol.Name);
+                    String propertyName = NameTransformer.TransformPropertyName(propertySymbol.Name);
                     String propertyCall = $"{representation.Target}.{propertyName}";
-                    MethodCallResolveData resolveData = new MethodCallResolveData(propertyCall, "");
-                    return new OperationResult<MethodCallResolveData>(true, "", resolveData);
+                    MemberResolveData resolveData = new MemberResolveData(propertyCall, "");
+                    return new OperationResult<MemberResolveData>(true, "", resolveData);
                 }
                 case IFieldSymbol fieldSymbol:
                 {
@@ -138,30 +141,30 @@ namespace PythonExamplesPorterApp.Expressions
                         _ => NameTransformer.TransformFieldName(fieldSymbol.Name)
                     };
                     String fieldCall = $"{representation.Target}.{fieldName}";
-                    MethodCallResolveData resolveData = new MethodCallResolveData(fieldCall, "");
-                    return new OperationResult<MethodCallResolveData>(true, "", resolveData);
+                    MemberResolveData resolveData = new MemberResolveData(fieldCall, "");
+                    return new OperationResult<MemberResolveData>(true, "", resolveData);
                 }
                 default:
-                    return new OperationResult<MethodCallResolveData>(false, $"Unsupported method \"{name.Identifier}\" for type \"{sourceType.FullName}\"");
+                    return new OperationResult<MemberResolveData>(false, $"Unsupported member \"{name.Identifier}\" for type \"{sourceTypeFullName}\"");
             }
         }
 
-        private OperationResult<MethodCallResolveData> ResolveMethodCallForNUnit(MethodData data, SourceType sourceType, MethodRepresentation representation)
+        private OperationResult<MemberResolveData> ResolveMemberForNUnit(MemberData data, ITypeSymbol sourceType, MemberRepresentation representation)
         {
-            OperationResult<MethodCallResolveData> GenerateAssertEqual(String arg0, String arg1, String? message = null)
+            OperationResult<MemberResolveData> GenerateAssertEqual(String arg0, String arg1, String? message = null)
             {
                 String messagePart = message == null ? "" : $", msg={message}";
                 String methodCall = $"self.assertEqual({arg0}, {arg1}{messagePart})";
-                MethodCallResolveData resolveData = new MethodCallResolveData(methodCall, "unittest");
-                return new OperationResult<MethodCallResolveData>(true, "", resolveData);
+                MemberResolveData resolveData = new MemberResolveData(methodCall, "unittest");
+                return new OperationResult<MemberResolveData>(true, "", resolveData);
             }
-            OperationResult<MethodCallResolveData> GenerateAssertAlmostEqual(String arg0, String arg1, String delta)
+            OperationResult<MemberResolveData> GenerateAssertAlmostEqual(String arg0, String arg1, String delta)
             {
                 String methodCall = $"self.assertAlmostEqual({arg0}, {arg1}, delta={delta})";
-                MethodCallResolveData resolveData = new MethodCallResolveData(methodCall, "unittest");
-                return new OperationResult<MethodCallResolveData>(true, "", resolveData);
+                MemberResolveData resolveData = new MemberResolveData(methodCall, "unittest");
+                return new OperationResult<MemberResolveData>(true, "", resolveData);
             }
-            OperationResult<MethodCallResolveData> ResolveAssertEqual()
+            OperationResult<MemberResolveData> ResolveAssertEqual()
             {
                 switch (data.Arguments.Count)
                 {
@@ -181,7 +184,7 @@ namespace PythonExamplesPorterApp.Expressions
                                 switch (identifierInfo.Symbol)
                                 {
                                     case null:
-                                        return new OperationResult<MethodCallResolveData>(false, $"Unrecognizable third argument in Assert.AreEqual: {identifier.Identifier}");
+                                        return new OperationResult<MemberResolveData>(false, $"Unrecognizable third argument in Assert.AreEqual: {identifier.Identifier}");
                                     case ILocalSymbol localSymbol when localSymbol.Type.GetTypeFullName() == "System.String":
                                         return GenerateAssertEqual(representation.Arguments[0], representation.Arguments[1], identifierInfo.Symbol.Name);
                                     case ILocalSymbol localSymbol when localSymbol.Type.GetTypeFullName() == "System.Single":
@@ -189,32 +192,90 @@ namespace PythonExamplesPorterApp.Expressions
                                     case ILocalSymbol localSymbol when localSymbol.Type.GetTypeFullName() == "System.Double":
                                         return GenerateAssertAlmostEqual(representation.Arguments[0], representation.Arguments[1], identifierInfo.Symbol.Name);
                                     }
-                                return new OperationResult<MethodCallResolveData>(false, $"Unsupported third argument in Assert.AreEqual: {identifier.Identifier}");
+                                return new OperationResult<MemberResolveData>(false, $"Unsupported third argument in Assert.AreEqual: {identifier.Identifier}");
                             }
-                        return new OperationResult<MethodCallResolveData>(false, $"Unsupported third argument kind in Assert.AreEqual: {lastArgument.Kind()}");
+                        return new OperationResult<MemberResolveData>(false, $"Unsupported third argument kind in Assert.AreEqual: {lastArgument.Kind()}");
                     }
                     default:
-                        return new OperationResult<MethodCallResolveData>(false, $"Unsupported arguments count in Assert.AreEqual: {data.Arguments.Count}");
+                        return new OperationResult<MemberResolveData>(false, $"Unsupported arguments count in Assert.AreEqual: {data.Arguments.Count}");
                 }
             }
-            if (!sourceType.FullName.Equals("NUnit.Framework.Assert"))
-                return new OperationResult<MethodCallResolveData>(false, $"Unsupported type \"{sourceType.FullName}\"");
+            String sourceTypeFullName = sourceType.GetTypeFullName();
+            if (!sourceTypeFullName.Equals("NUnit.Framework.Assert"))
+                return new OperationResult<MemberResolveData>(false, $"Unsupported type \"{sourceTypeFullName}\"");
             SimpleNameSyntax name = data.Name;
             SymbolInfo nameInfo = ModelExtensions.GetSymbolInfo(_model, name);
             switch (nameInfo.Symbol)
             {
                 case null:
-                    return new OperationResult<MethodCallResolveData>(false, $"Unrecognizable method \"{name.Identifier}\" for type \"{sourceType.FullName}\"");
+                    return new OperationResult<MemberResolveData>(false, $"Unrecognizable member \"{name.Identifier}\" for type \"{sourceTypeFullName}\"");
                 case IMethodSymbol{Name: "AreEqual"}:
                     return ResolveAssertEqual();
                 default:
-                    return new OperationResult<MethodCallResolveData>(false, $"Unsupported method \"{name.Identifier}\" for type \"{sourceType.FullName}\"");
+                    return new OperationResult<MemberResolveData>(false, $"Unsupported member \"{name.Identifier}\" for type \"{sourceTypeFullName}\"");
             }
         }
 
-        private OperationResult<MethodCallResolveData> ResolveMethodCallForSystem(MethodData data, SourceType sourceType, MethodRepresentation representation)
+        private OperationResult<MemberResolveData> ResolveMemberCallForSystem(MemberData data, ITypeSymbol sourceType, MemberRepresentation representation)
         {
-            return new OperationResult<MethodCallResolveData>(false, $"ResolveMethodCallForSystem: Not Implemented");
+            return new OperationResult<MemberResolveData>(false, $"ResolveMemberCallForSystem: Not Implemented");
+        }
+
+        public OperationResult<CastResolveData> ResolveCastForKnownNamespace(ITypeSymbol castTypeSymbol, ExpressionSyntax sourceExpression, String sourceRepresentation)
+        {
+            String sourceTypeFullName = castTypeSymbol.GetTypeFullName();
+            // TODO (std_string) : think about check containing assemblies
+            String[] knownNamespaces = _appData.AppConfig.GetSourceDetails().KnownNamespaces ?? Array.Empty<String>();
+            Boolean isSupportedType = knownNamespaces.Any(sourceTypeFullName.StartsWith);
+            if (!isSupportedType)
+                return new OperationResult<CastResolveData>(false, $"Unsupported type: {sourceTypeFullName}");
+            // TODO (std_string) : think about check existing corresponding cast method in sourceExpression
+            String castMethod = NameTransformer.TransformMethodName($"As{castTypeSymbol.Name}");
+            CastResolveData castResolveData = new CastResolveData($"{sourceRepresentation}.{castMethod}()", "");
+            return new OperationResult<CastResolveData>(true, String.Empty, castResolveData);
+        }
+
+        public OperationResult<CastResolveData> ResolveCastForSystem(ITypeSymbol castTypeSymbol, ExpressionSyntax sourceExpression, String sourceRepresentation)
+        {
+            throw new NotImplementedException();
+        }
+
+        // TODO (std_string) : think about separation for members, cast etc
+        private OperationResult<ITypeSymbol> ExtractExpressionType(ExpressionSyntax target)
+        {
+            return ExtractExpressionTypeSymbol(target) switch
+            {
+                { Success: false, Reason: var reason } => new OperationResult<ITypeSymbol>(false, reason),
+                { Success: true, Data: IArrayTypeSymbol type } => new OperationResult<ITypeSymbol>(false, $"Unsupported member target type - {type.ElementType.GetTypeFullName()}[] for expression: \"{target}\""),
+                { Success: true, Data: var type } => new OperationResult<ITypeSymbol>(true, "", type)
+            };
+        }
+
+        // TODO (std_string) : think about place
+        private OperationResult<ITypeSymbol> ExtractExpressionTypeSymbol(ExpressionSyntax expression)
+        {
+            ExpressionSyntax GetTargetExpression(ExpressionSyntax sourceExpression)
+            {
+                return sourceExpression switch
+                {
+                    ParenthesizedExpressionSyntax parenthesizedExpression => GetTargetExpression(parenthesizedExpression.Expression),
+                    CastExpressionSyntax castExpression => castExpression.Type,
+                    _ => sourceExpression
+                };
+            }
+            ExpressionSyntax targetExpression = GetTargetExpression(expression);
+            SymbolInfo symbolInfo = _model.GetSymbolInfo(targetExpression);
+            return symbolInfo.Symbol switch
+            {
+                null => new OperationResult<ITypeSymbol>(false, $"Unrecognizable type of expression: \"{expression}\""),
+                ILocalSymbol localSymbol => new OperationResult<ITypeSymbol>(true, "", localSymbol.Type),
+                IPropertySymbol propertySymbol => new OperationResult<ITypeSymbol>(true, "", propertySymbol.Type),
+                IMethodSymbol { ReturnsVoid: true } => new OperationResult<ITypeSymbol>(false, $"Unsupported type (void) of expression: \"{expression}\""),
+                IMethodSymbol methodSymbol => new OperationResult<ITypeSymbol>(true, "", methodSymbol.ReturnType),
+                IArrayTypeSymbol arrayType => new OperationResult<ITypeSymbol>(true, "", arrayType),
+                ITypeSymbol typeSymbol => new OperationResult<ITypeSymbol>(true, "", typeSymbol),
+                _ => new OperationResult<ITypeSymbol>(false, $"Unsupported type of expression: \"{expression}\"")
+            };
         }
 
         private readonly SemanticModel _model;

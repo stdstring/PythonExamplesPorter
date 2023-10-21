@@ -104,6 +104,12 @@ namespace PythonExamplesPorterApp.Expressions
                 case InitializerExpressionSyntax node:
                     VisitInitializerExpression(node);
                     break;
+                case CastExpressionSyntax node:
+                    VisitCastExpression(node);
+                    break;
+                case ParenthesizedExpressionSyntax node:
+                    VisitParenthesizedExpression(node);
+                    break;
                 default:
                     throw new UnsupportedSyntaxException($"Unsupported expression: {expression.Kind()}");
             }
@@ -166,10 +172,10 @@ namespace PythonExamplesPorterApp.Expressions
                     // TODO (std_string) : think about smart (not straightforward) solution
                     // TODO (std_string) : think about cases when property/method/etc in source type is absent in dest handmade type
                     String name = propertySymbol.Name;
-                    SourceType containedType = new SourceType(propertySymbol.ContainingType);
-                    if (!_appData.HandmadeManager.IsHandmadeType(containedType.FullName))
+                    String typeFullName = propertySymbol.ContainingType.GetTypeFullName();
+                    if (!_appData.HandmadeManager.IsHandmadeType(typeFullName))
                         throw new UnsupportedSyntaxException($"Unsupported identifier with name = \"{node.Identifier}\" and kind = \"{node.Kind()}\"");
-                    IDictionary<String, String> mapping = _appData.HandmadeManager.GetHandmadeTypeMapping(containedType.FullName);
+                    IDictionary<String, String> mapping = _appData.HandmadeManager.GetHandmadeTypeMapping(typeFullName);
                     if (mapping.ContainsKey(name))
                         name = mapping[name];
                     _buffer.Append(name);
@@ -268,6 +274,26 @@ namespace PythonExamplesPorterApp.Expressions
             }
         }
 
+        public override void VisitCastExpression(CastExpressionSyntax node)
+        {
+            ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData);
+            String sourceRepresentation = ConvertExpression(expressionConverter, node.Expression);
+            OperationResult<CastResolveData> resolveResult = _externalEntityResolver.ResolveCast(node.Type, node.Expression, sourceRepresentation);
+            if (!resolveResult.Success)
+                throw new UnsupportedSyntaxException(resolveResult.Reason);
+            CastResolveData castResolveData = resolveResult.Data!;
+            _buffer.Append(castResolveData.Cast);
+            _importData.Append(castResolveData.ModuleName, "");
+        }
+
+        public override void VisitParenthesizedExpression(ParenthesizedExpressionSyntax node)
+        {
+            ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData);
+            ConvertResult innerResult = expressionConverter.Convert(node.Expression);
+            _importData.Append(innerResult.ImportData);
+            _buffer.Append($"({innerResult.Result})");
+        }
+
         private void VisitMemberAccessExpressionImpl(MemberAccessExpressionSyntax node, ArgumentListSyntax? argumentList)
         {
             ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData);
@@ -275,14 +301,14 @@ namespace PythonExamplesPorterApp.Expressions
             ExpressionSyntax target = node.Expression;
             String targetDest = ConvertExpression(expressionConverter, target);
             SimpleNameSyntax name = node.Name;
-            MethodData methodData = new MethodData(target, name, argumentList.GetArguments());
-            MethodRepresentation methodRepresentation = new MethodRepresentation(targetDest, arguments);
-            OperationResult<MethodCallResolveData> resolveResult = _externalEntityResolver.ResolveMethodCall(methodData, methodRepresentation);
+            MemberData memberData = new MemberData(target, name, argumentList.GetArguments());
+            MemberRepresentation memberRepresentation = new MemberRepresentation(targetDest, arguments);
+            OperationResult<MemberResolveData> resolveResult = _externalEntityResolver.ResolveMember(memberData, memberRepresentation);
             if (!resolveResult.Success)
                 throw new UnsupportedSyntaxException(resolveResult.Reason);
-            MethodCallResolveData methodCallData = resolveResult.Data!;
-            _buffer.Append(methodCallData.Call);
-            _importData.Append(methodCallData.ModuleName, "");
+            MemberResolveData memberResolveData = resolveResult.Data!;
+            _buffer.Append(memberResolveData.Member);
+            _importData.Append(memberResolveData.ModuleName, "");
         }
 
         private String[] ConvertArgumentList(ExpressionConverter expressionConverter, IReadOnlyList<ArgumentSyntax> arguments)
