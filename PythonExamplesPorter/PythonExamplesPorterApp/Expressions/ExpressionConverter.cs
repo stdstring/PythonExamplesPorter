@@ -69,6 +69,8 @@ namespace PythonExamplesPorterApp.Expressions
 
         public void VisitExpression(ExpressionSyntax expression)
         {
+            if (ProcessPredefinedExpressions(expression))
+                return;
             switch (expression)
             {
                 case ObjectCreationExpressionSyntax node:
@@ -109,6 +111,9 @@ namespace PythonExamplesPorterApp.Expressions
                     break;
                 case ParenthesizedExpressionSyntax node:
                     VisitParenthesizedExpression(node);
+                    break;
+                case PredefinedTypeSyntax node:
+                    VisitPredefinedType(node);
                     break;
                 default:
                     throw new UnsupportedSyntaxException($"Unsupported expression: {expression.Kind()}");
@@ -294,6 +299,11 @@ namespace PythonExamplesPorterApp.Expressions
             _buffer.Append($"({innerResult.Result})");
         }
 
+        public override void VisitPredefinedType(PredefinedTypeSyntax node)
+        {
+            throw new UnsupportedSyntaxException($"Usage of predefined type \"{node.Keyword}\" is unsupported");
+        }
+
         private void VisitMemberAccessExpressionImpl(MemberAccessExpressionSyntax node, ArgumentListSyntax? argumentList)
         {
             ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData);
@@ -336,6 +346,29 @@ namespace PythonExamplesPorterApp.Expressions
         {
             _buffer.Append(result.Result);
             _importData.Append(result.ImportData);
+        }
+
+        // TODO (std_string) : think about location
+        private Boolean ProcessPredefinedExpressions(ExpressionSyntax expression)
+        {
+            String expressionRepresentation = expression.ToString();
+            switch (expressionRepresentation)
+            {
+                case "double.NaN":
+                    _buffer.Append("math.nan");
+                    _importData.Append("math", "");
+                    return true;
+                case "double.MaxValue":
+                    _buffer.Append("1.7976931348623157E+308");
+                    return true;
+                case "double.MinValue":
+                    _buffer.Append("-1.7976931348623157E+308");
+                    return true;
+                case "string.Empty":
+                    _buffer.Append("\"\"");
+                    return true;
+            }
+            return false;
         }
 
         private readonly SemanticModel _model;
