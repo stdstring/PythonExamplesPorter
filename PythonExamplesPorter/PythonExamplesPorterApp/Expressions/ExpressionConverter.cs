@@ -209,15 +209,78 @@ namespace PythonExamplesPorterApp.Expressions
         public override void VisitBinaryExpression(BinaryExpressionSyntax node)
         {
             // TODO (std_string) : add check ability of applying binary expression for given arguments
+            ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData);
+            ConvertResult leftOperandResult = expressionConverter.Convert(node.Left);
+            _importData.Append(leftOperandResult.ImportData);
+            ConvertResult rightOperandResult = expressionConverter.Convert(node.Right);
+            _importData.Append(rightOperandResult.ImportData);
             switch (node.Kind())
             {
                 case SyntaxKind.AddExpression:
-                    ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData);
-                    ConvertResult leftOperandResult = expressionConverter.Convert(node.Left);
-                    _importData.Append(leftOperandResult.ImportData);
-                    ConvertResult rightOperandResult = expressionConverter.Convert(node.Right);
-                    _importData.Append(rightOperandResult.ImportData);
                     _buffer.Append($"{leftOperandResult.Result} + {rightOperandResult.Result}");
+                    break;
+                case SyntaxKind.SubtractExpression:
+                    _buffer.Append($"{leftOperandResult.Result} - {rightOperandResult.Result}");
+                    break;
+                case SyntaxKind.MultiplyExpression:
+                    _buffer.Append($"{leftOperandResult.Result} * {rightOperandResult.Result}");
+                    break;
+                case SyntaxKind.DivideExpression:
+                    // TODO (std_string) : we must check type of arguments for choosing between float divide (/) and integer divide (//) operators
+                    _buffer.Append($"{leftOperandResult.Result} / {rightOperandResult.Result}");
+                    break;
+                case SyntaxKind.ModuloExpression:
+                    _buffer.Append($"{leftOperandResult.Result} % {rightOperandResult.Result}");
+                    break;
+                case SyntaxKind.EqualsExpression:
+                    _buffer.Append($"{leftOperandResult.Result} == {rightOperandResult.Result}");
+                    break;
+                case SyntaxKind.NotEqualsExpression:
+                    _buffer.Append($"{leftOperandResult.Result} != {rightOperandResult.Result}");
+                    break;
+                case SyntaxKind.LessThanExpression:
+                    _buffer.Append($"{leftOperandResult.Result} < {rightOperandResult.Result}");
+                    break;
+                case SyntaxKind.LessThanOrEqualExpression:
+                    _buffer.Append($"{leftOperandResult.Result} <= {rightOperandResult.Result}");
+                    break;
+                case SyntaxKind.GreaterThanExpression:
+                    _buffer.Append($"{leftOperandResult.Result} > {rightOperandResult.Result}");
+                    break;
+                case SyntaxKind.GreaterThanOrEqualExpression:
+                    _buffer.Append($"{leftOperandResult.Result} >= {rightOperandResult.Result}");
+                    break;
+                case SyntaxKind.BitwiseAndExpression:
+                    _buffer.Append($"{leftOperandResult.Result} & {rightOperandResult.Result}");
+                    break;
+                case SyntaxKind.BitwiseOrExpression:
+                    _buffer.Append($"{leftOperandResult.Result} | {rightOperandResult.Result}");
+                    break;
+                case SyntaxKind.LogicalAndExpression:
+                    _buffer.Append($"{leftOperandResult.Result} and {rightOperandResult.Result}");
+                    break;
+                case SyntaxKind.LogicalOrExpression:
+                    _buffer.Append($"{leftOperandResult.Result} or {rightOperandResult.Result}");
+                    break;
+                case SyntaxKind.AsExpression:
+                    switch (node.Right)
+                    {
+                        case TypeSyntax typeSyntax:
+                            switch (_externalEntityResolver.ResolveCast(typeSyntax, node.Left, leftOperandResult.Result))
+                            {
+                                case {Success: false, Reason: var reason}:
+                                    throw new UnsupportedSyntaxException($"Bad binary \"as\" expression due to: \" {reason}\"");
+                                case {Success: true, Data: var resolveData}:
+                                    _buffer.Append(resolveData!.Cast);
+                                    _importData.Append(resolveData.ModuleName, "");
+                                    break;
+                                default:
+                                    throw new UnsupportedSyntaxException($"Unexpected control flow at binary \"as\" expression: \"{node}\"");
+                            }
+                            break;
+                        default:
+                            throw new UnsupportedSyntaxException($"Unsupported binary \"as\" expression: \" {node}\"");
+                    }
                     break;
                 default:
                     throw new UnsupportedSyntaxException($"Unsupported binary expression: \"{node.Kind()}\"");
