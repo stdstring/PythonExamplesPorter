@@ -16,6 +16,7 @@ namespace PythonExamplesPorterApp.Converter
             _model = model;
             _currentMethod = currentMethod;
             _appData = appData;
+            _expressionCommonSettings = new ExpressionConverterSettings();
         }
 
         public override void VisitBlock(BlockSyntax node)
@@ -31,7 +32,8 @@ namespace PythonExamplesPorterApp.Converter
 
         public override void VisitExpressionStatement(ExpressionStatementSyntax node)
         {
-            String expression = ConvertExpression(node.Expression);
+            ExpressionConverterSettings expressionSettings = new ExpressionConverterSettings(_expressionCommonSettings){AllowIncrementDecrement = true};
+            String expression = ConvertExpression(node.Expression, expressionSettings);
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}{expression}");
         }
 
@@ -39,7 +41,7 @@ namespace PythonExamplesPorterApp.Converter
         {
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}# for each loop begin");
             String enumerationVariable = NameTransformer.TransformLocalVariableName(node.Identifier.Text);
-            String forEachExpression = ConvertExpression(node.Expression);
+            String forEachExpression = ConvertExpression(node.Expression, _expressionCommonSettings);
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}for {enumerationVariable} in {forEachExpression}:");
             VisitStatement(node.Statement, true);
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}# for loop end");
@@ -47,19 +49,20 @@ namespace PythonExamplesPorterApp.Converter
 
         public override void VisitForStatement(ForStatementSyntax node)
         {
+            ExpressionConverterSettings incrementSettings = new ExpressionConverterSettings(_expressionCommonSettings){AllowIncrementDecrement = true};
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}# for loop begin");
             if (node.Declaration != null)
             {
                 foreach (VariableDeclaratorSyntax variable in node.Declaration.Variables)
                     ProcessVariableDeclaration(variable);
             }
-            String condition = node.Condition == null ? "true" : ConvertExpression(node.Condition);
+            String condition = node.Condition == null ? "true" : ConvertExpression(node.Condition, _expressionCommonSettings);
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}while {condition}:");
             VisitStatement(node.Statement, true);
             _indentation += StorageDef.IndentationDelta;
             foreach (ExpressionSyntax incrementExpr in node.Incrementors)
             {
-                String incrementExpression = ConvertExpression(incrementExpr);
+                String incrementExpression = ConvertExpression(incrementExpr, incrementSettings);
                 _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}{incrementExpression}");
             }
             _indentation -= StorageDef.IndentationDelta;
@@ -78,7 +81,7 @@ namespace PythonExamplesPorterApp.Converter
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}# switch begin");
             // TODO (std_string) : think about possible other definition of switchCondition variable
             const String switchConditionVariable = "switch_condition";
-            String switchCondition = ConvertExpression(node.Expression);
+            String switchCondition = ConvertExpression(node.Expression, _expressionCommonSettings);
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}{switchConditionVariable} = {switchCondition}");
             IReadOnlyList<SwitchSectionSyntax> sections = node.Sections;
             for (Int32 index = 0; index < sections.Count; ++index)
@@ -108,7 +111,7 @@ namespace PythonExamplesPorterApp.Converter
         public override void VisitWhileStatement(WhileStatementSyntax node)
         {
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}# while begin");
-            String condition = ConvertExpression(node.Condition);
+            String condition = ConvertExpression(node.Condition, _expressionCommonSettings);
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}while {condition}:");
             VisitStatement(node.Statement, true);
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}# while end");
@@ -120,7 +123,7 @@ namespace PythonExamplesPorterApp.Converter
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}while true:");
             VisitStatement(node.Statement, true);
             _indentation += StorageDef.IndentationDelta;
-            String condition = ConvertExpression(node.Condition);
+            String condition = ConvertExpression(node.Condition, _expressionCommonSettings);
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}if {condition}:");
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation + StorageDef.IndentationDelta)}break");
             _indentation -= StorageDef.IndentationDelta;
@@ -140,7 +143,7 @@ namespace PythonExamplesPorterApp.Converter
         public override void VisitReturnStatement(ReturnStatementSyntax node)
         {
             String delimiter = node.Expression == null ? "" : " ";
-            String expression = node.Expression == null ? "" : ConvertExpression(node.Expression);
+            String expression = node.Expression == null ? "" : ConvertExpression(node.Expression, _expressionCommonSettings);
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}return{delimiter}{expression}");
         }
 
@@ -184,7 +187,7 @@ namespace PythonExamplesPorterApp.Converter
 
         private void VisitIfStatementImpl(IfStatementSyntax node, String ifOperator)
         {
-            String condition = ConvertExpression(node.Condition);
+            String condition = ConvertExpression(node.Condition, _expressionCommonSettings);
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}{ifOperator} {condition}:");
             VisitStatement(node.Statement, true);
             switch (node.Else)
@@ -204,7 +207,7 @@ namespace PythonExamplesPorterApp.Converter
         private void ProcessVariableDeclaration(VariableDeclaratorSyntax variable)
         {
             String name = NameTransformer.TransformLocalVariableName(variable.Identifier.Text);
-            String initializer = variable.Initializer == null ? "None" : ConvertExpression(variable.Initializer.Value);
+            String initializer = variable.Initializer == null ? "None" : ConvertExpression(variable.Initializer.Value, _expressionCommonSettings);
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}{name} = {initializer}");
         }
 
@@ -219,7 +222,7 @@ namespace PythonExamplesPorterApp.Converter
                     throw new InvalidOperationException("Wrong hierarchy of case labels");
                 String value = label switch
                 {
-                    CaseSwitchLabelSyntax switchLabel => ConvertExpression(switchLabel.Value),
+                    CaseSwitchLabelSyntax switchLabel => ConvertExpression(switchLabel.Value, _expressionCommonSettings),
                     CasePatternSwitchLabelSyntax _ => throw new InvalidOperationException("Unexpected type of switch label: CasePatternSwitchLabelSyntax"),
                     DefaultSwitchLabelSyntax _ => throw new InvalidOperationException("Wrong hierarchy of case labels"),
                     _ => throw new InvalidOperationException($"Unexpected type of label: {label.Kind()}")
@@ -232,9 +235,9 @@ namespace PythonExamplesPorterApp.Converter
             return totalCondition;
         }
 
-        private String ConvertExpression(ExpressionSyntax expression)
+        private String ConvertExpression(ExpressionSyntax expression, ExpressionConverterSettings settings)
         {
-            ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData);
+            ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData, settings);
             ConvertResult result = expressionConverter.Convert(expression);
             foreach (KeyValuePair<String, String> entry in result.ImportData.Data)
             {
@@ -250,5 +253,6 @@ namespace PythonExamplesPorterApp.Converter
         private readonly SemanticModel _model;
         private readonly MethodStorage _currentMethod;
         private readonly AppData _appData;
+        private readonly ExpressionConverterSettings _expressionCommonSettings;
     }
 }

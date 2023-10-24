@@ -9,10 +9,11 @@ namespace PythonExamplesPorterApp.Expressions
 {
     internal class ArrayCreationConverter
     {
-        public ArrayCreationConverter(SemanticModel model, AppData appData)
+        public ArrayCreationConverter(SemanticModel model, AppData appData, ExpressionConverterSettings settings)
         {
             _model = model;
             _appData = appData;
+            _settings = settings;
         }
 
         public ConvertResult Convert(ArrayCreationExpressionSyntax expression)
@@ -35,7 +36,7 @@ namespace PythonExamplesPorterApp.Expressions
         {
             if (expression.Kind() != SyntaxKind.ArrayInitializerExpression)
                 throw new UnsupportedSyntaxException($"Bad usage of ArrayCreationConverter for expression: \"{expression}\"");
-            ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData);
+            ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData, _settings);
             ConvertResult[] convertResults = expression.Expressions.Select(expressionConverter.Convert).ToArray();
             ImportData importData = new ImportData();
             convertResults.Foreach(result => importData.Append(result.ImportData));
@@ -59,5 +60,6 @@ namespace PythonExamplesPorterApp.Expressions
 
         private readonly SemanticModel _model;
         private readonly AppData _appData;
+        private readonly ExpressionConverterSettings _settings;
     }
 }

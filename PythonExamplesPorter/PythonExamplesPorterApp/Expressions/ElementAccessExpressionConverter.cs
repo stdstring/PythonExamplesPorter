@@ -8,10 +8,11 @@ namespace PythonExamplesPorterApp.Expressions
 {
     internal class ElementAccessExpressionConverter
     {
-        public ElementAccessExpressionConverter(SemanticModel model, AppData appData)
+        public ElementAccessExpressionConverter(SemanticModel model, AppData appData, ExpressionConverterSettings settings)
         {
             _model = model;
             _appData = appData;
+            _settings = settings;
         }
 
         public ConvertResult Convert(ElementAccessExpressionSyntax expression)
@@ -48,7 +49,7 @@ namespace PythonExamplesPorterApp.Expressions
         {
             IReadOnlyList<ArgumentSyntax> arguments = expression.ArgumentList.Arguments;
             ImportData importData = new ImportData();
-            ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData);
+            ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData, _settings);
             ConvertResult targetResult = expressionConverter.Convert(expression.Expression);
             importData.Append(targetResult.ImportData);
             switch (arguments[0].Expression)
@@ -84,7 +85,7 @@ namespace PythonExamplesPorterApp.Expressions
         {
             IReadOnlyList<ArgumentSyntax> arguments = expression.ArgumentList.Arguments;
             ImportData importData = new ImportData();
-            ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData);
+            ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData, _settings);
             ConvertResult targetResult = expressionConverter.Convert(expression.Expression);
             importData.Append(targetResult.ImportData);
             String getByNameMethod = NameTransformer.TransformMethodName("GetByName");
@@ -111,7 +112,7 @@ namespace PythonExamplesPorterApp.Expressions
                                     importData.Append(argumentResult.ImportData);
                                     return new ConvertResult($"{targetResult.Result}.{getByNameMethod}({argumentResult.Result})", importData);
                                 }
-                                case ITypeSymbol {TypeKind: TypeKind.Enum, Name: var enumName}:
+                                case {TypeKind: TypeKind.Enum, Name: var enumName}:
                                 {
                                     ConvertResult argumentResult = expressionConverter.Convert(arguments[0].Expression);
                                     importData.Append(argumentResult.ImportData);
@@ -129,5 +130,6 @@ namespace PythonExamplesPorterApp.Expressions
 
         private readonly SemanticModel _model;
         private readonly AppData _appData;
+        private readonly ExpressionConverterSettings _settings;
     }
 }

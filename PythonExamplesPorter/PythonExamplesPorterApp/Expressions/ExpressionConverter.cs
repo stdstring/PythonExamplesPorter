@@ -35,36 +35,53 @@ namespace PythonExamplesPorterApp.Expressions
 
     internal record ConvertResult(String Result, ImportData ImportData);
 
+    internal class ExpressionConverterSettings
+    {
+        public ExpressionConverterSettings()
+        {
+        }
+
+        public ExpressionConverterSettings(ExpressionConverterSettings other)
+        {
+            AllowIncrementDecrement = other.AllowIncrementDecrement;
+        }
+
+        public Boolean AllowIncrementDecrement { get; set; }
+    }
+
     internal class ExpressionConverter
     {
-        public ExpressionConverter(SemanticModel model, AppData appData)
+        public ExpressionConverter(SemanticModel model, AppData appData, ExpressionConverterSettings settings)
         {
             _model = model;
             _appData = appData;
+            _settings = settings;
         }
 
         public ConvertResult Convert(ExpressionSyntax expression)
         {
             StringBuilder buffer = new StringBuilder();
             ImportData importData = new ImportData();
-            ExpressionConverterVisitor visitor = new ExpressionConverterVisitor(_model, buffer, importData, _appData);
+            ExpressionConverterVisitor visitor = new ExpressionConverterVisitor(_model, buffer, importData, _appData, _settings);
             visitor.VisitExpression(expression);
             return new ConvertResult(buffer.ToString(), importData);
         }
 
         private readonly SemanticModel _model;
         private readonly AppData _appData;
+        private readonly ExpressionConverterSettings _settings;
     }
 
     internal class ExpressionConverterVisitor : CSharpSyntaxWalker
     {
-        public ExpressionConverterVisitor(SemanticModel model, StringBuilder buffer, ImportData importData, AppData appData)
+        public ExpressionConverterVisitor(SemanticModel model, StringBuilder buffer, ImportData importData, AppData appData, ExpressionConverterSettings settings)
         {
             _model = model;
             _appData = appData;
             _externalEntityResolver = new ExternalEntityResolver(model, appData);
             _buffer = buffer;
             _importData = importData;
+            _settings = settings;
         }
 
         public void VisitExpression(ExpressionSyntax expression)
@@ -87,6 +104,12 @@ namespace PythonExamplesPorterApp.Expressions
                     break;
                 case BinaryExpressionSyntax node:
                     VisitBinaryExpression(node);
+                    break;
+                case PrefixUnaryExpressionSyntax node:
+                    VisitPrefixUnaryExpression(node);
+                    break;
+                case PostfixUnaryExpressionSyntax node:
+                    VisitPostfixUnaryExpression(node);
                     break;
                 case MemberAccessExpressionSyntax node:
                     VisitMemberAccessExpression(node);
@@ -134,7 +157,7 @@ namespace PythonExamplesPorterApp.Expressions
             if (String.IsNullOrEmpty(data.TypeName))
                 throw new UnsupportedSyntaxException($"Unsupported type: {type}");
             ProcessTypeResolveData(data);
-            ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData);
+            ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData, CreateChildSetting());
             String[] arguments = ConvertArgumentList(expressionConverter, node.ArgumentList.GetArguments());
             _buffer.Append($"({String.Join(", ", arguments)})");
         }
@@ -209,7 +232,7 @@ namespace PythonExamplesPorterApp.Expressions
         public override void VisitBinaryExpression(BinaryExpressionSyntax node)
         {
             // TODO (std_string) : add check ability of applying binary expression for given arguments
-            ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData);
+            ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData, CreateChildSetting());
             ConvertResult leftOperandResult = expressionConverter.Convert(node.Left);
             _importData.Append(leftOperandResult.ImportData);
             ConvertResult rightOperandResult = expressionConverter.Convert(node.Right);
@@ -287,6 +310,51 @@ namespace PythonExamplesPorterApp.Expressions
             }
         }
 
+        public override void VisitPrefixUnaryExpression(PrefixUnaryExpressionSyntax node)
+        {
+            ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData, CreateChildSetting());
+            ConvertResult operandResult = expressionConverter.Convert(node.Operand);
+            _importData.Append(operandResult.ImportData);
+            switch (node.Kind())
+            {
+                case SyntaxKind.UnaryPlusExpression:
+                    _buffer.Append($"+{operandResult.Result}");
+                    break;
+                case SyntaxKind.UnaryMinusExpression:
+                    _buffer.Append($"-{operandResult.Result}");
+                    break;
+                case SyntaxKind.LogicalNotExpression:
+                    _buffer.Append($"not {operandResult.Result}");
+                    break;
+                case SyntaxKind.PreIncrementExpression when _settings.AllowIncrementDecrement:
+                    _buffer.Append($"{operandResult.Result} += 1");
+                    break;
+                case SyntaxKind.PreDecrementExpression when _settings.AllowIncrementDecrement:
+                    _buffer.Append($"{operandResult.Result} -= 1");
+                    break;
+                default:
+                    throw new UnsupportedSyntaxException($"Unsupported PrefixUnaryExpressionSyntax expression: \"{node.Kind()}\"");
+            }
+        }
+
+        public override void VisitPostfixUnaryExpression(PostfixUnaryExpressionSyntax node)
+        {
+            ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData, CreateChildSetting());
+            ConvertResult operandResult = expressionConverter.Convert(node.Operand);
+            _importData.Append(operandResult.ImportData);
+            switch (node.Kind())
+            {
+                case SyntaxKind.PostIncrementExpression when _settings.AllowIncrementDecrement:
+                    _buffer.Append($"{operandResult.Result} += 1");
+                    break;
+                case SyntaxKind.PostDecrementExpression when _settings.AllowIncrementDecrement:
+                    _buffer.Append($"{operandResult.Result} -= 1");
+                    break;
+                default:
+                    throw new UnsupportedSyntaxException($"Unsupported PostfixUnaryExpressionSyntax expression: \"{node.Kind()}\"");
+            }
+        }
+
         public override void VisitMemberAccessExpression(MemberAccessExpressionSyntax node)
         {
             VisitMemberAccessExpressionImpl(node, null);
@@ -298,7 +366,7 @@ namespace PythonExamplesPorterApp.Expressions
             {
                 case SyntaxKind.SimpleAssignmentExpression:
                 {
-                    ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData);
+                    ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData, CreateChildSetting());
                     ConvertResult leftAssignmentResult = expressionConverter.Convert(node.Left);
                     _importData.Append(leftAssignmentResult.ImportData);
                     ConvertResult rightAssignmentResult = expressionConverter.Convert(node.Right);
@@ -313,19 +381,19 @@ namespace PythonExamplesPorterApp.Expressions
 
         public override void VisitElementAccessExpression(ElementAccessExpressionSyntax node)
         {
-            ElementAccessExpressionConverter converter = new ElementAccessExpressionConverter(_model, _appData);
+            ElementAccessExpressionConverter converter = new ElementAccessExpressionConverter(_model, _appData, CreateChildSetting());
             AppendResult(converter.Convert(node));
         }
 
         public override void VisitArrayCreationExpression(ArrayCreationExpressionSyntax node)
         {
-            ArrayCreationConverter converter = new ArrayCreationConverter(_model, _appData);
+            ArrayCreationConverter converter = new ArrayCreationConverter(_model, _appData, CreateChildSetting());
             AppendResult(converter.Convert(node));
         }
 
         public override void VisitImplicitArrayCreationExpression(ImplicitArrayCreationExpressionSyntax node)
         {
-            ArrayCreationConverter converter = new ArrayCreationConverter(_model, _appData);
+            ArrayCreationConverter converter = new ArrayCreationConverter(_model, _appData, CreateChildSetting());
             AppendResult(converter.Convert(node));
         }
 
@@ -334,7 +402,7 @@ namespace PythonExamplesPorterApp.Expressions
             switch (node.Kind())
             {
                 case SyntaxKind.ArrayInitializerExpression:
-                    ArrayCreationConverter converter = new ArrayCreationConverter(_model, _appData);
+                    ArrayCreationConverter converter = new ArrayCreationConverter(_model, _appData, CreateChildSetting());
                     AppendResult(converter.Convert(node));
                     break;
                 default:
@@ -344,7 +412,7 @@ namespace PythonExamplesPorterApp.Expressions
 
         public override void VisitCastExpression(CastExpressionSyntax node)
         {
-            ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData);
+            ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData, CreateChildSetting());
             String sourceRepresentation = ConvertExpression(expressionConverter, node.Expression);
             OperationResult<CastResolveData> resolveResult = _externalEntityResolver.ResolveCast(node.Type, node.Expression, sourceRepresentation);
             if (!resolveResult.Success)
@@ -356,7 +424,7 @@ namespace PythonExamplesPorterApp.Expressions
 
         public override void VisitParenthesizedExpression(ParenthesizedExpressionSyntax node)
         {
-            ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData);
+            ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData, CreateChildSetting());
             ConvertResult innerResult = expressionConverter.Convert(node.Expression);
             _importData.Append(innerResult.ImportData);
             _buffer.Append($"({innerResult.Result})");
@@ -369,7 +437,7 @@ namespace PythonExamplesPorterApp.Expressions
 
         private void VisitMemberAccessExpressionImpl(MemberAccessExpressionSyntax node, ArgumentListSyntax? argumentList)
         {
-            ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData);
+            ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData, CreateChildSetting());
             String[] arguments = ConvertArgumentList(expressionConverter, argumentList.GetArguments());
             ExpressionSyntax target = node.Expression;
             String targetDest = ConvertExpression(expressionConverter, target);
@@ -434,10 +502,16 @@ namespace PythonExamplesPorterApp.Expressions
             return false;
         }
 
+        private ExpressionConverterSettings CreateChildSetting()
+        {
+            return new ExpressionConverterSettings(_settings){AllowIncrementDecrement = false};
+        }
+
         private readonly SemanticModel _model;
         private readonly AppData _appData;
         private readonly ExternalEntityResolver _externalEntityResolver;
         private readonly StringBuilder _buffer;
         private readonly ImportData _importData;
+        private readonly ExpressionConverterSettings _settings;
     }
 }
