@@ -484,6 +484,9 @@ namespace PythonExamplesPorterApp.Expressions
                 case "string.Empty":
                     _buffer.Append("\"\"");
                     return true;
+                case "null":
+                    _buffer.Append("None");
+                    return true;
             }
             return false;
         }
