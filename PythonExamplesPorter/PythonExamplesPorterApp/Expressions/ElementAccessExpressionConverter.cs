@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using PythonExamplesPorterApp.Common;
 using PythonExamplesPorterApp.Converter;
+using PythonExamplesPorterApp.DestStorage;
 
 namespace PythonExamplesPorterApp.Expressions
 {
@@ -40,7 +41,7 @@ namespace PythonExamplesPorterApp.Expressions
                                     return ProcessSpecialCase(expression);
                             }
                         default:
-                            throw new UnsupportedSyntaxException($"Unexpected control flow at converting ElementAccessExpression expression: \"{expression}\"");
+                            throw new UnsupportedSyntaxException($"Unexpected control flow at converting ElementAccessExpression expression: {expression}");
                     }
             }
         }
@@ -58,7 +59,7 @@ namespace PythonExamplesPorterApp.Expressions
                     Int32 value = (Int32)literalExpression.Token.Value!;
                     return new ConvertResult($"{targetResult.Result}[{value}]", importData);
                 case LiteralExpressionSyntax literalExpression when literalExpression.Kind() != SyntaxKind.NumericLiteralExpression:
-                    throw new UnsupportedSyntaxException($"Unsupported type of ElementAccessExpression expression: \"{expression}\"");
+                    throw new UnsupportedSyntaxException($"Unsupported type of ElementAccessExpression expression: {expression}");
                 default:
                     switch (arguments[0].Expression.GetExpressionTypeSymbol(_model))
                     {
@@ -72,10 +73,10 @@ namespace PythonExamplesPorterApp.Expressions
                                     importData.Append(argumentResult.ImportData);
                                     return new ConvertResult($"{targetResult.Result}[{argumentResult.Result}]", importData);
                                 default:
-                                    throw new UnsupportedSyntaxException($"Unsupported type of ElementAccessExpression expression: \"{expression}\"");
+                                    throw new UnsupportedSyntaxException($"Unsupported type of ElementAccessExpression expression: {expression}");
                             }
                         default:
-                            throw new UnsupportedSyntaxException($"Unexpected control flow at converting ElementAccessExpression expression: \"{expression}\"");
+                            throw new UnsupportedSyntaxException($"Unexpected control flow at converting ElementAccessExpression expression: {expression}");
                     }
             }
         }
@@ -97,7 +98,7 @@ namespace PythonExamplesPorterApp.Expressions
                     return new ConvertResult($"{targetResult.Result}.{getByNameMethod}({value})", importData);
                 }
                 case LiteralExpressionSyntax literalExpression when literalExpression.Kind() != SyntaxKind.StringLiteralExpression:
-                    throw new UnsupportedSyntaxException($"Unsupported type of ElementAccessExpression expression: \"{expression}\"");
+                    throw new UnsupportedSyntaxException($"Unsupported type of ElementAccessExpression expression: {expression}");
                 default:
                     switch (arguments[0].Expression.GetExpressionTypeSymbol(_model))
                     {
@@ -120,10 +121,10 @@ namespace PythonExamplesPorterApp.Expressions
                                     return new ConvertResult($"{targetResult.Result}.{getByEnumMethod}({argumentResult.Result})", importData);
                                 }
                                 default:
-                                    throw new UnsupportedSyntaxException($"Unsupported type of ElementAccessExpression expression: \"{expression}\"");
+                                    throw new UnsupportedSyntaxException($"Unsupported type of ElementAccessExpression expression: {expression}");
                             }
                         default:
-                            throw new UnsupportedSyntaxException($"Unexpected control flow at converting ElementAccessExpression expression: \"{expression}\"");
+                            throw new UnsupportedSyntaxException($"Unexpected control flow at converting ElementAccessExpression expression: {expression}");
                     }
             }
         }

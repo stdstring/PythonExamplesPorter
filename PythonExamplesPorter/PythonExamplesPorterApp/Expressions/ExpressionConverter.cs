@@ -6,33 +6,11 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using PythonExamplesPorterApp.Checker;
 using PythonExamplesPorterApp.Common;
 using PythonExamplesPorterApp.Converter;
+using PythonExamplesPorterApp.DestStorage;
+using PythonExamplesPorterApp.Handmade;
 
 namespace PythonExamplesPorterApp.Expressions
 {
-    internal class ImportData
-    {
-        public IDictionary<String, String> Data { get; } = new Dictionary<String, String>();
-
-        public void Append(ImportData data)
-        {
-            Append(data.Data);
-        }
-
-        public void Append(IDictionary<String, String> data)
-        {
-            foreach (KeyValuePair<String, String> entry in data)
-                Append(entry.Key, entry.Value);
-        }
-
-        public void Append(String moduleName, String aliasName)
-        {
-            if (String.IsNullOrEmpty(moduleName))
-                return;
-            if (!Data.ContainsKey(moduleName))
-                Data.Add(moduleName, aliasName);
-        }
-    }
-
     internal record ConvertResult(String Result, ImportData ImportData);
 
     internal class ExpressionConverterSettings
@@ -202,14 +180,22 @@ namespace PythonExamplesPorterApp.Expressions
                     String name = propertySymbol.Name;
                     String typeFullName = propertySymbol.ContainingType.GetTypeFullName();
                     if (!_appData.HandmadeManager.IsHandmadeType(typeFullName))
-                        throw new UnsupportedSyntaxException($"Unsupported identifier with name = \"{node.Identifier}\" and kind = \"{node.Kind()}\"");
-                    IDictionary<String, String> mapping = _appData.HandmadeManager.GetHandmadeTypeMapping(typeFullName);
+                        throw new UnsupportedSyntaxException($"Unsupported identifier with name = {node.Identifier} and kind = {node.Kind()}");
+                    IDictionary<String, MappingData> mapping = _appData.HandmadeManager.GetHandmadeTypeMapping(typeFullName);
                     if (mapping.ContainsKey(name))
-                        name = mapping[name];
+                    {
+                        MappingData mappingData = mapping[name];
+                        name = mappingData.Name;
+                        if (mappingData.NeedImport)
+                        {
+                            String moduleName = _appData.HandmadeManager.CalcHandmadeTypeModuleName(typeFullName);
+                            _importData.AddEntity(moduleName, name);
+                        }
+                    }
                     _buffer.Append(name);
                     break;
                 default:
-                    throw new UnsupportedSyntaxException($"Unsupported identifier with name = \"{node.Identifier}\" and kind = \"{node.Kind()}\"");
+                    throw new UnsupportedSyntaxException($"Unsupported identifier with name = {node.Identifier} and kind = {node.Kind()}");
             }
         }
 
@@ -292,21 +278,21 @@ namespace PythonExamplesPorterApp.Expressions
                             switch (_externalEntityResolver.ResolveCast(typeSyntax, node.Left, leftOperandResult.Result))
                             {
                                 case {Success: false, Reason: var reason}:
-                                    throw new UnsupportedSyntaxException($"Bad binary \"as\" expression due to: \" {reason}\"");
+                                    throw new UnsupportedSyntaxException($"Bad binary as expression due to: {reason}");
                                 case {Success: true, Data: var resolveData}:
                                     _buffer.Append(resolveData!.Cast);
-                                    _importData.Append(resolveData.ModuleName, "");
+                                    _importData.AddImport(resolveData.ModuleName);
                                     break;
                                 default:
-                                    throw new UnsupportedSyntaxException($"Unexpected control flow at binary \"as\" expression: \"{node}\"");
+                                    throw new UnsupportedSyntaxException($"Unexpected control flow at binary as expression: {node}");
                             }
                             break;
                         default:
-                            throw new UnsupportedSyntaxException($"Unsupported binary \"as\" expression: \" {node}\"");
+                            throw new UnsupportedSyntaxException($"Unsupported binary as expression: {node}");
                     }
                     break;
                 default:
-                    throw new UnsupportedSyntaxException($"Unsupported binary expression: \"{node.Kind()}\"");
+                    throw new UnsupportedSyntaxException($"Unsupported binary expression: {node.Kind()}");
             }
         }
 
@@ -333,7 +319,7 @@ namespace PythonExamplesPorterApp.Expressions
                     _buffer.Append($"{operandResult.Result} -= 1");
                     break;
                 default:
-                    throw new UnsupportedSyntaxException($"Unsupported PrefixUnaryExpressionSyntax expression: \"{node.Kind()}\"");
+                    throw new UnsupportedSyntaxException($"Unsupported PrefixUnaryExpressionSyntax expression: {node.Kind()}");
             }
         }
 
@@ -351,7 +337,7 @@ namespace PythonExamplesPorterApp.Expressions
                     _buffer.Append($"{operandResult.Result} -= 1");
                     break;
                 default:
-                    throw new UnsupportedSyntaxException($"Unsupported PostfixUnaryExpressionSyntax expression: \"{node.Kind()}\"");
+                    throw new UnsupportedSyntaxException($"Unsupported PostfixUnaryExpressionSyntax expression: {node.Kind()}");
             }
         }
 
@@ -375,7 +361,7 @@ namespace PythonExamplesPorterApp.Expressions
                     break;
                 }
                 default:
-                    throw new UnsupportedSyntaxException($"Unsupported assignment expression: \"{node.Kind()}\"");
+                    throw new UnsupportedSyntaxException($"Unsupported assignment expression: {node.Kind()}");
             }
         }
 
@@ -406,7 +392,7 @@ namespace PythonExamplesPorterApp.Expressions
                     AppendResult(converter.Convert(node));
                     break;
                 default:
-                    throw new UnsupportedSyntaxException($"Unsupported initializer expression: \"{node.Kind()}\"");
+                    throw new UnsupportedSyntaxException($"Unsupported initializer expression: {node.Kind()}");
             }
         }
 
@@ -419,7 +405,7 @@ namespace PythonExamplesPorterApp.Expressions
                 throw new UnsupportedSyntaxException(resolveResult.Reason);
             CastResolveData castResolveData = resolveResult.Data!;
             _buffer.Append(castResolveData.Cast);
-            _importData.Append(castResolveData.ModuleName, "");
+            _importData.AddImport(castResolveData.ModuleName);
         }
 
         public override void VisitParenthesizedExpression(ParenthesizedExpressionSyntax node)
@@ -432,7 +418,7 @@ namespace PythonExamplesPorterApp.Expressions
 
         public override void VisitPredefinedType(PredefinedTypeSyntax node)
         {
-            throw new UnsupportedSyntaxException($"Usage of predefined type \"{node.Keyword}\" is unsupported");
+            throw new UnsupportedSyntaxException($"Usage of predefined type {node.Keyword} is unsupported");
         }
 
         private void VisitMemberAccessExpressionImpl(MemberAccessExpressionSyntax node, ArgumentListSyntax? argumentList)
@@ -449,7 +435,7 @@ namespace PythonExamplesPorterApp.Expressions
                 throw new UnsupportedSyntaxException(resolveResult.Reason);
             MemberResolveData memberResolveData = resolveResult.Data!;
             _buffer.Append(memberResolveData.Member);
-            _importData.Append(memberResolveData.ModuleName, "");
+            _importData.AddImport(memberResolveData.ModuleName);
         }
 
         private String[] ConvertArgumentList(ExpressionConverter expressionConverter, IReadOnlyList<ArgumentSyntax> arguments)
@@ -469,7 +455,7 @@ namespace PythonExamplesPorterApp.Expressions
 
         private void ProcessTypeResolveData(TypeResolveData resolveData)
         {
-            _importData.Append(resolveData.ModuleName, "");
+            _importData.AddImport(resolveData.ModuleName);
             _buffer.Append($"{resolveData.ModuleName}.{resolveData.TypeName}");
         }
 
@@ -487,7 +473,7 @@ namespace PythonExamplesPorterApp.Expressions
             {
                 case "double.NaN":
                     _buffer.Append("math.nan");
-                    _importData.Append("math", "");
+                    _importData.AddImport("math");
                     return true;
                 case "double.MaxValue":
                     _buffer.Append("1.7976931348623157E+308");

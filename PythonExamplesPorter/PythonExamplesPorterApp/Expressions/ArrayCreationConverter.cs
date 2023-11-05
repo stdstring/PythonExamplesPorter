@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using PythonExamplesPorterApp.Common;
 using PythonExamplesPorterApp.Converter;
+using PythonExamplesPorterApp.DestStorage;
 using PythonExamplesPorterApp.Utils;
 
 namespace PythonExamplesPorterApp.Expressions
@@ -35,7 +36,7 @@ namespace PythonExamplesPorterApp.Expressions
         public ConvertResult Convert(InitializerExpressionSyntax expression)
         {
             if (expression.Kind() != SyntaxKind.ArrayInitializerExpression)
-                throw new UnsupportedSyntaxException($"Bad usage of ArrayCreationConverter for expression: \"{expression}\"");
+                throw new UnsupportedSyntaxException($"Bad usage of ArrayCreationConverter for expression: {expression}");
             ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData, _settings);
             ConvertResult[] convertResults = expression.Expressions.Select(expressionConverter.Convert).ToArray();
             ImportData importData = new ImportData();
@@ -54,7 +55,7 @@ namespace PythonExamplesPorterApp.Expressions
                 case [{Sizes: [LiteralExpressionSyntax {Token.Value: Int32 value}]}]:
                     return new ConvertResult($"[None for i in range(0, {value})]", importData);
                 default:
-                    throw new UnsupportedSyntaxException($"Unsupported ranks in ArrayCreationExpression expression: \"{expression}\"");
+                    throw new UnsupportedSyntaxException($"Unsupported ranks in ArrayCreationExpression expression: {expression}");
             }
         }
 

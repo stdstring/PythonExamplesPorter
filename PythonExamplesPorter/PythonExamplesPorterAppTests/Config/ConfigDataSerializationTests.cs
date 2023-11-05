@@ -337,8 +337,8 @@ namespace PythonExamplesPorterAppTests.Config
                                   "        <Source>SomeStorage\\some_typeb.py</Source>\r\n" +
                                   "        <Dest>utils\\some_typeb.py</Dest>\r\n" +
                                   "        <MemberMapping>\r\n" +
-                                  "          <Member SourceName=\"GetXXX\" DestName=\"get_super_xxx_value\"/>\r\n" +
-                                  "          <Member SourceName=\"SomePath\" DestName=\"SOME_PATH\"/>\r\n" +
+                                  "          <Member SourceName=\"GetXXX\" DestName=\"get_super_xxx_value\" NeedImport=\"true\"/>\r\n" +
+                                  "          <Member SourceName=\"SomePath\" DestName=\"SOME_PATH\" NeedImport=\"false\"/>\r\n" +
                                   "        </MemberMapping>\r\n" +
                                   "      </Type>\r\n" +
                                   "    </Types>\r\n" +
@@ -368,8 +368,8 @@ namespace PythonExamplesPorterAppTests.Config
                             Dest = "utils\\some_typeb.py",
                             MemberMappings = new[]
                             {
-                                new HandmadeMemberMapping{SourceName = "GetXXX", DestName = "get_super_xxx_value"},
-                                new HandmadeMemberMapping{SourceName = "SomePath", DestName = "SOME_PATH"}
+                                new HandmadeMemberMapping{SourceName = "GetXXX", DestName = "get_super_xxx_value", NeedImport = true},
+                                new HandmadeMemberMapping{SourceName = "SomePath", DestName = "SOME_PATH", NeedImport = false}
                             }
                         }
                     }
@@ -422,8 +422,8 @@ namespace PythonExamplesPorterAppTests.Config
                                   "        <Source>SomeStorage\\some_typeb.py</Source>\r\n" +
                                   "        <Dest>utils\\some_typeb.py</Dest>\r\n" +
                                   "        <MemberMapping>\r\n" +
-                                  "          <Member SourceName=\"GetXXX\" DestName=\"get_super_xxx_value\"/>\r\n" +
-                                  "          <Member SourceName=\"SomePath\" DestName=\"SOME_PATH\"/>\r\n" +
+                                  "          <Member SourceName=\"GetXXX\" DestName=\"get_super_xxx_value\" NeedImport=\"true\"/>\r\n" +
+                                  "          <Member SourceName=\"SomePath\" DestName=\"SOME_PATH\" NeedImport=\"false\"/>\r\n" +
                                   "        </MemberMapping>\r\n" +
                                   "      </Type>\r\n" +
                                   "    </Types>\r\n" +
@@ -464,8 +464,8 @@ namespace PythonExamplesPorterAppTests.Config
                             Dest = "utils\\some_typeb.py",
                             MemberMappings = new[]
                             {
-                                new HandmadeMemberMapping{SourceName = "GetXXX", DestName = "get_super_xxx_value"},
-                                new HandmadeMemberMapping{SourceName = "SomePath", DestName = "SOME_PATH"}
+                                new HandmadeMemberMapping{SourceName = "GetXXX", DestName = "get_super_xxx_value", NeedImport = true},
+                                new HandmadeMemberMapping{SourceName = "SomePath", DestName = "SOME_PATH", NeedImport = false}
                             }
                         }
                     }
@@ -583,6 +583,7 @@ namespace PythonExamplesPorterAppTests.Config
                 {
                     Assert.AreEqual(expected[index].SourceName, actual[index].SourceName);
                     Assert.AreEqual(expected[index].DestName, actual[index].DestName);
+                    Assert.AreEqual(expected[index].NeedImport, actual[index].NeedImport);
                 }
             }
         }

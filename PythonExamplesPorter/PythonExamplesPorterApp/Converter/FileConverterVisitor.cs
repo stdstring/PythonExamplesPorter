@@ -71,12 +71,16 @@ namespace PythonExamplesPorterApp.Converter
             else
             {
                 Int32 lastDotIndex = baseClassFullName.LastIndexOf('.');
-                String baseClassName = lastDotIndex == -1 ? baseClassFullName : baseClassFullName.Substring(lastDotIndex + 1);
+                String sourceBaseClassName = lastDotIndex == -1 ? baseClassFullName : baseClassFullName.Substring(lastDotIndex + 1);
+                String baseClassName = NameTransformer.TransformClassName(sourceBaseClassName);
                 _currentClass.AddBaseClass(baseClassName);
                 _appData.HandmadeManager.UseHandmadeType(baseClassFullName);
+                String moduleName = _appData.HandmadeManager.CalcHandmadeTypeModuleName(baseClassFullName);
+                _currentFile.ImportStorage.AddEntity(moduleName, baseClassName);
             }
         }
 
+        // TODO (std_string) : think about processing of unsupported base classes
         private String? GetBaseClassFullName(INamedTypeSymbol currentType)
         {
             INamedTypeSymbol? baseType = currentType.BaseType;

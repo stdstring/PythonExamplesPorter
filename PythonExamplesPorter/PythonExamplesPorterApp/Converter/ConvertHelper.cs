@@ -60,15 +60,15 @@ namespace PythonExamplesPorterApp.Converter
             SymbolInfo symbolInfo = model.GetSymbolInfo(targetExpression);
             return symbolInfo.Symbol switch
             {
-                null => new OperationResult<ITypeSymbol>(false, $"Unrecognizable type of expression: \"{expression}\""),
+                null => new OperationResult<ITypeSymbol>(false, $"Unrecognizable type of expression: {expression}"),
                 ILocalSymbol localSymbol => new OperationResult<ITypeSymbol>(true, "", localSymbol.Type),
                 IPropertySymbol propertySymbol => new OperationResult<ITypeSymbol>(true, "", propertySymbol.Type),
                 IMethodSymbol { MethodKind: MethodKind.Constructor } methodSymbol => new OperationResult<ITypeSymbol>(true, "", methodSymbol.ContainingType),
-                IMethodSymbol { ReturnsVoid: true } => new OperationResult<ITypeSymbol>(false, $"Unsupported type (void) of expression: \"{expression}\""),
+                IMethodSymbol { ReturnsVoid: true } => new OperationResult<ITypeSymbol>(false, $"Unsupported type (void) of expression: {expression}"),
                 IMethodSymbol methodSymbol => new OperationResult<ITypeSymbol>(true, "", methodSymbol.ReturnType),
                 IArrayTypeSymbol arrayTypeSymbol => new OperationResult<ITypeSymbol>(true, "", arrayTypeSymbol),
                 ITypeSymbol typeSymbol => new OperationResult<ITypeSymbol>(true, "", typeSymbol),
-                _ => new OperationResult<ITypeSymbol>(false, $"Unsupported type of expression: \"{expression}\"")
+                _ => new OperationResult<ITypeSymbol>(false, $"Unsupported type of expression: {expression}")
             };
         }
     }

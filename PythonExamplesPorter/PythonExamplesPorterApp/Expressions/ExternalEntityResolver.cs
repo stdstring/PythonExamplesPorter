@@ -76,7 +76,7 @@ namespace PythonExamplesPorterApp.Expressions
                 if (result.Success)
                     return result;
             }
-            return new OperationResult<MemberResolveData>(false, $"Unsupported target type \"{sourceType.GetTypeFullName()}\"");
+            return new OperationResult<MemberResolveData>(false, $"Unsupported target type {sourceType.GetTypeFullName()}");
         }
 
         public OperationResult<CastResolveData> ResolveCast(TypeSyntax castType, ExpressionSyntax sourceExpression, String sourceRepresentation)
@@ -96,7 +96,7 @@ namespace PythonExamplesPorterApp.Expressions
                 if (result.Success)
                     return result;
             }
-            return new OperationResult<CastResolveData>(false, $"Unsupported cast to type \"{castType}\"");
+            return new OperationResult<CastResolveData>(false, $"Unsupported cast to type {castType}");
         }
 
         private delegate OperationResult<MemberResolveData> ResolveMemberHandler(MemberData data, ITypeSymbol sourceType, MemberRepresentation representation);
@@ -116,7 +116,7 @@ namespace PythonExamplesPorterApp.Expressions
             switch (nameInfo.Symbol)
             {
                 case null:
-                    return new OperationResult<MemberResolveData>(false, $"Unrecognizable member \"{name.Identifier}\" for type \"{sourceTypeFullName}\"");
+                    return new OperationResult<MemberResolveData>(false, $"Unrecognizable member {name.Identifier} for type {sourceTypeFullName}");
                 // TODO (std_string) : think about separation between methods, properties and fields
                 case IMethodSymbol methodSymbol:
                 {
@@ -145,7 +145,7 @@ namespace PythonExamplesPorterApp.Expressions
                     return new OperationResult<MemberResolveData>(true, "", resolveData);
                 }
                 default:
-                    return new OperationResult<MemberResolveData>(false, $"Unsupported member \"{name.Identifier}\" for type \"{sourceTypeFullName}\"");
+                    return new OperationResult<MemberResolveData>(false, $"Unsupported member {name.Identifier} for type {sourceTypeFullName}");
             }
         }
 
@@ -202,23 +202,23 @@ namespace PythonExamplesPorterApp.Expressions
             }
             String sourceTypeFullName = sourceType.GetTypeFullName();
             if (!sourceTypeFullName.Equals("NUnit.Framework.Assert"))
-                return new OperationResult<MemberResolveData>(false, $"Unsupported type \"{sourceTypeFullName}\"");
+                return new OperationResult<MemberResolveData>(false, $"Unsupported type {sourceTypeFullName}");
             SimpleNameSyntax name = data.Name;
             SymbolInfo nameInfo = ModelExtensions.GetSymbolInfo(_model, name);
             switch (nameInfo.Symbol)
             {
                 case null:
-                    return new OperationResult<MemberResolveData>(false, $"Unrecognizable member \"{name.Identifier}\" for type \"{sourceTypeFullName}\"");
+                    return new OperationResult<MemberResolveData>(false, $"Unrecognizable member {name.Identifier} for type {sourceTypeFullName}");
                 case IMethodSymbol{Name: "AreEqual"}:
                     return ResolveAssertEqual();
                 default:
-                    return new OperationResult<MemberResolveData>(false, $"Unsupported member \"{name.Identifier}\" for type \"{sourceTypeFullName}\"");
+                    return new OperationResult<MemberResolveData>(false, $"Unsupported member {name.Identifier} for type {sourceTypeFullName}");
             }
         }
 
         private OperationResult<MemberResolveData> ResolveMemberCallForSystem(MemberData data, ITypeSymbol sourceType, MemberRepresentation representation)
         {
-            return new OperationResult<MemberResolveData>(false, $"ResolveMemberCallForSystem: Not Implemented");
+            return new OperationResult<MemberResolveData>(false, "ResolveMemberCallForSystem: Not Implemented");
         }
 
         public OperationResult<CastResolveData> ResolveCastForKnownNamespace(ITypeSymbol castTypeSymbol, ExpressionSyntax sourceExpression, String sourceRepresentation)
@@ -246,7 +246,7 @@ namespace PythonExamplesPorterApp.Expressions
             return target.GetExpressionTypeSymbol(_model) switch
             {
                 {Success: false, Reason: var reason} => new OperationResult<ITypeSymbol>(false, reason),
-                {Success: true, Data: IArrayTypeSymbol type} => new OperationResult<ITypeSymbol>(false, $"Unsupported member target type - {type.ElementType.GetTypeFullName()}[] for expression: \"{target}\""),
+                {Success: true, Data: IArrayTypeSymbol type} => new OperationResult<ITypeSymbol>(false, $"Unsupported member target type - {type.ElementType.GetTypeFullName()}[] for expression: {target}"),
                 {Success: true, Data: var type} => new OperationResult<ITypeSymbol>(true, "", type)
             };
         }

@@ -93,11 +93,11 @@ namespace PythonExamplesPorterAppTests.Handmade
             Assert.IsEmpty(managerForEmpty.GetHandmadeTypeMapping(fullName));
         }
 
-        private void CheckMemberMappings(HandmadeMemberMapping[] expected, IDictionary<String, String> actual)
+        private void CheckMemberMappings(HandmadeMemberMapping[] expected, IDictionary<String, MappingData> actual)
         {
-            IDictionary<String, String> expectedMap = expected.ToDictionary(mapping => mapping.SourceName, mapping => mapping.DestName);
+            IDictionary<String, MappingData> expectedMap = expected.ToDictionary(mapping => mapping.SourceName, mapping => new MappingData(mapping.DestName, mapping.NeedImport));
             Assert.AreEqual(expectedMap.Count, actual.Count);
-            foreach (KeyValuePair<String, String> expectedMapping in expectedMap)
+            foreach (KeyValuePair<String, MappingData> expectedMapping in expectedMap)
             {
                 Assert.IsTrue(actual.ContainsKey(expectedMapping.Key));
                 Assert.AreEqual(expectedMapping.Value, actual[expectedMapping.Key]);
@@ -121,8 +121,8 @@ namespace PythonExamplesPorterAppTests.Handmade
                     Dest = "utils\\some_typeb.py",
                     MemberMappings = new []
                     {
-                        new HandmadeMemberMapping{SourceName = "GetXXX", DestName = "get_super_xxx_value"},
-                        new HandmadeMemberMapping{SourceName = "SomePath", DestName = "SOME_PATH"}
+                        new HandmadeMemberMapping{SourceName = "GetXXX", DestName = "get_super_xxx_value", NeedImport = true},
+                        new HandmadeMemberMapping{SourceName = "SomePath", DestName = "SOME_PATH", NeedImport = false}
                     }
                 }
             }

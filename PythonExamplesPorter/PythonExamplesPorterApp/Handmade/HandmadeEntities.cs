@@ -35,5 +35,8 @@ namespace PythonExamplesPorterApp.Handmade
 
         [XmlAttribute("DestName")]
         public String DestName { get; set; } = "";
+
+        [XmlAttribute("NeedImport")]
+        public Boolean NeedImport { get; set; }
     }
 }

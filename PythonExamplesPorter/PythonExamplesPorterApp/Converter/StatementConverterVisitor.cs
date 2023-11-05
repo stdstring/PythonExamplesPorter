@@ -239,13 +239,7 @@ namespace PythonExamplesPorterApp.Converter
         {
             ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData, settings);
             ConvertResult result = expressionConverter.Convert(expression);
-            foreach (KeyValuePair<String, String> entry in result.ImportData.Data)
-            {
-                if (String.IsNullOrEmpty(entry.Value))
-                    _currentMethod.ImportStorage.AddImport(entry.Key);
-                else
-                    _currentMethod.ImportStorage.AddImportWithAlias(entry.Key, entry.Value);
-            }
+            _currentMethod.ImportStorage.Append(result.ImportData);
             return result.Result;
         }
 
