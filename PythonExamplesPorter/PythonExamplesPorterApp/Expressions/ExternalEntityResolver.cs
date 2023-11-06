@@ -178,7 +178,7 @@ namespace PythonExamplesPorterApp.Expressions
                             case LiteralExpressionSyntax literalExpression when literalExpression.Kind() == SyntaxKind.StringLiteralExpression:
                                 return GenerateAssertEqual(representation.Arguments[0], representation.Arguments[1], literalExpression.Token.Text);
                             case LiteralExpressionSyntax literalExpression when literalExpression.Kind() == SyntaxKind.NumericLiteralExpression:
-                                return GenerateAssertAlmostEqual(representation.Arguments[0], representation.Arguments[1], literalExpression.Token.Text);
+                                return GenerateAssertAlmostEqual(representation.Arguments[0], representation.Arguments[1], literalExpression.Token.ValueText);
                             case IdentifierNameSyntax identifier:
                                 SymbolInfo identifierInfo = ModelExtensions.GetSymbolInfo(_model, identifier);
                                 switch (identifierInfo.Symbol)
