@@ -42,7 +42,7 @@ namespace PythonExamplesPorterApp.Expressions
             ImportData importData = new ImportData();
             convertResults.Foreach(result => importData.Append(result.ImportData));
             String[] initExpressions = convertResults.Select(result => result.Result).ToArray();
-            return new ConvertResult($"[{String.Join(", ", initExpressions)}]", importData);
+            return new ConvertResult($"[{String.Join(", ", initExpressions)}]", importData, new List<String>());
         }
 
         private ConvertResult ConvertArrayCreationWithSize(ArrayCreationExpressionSyntax expression)
@@ -51,9 +51,9 @@ namespace PythonExamplesPorterApp.Expressions
             switch (expression.Type.RankSpecifiers)
             {
                 case [{Sizes: [LiteralExpressionSyntax {Token.Value: 0}]}]:
-                    return new ConvertResult("[]", importData);
+                    return new ConvertResult("[]", importData, new List<String>());
                 case [{Sizes: [LiteralExpressionSyntax {Token.Value: Int32 value}]}]:
-                    return new ConvertResult($"[None for i in range(0, {value})]", importData);
+                    return new ConvertResult($"[None for i in range(0, {value})]", importData, new List<String>());
                 default:
                     throw new UnsupportedSyntaxException($"Unsupported ranks in ArrayCreationExpression expression: {expression}");
             }

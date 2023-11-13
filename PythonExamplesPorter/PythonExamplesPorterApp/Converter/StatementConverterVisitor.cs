@@ -207,8 +207,22 @@ namespace PythonExamplesPorterApp.Converter
         private void ProcessVariableDeclaration(VariableDeclaratorSyntax variable)
         {
             String name = NameTransformer.TransformLocalVariableName(variable.Identifier.Text);
-            String initializer = variable.Initializer == null ? "None" : ConvertExpression(variable.Initializer.Value, _expressionCommonSettings);
+            String initializer = "None";
+            IList<String> afterResults = new List<String>();
+            if (variable.Initializer != null)
+            {
+                ExpressionConverterSettings settings = new ExpressionConverterSettings(_expressionCommonSettings)
+                {
+                    AllowObjectInitializer = true
+                };
+                ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData, settings);
+                ConvertResult result = expressionConverter.Convert(variable.Initializer.Value);
+                _currentMethod.ImportStorage.Append(result.ImportData);
+                initializer = result.Result;
+                afterResults = result.AfterResults.Select(entry => $"{name}.{entry}").ToList();
+            }
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}{name} = {initializer}");
+            afterResults.Foreach(entry => _currentMethod.AddBodyLine($"{entry}"));
         }
 
         private String CreateSwitchSectionCondition(IReadOnlyList<SwitchLabelSyntax> labels, String switchConditionVariable)
