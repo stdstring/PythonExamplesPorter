@@ -67,16 +67,16 @@ namespace PythonExamplesPorterApp.Converter
                 return;
             }
             _appData.Logger.LogInfo($"{logHead} processed");
-            GenerateMethodDeclaration(node);
+            GenerateMethodDeclaration(node, parentFullName);
             base.VisitMethodDeclaration(node);
         }
 
-        private void GenerateMethodDeclaration(MethodDeclarationSyntax node)
+        private void GenerateMethodDeclaration(MethodDeclarationSyntax node, String typeName)
         {
             String methodName = node.Identifier.Text;
             if (_currentClass == null)
                 throw new InvalidOperationException($"Unknown class for method {node.Identifier.Text}");
-            String destMethodName = NameTransformer.TransformMethodName(node.Identifier.Text);
+            String destMethodName = _appData.NameTransformer.TransformMethodName(typeName, node.Identifier.Text);
             if (!destMethodName.StartsWith("test_"))
                 destMethodName = "test_" + destMethodName;
             MethodStorage currentMethod = _currentClass.CreateMethodStorage(destMethodName);

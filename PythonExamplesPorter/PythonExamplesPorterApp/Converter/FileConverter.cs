@@ -14,7 +14,7 @@ namespace PythonExamplesPorterApp.Converter
 
         public void Convert(String relativeFilePath, SyntaxTree tree, SemanticModel model)
         {
-            String destRelativePath = PathTransformer.TransformPath(relativeFilePath);
+            String destRelativePath = PathTransformer.TransformPath(relativeFilePath, _appData.NameTransformer);
             String destDirectory = _appData.AppConfig.ResolveDestDirectory();
             String destPath = Path.Combine(destDirectory, destRelativePath);
             FileStorage currentFile = new FileStorage(destPath);

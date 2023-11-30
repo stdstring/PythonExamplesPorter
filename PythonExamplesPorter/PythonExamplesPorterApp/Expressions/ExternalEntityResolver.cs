@@ -53,8 +53,8 @@ namespace PythonExamplesPorterApp.Expressions
             Boolean isSupportedType = knownNamespaces.Any(sourceNamespaceName.StartsWith);
             if (!isSupportedType)
                 return new OperationResult<TypeResolveData>(false, $"Unsupported type: {sourceNamespaceName}.{sourceTypeName}");
-            String destModuleName = NameTransformer.TransformNamespaceName(sourceNamespaceName);
-            String destTypeName = NameTransformer.TransformClassName(sourceTypeName);
+            String destModuleName = _appData.NameTransformer.TransformNamespaceName(sourceNamespaceName);
+            String destTypeName = _appData.NameTransformer.TransformTypeName(sourceTypeName);
             return new OperationResult<TypeResolveData>(true, "", new TypeResolveData(destTypeName, destModuleName));
         }
 
@@ -120,7 +120,7 @@ namespace PythonExamplesPorterApp.Expressions
                 // TODO (std_string) : think about separation between methods, properties and fields
                 case IMethodSymbol methodSymbol:
                 {
-                    String methodName = NameTransformer.TransformMethodName(methodSymbol.Name);
+                    String methodName = _appData.NameTransformer.TransformMethodName(sourceTypeFullName, methodSymbol.Name);
                     String args = String.Join(", ", representation.Arguments);
                     String methodCall = String.Concat(representation.Target, ".", methodName, "(", args, ")");
                     MemberResolveData resolveData = new MemberResolveData(methodCall, "");
@@ -128,7 +128,7 @@ namespace PythonExamplesPorterApp.Expressions
                 }
                 case IPropertySymbol propertySymbol:
                 {
-                    String propertyName = NameTransformer.TransformPropertyName(propertySymbol.Name);
+                    String propertyName = _appData.NameTransformer.TransformPropertyName(sourceTypeFullName, propertySymbol.Name);
                     String propertyCall = $"{representation.Target}.{propertyName}";
                     MemberResolveData resolveData = new MemberResolveData(propertyCall, "");
                     return new OperationResult<MemberResolveData>(true, "", resolveData);
@@ -137,8 +137,8 @@ namespace PythonExamplesPorterApp.Expressions
                 {
                     String fieldName = fieldSymbol.Type.TypeKind switch
                     {
-                        TypeKind.Enum => NameTransformer.TransformEnumValueName(fieldSymbol.Name),
-                        _ => NameTransformer.TransformFieldName(fieldSymbol.Name)
+                        TypeKind.Enum => _appData.NameTransformer.TransformEnumValueName(sourceTypeFullName, fieldSymbol.Name),
+                        _ => _appData.NameTransformer.TransformFieldName(sourceTypeFullName, fieldSymbol.Name)
                     };
                     String fieldCall = $"{representation.Target}.{fieldName}";
                     MemberResolveData resolveData = new MemberResolveData(fieldCall, "");
@@ -230,7 +230,7 @@ namespace PythonExamplesPorterApp.Expressions
             if (!isSupportedType)
                 return new OperationResult<CastResolveData>(false, $"Unsupported type: {sourceTypeFullName}");
             // TODO (std_string) : think about check existing corresponding cast method in sourceExpression
-            String castMethod = NameTransformer.TransformMethodName($"As{castTypeSymbol.Name}");
+            String castMethod = _appData.NameTransformer.TransformMethodName(sourceTypeFullName, $"As{castTypeSymbol.Name}");
             CastResolveData castResolveData = new CastResolveData($"{sourceRepresentation}.{castMethod}()", "");
             return new OperationResult<CastResolveData>(true, String.Empty, castResolveData);
         }

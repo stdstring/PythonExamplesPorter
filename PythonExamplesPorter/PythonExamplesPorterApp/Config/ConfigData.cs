@@ -1,6 +1,7 @@
 ﻿using System.Xml.Serialization;
 using PythonExamplesPorterApp.Handmade;
 using PythonExamplesPorterApp.Ignored;
+using PythonExamplesPorterApp.Names;
 
 namespace PythonExamplesPorterApp.Config
 {
@@ -15,6 +16,9 @@ namespace PythonExamplesPorterApp.Config
 
         [XmlElement("HandmadeEntities")]
         public HandmadeEntities? HandmadeEntities { get; set; }
+
+        [XmlElement("aliases")]
+        public HandmadeNameAliases? HandmadeAliases { get; set; }
     }
 
     public enum RelativePathBase

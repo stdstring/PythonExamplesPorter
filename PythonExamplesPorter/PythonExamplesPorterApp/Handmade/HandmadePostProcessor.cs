@@ -10,10 +10,10 @@ namespace PythonExamplesPorterApp.Handmade
             _appData = appData;
         }
 
-        public void Process(HandmadeType[] usedTypes)
+        public void Process()
         {
             String destDirectory = _appData.AppConfig.ResolveDestDirectory();
-            foreach (HandmadeType usedType in usedTypes)
+            foreach (HandmadeType usedType in _appData.HandmadeManager.GetUsedHandmadeTypes())
             {
                 String sourcePath = Path.Combine(_appData.AppConfig.ConfigBaseDirectory, usedType.Source);
                 String destPath = Path.Combine(destDirectory, usedType.Dest);

@@ -40,7 +40,7 @@ namespace PythonExamplesPorterApp.Converter
         public override void VisitForEachStatement(ForEachStatementSyntax node)
         {
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}# for each loop begin");
-            String enumerationVariable = NameTransformer.TransformLocalVariableName(node.Identifier.Text);
+            String enumerationVariable = _appData.NameTransformer.TransformLocalVariableName(node.Identifier.Text);
             String forEachExpression = ConvertExpression(node.Expression, _expressionCommonSettings);
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}for {enumerationVariable} in {forEachExpression}:");
             VisitStatement(node.Statement, true);
@@ -206,7 +206,7 @@ namespace PythonExamplesPorterApp.Converter
 
         private void ProcessVariableDeclaration(VariableDeclaratorSyntax variable)
         {
-            String name = NameTransformer.TransformLocalVariableName(variable.Identifier.Text);
+            String name = _appData.NameTransformer.TransformLocalVariableName(variable.Identifier.Text);
             String initializer = "None";
             IList<String> afterResults = new List<String>();
             if (variable.Initializer != null)

@@ -89,7 +89,11 @@ namespace PythonExamplesPorterApp.Expressions
             ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData, _settings);
             ConvertResult targetResult = expressionConverter.Convert(expression.Expression);
             importData.Append(targetResult.ImportData);
-            String getByNameMethod = NameTransformer.TransformMethodName("GetByName");
+            OperationResult<ITypeSymbol> expressionType = expression.GetExpressionTypeSymbol(_model);
+            if (!expressionType.Success)
+                throw new UnsupportedSyntaxException($"Unsupported ElementAccessExpression expression: {expressionType.Reason}");
+            String sourceTypeFullName = expressionType.Data!.GetTypeFullName();
+            String getByNameMethod = _appData.NameTransformer.TransformMethodName(sourceTypeFullName, "GetByName");
             switch (arguments[0].Expression)
             {
                 case LiteralExpressionSyntax literalExpression when literalExpression.Kind() == SyntaxKind.StringLiteralExpression:
@@ -117,7 +121,7 @@ namespace PythonExamplesPorterApp.Expressions
                                 {
                                     ConvertResult argumentResult = expressionConverter.Convert(arguments[0].Expression);
                                     importData.Append(argumentResult.ImportData);
-                                    String getByEnumMethod = NameTransformer.TransformMethodName($"GetBy{enumName}");
+                                    String getByEnumMethod = _appData.NameTransformer.TransformMethodName(sourceTypeFullName, $"GetBy{enumName}");
                                     return new ConvertResult($"{targetResult.Result}.{getByEnumMethod}({argumentResult.Result})", importData, new List<String>());
                                 }
                                 default:

@@ -1,11 +1,19 @@
 ﻿using NUnit.Framework;
 using PythonExamplesPorterApp.Handmade;
+using PythonExamplesPorterApp.Names;
 
 namespace PythonExamplesPorterAppTests.Handmade
 {
     [TestFixture]
     internal class HandmadeEntitiesManagerTests
     {
+        public HandmadeEntitiesManagerTests()
+        {
+            INameTransformStrategy transformStrategy = new SeparatedDigitsExceptSinglesNameConverter();
+            IHandmadeNameManager manager = HandmadeNameManagerFactory.Create(null);
+            _nameTransformer = new NameTransformer(transformStrategy, manager);
+        }
+
         [TestCase("SomeNamespace.SomeTypeA", true)]
         [TestCase("SomeTypeA", false)]
         [TestCase("SomeNamespace.SomeTypeB", false)]
@@ -14,7 +22,7 @@ namespace PythonExamplesPorterAppTests.Handmade
         [TestCase("XXXNamespace.YYYType", false)]
         public void IsHandmadeType(String fullName, Boolean expectedResult)
         {
-            HandmadeEntitiesManager manager = new HandmadeEntitiesManager(_handmadeEntities);
+            HandmadeEntitiesManager manager = new HandmadeEntitiesManager(_handmadeEntities, _nameTransformer);
             Assert.AreEqual(expectedResult, manager.IsHandmadeType(fullName));
         }
 
@@ -26,8 +34,8 @@ namespace PythonExamplesPorterAppTests.Handmade
         [TestCase("XXXNamespace.YYYType")]
         public void IsHandmadeTypeForEmpty(String fullName)
         {
-            HandmadeEntitiesManager managerForNull = new HandmadeEntitiesManager(null);
-            HandmadeEntitiesManager managerForEmpty = new HandmadeEntitiesManager(new HandmadeEntities());
+            HandmadeEntitiesManager managerForNull = new HandmadeEntitiesManager(null, _nameTransformer);
+            HandmadeEntitiesManager managerForEmpty = new HandmadeEntitiesManager(new HandmadeEntities(), _nameTransformer);
             Assert.AreEqual(false, managerForNull.IsHandmadeType(fullName));
             Assert.AreEqual(false, managerForEmpty.IsHandmadeType(fullName));
         }
@@ -35,7 +43,7 @@ namespace PythonExamplesPorterAppTests.Handmade
         [Test]
         public void UseHandmadeType()
         {
-            HandmadeEntitiesManager manager = new HandmadeEntitiesManager(_handmadeEntities);
+            HandmadeEntitiesManager manager = new HandmadeEntitiesManager(_handmadeEntities, _nameTransformer);
             foreach (String typename in new[] {"SomeNamespace.SomeTypeA", "SomeTypeA", "SomeNamespace.SomeTypeB", "XXXNamespace.YYYType"})
                 Assert.DoesNotThrow(() => manager.UseHandmadeType(typename));
             HandmadeType[] expectedUsedHandmadeTypes = _handmadeEntities.HandmadeTypes!.Where(type => type.FullName == "SomeNamespace.SomeTypeA").ToArray();
@@ -52,8 +60,8 @@ namespace PythonExamplesPorterAppTests.Handmade
         [Test]
         public void UseHandmadeTypeForEmpty()
         {
-            HandmadeEntitiesManager managerForNull = new HandmadeEntitiesManager(null);
-            HandmadeEntitiesManager managerForEmpty = new HandmadeEntitiesManager(new HandmadeEntities());
+            HandmadeEntitiesManager managerForNull = new HandmadeEntitiesManager(null, _nameTransformer);
+            HandmadeEntitiesManager managerForEmpty = new HandmadeEntitiesManager(new HandmadeEntities(), _nameTransformer);
             foreach (String typename in new[] {"SomeNamespace.SomeTypeA", "SomeTypeA", "SomeNamespace.SomeTypeB", "XXXNamespace.YYYType"})
             {
                 Assert.DoesNotThrow(() => managerForNull.UseHandmadeType(typename));
@@ -71,7 +79,7 @@ namespace PythonExamplesPorterAppTests.Handmade
         [TestCase("XXXNamespace.YYYType")]
         public void GetHandmadeTypeMapping(String fullName)
         {
-            HandmadeEntitiesManager manager = new HandmadeEntitiesManager(_handmadeEntities);
+            HandmadeEntitiesManager manager = new HandmadeEntitiesManager(_handmadeEntities, _nameTransformer);
             HandmadeMemberMapping[] expected = _handmadeEntities
                 .HandmadeTypes!
                 .SingleOrDefault(type => type.FullName == fullName)?
@@ -87,8 +95,8 @@ namespace PythonExamplesPorterAppTests.Handmade
         [TestCase("XXXNamespace.YYYType")]
         public void GetHandmadeTypeMappingForEmpty(String fullName)
         {
-            HandmadeEntitiesManager managerForNull = new HandmadeEntitiesManager(null);
-            HandmadeEntitiesManager managerForEmpty = new HandmadeEntitiesManager(new HandmadeEntities());
+            HandmadeEntitiesManager managerForNull = new HandmadeEntitiesManager(null, _nameTransformer);
+            HandmadeEntitiesManager managerForEmpty = new HandmadeEntitiesManager(new HandmadeEntities(), _nameTransformer);
             Assert.IsEmpty(managerForNull.GetHandmadeTypeMapping(fullName));
             Assert.IsEmpty(managerForEmpty.GetHandmadeTypeMapping(fullName));
         }
@@ -103,6 +111,8 @@ namespace PythonExamplesPorterAppTests.Handmade
                 Assert.AreEqual(expectedMapping.Value, actual[expectedMapping.Key]);
             }
         }
+
+        private readonly NameTransformer _nameTransformer;
 
         private readonly HandmadeEntities _handmadeEntities = new HandmadeEntities
         {

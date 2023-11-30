@@ -61,7 +61,7 @@ namespace PythonExamplesPorterApp.Converter
         private void GenerateClassDeclaration(ClassDeclarationSyntax node, INamedTypeSymbol currentType)
         {
             String? baseClassFullName = GetBaseClassFullName(currentType);
-            String destClassName = NameTransformer.TransformClassName(node.Identifier.Text);
+            String destClassName = _appData.NameTransformer.TransformTypeName(node.Identifier.Text);
             _currentClass = _currentFile.CreateClassStorage(destClassName);
             if (baseClassFullName == null)
             {
@@ -72,7 +72,7 @@ namespace PythonExamplesPorterApp.Converter
             {
                 Int32 lastDotIndex = baseClassFullName.LastIndexOf('.');
                 String sourceBaseClassName = lastDotIndex == -1 ? baseClassFullName : baseClassFullName.Substring(lastDotIndex + 1);
-                String baseClassName = NameTransformer.TransformClassName(sourceBaseClassName);
+                String baseClassName = _appData.NameTransformer.TransformTypeName(sourceBaseClassName);
                 _currentClass.AddBaseClass(baseClassName);
                 _appData.HandmadeManager.UseHandmadeType(baseClassFullName);
                 String moduleName = _appData.HandmadeManager.CalcHandmadeTypeModuleName(baseClassFullName);

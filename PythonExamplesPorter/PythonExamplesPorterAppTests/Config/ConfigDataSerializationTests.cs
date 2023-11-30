@@ -3,6 +3,7 @@ using NUnit.Framework;
 using PythonExamplesPorterApp.Config;
 using PythonExamplesPorterApp.Handmade;
 using PythonExamplesPorterApp.Ignored;
+using PythonExamplesPorterApp.Names;
 
 namespace PythonExamplesPorterAppTests.Config
 {
@@ -379,6 +380,89 @@ namespace PythonExamplesPorterAppTests.Config
         }
 
         [Test]
+        public void DeserializeWithHandmadeNameAliases()
+        {
+            const String source = "<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n" +
+                                  "<ConfigData>\r\n" +
+                                  "  <BaseConfig>\r\n" +
+                                  "    <Source RelativePathBase=\"app\">..\\source\\someproj.csproj</Source>\r\n" +
+                                  "    <Dest RelativePathBase=\"app\">..\\dest\\examples</Dest>\r\n" +
+                                  "  </BaseConfig>\r\n" +
+                                  "  <aliases>\r\n" +
+                                  "    <namespace>\r\n" +
+                                  "      <types>\r\n" +
+                                  "        <type>\r\n" +
+                                  "          <members>\r\n" +
+                                  "            <member>\r\n" +
+                                  "              <name>HRef</name>\r\n" +
+                                  "              <alias>href</alias>\r\n" +
+                                  "            </member>\r\n" +
+                                  "            <member>\r\n" +
+                                  "              <name>XPath</name>\r\n" +
+                                  "              <alias>xpath</alias>\r\n" +
+                                  "            </member>\r\n" +
+                                  "          </members>\r\n" +
+                                  "        </type>\r\n" +
+                                  "        <type>\r\n" +
+                                  "          <conditions>\r\n" +
+                                  "            <equal>StyleIdentifier</equal>\r\n" +
+                                  "          </conditions>" +
+                                  "          <members>\r\n" +
+                                  "            <member>\r\n" +
+                                  "              <name>BodyText1I</name>\r\n" +
+                                  "              <alias>BODY_TEXT1_I</alias>\r\n" +
+                                  "            </member>\r\n" +
+                                  "            <member>\r\n" +
+                                  "              <name>BodyText1I2</name>\r\n" +
+                                  "              <alias>BODY_TEXT1_I2</alias>\r\n" +
+                                  "            </member>\r\n" +
+                                  "          </members>\r\n" +
+                                  "        </type>\r\n" +
+                                  "      </types>\r\n" +
+                                  "    </namespace>\r\n" +
+                                  "  </aliases>\r\n" +
+                                  "</ConfigData>";
+            ConfigData expected = new ConfigData
+            {
+                BaseConfig = new BaseConfig
+                {
+                    Source = new TargetPath(RelativePathBase.App, "..\\source\\someproj.csproj"),
+                    DestDirectory = new TargetPath(RelativePathBase.App, "..\\dest\\examples")
+                },
+                HandmadeAliases = new HandmadeNameAliases
+                {
+                    Namespaces = new []
+                    {
+                        new NamespaceNameEntry
+                        {
+                            Types = new []
+                            {
+                                new TypeNameEntry
+                                {
+                                    Members = new []
+                                    {
+                                        new MemberAliasMapping{Name = "HRef", Alias="href"},
+                                        new MemberAliasMapping{Name = "XPath", Alias="xpath"}
+                                    }
+                                },
+                                new TypeNameEntry
+                                {
+                                    Condition = new NameConditions{EqualCondition = "StyleIdentifier"},
+                                    Members = new []
+                                    {
+                                        new MemberAliasMapping{Name = "BodyText1I", Alias="BODY_TEXT1_I"},
+                                        new MemberAliasMapping{Name = "BodyText1I2", Alias="BODY_TEXT1_I2"}
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+            CheckDeserialization(expected, source);
+        }
+
+        [Test]
         public void DeserializeFull()
         {
             const String source = "<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n" +
@@ -428,6 +512,39 @@ namespace PythonExamplesPorterAppTests.Config
                                   "      </Type>\r\n" +
                                   "    </Types>\r\n" +
                                   "  </HandmadeEntities>\r\n" +
+                                  "  <aliases>\r\n" +
+                                  "    <namespace>\r\n" +
+                                  "      <types>\r\n" +
+                                  "        <type>\r\n" +
+                                  "          <members>\r\n" +
+                                  "            <member>\r\n" +
+                                  "              <name>HRef</name>\r\n" +
+                                  "              <alias>href</alias>\r\n" +
+                                  "            </member>\r\n" +
+                                  "            <member>\r\n" +
+                                  "              <name>XPath</name>\r\n" +
+                                  "              <alias>xpath</alias>\r\n" +
+                                  "            </member>\r\n" +
+                                  "          </members>\r\n" +
+                                  "        </type>\r\n" +
+                                  "        <type>\r\n" +
+                                  "          <conditions>\r\n" +
+                                  "            <equal>StyleIdentifier</equal>\r\n" +
+                                  "          </conditions>" +
+                                  "          <members>\r\n" +
+                                  "            <member>\r\n" +
+                                  "              <name>BodyText1I</name>\r\n" +
+                                  "              <alias>BODY_TEXT1_I</alias>\r\n" +
+                                  "            </member>\r\n" +
+                                  "            <member>\r\n" +
+                                  "              <name>BodyText1I2</name>\r\n" +
+                                  "              <alias>BODY_TEXT1_I2</alias>\r\n" +
+                                  "            </member>\r\n" +
+                                  "          </members>\r\n" +
+                                  "        </type>\r\n" +
+                                  "      </types>\r\n" +
+                                  "    </namespace>\r\n" +
+                                  "  </aliases>\r\n" +
                                   "</ConfigData>";
             ConfigData expected = new ConfigData
             {
@@ -469,6 +586,35 @@ namespace PythonExamplesPorterAppTests.Config
                             }
                         }
                     }
+                },
+                HandmadeAliases = new HandmadeNameAliases
+                {
+                    Namespaces = new[]
+                    {
+                        new NamespaceNameEntry
+                        {
+                            Types = new []
+                            {
+                                new TypeNameEntry
+                                {
+                                    Members = new []
+                                    {
+                                        new MemberAliasMapping{Name = "HRef", Alias="href"},
+                                        new MemberAliasMapping{Name = "XPath", Alias="xpath"}
+                                    }
+                                },
+                                new TypeNameEntry
+                                {
+                                    Condition = new NameConditions{EqualCondition = "StyleIdentifier"},
+                                    Members = new []
+                                    {
+                                        new MemberAliasMapping{Name = "BodyText1I", Alias="BODY_TEXT1_I"},
+                                        new MemberAliasMapping{Name = "BodyText1I2", Alias="BODY_TEXT1_I2"}
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             };
             CheckDeserialization(expected, source);
@@ -491,6 +637,7 @@ namespace PythonExamplesPorterAppTests.Config
             CheckBaseConfig(expected.BaseConfig!, actual.BaseConfig!);
             CheckIgnoredEntities(expected.IgnoredEntities, actual.IgnoredEntities);
             CheckHandmadeEntities(expected.HandmadeEntities, actual.HandmadeEntities);
+            CheckHandmadeNameAliases(expected.HandmadeAliases, actual.HandmadeAliases);
         }
 
         private void CheckTargetPath(TargetPath expected, TargetPath actual)
@@ -584,6 +731,85 @@ namespace PythonExamplesPorterAppTests.Config
                     Assert.AreEqual(expected[index].SourceName, actual[index].SourceName);
                     Assert.AreEqual(expected[index].DestName, actual[index].DestName);
                     Assert.AreEqual(expected[index].NeedImport, actual[index].NeedImport);
+                }
+            }
+        }
+
+        private void CheckHandmadeNameAliases(HandmadeNameAliases? expected, HandmadeNameAliases? actual)
+        {
+            if (expected == null)
+                Assert.IsNull(actual);
+            else
+            {
+                Assert.IsNotNull(actual);
+                CheckNamespaceNameEntries(expected.Namespaces, actual!.Namespaces);
+            }
+        }
+
+        private void CheckNameConditions(NameConditions? expected, NameConditions? actual)
+        {
+            if (expected == null)
+                Assert.IsNull(actual);
+            else
+            {
+                Assert.IsNotNull(actual);
+                if (expected.EqualCondition == null)
+                    Assert.IsNull(actual);
+                else
+                    Assert.AreEqual(expected.EqualCondition, actual!.EqualCondition);
+            }
+        }
+
+        private void CheckNamespaceNameEntries(NamespaceNameEntry[]? expected, NamespaceNameEntry[]? actual)
+        {
+            if (expected == null || expected.Length == 0)
+                Assert.That(actual == null || actual.Length == 0);
+            else
+            {
+                Assert.IsNotNull(actual);
+                Assert.AreEqual(expected.Length, actual!.Length);
+                for (Int32 index = 0; index < expected.Length; ++index)
+                    CheckNamespaceNameEntry(expected[index], actual[index]);
+            }
+        }
+
+        private void CheckNamespaceNameEntry(NamespaceNameEntry expected, NamespaceNameEntry actual)
+        {
+            CheckNameConditions(expected.Condition, actual.Condition);
+            CheckTypeNameEntries(expected.Types, actual.Types);
+        }
+
+        private void CheckTypeNameEntries(TypeNameEntry[]? expected, TypeNameEntry[]? actual)
+        {
+            if (expected == null || expected.Length == 0)
+                Assert.That(actual == null || actual.Length == 0);
+            else
+            {
+                Assert.IsNotNull(actual);
+                Assert.AreEqual(expected.Length, actual!.Length);
+                for (Int32 index = 0; index < expected.Length; ++index)
+                    CheckTypeNameEntry(expected[index], actual[index]);
+            }
+        }
+
+        private void CheckTypeNameEntry(TypeNameEntry expected, TypeNameEntry actual)
+        {
+            CheckNameConditions(expected.Condition, actual.Condition);
+            CheckMemberAliasMappings(expected.Members, actual.Members);
+        }
+
+        private void CheckMemberAliasMappings(MemberAliasMapping[]? expected, MemberAliasMapping[]? actual)
+        {
+            if (expected == null || expected.Length == 0)
+                Assert.That(actual == null || actual.Length == 0);
+            else
+            {
+                Assert.IsNotNull(actual);
+                Assert.AreEqual(expected.Length, actual!.Length);
+                for (Int32 index = 0; index < expected.Length; ++index)
+                {
+                    Assert.AreEqual(expected[index].Name, actual[index].Name);
+                    Assert.AreEqual(expected[index].Alias, actual[index].Alias);
                 }
             }
         }

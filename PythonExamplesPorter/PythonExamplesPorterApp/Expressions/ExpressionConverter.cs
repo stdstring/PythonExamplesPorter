@@ -174,7 +174,7 @@ namespace PythonExamplesPorterApp.Expressions
                 case null:
                     throw new UnsupportedSyntaxException($"Unrecognizable identifier: {node.Identifier}");
                 case ILocalSymbol localSymbol:
-                    Buffer.Append(NameTransformer.TransformLocalVariableName(localSymbol.Name));
+                    Buffer.Append(_appData.NameTransformer.TransformLocalVariableName(localSymbol.Name));
                     break;
                 case INamedTypeSymbol typeSymbol:
                     // TODO (std_string) ; think about ability of import rollback, e.g. in case of method from NUnit.Framework.Assert class
@@ -458,7 +458,11 @@ namespace PythonExamplesPorterApp.Expressions
                 {
                     case AssignmentExpressionSyntax {Left: IdentifierNameSyntax identifier} expr when expr.Kind() == SyntaxKind.SimpleAssignmentExpression:
                         // TODO (std_string) : check identifier: is this field, property or something else
-                        String name = NameTransformer.TransformPropertyName(identifier.Identifier.Text);
+                        OperationResult<ITypeSymbol> expressionType = identifier.GetExpressionTypeSymbol(_model);
+                        if (!expressionType.Success)
+                            throw new UnsupportedSyntaxException($"Unsupported object initializer expression: {expressionType.Reason}");
+                        String sourceTypeFullName = expressionType.Data!.GetTypeFullName();
+                        String name = _appData.NameTransformer.TransformPropertyName(sourceTypeFullName, identifier.Identifier.Text);
                         ConvertResult expressionResult = converter.Convert(expr.Right);
                         ImportData.Append(expressionResult.ImportData);
                         destExpressions.Add($"{name} = {expressionResult.Result}");

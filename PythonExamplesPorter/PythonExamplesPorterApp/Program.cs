@@ -3,6 +3,7 @@ using PythonExamplesPorterApp.Config;
 using PythonExamplesPorterApp.Handmade;
 using PythonExamplesPorterApp.Ignored;
 using PythonExamplesPorterApp.Logger;
+using PythonExamplesPorterApp.Names;
 using PythonExamplesPorterApp.Processor;
 using PythonExamplesPorterApp.Utils;
 
@@ -57,17 +58,25 @@ namespace PythonExamplesPorterApp
             }
         }
 
+        private static AppData CreateAppData(AppConfig appConfig, TextWriter outputWriter, TextWriter errorWriter)
+        {
+            ILogger logger = new TextWriterLogger(outputWriter, errorWriter, LogLevel.Info);
+            INameTransformStrategy nameTransformStrategy = new SeparatedDigitsExceptSinglesNameConverter();
+            IHandmadeNameManager handmadeNameManager = HandmadeNameManagerFactory.Create(appConfig.ConfigData.HandmadeAliases);
+            NameTransformer nameTransformer = new NameTransformer(nameTransformStrategy, handmadeNameManager);
+            IgnoredEntitiesManager ignoredManager = new IgnoredEntitiesManager(appConfig.ConfigData.IgnoredEntities);
+            HandmadeEntitiesManager handmadeManager = new HandmadeEntitiesManager(appConfig.ConfigData.HandmadeEntities, nameTransformer);
+            return new AppData(appConfig, ignoredManager, handmadeManager, nameTransformer, logger);
+        }
+
         private static void RunPorter(AppConfig appConfig, TextWriter outputWriter, TextWriter errorWriter)
         {
             PrerequisitesManager.Run();
-            ILogger logger = new TextWriterLogger(outputWriter, errorWriter, LogLevel.Info);
-            IgnoredEntitiesManager ignoredManager = new IgnoredEntitiesManager(appConfig.ConfigData.IgnoredEntities);
-            HandmadeEntitiesManager handmadeManager = new HandmadeEntitiesManager(appConfig.ConfigData.HandmadeEntities);
-            AppData appData = new AppData(appConfig, ignoredManager, handmadeManager, logger);
+            AppData appData = CreateAppData(appConfig, outputWriter, errorWriter);
             ProjectProcessor projectProcessor = new ProjectProcessor(appData);
             projectProcessor.Process(appData.AppConfig.ResolveSource());
             HandmadePostProcessor handmadePostProcessor = new HandmadePostProcessor(appData);
-            handmadePostProcessor.Process(handmadeManager.GetUsedHandmadeTypes());
+            handmadePostProcessor.Process();
             outputWriter.WriteLine("That's all folks !!!");
         }
 

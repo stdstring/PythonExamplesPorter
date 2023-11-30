@@ -1,4 +1,4 @@
-﻿using PythonExamplesPorterApp.Converter;
+﻿using PythonExamplesPorterApp.Names;
 
 namespace PythonExamplesPorterApp.Handmade
 {
@@ -6,11 +6,12 @@ namespace PythonExamplesPorterApp.Handmade
 
     internal class HandmadeEntitiesManager
     {
-        public HandmadeEntitiesManager(HandmadeEntities? handmadeEntities)
+        public HandmadeEntitiesManager(HandmadeEntities? handmadeEntities, NameTransformer nameTransformer)
         {
             _handmadeTypes = handmadeEntities?
                 .HandmadeTypes?
                 .ToDictionary(type => type.FullName) ?? new Dictionary<string, HandmadeType>();
+            _nameTransformer = nameTransformer;
         }
 
         public Boolean IsHandmadeType(String fullName) => _handmadeTypes.ContainsKey(fullName);
@@ -41,10 +42,11 @@ namespace PythonExamplesPorterApp.Handmade
             HandmadeType handmadeType = _handmadeTypes[fullName];
             String[] destParts = handmadeType.Dest.Split('\\', '/');
             destParts[^1] = Path.GetFileNameWithoutExtension(destParts[^1]);
-            return String.Join(".", destParts.Select(NameTransformer.TransformFileObjectName));
+            return String.Join(".", destParts.Select(_nameTransformer.TransformFileObjectName));
         }
 
         private readonly IDictionary<String, HandmadeType> _handmadeTypes;
+        private readonly NameTransformer _nameTransformer;
         private readonly ISet<String> _usedHandmadeTypes = new HashSet<String>();
     }
 }
