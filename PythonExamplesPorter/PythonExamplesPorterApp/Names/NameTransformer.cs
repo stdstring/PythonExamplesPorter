@@ -7,12 +7,13 @@ namespace PythonExamplesPorterApp.Names
         public NameTransformer(INameTransformStrategy transformStrategy, IHandmadeNameManager manager)
         {
             _transformStrategy = transformStrategy;
+            _simpleFileObjectStrategy = new SimpleFileObjectConverter();
             _manager = manager;
         }
 
         public String TransformFileObjectName(String fileObjectName)
         {
-            return _transformStrategy.ConvertPascalCaseIntoSnakeCase(fileObjectName);
+            return _simpleFileObjectStrategy.ConvertPascalCaseIntoSnakeCase(fileObjectName);
         }
 
         public String TransformNamespaceName(String namespaceName)
@@ -49,6 +50,13 @@ namespace PythonExamplesPorterApp.Names
                 : _transformStrategy.ConvertPascalCaseIntoSnakeCase(fieldName);
         }
 
+        public String TransformStaticReadonlyFieldName(String typeName, String fieldName)
+        {
+            OperationResult<String> handmadeResult = _manager.Search(typeName, fieldName);
+            String destName = handmadeResult.Success ? handmadeResult.Data! : _transformStrategy.ConvertPascalCaseIntoSnakeCase(fieldName);
+            return destName.ToUpper();
+        }
+
         public String TransformEnumValueName(String typeName, String enumValueName)
         {
             OperationResult<String> handmadeResult = _manager.Search(typeName, enumValueName);
@@ -62,6 +70,7 @@ namespace PythonExamplesPorterApp.Names
         }
 
         private readonly INameTransformStrategy _transformStrategy;
+        private readonly INameTransformStrategy _simpleFileObjectStrategy;
         private readonly IHandmadeNameManager _manager;
     }
 }

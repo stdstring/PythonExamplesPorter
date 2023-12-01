@@ -191,4 +191,28 @@ namespace PythonExamplesPorterApp.Names
             public Boolean HasDigitParts { get; set; }
         }
     }
+
+    internal class SimpleFileObjectConverter : INameTransformStrategy
+    {
+        public String ConvertPascalCaseIntoSnakeCase(String name)
+        {
+            StringBuilder builder = new StringBuilder();
+            for (Int32 index = 0; index < name.Length; ++index)
+            {
+                Char current = name[index];
+                if (Char.IsUpper(current) && (index > 0) && (index < name.Length - 1))
+                {
+                    Char prev = name[index - 1];
+                    Char next = name[index + 1];
+                    if (Char.IsLower(prev) ||
+                        (Char.IsLower(next) && !Char.IsDigit(prev)) ||
+                        (Char.IsDigit(prev) && Char.IsDigit(name[index - 2])))
+                        builder.Append('_');
+                }
+                builder.Append(Char.ToLower(current));
+            }
+
+            return builder.ToString();
+        }
+    }
 }

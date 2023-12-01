@@ -133,11 +133,12 @@ namespace PythonExamplesPorterApp.Expressions
                     MemberResolveData resolveData = new MemberResolveData(propertyCall, "");
                     return new OperationResult<MemberResolveData>(true, "", resolveData);
                 }
-                case IFieldSymbol fieldSymbol:
+                case IFieldSymbol{IsStatic: var isStatic, IsReadOnly: var isReadOnly, Type.TypeKind: var typeKind} fieldSymbol:
                 {
-                    String fieldName = fieldSymbol.Type.TypeKind switch
+                    String fieldName = typeKind switch
                     {
                         TypeKind.Enum => _appData.NameTransformer.TransformEnumValueName(sourceTypeFullName, fieldSymbol.Name),
+                        _ when isStatic && isReadOnly => _appData.NameTransformer.TransformStaticReadonlyFieldName(sourceTypeFullName, fieldSymbol.Name),
                         _ => _appData.NameTransformer.TransformFieldName(sourceTypeFullName, fieldSymbol.Name)
                     };
                     String fieldCall = $"{representation.Target}.{fieldName}";

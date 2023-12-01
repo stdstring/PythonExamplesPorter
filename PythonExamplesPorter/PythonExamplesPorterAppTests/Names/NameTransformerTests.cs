@@ -18,8 +18,11 @@ namespace PythonExamplesPorterAppTests.Names
         [TestCase("ExBorder", "ex_border")]
         [TestCase("ExSuperBorder", "ex_super_border")]
         [TestCase("ExAbsoluteSuperBorder", "ex_absolute_super_border")]
-        [TestCase("ABC23Border", "abc_23_border")]
-        [TestCase("ExABC23Border", "ex_abc_23_border")]
+        [TestCase("ABC23Border", "abc23_border")]
+        [TestCase("ExABC23Border", "ex_abc23_border")]
+        [TestCase("ExMossRtf2Docx", "ex_moss_rtf2docx")]
+        [TestCase("ExPdf2Word", "ex_pdf2word")]
+        [TestCase("ExWordML2003SaveOptions", "ex_word_ml2003_save_options")]
         public void TransformFileObjectName(String source, String expectedResult)
         {
             Assert.AreEqual(expectedResult, _nameTransformer.TransformFileObjectName(source));
@@ -111,6 +114,16 @@ namespace PythonExamplesPorterAppTests.Names
         public void TransformFieldName(String typeName, String source, String expectedResult)
         {
             Assert.AreEqual(expectedResult, _nameTransformer.TransformFieldName(typeName, source));
+        }
+
+        [TestCase("ControlChar", "SectionBreak", "SECTION_BREAK")]
+        [TestCase("ControlChar", "PageBreak", "PAGE_BREAK")]
+        [TestCase("ControlChar", "Lf", "LF")]
+        [TestCase("ControlChar", "LineFeed", "LINE_FEED")]
+        [TestCase("ControlChar", "Cr", "CR")]
+        public void TransformStaticReadonlyFieldName(String typeName, String source, String expectedResult)
+        {
+            Assert.AreEqual(expectedResult, _nameTransformer.TransformStaticReadonlyFieldName(typeName, source));
         }
 
         [TestCase("SomeEnum", "Item", "ITEM")]
