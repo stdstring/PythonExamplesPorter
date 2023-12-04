@@ -28,7 +28,7 @@ namespace PythonExamplesPorterApp.Expressions
 
         public OperationResult<TypeResolveData> ResolveType(TypeSyntax type)
         {
-            SymbolInfo symbolInfo = ModelExtensions.GetSymbolInfo(_model, type);
+            SymbolInfo symbolInfo = _model.GetSymbolInfo(type);
             ISymbol? typeInfo = symbolInfo.Symbol;
             if (typeInfo == null)
                 return new OperationResult<TypeResolveData>(false, $"Unrecognizable type: {type}");

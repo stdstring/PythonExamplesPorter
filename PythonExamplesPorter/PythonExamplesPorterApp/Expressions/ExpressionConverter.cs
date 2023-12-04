@@ -235,7 +235,7 @@ namespace PythonExamplesPorterApp.Expressions
             switch (node.Kind())
             {
                 case SyntaxKind.AddExpression:
-                    Buffer.Append($"{leftOperandResult.Result} + {rightOperandResult.Result}");
+                    ProcessAddExpression(node, leftOperandResult.Result, rightOperandResult.Result);
                     break;
                 case SyntaxKind.SubtractExpression:
                     Buffer.Append($"{leftOperandResult.Result} - {rightOperandResult.Result}");
@@ -302,6 +302,41 @@ namespace PythonExamplesPorterApp.Expressions
                     break;
                 default:
                     throw new UnsupportedSyntaxException($"Unsupported binary expression: {node.Kind()}");
+            }
+        }
+
+        private void ProcessAddExpression(BinaryExpressionSyntax node, String leftOperand, String rightOperand)
+        {
+            SymbolInfo nodeInfo = _model.GetSymbolInfo(node);
+            IMethodSymbol operatorSymbol = nodeInfo.Symbol switch
+            {
+                null => throw new UnsupportedSyntaxException($"Unrecognizable type of expression: {node}"),
+                IMethodSymbol symbol => symbol,
+                _ => throw new UnsupportedSyntaxException($"Unexpected type of expression: {node}")
+            };
+            switch (operatorSymbol.ContainingType.GetTypeFullName())
+            {
+                case "System.String" when operatorSymbol.Parameters.Length == 2:
+                    String leftOperandType = operatorSymbol.Parameters[0].Type.GetTypeFullName();
+                    String rightOperandType = operatorSymbol.Parameters[1].Type.GetTypeFullName();
+                    switch (leftOperandType, rightOperandType)
+                    {
+                        case ("System.String", "System.String"):
+                            Buffer.Append($"{leftOperand} + {rightOperand}");
+                            break;
+                        case ("System.String", _):
+                            Buffer.Append($"{leftOperand} + str({rightOperand})");
+                            break;
+                        case (_, "System.String"):
+                            Buffer.Append($"str({leftOperand}) + {rightOperand}");
+                            break;
+                        default:
+                            throw new UnsupportedSyntaxException($"Unsupported binary expression: node");
+                    }
+                    break;
+                default:
+                    Buffer.Append($"{leftOperand} + {rightOperand}");
+                    break;
             }
         }
 
