@@ -132,7 +132,7 @@ namespace PythonExamplesPorterApp.Expressions
             CheckResult argumentsCheckResult = node.ArgumentList.GetArguments().CheckForMethod();
             if (!argumentsCheckResult.Result)
                 throw new UnsupportedSyntaxException(argumentsCheckResult.Reason);
-            if ((node.Initializer is {Expressions.Count: > 0 }) && !_settings.AllowObjectInitializer)
+            if ((node.Initializer is {Expressions.Count: > 0}) && !_settings.AllowObjectInitializer)
                 throw new UnsupportedSyntaxException("Forbidden object initializer");
             TypeSyntax type = node.Type;
             OperationResult<TypeResolveData> resolveResult = _externalEntityResolver.ResolveType(type);
@@ -143,7 +143,7 @@ namespace PythonExamplesPorterApp.Expressions
             if (String.IsNullOrEmpty(data.TypeName))
                 throw new UnsupportedSyntaxException($"Unsupported type: {type}");
             ProcessTypeResolveData(data);
-            String[] arguments = ConvertArgumentList(CreateChildConverter(), node.ArgumentList.GetArguments());
+            String[] arguments = ConvertArgumentList(CreateChildConverter(), node, node.ArgumentList.GetArguments());
             Buffer.Append($"({String.Join(", ", arguments)})");
             if (node.Initializer is {Expressions.Count: > 0})
                 AfterResults.AddRange(ConvertObjectInitializerExpressions(node.Initializer.Expressions));
@@ -307,18 +307,14 @@ namespace PythonExamplesPorterApp.Expressions
 
         private void ProcessAddExpression(BinaryExpressionSyntax node, String leftOperand, String rightOperand)
         {
-            SymbolInfo nodeInfo = _model.GetSymbolInfo(node);
-            IMethodSymbol operatorSymbol = nodeInfo.Symbol switch
+            OperationResult<IMethodSymbol> operatorSymbol = node.GetMethodSymbol(_model);
+            if (!operatorSymbol.Success)
+                throw new UnsupportedSyntaxException(operatorSymbol.Reason);
+            switch (operatorSymbol.Data!.ContainingType.GetTypeFullName())
             {
-                null => throw new UnsupportedSyntaxException($"Unrecognizable type of expression: {node}"),
-                IMethodSymbol symbol => symbol,
-                _ => throw new UnsupportedSyntaxException($"Unexpected type of expression: {node}")
-            };
-            switch (operatorSymbol.ContainingType.GetTypeFullName())
-            {
-                case "System.String" when operatorSymbol.Parameters.Length == 2:
-                    String leftOperandType = operatorSymbol.Parameters[0].Type.GetTypeFullName();
-                    String rightOperandType = operatorSymbol.Parameters[1].Type.GetTypeFullName();
+                case "System.String" when operatorSymbol.Data.Parameters.Length == 2:
+                    String leftOperandType = operatorSymbol.Data.Parameters[0].Type.GetTypeFullName();
+                    String rightOperandType = operatorSymbol.Data.Parameters[1].Type.GetTypeFullName();
                     switch (leftOperandType, rightOperandType)
                     {
                         case ("System.String", "System.String"):
@@ -468,7 +464,7 @@ namespace PythonExamplesPorterApp.Expressions
         private void VisitMemberAccessExpressionImpl(MemberAccessExpressionSyntax node, ArgumentListSyntax? argumentList)
         {
             ExpressionConverter expressionConverter = CreateChildConverter();
-            String[] arguments = ConvertArgumentList(expressionConverter, argumentList.GetArguments());
+            String[] arguments = ConvertArgumentList(expressionConverter, node, argumentList.GetArguments());
             ExpressionSyntax target = node.Expression;
             String targetDest = ConvertExpression(expressionConverter, target);
             SimpleNameSyntax name = node.Name;
@@ -511,11 +507,47 @@ namespace PythonExamplesPorterApp.Expressions
             return destExpressions;
         }
 
-        private String[] ConvertArgumentList(ExpressionConverter expressionConverter, IReadOnlyList<ArgumentSyntax> arguments)
+        private String[] ConvertArgumentList(ExpressionConverter expressionConverter, ExpressionSyntax source, IReadOnlyList<ArgumentSyntax> arguments)
         {
-            String[] dest = new String[arguments.Count];
-            for (Int32 index = 0; index < arguments.Count; ++index)
+            String ProcessParamsArgument(Int32 startIndex)
+            {
+                Int32 paramsSize = arguments.Count - startIndex;
+                String[] paramsValues = new String[paramsSize];
+                for (Int32 index = startIndex; index < arguments.Count; ++index)
+                    paramsValues[index] = ConvertExpression(expressionConverter, arguments[index].Expression);
+                switch (paramsSize)
+                {
+                    case 1:
+                        TypeInfo lastArgumentInfo = _model.GetTypeInfo(arguments[^1].Expression);
+                        switch (lastArgumentInfo.Type)
+                        {
+                            case null:
+                                throw new UnsupportedSyntaxException("Unrecognizable params argument");
+                            case IArrayTypeSymbol:
+                                return paramsValues[0];
+                            default:
+                                return $"[{String.Join(", ", paramsValues)}]";
+                        }
+                    default:
+                        return $"[{String.Join(", ", paramsValues)}]";
+                }
+            }
+            if (arguments.Count == 0)
+                return Array.Empty<String>();
+            OperationResult<IMethodSymbol> methodSymbol = source.GetMethodSymbol(_model);
+            if (!methodSymbol.Success)
+                throw new UnsupportedSyntaxException(methodSymbol.Reason);
+            IReadOnlyList<IParameterSymbol> parameters = methodSymbol.Data!.Parameters;
+            Boolean hasParamsArguments = (parameters[^1].IsParams) && (arguments.Count >= parameters.Count);
+            Int32 destCount = Math.Min(parameters.Count, arguments.Count);
+            String[] dest = new String[destCount];
+            Int32 usualArgumentCount = arguments.Count < parameters.Count ? arguments.Count : parameters.Count;
+            if (hasParamsArguments)
+                --usualArgumentCount;
+            for (Int32 index = 0; index < usualArgumentCount; ++index)
                 dest[index] = ConvertExpression(expressionConverter, arguments[index].Expression);
+            if (hasParamsArguments)
+                dest[^1] = ProcessParamsArgument(usualArgumentCount);
             return dest;
         }
 

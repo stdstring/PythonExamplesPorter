@@ -71,5 +71,16 @@ namespace PythonExamplesPorterApp.Converter
                 _ => new OperationResult<ITypeSymbol>(false, $"Unsupported type of expression: {expression}")
             };
         }
+
+        public static OperationResult<IMethodSymbol> GetMethodSymbol(this ExpressionSyntax expression, SemanticModel model)
+        {
+            SymbolInfo nodeInfo = model.GetSymbolInfo(expression);
+            return nodeInfo.Symbol switch
+            {
+                null => new OperationResult<IMethodSymbol>(false, $"Unrecognizable type of expression: {expression}"),
+                IMethodSymbol symbol => new OperationResult<IMethodSymbol>(true, "", symbol),
+                _ => new OperationResult<IMethodSymbol>(false, $"Unexpected type of expression: {expression}")
+            };
+        }
     }
 }
