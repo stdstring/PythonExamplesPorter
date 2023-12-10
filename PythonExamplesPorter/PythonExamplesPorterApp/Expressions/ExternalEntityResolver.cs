@@ -11,7 +11,7 @@ namespace PythonExamplesPorterApp.Expressions
 
     internal record MemberData(ExpressionSyntax Target, SimpleNameSyntax Name, IReadOnlyList<ArgumentSyntax> Arguments);
 
-    internal record MemberRepresentation(String Target, String[] Arguments);
+    internal record MemberRepresentation(String Target, ConvertedArguments Arguments);
 
     internal record MemberResolveData(String Member, String ModuleName);
 
@@ -121,7 +121,7 @@ namespace PythonExamplesPorterApp.Expressions
                 case IMethodSymbol methodSymbol:
                 {
                     String methodName = _appData.NameTransformer.TransformMethodName(sourceTypeFullName, methodSymbol.Name);
-                    String args = String.Join(", ", representation.Arguments);
+                    String args = String.Join(", ", representation.Arguments.GetArguments(true));
                     String methodCall = String.Concat(representation.Target, ".", methodName, "(", args, ")");
                     MemberResolveData resolveData = new MemberResolveData(methodCall, "");
                     return new OperationResult<MemberResolveData>(true, "", resolveData);
@@ -150,6 +150,7 @@ namespace PythonExamplesPorterApp.Expressions
             }
         }
 
+        // TODO (std_string) : use IMethodSymbol.Parameters instead of resolving types of representation.Arguments
         private OperationResult<MemberResolveData> ResolveMemberForNUnit(MemberData data, ITypeSymbol sourceType, MemberRepresentation representation)
         {
             OperationResult<MemberResolveData> GenerateAssertEqual(String arg0, String arg1, String? message = null)
@@ -170,16 +171,16 @@ namespace PythonExamplesPorterApp.Expressions
                 switch (data.Arguments.Count)
                 {
                     case 2:
-                        return GenerateAssertEqual(representation.Arguments[0], representation.Arguments[1]);
+                        return GenerateAssertEqual(representation.Arguments.Values[0], representation.Arguments.Values[1]);
                     case 3:
                     {
                         ExpressionSyntax lastArgument = data.Arguments.Last().Expression;
                         switch (lastArgument)
                         {
                             case LiteralExpressionSyntax literalExpression when literalExpression.Kind() == SyntaxKind.StringLiteralExpression:
-                                return GenerateAssertEqual(representation.Arguments[0], representation.Arguments[1], literalExpression.Token.Text);
+                                return GenerateAssertEqual(representation.Arguments.Values[0], representation.Arguments.Values[1], literalExpression.Token.Text);
                             case LiteralExpressionSyntax literalExpression when literalExpression.Kind() == SyntaxKind.NumericLiteralExpression:
-                                return GenerateAssertAlmostEqual(representation.Arguments[0], representation.Arguments[1], literalExpression.Token.ValueText);
+                                return GenerateAssertAlmostEqual(representation.Arguments.Values[0], representation.Arguments.Values[1], literalExpression.Token.ValueText);
                             case IdentifierNameSyntax identifier:
                                 SymbolInfo identifierInfo = ModelExtensions.GetSymbolInfo(_model, identifier);
                                 switch (identifierInfo.Symbol)
@@ -187,11 +188,11 @@ namespace PythonExamplesPorterApp.Expressions
                                     case null:
                                         return new OperationResult<MemberResolveData>(false, $"Unrecognizable third argument in Assert.AreEqual: {identifier.Identifier}");
                                     case ILocalSymbol localSymbol when localSymbol.Type.GetTypeFullName() == "System.String":
-                                        return GenerateAssertEqual(representation.Arguments[0], representation.Arguments[1], identifierInfo.Symbol.Name);
+                                        return GenerateAssertEqual(representation.Arguments.Values[0], representation.Arguments.Values[1], identifierInfo.Symbol.Name);
                                     case ILocalSymbol localSymbol when localSymbol.Type.GetTypeFullName() == "System.Single":
-                                        return GenerateAssertAlmostEqual(representation.Arguments[0], representation.Arguments[1], identifierInfo.Symbol.Name);
+                                        return GenerateAssertAlmostEqual(representation.Arguments.Values[0], representation.Arguments.Values[1], identifierInfo.Symbol.Name);
                                     case ILocalSymbol localSymbol when localSymbol.Type.GetTypeFullName() == "System.Double":
-                                        return GenerateAssertAlmostEqual(representation.Arguments[0], representation.Arguments[1], identifierInfo.Symbol.Name);
+                                        return GenerateAssertAlmostEqual(representation.Arguments.Values[0], representation.Arguments.Values[1], identifierInfo.Symbol.Name);
                                     }
                                 return new OperationResult<MemberResolveData>(false, $"Unsupported third argument in Assert.AreEqual: {identifier.Identifier}");
                             }

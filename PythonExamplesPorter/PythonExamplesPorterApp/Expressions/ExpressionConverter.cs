@@ -31,6 +31,15 @@ namespace PythonExamplesPorterApp.Expressions
         public Boolean AllowObjectInitializer { get; set; }
     }
 
+    // TODO (std_string) : think about more smart solution
+    internal record ConvertedArguments(String[] Values, String[]? NamedValues)
+    {
+        public String[] GetArguments(Boolean canUseNamedArguments)
+        {
+            return canUseNamedArguments && NamedValues != null ? NamedValues : Values;
+        }
+    }
+
     internal class ExpressionConverter
     {
         public ExpressionConverter(SemanticModel model, AppData appData, ExpressionConverterSettings settings)
@@ -143,8 +152,8 @@ namespace PythonExamplesPorterApp.Expressions
             if (String.IsNullOrEmpty(data.TypeName))
                 throw new UnsupportedSyntaxException($"Unsupported type: {type}");
             ProcessTypeResolveData(data);
-            String[] arguments = ConvertArgumentList(CreateChildConverter(), node, node.ArgumentList.GetArguments());
-            Buffer.Append($"({String.Join(", ", arguments)})");
+            ConvertedArguments arguments = ConvertArgumentList(CreateChildConverter(), node, node.ArgumentList.GetArguments());
+            Buffer.Append($"({String.Join(", ", arguments.GetArguments(true))})");
             if (node.Initializer is {Expressions.Count: > 0})
                 AfterResults.AddRange(ConvertObjectInitializerExpressions(node.Initializer.Expressions));
         }
@@ -464,7 +473,7 @@ namespace PythonExamplesPorterApp.Expressions
         private void VisitMemberAccessExpressionImpl(MemberAccessExpressionSyntax node, ArgumentListSyntax? argumentList)
         {
             ExpressionConverter expressionConverter = CreateChildConverter();
-            String[] arguments = ConvertArgumentList(expressionConverter, node, argumentList.GetArguments());
+            ConvertedArguments arguments = ConvertArgumentList(expressionConverter, node, argumentList.GetArguments());
             ExpressionSyntax target = node.Expression;
             String targetDest = ConvertExpression(expressionConverter, target);
             SimpleNameSyntax name = node.Name;
@@ -507,14 +516,44 @@ namespace PythonExamplesPorterApp.Expressions
             return destExpressions;
         }
 
-        private String[] ConvertArgumentList(ExpressionConverter expressionConverter, ExpressionSyntax source, IReadOnlyList<ArgumentSyntax> arguments)
+        // TODO (std_string) : move into separate converter
+        private ConvertedArguments ConvertArgumentList(ExpressionConverter expressionConverter, ExpressionSyntax source, IReadOnlyList<ArgumentSyntax> arguments)
         {
-            String ProcessParamsArgument(Int32 startIndex)
+            Boolean IsOverloadedMember(IMethodSymbol methodSymbol)
+            {
+                IMethodSymbol[] methods = methodSymbol.ContainingType.GetMembers(methodSymbol.Name).OfType<IMethodSymbol>().ToArray();
+                return methods switch
+                {
+                    {Length: 1} => false,
+                    {Length: 2} when methods.Any(method => method.Parameters.Length == 0) => false,
+                    _ => true
+                };
+            }
+            String? GetArgumentName(Boolean useNamedArguments, ArgumentSyntax argument, IParameterSymbol parameter)
+            {
+                if (!useNamedArguments)
+                    return null;
+                return argument.NameColon switch
+                {
+                    null => _appData.NameTransformer.TransformLocalVariableName(parameter.Name),
+                    var nameColon => _appData.NameTransformer.TransformLocalVariableName(nameColon.Name.ToString())
+                };
+            }
+            (String value, String? namedValue) ProcessUsualArgument(Boolean useNamedArguments, ArgumentSyntax argument, IParameterSymbol parameter)
+            {
+                String argumentValue = ConvertExpression(expressionConverter, argument.Expression);
+                return GetArgumentName(useNamedArguments, argument, parameter) switch
+                {
+                    null => (value: argumentValue, namedValue: null),
+                    var name => (value: argumentValue, namedValue: $"{name} = {argumentValue}")
+                };
+            }
+            String ProcessParamsArgumentValue(Int32 startIndex)
             {
                 Int32 paramsSize = arguments.Count - startIndex;
                 String[] paramsValues = new String[paramsSize];
-                for (Int32 index = startIndex; index < arguments.Count; ++index)
-                    paramsValues[index] = ConvertExpression(expressionConverter, arguments[index].Expression);
+                for (Int32 index = 0; index < paramsSize; ++index)
+                    paramsValues[index] = ConvertExpression(expressionConverter, arguments[startIndex + index].Expression);
                 switch (paramsSize)
                 {
                     case 1:
@@ -532,23 +571,44 @@ namespace PythonExamplesPorterApp.Expressions
                         return $"[{String.Join(", ", paramsValues)}]";
                 }
             }
+            (String value, String? namedValue) ProcessParamsArgument(Boolean useNamedArguments, Int32 startIndex, IParameterSymbol parameter)
+            {
+                String argumentValue = ProcessParamsArgumentValue(startIndex);
+                return GetArgumentName(useNamedArguments, arguments[^1], parameter) switch
+                {
+                    null => (value: argumentValue, namedValue: null),
+                    var name => (value: argumentValue, namedValue: $"{name} = {argumentValue}")
+                };
+            }
             if (arguments.Count == 0)
-                return Array.Empty<String>();
+                return new ConvertedArguments(Array.Empty<String>(), null);
             OperationResult<IMethodSymbol> methodSymbol = source.GetMethodSymbol(_model);
             if (!methodSymbol.Success)
                 throw new UnsupportedSyntaxException(methodSymbol.Reason);
             IReadOnlyList<IParameterSymbol> parameters = methodSymbol.Data!.Parameters;
+            Boolean useNamedArguments = (arguments[^1].NameColon is not null) || IsOverloadedMember(methodSymbol.Data);
             Boolean hasParamsArguments = (parameters[^1].IsParams) && (arguments.Count >= parameters.Count);
             Int32 destCount = Math.Min(parameters.Count, arguments.Count);
-            String[] dest = new String[destCount];
+            String[] destArguments = new String[destCount];
+            String[]? destNamedArguments = useNamedArguments ? new String[destCount] : null;
             Int32 usualArgumentCount = arguments.Count < parameters.Count ? arguments.Count : parameters.Count;
             if (hasParamsArguments)
                 --usualArgumentCount;
             for (Int32 index = 0; index < usualArgumentCount; ++index)
-                dest[index] = ConvertExpression(expressionConverter, arguments[index].Expression);
+            {
+                (String value, String? namedValue) argument = ProcessUsualArgument(useNamedArguments, arguments[index], parameters[index]);
+                destArguments[index] = argument.value;
+                if (destNamedArguments != null)
+                    destNamedArguments[index] = argument.namedValue!;
+            }
             if (hasParamsArguments)
-                dest[^1] = ProcessParamsArgument(usualArgumentCount);
-            return dest;
+            {
+                (String value, String? namedValue) argument = ProcessParamsArgument(useNamedArguments, usualArgumentCount, parameters[^1]);
+                destArguments[^1] = argument.value;
+                if (destNamedArguments != null)
+                    destNamedArguments[^1] = argument.namedValue!;
+            }
+            return new ConvertedArguments(destArguments, destNamedArguments);
         }
 
         private String ConvertExpression(ExpressionConverter expressionConverter, ExpressionSyntax expression)
