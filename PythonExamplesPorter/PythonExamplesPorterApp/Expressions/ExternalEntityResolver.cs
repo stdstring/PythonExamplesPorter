@@ -99,6 +99,22 @@ namespace PythonExamplesPorterApp.Expressions
             return new OperationResult<CastResolveData>(false, $"Unsupported cast to type {castType}");
         }
 
+        public OperationResult<CastResolveData> ResolveCast(ITypeSymbol castType, ExpressionSyntax sourceExpression, String sourceRepresentation)
+        {
+            IList<ResolveCastHandler> handlers = new List<ResolveCastHandler>
+            {
+                ResolveCastForKnownNamespace,
+                ResolveCastForSystem
+            };
+            foreach (ResolveCastHandler handler in handlers)
+            {
+                OperationResult<CastResolveData> result = handler(castType, sourceExpression, sourceRepresentation);
+                if (result.Success)
+                    return result;
+            }
+            return new OperationResult<CastResolveData>(false, $"Unsupported cast to type {castType.GetTypeFullName()}");
+        }
+
         private delegate OperationResult<MemberResolveData> ResolveMemberHandler(MemberData data, ITypeSymbol sourceType, MemberRepresentation representation);
 
         private delegate OperationResult<CastResolveData> ResolveCastHandler(ITypeSymbol castTypeSymbol, ExpressionSyntax sourceExpression, String sourceRepresentation);

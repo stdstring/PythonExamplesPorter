@@ -39,10 +39,32 @@ namespace PythonExamplesPorterApp.Converter
 
         public override void VisitForEachStatement(ForEachStatementSyntax node)
         {
+            TypeInfo loopVariableInfo = _model.GetTypeInfo(node.Type);
+            if (loopVariableInfo.Type == null)
+                throw new UnsupportedSyntaxException("Unrecognizable type of foreach loop variable");
+            TypeInfo loopSourceInfo = _model.GetTypeInfo(node.Expression);
+            if (loopSourceInfo.Type == null)
+                throw new UnsupportedSyntaxException("Unrecognizable type of foreach loop source");
+            INamedTypeSymbol? enumerableInterface = loopSourceInfo.Type.AllInterfaces.FirstOrDefault(ci => ci.MetadataName == "IEnumerable`1");
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}# for each loop begin");
             String enumerationVariable = _appData.NameTransformer.TransformLocalVariableName(node.Identifier.Text);
             String forEachExpression = ConvertExpression(node.Expression, _expressionCommonSettings);
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}for {enumerationVariable} in {forEachExpression}:");
+            if (enumerableInterface != null)
+            {
+                ITypeSymbol sourceTypeArgument = enumerableInterface.TypeArguments[0];
+                if (loopVariableInfo.Type.GetTypeFullName() != sourceTypeArgument.GetTypeFullName())
+                {
+                    ExternalEntityResolver resolver = new ExternalEntityResolver(_model, _appData);
+                    OperationResult<CastResolveData> castResult = resolver.ResolveCast(loopVariableInfo.Type, node.Type, enumerationVariable);
+                    if (!castResult.Success)
+                        throw new UnsupportedSyntaxException(castResult.Reason);
+                    _currentMethod.ImportStorage.AddImport(castResult.Data!.ModuleName);
+                    _indentation += StorageDef.IndentationDelta;
+                    _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}{enumerationVariable} = {castResult.Data!.Cast}");
+                    _indentation -= StorageDef.IndentationDelta;
+                }
+            }
             VisitStatement(node.Statement, true);
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}# for loop end");
         }
