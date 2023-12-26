@@ -42,7 +42,11 @@ namespace PythonExamplesPorterApp.Converter
         public static String GetTypeFullName(this ITypeSymbol type)
         {
             // TODO (std_string) : think about using SymbolDisplayFormat
-            return $"{type.ContainingNamespace.ToDisplayString()}.{type.Name}";
+            return type switch
+            {
+                IArrayTypeSymbol arrayType => $"{arrayType.ElementType.ContainingNamespace.ToDisplayString()}.{arrayType.ElementType.Name}[]",
+                _ => $"{type.ContainingNamespace.ToDisplayString()}.{type.Name}"
+            };
         }
 
         public static OperationResult<ITypeSymbol> GetExpressionTypeSymbol(this ExpressionSyntax expression, SemanticModel model)

@@ -166,54 +166,59 @@ namespace PythonExamplesPorterApp.Expressions
             }
         }
 
-        // TODO (std_string) : use IMethodSymbol.Parameters instead of resolving types of representation.Arguments
+        // TODO (std_string) : think about processing of named arguments in C# code
+        // TODO (std_string) : think about processing more smart expression
         private OperationResult<MemberResolveData> ResolveMemberForNUnit(MemberData data, ITypeSymbol sourceType, MemberRepresentation representation)
         {
-            OperationResult<MemberResolveData> GenerateAssertEqual(String arg0, String arg1, String? message = null)
+            OperationResult<MemberResolveData> GenerateAssertEqual(String methodName, String arg0, String arg1, (String name, String value)[] namedArguments)
             {
-                String messagePart = message == null ? "" : $", msg={message}";
-                String methodCall = $"self.assertEqual({arg0}, {arg1}{messagePart})";
-                MemberResolveData resolveData = new MemberResolveData(methodCall, "unittest");
-                return new OperationResult<MemberResolveData>(true, "", resolveData);
-            }
-            OperationResult<MemberResolveData> GenerateAssertAlmostEqual(String arg0, String arg1, String delta)
-            {
-                String methodCall = $"self.assertAlmostEqual({arg0}, {arg1}, delta={delta})";
+                String namedArgumentsPart = String.Join("", namedArguments.Select(arg => $", {arg.name}={arg.value}"));
+                String methodCall = $"self.{methodName}({arg0}, {arg1}{namedArgumentsPart})";
                 MemberResolveData resolveData = new MemberResolveData(methodCall, "unittest");
                 return new OperationResult<MemberResolveData>(true, "", resolveData);
             }
             OperationResult<MemberResolveData> ResolveAssertEqual()
             {
+                if (data.Arguments.Count < 2)
+                    return new OperationResult<MemberResolveData>(false, $"Bad arguments count in Assert.AreEqual: {data.Arguments.Count}");
+                String firstArg = representation.Arguments.Values[0];
+                String secondArg = representation.Arguments.Values[1];
+                TypeInfo firstArgInfo = _model.GetTypeInfo(data.Arguments[0].Expression);
+                TypeInfo secondArgInfo = _model.GetTypeInfo(data.Arguments[1].Expression);
+                Boolean useEqualForCollections = firstArgInfo.Type is IArrayTypeSymbol || secondArgInfo.Type is IArrayTypeSymbol;
                 switch (data.Arguments.Count)
                 {
                     case 2:
-                        return GenerateAssertEqual(representation.Arguments.Values[0], representation.Arguments.Values[1]);
-                    case 3:
-                    {
-                        ExpressionSyntax lastArgument = data.Arguments.Last().Expression;
-                        switch (lastArgument)
+                        (String name, String value)[] emptyNamedArguments = Array.Empty<(String name, String value)>();
+                        return useEqualForCollections switch
                         {
-                            case LiteralExpressionSyntax literalExpression when literalExpression.Kind() == SyntaxKind.StringLiteralExpression:
-                                return GenerateAssertEqual(representation.Arguments.Values[0], representation.Arguments.Values[1], literalExpression.Token.Text);
-                            case LiteralExpressionSyntax literalExpression when literalExpression.Kind() == SyntaxKind.NumericLiteralExpression:
-                                return GenerateAssertAlmostEqual(representation.Arguments.Values[0], representation.Arguments.Values[1], literalExpression.Token.ValueText);
-                            case IdentifierNameSyntax identifier:
-                                SymbolInfo identifierInfo = ModelExtensions.GetSymbolInfo(_model, identifier);
-                                switch (identifierInfo.Symbol)
-                                {
-                                    case null:
-                                        return new OperationResult<MemberResolveData>(false, $"Unrecognizable third argument in Assert.AreEqual: {identifier.Identifier}");
-                                    case ILocalSymbol localSymbol when localSymbol.Type.GetTypeFullName() == "System.String":
-                                        return GenerateAssertEqual(representation.Arguments.Values[0], representation.Arguments.Values[1], identifierInfo.Symbol.Name);
-                                    case ILocalSymbol localSymbol when localSymbol.Type.GetTypeFullName() == "System.Single":
-                                        return GenerateAssertAlmostEqual(representation.Arguments.Values[0], representation.Arguments.Values[1], identifierInfo.Symbol.Name);
-                                    case ILocalSymbol localSymbol when localSymbol.Type.GetTypeFullName() == "System.Double":
-                                        return GenerateAssertAlmostEqual(representation.Arguments.Values[0], representation.Arguments.Values[1], identifierInfo.Symbol.Name);
-                                    }
-                                return new OperationResult<MemberResolveData>(false, $"Unsupported third argument in Assert.AreEqual: {identifier.Identifier}");
-                            }
-                        return new OperationResult<MemberResolveData>(false, $"Unsupported third argument kind in Assert.AreEqual: {lastArgument.Kind()}");
-                    }
+                            true => GenerateAssertEqual("assertSequenceEqual", firstArg, secondArg, emptyNamedArguments),
+                            false => GenerateAssertEqual("assertEqual", firstArg, secondArg, emptyNamedArguments)
+                        };
+                    case 3:
+                        String thirdArg = representation.Arguments.Values[2];
+                        ExpressionSyntax lastArgument = data.Arguments.Last().Expression;
+                        String? lastArgumentType = _model.GetTypeInfo(lastArgument).Type?.GetTypeFullName();
+                        if (lastArgumentType == null)
+                            return new OperationResult<MemberResolveData>(false, "Unrecognizable third argument of Assert.AreEqual");
+                        String? methodName = lastArgumentType switch
+                        {
+                            "System.Single" => "assertAlmostEqual",
+                            "System.Double" => "assertAlmostEqual",
+                            "System.String" when useEqualForCollections => "assertSequenceEqual",
+                            "System.String" => "assertEqual",
+                            _ => null
+                        };
+                        if (methodName is null)
+                            return new OperationResult<MemberResolveData>(false, "Unsupported third argument of Assert.AreEqual");
+                        (String name, String value)[] namedArguments = lastArgumentType! switch
+                        {
+                            "System.Single" => new []{(name: "delta", value: thirdArg)},
+                            "System.Double" => new []{(name: "delta", value: thirdArg)},
+                            "System.String" => new []{(name: "msg", value: thirdArg)},
+                            _ => Array.Empty<(String name, String value)>()
+                        };
+                        return GenerateAssertEqual(methodName, firstArg, secondArg, namedArguments);
                     default:
                         return new OperationResult<MemberResolveData>(false, $"Unsupported arguments count in Assert.AreEqual: {data.Arguments.Count}");
                 }
