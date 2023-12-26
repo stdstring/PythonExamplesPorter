@@ -1,0 +1,110 @@
+﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using PythonExamplesPorterApp.Common;
+using PythonExamplesPorterApp.DestStorage;
+
+namespace PythonExamplesPorterApp.Converter
+{
+    internal class FileConverterVisitor : CSharpSyntaxWalker
+    {
+        public FileConverterVisitor(SemanticModel model, FileStorage currentFile, AppData appData)
+        {
+            _model = model;
+            _currentFile = currentFile;
+            _appData = appData;
+        }
+
+        public override void VisitClassDeclaration(ClassDeclarationSyntax node)
+        {
+            String logHead = $"    We try to process {node.Identifier.Text} class ...";
+            INamedTypeSymbol? currentType = _model.GetDeclaredSymbol(node);
+            // we don't process class without semantic info
+            if (currentType == null)
+            {
+                _appData.Logger.LogInfo($"{logHead} skipped due to absence semantic info");
+                return;
+            }
+            SyntaxNode? parentDecl = node.Parent;
+            // we don't process class which aren't nested into namespaces
+            if (parentDecl == null)
+            {
+                _appData.Logger.LogInfo($"{logHead} skipped due to absence parent namespace");
+                return;
+            }
+            // we don't process nested class
+            if (!parentDecl.IsKind(SyntaxKind.NamespaceDeclaration))
+            {
+                _appData.Logger.LogInfo($"{logHead} skipped for nested class");
+                return;
+            }
+            IReadOnlyList<AttributeListSyntax> attributes = node.AttributeLists;
+            // we don't process classes not marked by NUnit.Framework.TestFixtureAttribute attribute
+            if (!attributes.ContainAttribute(_model, "NUnit.Framework.TestFixtureAttribute"))
+            {
+                _appData.Logger.LogInfo($"{logHead} skipped for class non marked by NUnit.Framework.TestFixtureAttribute attribute");
+                return;
+            }
+            // TODO (std_string) : think about using SymbolDisplayFormat
+            String currentTypeFullName = currentType.ToDisplayString();
+            // we don't process ignored class
+            if (_appData.IgnoredManager.IsIgnoredType(currentTypeFullName))
+            {
+                _appData.Logger.LogInfo($"{logHead} skipped because ignored class");
+                return;
+            }
+            _appData.Logger.LogInfo($"{logHead} processed");
+            GenerateClassDeclaration(node, currentType);
+            base.VisitClassDeclaration(node);
+        }
+
+        private void GenerateClassDeclaration(ClassDeclarationSyntax node, INamedTypeSymbol currentType)
+        {
+            String? baseClassFullName = GetBaseClassFullName(currentType);
+            String destClassName = _appData.NameTransformer.TransformTypeName(node.Identifier.Text);
+            _currentClass = _currentFile.CreateClassStorage(destClassName);
+            if (baseClassFullName == null)
+            {
+                _currentFile.ImportStorage.AddImport("unittest");
+                _currentClass.AddBaseClass("unittest.TestCase");
+            }
+            else
+            {
+                Int32 lastDotIndex = baseClassFullName.LastIndexOf('.');
+                String sourceBaseClassName = lastDotIndex == -1 ? baseClassFullName : baseClassFullName.Substring(lastDotIndex + 1);
+                String baseClassName = _appData.NameTransformer.TransformTypeName(sourceBaseClassName);
+                _currentClass.AddBaseClass(baseClassName);
+                _appData.HandmadeManager.UseHandmadeType(baseClassFullName);
+                String moduleName = _appData.HandmadeManager.CalcHandmadeTypeModuleName(baseClassFullName);
+                _currentFile.ImportStorage.AddEntity(moduleName, baseClassName);
+            }
+        }
+
+        // TODO (std_string) : think about processing of unsupported base classes
+        private String? GetBaseClassFullName(INamedTypeSymbol currentType)
+        {
+            INamedTypeSymbol? baseType = currentType.BaseType;
+            INamespaceSymbol? baseTypeNamespace = baseType?.ContainingNamespace;
+            String? baseTypeNamespaceName = baseTypeNamespace?.Name;
+            if (baseType == null)
+                return null;
+            if (baseTypeNamespaceName == null || baseTypeNamespaceName.StartsWith("System."))
+                return null;
+            // TODO (std_string) : think about using SymbolDisplayFormat
+            return baseType.ToDisplayString();
+        }
+
+        public override void VisitMethodDeclaration(MethodDeclarationSyntax node)
+        {
+            if (_currentClass == null)
+                throw new InvalidOperationException($"Unknown class for method {node.Identifier.Text}");
+            MethodConverterVisitor methodConverter = new MethodConverterVisitor(_model, _currentClass, _appData);
+            methodConverter.Visit(node);
+        }
+
+        private readonly SemanticModel _model;
+        private readonly FileStorage _currentFile;
+        private readonly AppData _appData;
+        private ClassStorage? _currentClass;
+    }
+}

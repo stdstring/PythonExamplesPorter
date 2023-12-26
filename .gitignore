@@ -1,0 +1,5 @@
+PythonExamplesPorter/**/.vs/*
+PythonExamplesPorter/**/bin/*
+PythonExamplesPorter/**/obj/*
+PythonExamplesPorter/**/Properties/*
+PortingResult/**/*.pyc
