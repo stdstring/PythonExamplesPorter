@@ -300,7 +300,13 @@ class ExDocument(ApiExampleBase):
         raise NotImplementedError("Unsupported target type System.DateTime")
 
     def test_update_page_layout(self):
-        raise NotImplementedError("Unsupported identifier with name = Aspose and kind = IdentifierName")
+        doc = aspose.words.Document(file_name = MY_DIR + "Rendering.docx")
+        doc.save(file_name = ARTIFACTS_DIR + "Document.UpdatePageLayout.1.pdf")
+        doc.styles.get_by_name("Normal").font.size = 6
+        doc.sections[0].page_setup.orientation = aspose.words.Orientation.LANDSCAPE
+        doc.sections[0].page_setup.margins = aspose.words.Margins.MIRRORED
+        doc.update_page_layout()
+        doc.save(file_name = ARTIFACTS_DIR + "Document.UpdatePageLayout.2.pdf")
 
     def test_doc_package_custom_parts(self):
         raise NotImplementedError("Unsupported call of method named TestDocPackageCustomParts")

@@ -8,7 +8,7 @@ class ExDocumentBase(ApiExampleBase):
         raise NotImplementedError("Unsupported expression: TypeOfExpression")
 
     def test_set_page_color(self):
-        raise NotImplementedError("Unsupported identifier with name = System and kind = IdentifierName")
+        raise NotImplementedError("Unsupported target type System.Drawing.Color")
 
     def test_import_node(self):
         raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")

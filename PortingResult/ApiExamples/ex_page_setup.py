@@ -170,4 +170,8 @@ class ExPageSetup(ApiExampleBase):
         raise NotImplementedError("Unsupported call of method named InsertSectionWithEndnote")
 
     def test_chapter_page_separator(self):
-        raise NotImplementedError("Unsupported identifier with name = Aspose and kind = IdentifierName")
+        doc = aspose.words.Document(file_name = MY_DIR + "Big document.docx")
+        page_setup = doc.first_section.page_setup
+        page_setup.page_number_style = aspose.words.NumberStyle.UPPERCASE_ROMAN
+        page_setup.chapter_page_separator = aspose.words.ChapterPageSeparator.COLON
+        page_setup.heading_level_for_chapter = 1
