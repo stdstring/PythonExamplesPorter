@@ -475,16 +475,26 @@ namespace PythonExamplesPorterApp.Expressions
             ExpressionConverter expressionConverter = CreateChildConverter();
             ConvertedArguments arguments = ConvertArgumentList(expressionConverter, node, argumentList.GetArguments());
             ExpressionSyntax target = node.Expression;
-            String targetDest = ConvertExpression(expressionConverter, target);
-            SimpleNameSyntax name = node.Name;
-            MemberData memberData = new MemberData(target, name, argumentList.GetArguments());
-            MemberRepresentation memberRepresentation = new MemberRepresentation(targetDest, arguments);
-            OperationResult<MemberResolveData> resolveResult = _externalEntityResolver.ResolveMember(memberData, memberRepresentation);
-            if (!resolveResult.Success)
-                throw new UnsupportedSyntaxException(resolveResult.Reason);
-            MemberResolveData memberResolveData = resolveResult.Data!;
-            Buffer.Append(memberResolveData.Member);
-            ImportData.AddImport(memberResolveData.ModuleName);
+            SymbolInfo targetInfo = _model.GetSymbolInfo(target);
+            switch (targetInfo.Symbol)
+            {
+                // TODO (std_string) : for some types of expression we receive null, but this is not error of recognition. Think about this
+                case INamespaceSymbol:
+                    Visit(node.Name);
+                    break;
+                default:
+                    String targetDest = ConvertExpression(expressionConverter, target);
+                    SimpleNameSyntax name = node.Name;
+                    MemberData memberData = new MemberData(target, name, argumentList.GetArguments());
+                    MemberRepresentation memberRepresentation = new MemberRepresentation(targetDest, arguments);
+                    OperationResult<MemberResolveData> resolveResult = _externalEntityResolver.ResolveMember(memberData, memberRepresentation);
+                    if (!resolveResult.Success)
+                        throw new UnsupportedSyntaxException(resolveResult.Reason);
+                    MemberResolveData memberResolveData = resolveResult.Data!;
+                    Buffer.Append(memberResolveData.Member);
+                    ImportData.AddImport(memberResolveData.ModuleName);
+                    break;
+            }
         }
 
         private IList<String> ConvertObjectInitializerExpressions(IReadOnlyList<ExpressionSyntax> initializerExpressions)
