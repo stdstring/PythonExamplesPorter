@@ -13,32 +13,33 @@ namespace PythonExamplesPorterApp.Expressions
         {
             _model = model;
             _appData = appData;
-            _settings = settings;
+            _expressionConverter = new ExpressionConverter(model, appData, settings);
         }
 
         public ConvertResult Convert(ElementAccessExpressionSyntax expression)
         {
             IReadOnlyList<ArgumentSyntax> arguments = expression.ArgumentList.Arguments;
+            ImportData importData = new ImportData();
             if (arguments.Count != 1)
                 throw new UnsupportedSyntaxException($"Unsupported count of arguments for ElementAccessExpression: {arguments.Count} arguments");
             switch (arguments[0].Expression)
             {
                 case LiteralExpressionSyntax literalExpression when literalExpression.Kind() == SyntaxKind.NumericLiteralExpression:
-                    return ProcessCommonCase(expression);
+                    return ProcessCommonCase(expression, arguments, importData);
                 case LiteralExpressionSyntax literalExpression when literalExpression.Kind() == SyntaxKind.StringLiteralExpression:
-                    return ProcessSpecialCase(expression);
+                    return ProcessSpecialCase(expression, arguments, importData);
                 default:
                     switch (arguments[0].Expression.GetExpressionTypeSymbol(_model))
                     {
-                        case { Success: false, Reason: var reason }:
+                        case {Success: false, Reason: var reason}:
                             throw new UnsupportedSyntaxException(reason);
-                        case { Success: true, Data: var typeSymbol }:
+                        case {Success: true, Data: var typeSymbol}:
                             switch (typeSymbol)
                             {
                                 case var _ when typeSymbol!.GetTypeFullName() == "System.Int32":
-                                    return ProcessCommonCase(expression);
+                                    return ProcessCommonCase(expression, arguments, importData);
                                 default:
-                                    return ProcessSpecialCase(expression);
+                                    return ProcessSpecialCase(expression, arguments, importData);
                             }
                         default:
                             throw new UnsupportedSyntaxException($"Unexpected control flow at converting ElementAccessExpression expression: {expression}");
@@ -46,18 +47,15 @@ namespace PythonExamplesPorterApp.Expressions
             }
         }
 
-        private ConvertResult ProcessCommonCase(ElementAccessExpressionSyntax expression)
+        private ConvertResult ProcessCommonCase(ElementAccessExpressionSyntax expression, IReadOnlyList<ArgumentSyntax> arguments, ImportData importData)
         {
-            IReadOnlyList<ArgumentSyntax> arguments = expression.ArgumentList.Arguments;
-            ImportData importData = new ImportData();
-            ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData, _settings);
-            ConvertResult targetResult = expressionConverter.Convert(expression.Expression);
+            ConvertResult targetResult = _expressionConverter.Convert(expression.Expression);
             importData.Append(targetResult.ImportData);
             switch (arguments[0].Expression)
             {
                 case LiteralExpressionSyntax literalExpression when literalExpression.Kind() == SyntaxKind.NumericLiteralExpression:
                     Int32 value = (Int32)literalExpression.Token.Value!;
-                    return new ConvertResult($"{targetResult.Result}[{value}]", importData, new List<String>());
+                    return new ConvertResult($"{targetResult.Result}[{value}]", importData);
                 case LiteralExpressionSyntax literalExpression when literalExpression.Kind() != SyntaxKind.NumericLiteralExpression:
                     throw new UnsupportedSyntaxException($"Unsupported type of ElementAccessExpression expression: {expression}");
                 default:
@@ -69,9 +67,9 @@ namespace PythonExamplesPorterApp.Expressions
                             switch (typeSymbol)
                             {
                                 case var _ when typeSymbol!.GetTypeFullName() == "System.Int32":
-                                    ConvertResult argumentResult = expressionConverter.Convert(arguments[0].Expression);
+                                    ConvertResult argumentResult = _expressionConverter.Convert(arguments[0].Expression);
                                     importData.Append(argumentResult.ImportData);
-                                    return new ConvertResult($"{targetResult.Result}[{argumentResult.Result}]", importData, new List<String>());
+                                    return new ConvertResult($"{targetResult.Result}[{argumentResult.Result}]", importData);
                                 default:
                                     throw new UnsupportedSyntaxException($"Unsupported type of ElementAccessExpression expression: {expression}");
                             }
@@ -82,12 +80,9 @@ namespace PythonExamplesPorterApp.Expressions
         }
 
         // TODO (std_string) : think about location
-        private ConvertResult ProcessSpecialCase(ElementAccessExpressionSyntax expression)
+        private ConvertResult ProcessSpecialCase(ElementAccessExpressionSyntax expression, IReadOnlyList<ArgumentSyntax> arguments, ImportData importData)
         {
-            IReadOnlyList<ArgumentSyntax> arguments = expression.ArgumentList.Arguments;
-            ImportData importData = new ImportData();
-            ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData, _settings);
-            ConvertResult targetResult = expressionConverter.Convert(expression.Expression);
+            ConvertResult targetResult = _expressionConverter.Convert(expression.Expression);
             importData.Append(targetResult.ImportData);
             OperationResult<ITypeSymbol> expressionType = expression.GetExpressionTypeSymbol(_model);
             if (!expressionType.Success)
@@ -99,7 +94,7 @@ namespace PythonExamplesPorterApp.Expressions
                 case LiteralExpressionSyntax literalExpression when literalExpression.Kind() == SyntaxKind.StringLiteralExpression:
                 {
                     String value = literalExpression.Token.Text;
-                    return new ConvertResult($"{targetResult.Result}.{getByNameMethod}({value})", importData, new List<String>());
+                    return new ConvertResult($"{targetResult.Result}.{getByNameMethod}({value})", importData);
                 }
                 case LiteralExpressionSyntax literalExpression when literalExpression.Kind() != SyntaxKind.StringLiteralExpression:
                     throw new UnsupportedSyntaxException($"Unsupported type of ElementAccessExpression expression: {expression}");
@@ -113,16 +108,16 @@ namespace PythonExamplesPorterApp.Expressions
                             {
                                 case var _ when typeSymbol!.GetTypeFullName() == "System.String":
                                 {
-                                    ConvertResult argumentResult = expressionConverter.Convert(arguments[0].Expression);
+                                    ConvertResult argumentResult = _expressionConverter.Convert(arguments[0].Expression);
                                     importData.Append(argumentResult.ImportData);
-                                    return new ConvertResult($"{targetResult.Result}.{getByNameMethod}({argumentResult.Result})", importData, new List<String>());
+                                    return new ConvertResult($"{targetResult.Result}.{getByNameMethod}({argumentResult.Result})", importData);
                                 }
                                 case {TypeKind: TypeKind.Enum, Name: var enumName}:
                                 {
-                                    ConvertResult argumentResult = expressionConverter.Convert(arguments[0].Expression);
+                                    ConvertResult argumentResult = _expressionConverter.Convert(arguments[0].Expression);
                                     importData.Append(argumentResult.ImportData);
                                     String getByEnumMethod = _appData.NameTransformer.TransformMethodName(sourceTypeFullName, $"GetBy{enumName}");
-                                    return new ConvertResult($"{targetResult.Result}.{getByEnumMethod}({argumentResult.Result})", importData, new List<String>());
+                                    return new ConvertResult($"{targetResult.Result}.{getByEnumMethod}({argumentResult.Result})", importData);
                                 }
                                 default:
                                     throw new UnsupportedSyntaxException($"Unsupported type of ElementAccessExpression expression: {expression}");
@@ -135,6 +130,6 @@ namespace PythonExamplesPorterApp.Expressions
 
         private readonly SemanticModel _model;
         private readonly AppData _appData;
-        private readonly ExpressionConverterSettings _settings;
+        private readonly ExpressionConverter _expressionConverter;
     }
 }
