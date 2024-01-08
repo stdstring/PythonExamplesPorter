@@ -5,7 +5,7 @@ using PythonExamplesPorterApp.Names;
 namespace PythonExamplesPorterAppTests.Names
 {
     [TestFixture]
-    internal class HandmadeNameManagerTests
+    public class HandmadeNameManagerTests
     {
         [TestCase("SomeClass", "SomeMember", false, "")]
         [TestCase("SomeLibraryA.SomeClass", "SomeMember", false, "")]

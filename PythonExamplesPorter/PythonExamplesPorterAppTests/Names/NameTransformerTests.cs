@@ -4,7 +4,7 @@ using PythonExamplesPorterApp.Names;
 namespace PythonExamplesPorterAppTests.Names
 {
     [TestFixture]
-    internal class NameTransformerTests
+    public class NameTransformerTests
     {
         public NameTransformerTests()
         {

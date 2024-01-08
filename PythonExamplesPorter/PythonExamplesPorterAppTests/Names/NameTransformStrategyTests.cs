@@ -4,7 +4,7 @@ using PythonExamplesPorterApp.Names;
 namespace PythonExamplesPorterAppTests.Names
 {
     [TestFixture]
-    internal class SeparatedDigitsExceptSinglesNameConverterTests
+    public class SeparatedDigitsExceptSinglesNameConverterTests
     {
         [TestCase("UICompat97To2003", "ui_compat_97_to_2003")]
         [TestCase("Rotate90FlipNone", "rotate_90_flip_none")]
