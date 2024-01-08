@@ -20,7 +20,8 @@ namespace PythonExamplesPorterApp.DestStorage
             writer.WriteLine($"{baseIndentation}def {_methodName}(self):");
             if (_errorReason != null)
             {
-                writer.WriteLine($"{bodyIndentation}raise NotImplementedError(\"{_errorReason}\")");
+                String errorReason = StringUtils.Escape(_errorReason);
+                writer.WriteLine($"{bodyIndentation}raise NotImplementedError(\"{errorReason}\")");
                 return;
             }
             foreach (String bodyLine in _body)

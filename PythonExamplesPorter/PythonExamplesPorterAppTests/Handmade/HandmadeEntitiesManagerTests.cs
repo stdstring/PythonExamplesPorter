@@ -5,7 +5,7 @@ using PythonExamplesPorterApp.Names;
 namespace PythonExamplesPorterAppTests.Handmade
 {
     [TestFixture]
-    internal class HandmadeEntitiesManagerTests
+    public class HandmadeEntitiesManagerTests
     {
         public HandmadeEntitiesManagerTests()
         {
