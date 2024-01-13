@@ -77,7 +77,32 @@ class ExHtmlSaveOptions(ApiExampleBase):
         doc.save(file_name = ARTIFACTS_DIR + "HtmlSaveOptions.ContentIdScheme.mhtml", save_options = save_options)
 
     def test_heading_levels(self):
-        raise NotImplementedError("Unsupported target type System.String")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        builder.paragraph_format.style = builder.document.styles.get_by_name("Heading 1")
+        builder.writeln("Heading #1")
+        builder.paragraph_format.style = builder.document.styles.get_by_name("Heading 2")
+        builder.writeln("Heading #2")
+        builder.paragraph_format.style = builder.document.styles.get_by_name("Heading 3")
+        builder.writeln("Heading #3")
+        builder.paragraph_format.style = builder.document.styles.get_by_name("Heading 1")
+        builder.writeln("Heading #4")
+        builder.paragraph_format.style = builder.document.styles.get_by_name("Heading 2")
+        builder.writeln("Heading #5")
+        builder.paragraph_format.style = builder.document.styles.get_by_name("Heading 3")
+        builder.writeln("Heading #6")
+        options = aspose.words.saving.HtmlSaveOptions()
+        options.document_split_criteria = aspose.words.saving.DocumentSplitCriteria.HEADING_PARAGRAPH
+        options.document_split_heading_level = 2
+        doc.save(file_name = ARTIFACTS_DIR + "HtmlSaveOptions.HeadingLevels.html", save_options = options)
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "HtmlSaveOptions.HeadingLevels.html")
+        self.assertEqual("Heading #1", doc.get_text().strip())
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "HtmlSaveOptions.HeadingLevels-01.html")
+        self.assertEqual("Heading #2\r" + "Heading #3", doc.get_text().strip())
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "HtmlSaveOptions.HeadingLevels-02.html")
+        self.assertEqual("Heading #4", doc.get_text().strip())
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "HtmlSaveOptions.HeadingLevels-03.html")
+        self.assertEqual("Heading #5\r" + "Heading #6", doc.get_text().strip())
 
     def test_folder_alias(self):
         doc = aspose.words.Document(file_name = MY_DIR + "Rendering.docx")

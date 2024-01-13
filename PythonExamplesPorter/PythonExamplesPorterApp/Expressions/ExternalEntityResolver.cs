@@ -241,7 +241,115 @@ namespace PythonExamplesPorterApp.Expressions
 
         private OperationResult<MemberResolveData> ResolveMemberCallForSystem(MemberData data, ITypeSymbol sourceType, MemberRepresentation representation)
         {
-            return new OperationResult<MemberResolveData>(false, "ResolveMemberCallForSystem: Not Implemented");
+            String sourceTypeFullName = sourceType.GetTypeFullName();
+            SimpleNameSyntax memberName = data.Name;
+            SymbolInfo memberInfo = ModelExtensions.GetSymbolInfo(_model, memberName);
+            switch (sourceTypeFullName)
+            {
+                case "System.String":
+                    switch (memberInfo.Symbol)
+                    {
+                        case null:
+                            return new OperationResult<MemberResolveData>(false, $"Unsupported member: {sourceTypeFullName}.{memberName}");
+                        case IMethodSymbol {Name: "Trim"}:
+                            switch (data.Arguments)
+                            {
+                                case []:
+                                    return new OperationResult<MemberResolveData>(true, "", new MemberResolveData($"{representation.Target}.strip()", ""));
+                                case [var arg]:
+                                    switch (arg.Expression)
+                                    {
+                                        case LiteralExpressionSyntax literal when literal.Kind() == SyntaxKind.CharacterLiteralExpression:
+                                        {
+                                                String member = $"{representation.Target}.strip(\"{literal.Token.Text.Trim('\'')}\")";
+                                                MemberResolveData memberData = new MemberResolveData(member, "");
+                                            return new OperationResult<MemberResolveData>(true, "", memberData);
+                                        }
+                                        default:
+                                            return new OperationResult<MemberResolveData>(false, "Unsupported arguments for System.String.Trim");
+                                    }
+                                default:
+                                    return new OperationResult<MemberResolveData>(false, "Unsupported arguments for System.String.Trim");
+                            }
+                        case IMethodSymbol {Name: "StartsWith"}:
+                            switch (data.Arguments)
+                            {
+                                // TODO (std_string) : add check of arg type
+                                case [var arg]:
+                                    switch (arg.Expression)
+                                    {
+                                        case LiteralExpressionSyntax literal when literal.Kind() == SyntaxKind.CharacterLiteralExpression:
+                                        {
+                                            String member = $"{representation.Target}.startswith(\"{literal.Token.Text.Trim('\'')}\")";
+                                            MemberResolveData memberData = new MemberResolveData(member, "");
+                                            return new OperationResult<MemberResolveData>(true, "", memberData);
+                                        }
+                                        default:
+                                        {
+                                            String member = $"{representation.Target}.startswith({representation.Arguments.Values[0]})";
+                                            MemberResolveData memberData = new MemberResolveData(member, "");
+                                            return new OperationResult<MemberResolveData>(true, "", memberData);
+                                        }
+                                    }
+                                default:
+                                    return new OperationResult<MemberResolveData>(false, "Unsupported arguments for System.String.StartsWith");
+                            }
+                        case IMethodSymbol {Name: "Contains"}:
+                            switch (data.Arguments)
+                            {
+                                // TODO (std_string) : add check of arg type
+                                case [var arg]:
+                                    switch (arg.Expression)
+                                    {
+                                        case LiteralExpressionSyntax literal when literal.Kind() == SyntaxKind.CharacterLiteralExpression:
+                                        {
+                                            String member = $"(\"{literal.Token.Text.Trim('\'')}\" in {representation.Target})";
+                                            MemberResolveData memberData = new MemberResolveData(member, "");
+                                            return new OperationResult<MemberResolveData>(true, "", memberData);
+                                        }
+                                        default:
+                                        {
+                                            String member = $"({representation.Arguments.Values[0]} in {representation.Target})";
+                                            MemberResolveData memberData = new MemberResolveData(member, "");
+                                            return new OperationResult<MemberResolveData>(true, "", memberData);
+                                        }
+                                    }
+                                default:
+                                    return new OperationResult<MemberResolveData>(false, "Unsupported arguments for System.String.Contains");
+                            }
+                        case IMethodSymbol {Name: "Replace"}:
+                            switch (data.Arguments)
+                            {
+                                // TODO (std_string) : add check of arg type
+                                case [var arg1, var arg2]:
+                                {
+                                    switch (arg1.Expression, arg2.Expression)
+                                    {
+                                        case (LiteralExpressionSyntax literal1, LiteralExpressionSyntax literal2) when
+                                            literal1.Kind() == SyntaxKind.CharacterLiteralExpression &&
+                                            literal2.Kind() == SyntaxKind.CharacterLiteralExpression:
+                                        {
+                                            String member = $"{representation.Target}.replace(\"{literal1.Token.Text.Trim('\'')}\", \"{literal2.Token.Text.Trim('\'')}\")";
+                                            MemberResolveData memberData = new MemberResolveData(member, "");
+                                            return new OperationResult<MemberResolveData>(true, "", memberData);
+                                        }
+                                            default:
+                                        {
+                                            String member = $"{representation.Target}.replace({representation.Arguments.Values[0]}, {representation.Arguments.Values[1]})";
+                                            MemberResolveData memberData = new MemberResolveData(member, "");
+                                            return new OperationResult<MemberResolveData>(true, "", memberData);
+                                        }
+                                    }
+                                }
+                                default:
+                                    return new OperationResult<MemberResolveData>(false, "Unsupported arguments for System.String.Replace");
+                            }
+                        default:
+                            return new OperationResult<MemberResolveData>(false, $"Unsupported member: {sourceTypeFullName}.{memberName}");
+                    }
+                default:
+                    return new OperationResult<MemberResolveData>(false, $"Unsupported type: {sourceTypeFullName}");
+            }
         }
 
         public OperationResult<CastResolveData> ResolveCastForKnownNamespace(ITypeSymbol castTypeSymbol, ExpressionSyntax sourceExpression, String sourceRepresentation)
@@ -260,7 +368,7 @@ namespace PythonExamplesPorterApp.Expressions
 
         public OperationResult<CastResolveData> ResolveCastForSystem(ITypeSymbol castTypeSymbol, ExpressionSyntax sourceExpression, String sourceRepresentation)
         {
-            throw new NotImplementedException();
+            return new OperationResult<CastResolveData>(false, "Not supported now");
         }
 
         // TODO (std_string) : think about separation for members, cast etc

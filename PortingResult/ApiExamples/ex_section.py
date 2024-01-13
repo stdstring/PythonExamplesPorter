@@ -11,7 +11,18 @@ class ExSection(ApiExampleBase):
         raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
 
     def test_add_remove(self):
-        raise NotImplementedError("Unsupported target type System.String")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        builder.write("Section 1")
+        builder.insert_break(aspose.words.BreakType.SECTION_BREAK_NEW_PAGE)
+        builder.write("Section 2")
+        self.assertEqual("Section 1\x000cSection 2", doc.get_text().strip())
+        doc.sections.remove_at(0)
+        self.assertEqual("Section 2", doc.get_text().strip())
+        last_section_idx = doc.sections.count - 1
+        new_section = doc.sections[last_section_idx].clone()
+        doc.sections.add(new_section)
+        self.assertEqual("Section 2\x000cSection 2", doc.get_text().strip())
 
     def test_first_and_last(self):
         doc = aspose.words.Document()
@@ -35,16 +46,41 @@ class ExSection(ApiExampleBase):
         raise NotImplementedError("Unsupported target type System.Drawing.Color")
 
     def test_ensure_minimum(self):
-        raise NotImplementedError("Unsupported target type System.String")
+        doc = aspose.words.Document()
+        self.assertEqual(aspose.words.NodeType.SECTION, doc.get_child(aspose.words.NodeType.ANY, 0, True).node_type)
+        self.assertEqual(aspose.words.NodeType.BODY, doc.sections[0].get_child(aspose.words.NodeType.ANY, 0, True).node_type)
+        self.assertEqual(aspose.words.NodeType.PARAGRAPH, doc.sections[0].body.get_child(aspose.words.NodeType.ANY, 0, True).node_type)
+        doc.sections.add(aspose.words.Section(doc))
+        self.assertEqual(0, doc.sections[1].get_child_nodes(aspose.words.NodeType.ANY, True).count)
+        doc.last_section.ensure_minimum()
+        self.assertEqual(aspose.words.NodeType.BODY, doc.sections[1].get_child(aspose.words.NodeType.ANY, 0, True).node_type)
+        self.assertEqual(aspose.words.NodeType.PARAGRAPH, doc.sections[1].body.get_child(aspose.words.NodeType.ANY, 0, True).node_type)
+        doc.sections[0].body.first_paragraph.append_child(aspose.words.Run(doc = doc, text = "Hello world!"))
+        self.assertEqual("Hello world!", doc.get_text().strip())
 
     def test_body_ensure_minimum(self):
-        raise NotImplementedError("Unsupported target type System.String")
+        doc = aspose.words.Document()
+        doc.remove_all_children()
+        section = aspose.words.Section(doc)
+        doc.append_child(section)
+        body = aspose.words.Body(doc)
+        section.append_child(body)
+        self.assertEqual(0, doc.first_section.body.get_child_nodes(aspose.words.NodeType.ANY, True).count)
+        body.ensure_minimum()
+        body.first_paragraph.append_child(aspose.words.Run(doc = doc, text = "Hello world!"))
+        self.assertEqual("Hello world!", doc.get_text().strip())
 
     def test_body_child_nodes(self):
         raise NotImplementedError("Unsupported break statement usage")
 
     def test_clear(self):
-        raise NotImplementedError("Unsupported target type System.String")
+        doc = aspose.words.Document(file_name = MY_DIR + "Document.docx")
+        self.assertEqual(1, doc.sections.count)
+        self.assertEqual(17, doc.sections[0].get_child_nodes(aspose.words.NodeType.ANY, True).count)
+        self.assertEqual("Hello World!\r\rHello Word!\r\r\rHello World!", doc.get_text().strip())
+        doc.sections.clear()
+        self.assertEqual(0, doc.get_child_nodes(aspose.words.NodeType.ANY, True).count)
+        self.assertEqual("", doc.get_text().strip())
 
     def test_prepend_append_content(self):
         doc = aspose.words.Document()
@@ -64,7 +100,14 @@ class ExSection(ApiExampleBase):
         self.assertEqual("Section 1" + aspose.words.ControlChar.PARAGRAPH_BREAK + "Section 3" + aspose.words.ControlChar.PARAGRAPH_BREAK + "Section 2" + aspose.words.ControlChar.SECTION_BREAK, section.get_text())
 
     def test_clear_content(self):
-        raise NotImplementedError("Unsupported target type System.String")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        builder.write("Hello world!")
+        self.assertEqual("Hello world!", doc.get_text().strip())
+        self.assertEqual(1, doc.first_section.body.paragraphs.count)
+        doc.first_section.clear_content()
+        self.assertEqual("", doc.get_text().strip())
+        self.assertEqual(1, doc.first_section.body.paragraphs.count)
 
     def test_clear_headers_footers(self):
         raise NotImplementedError("Unsupported type of expression: HeaderFooterType.HeaderPrimary")

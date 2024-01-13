@@ -7,10 +7,30 @@ from api_example_base import ApiExampleBase, ARTIFACTS_DIR
 
 class ExCellFormat(ApiExampleBase):
     def test_vertical_merge(self):
-        raise NotImplementedError("Unsupported target type System.String")
+        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
 
     def test_horizontal_merge(self):
-        raise NotImplementedError("Unsupported target type System.String")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        builder.insert_cell()
+        builder.cell_format.horizontal_merge = aspose.words.tables.CellMerge.FIRST
+        builder.write("Text in merged cells.")
+        builder.insert_cell()
+        builder.cell_format.horizontal_merge = aspose.words.tables.CellMerge.PREVIOUS
+        builder.end_row()
+        builder.cell_format.horizontal_merge = aspose.words.tables.CellMerge.NONE
+        builder.insert_cell()
+        builder.write("Text in unmerged cell.")
+        builder.insert_cell()
+        builder.write("Text in unmerged cell.")
+        builder.end_row()
+        builder.end_table()
+        doc.save(file_name = ARTIFACTS_DIR + "CellFormat.HorizontalMerge.docx")
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "CellFormat.HorizontalMerge.docx")
+        table = doc.first_section.body.tables[0]
+        self.assertEqual(1, table.rows[0].cells.count)
+        self.assertEqual(aspose.words.tables.CellMerge.NONE, table.rows[0].cells[0].cell_format.horizontal_merge)
+        self.assertEqual("Text in merged cells.", table.rows[0].cells[0].get_text().strip("\a"))
 
     def test_padding(self):
         doc = aspose.words.Document()

@@ -14,7 +14,12 @@ from api_example_base import ApiExampleBase, ARTIFACTS_DIR, IMAGE_DIR, MY_DIR
 
 class ExDocument(ApiExampleBase):
     def test_constructor(self):
-        raise NotImplementedError("Unsupported target type System.String")
+        doc = aspose.words.Document()
+        doc.first_section.body.first_paragraph.append_child(aspose.words.Run(doc = doc, text = "Hello world!"))
+        doc = aspose.words.Document(file_name = MY_DIR + "Document.docx")
+        self.assertEqual("Hello World!", doc.first_section.body.first_paragraph.get_text().strip())
+        doc = aspose.words.Document(file_name = MY_DIR + "Encrypted.docx", load_options = aspose.words.loading.LoadOptions(password = "docPassword"))
+        self.assertEqual("Test encrypted document.", doc.first_section.body.first_paragraph.get_text().strip())
 
     def test_load_from_stream(self):
         raise NotImplementedError("Unsupported statement type: UsingStatement")
@@ -86,7 +91,7 @@ class ExDocument(ApiExampleBase):
         raise NotImplementedError("Unsupported expression: ParenthesizedLambdaExpression")
 
     def test_keep_source_numbering_same_list_ids(self):
-        raise NotImplementedError("Unsupported target type System.String")
+        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
 
     def test_merge_pasted_lists(self):
         src_doc = aspose.words.Document(file_name = MY_DIR + "List item.docx")
@@ -108,7 +113,16 @@ class ExDocument(ApiExampleBase):
         self.assertEqual(paras[2].paragraph_format.style.name, "MyStyle3")
 
     def test_adjust_sentence_and_word_spacing(self):
-        raise NotImplementedError("Unsupported target type System.String")
+        src_doc = aspose.words.Document()
+        dst_doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(src_doc)
+        builder.write("Dolor sit amet.")
+        builder = aspose.words.DocumentBuilder(dst_doc)
+        builder.write("Lorem ipsum.")
+        options = aspose.words.ImportFormatOptions()
+        options.adjust_sentence_and_word_spacing = True
+        builder.insert_document(src_doc = src_doc, import_format_mode = aspose.words.ImportFormatMode.USE_DESTINATION_STYLES, import_format_options = options)
+        self.assertEqual("Lorem ipsum. Dolor sit amet.", dst_doc.first_section.body.first_paragraph.get_text().strip())
 
     def test_validate_individual_document_signatures(self):
         raise NotImplementedError("Unsupported expression: InterpolatedStringExpression")
@@ -142,10 +156,41 @@ class ExDocument(ApiExampleBase):
         raise NotImplementedError("Unsupported type: MemoryStream")
 
     def test_protect_unprotect(self):
-        raise NotImplementedError("Unsupported target type System.String")
+        doc = aspose.words.Document()
+        doc.protect(type = aspose.words.ProtectionType.READ_ONLY, password = "password")
+        self.assertEqual(aspose.words.ProtectionType.READ_ONLY, doc.protection_type)
+        doc.save(file_name = ARTIFACTS_DIR + "Document.Protect.docx")
+        protected_doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Document.Protect.docx")
+        self.assertEqual(aspose.words.ProtectionType.READ_ONLY, protected_doc.protection_type)
+        builder = aspose.words.DocumentBuilder(protected_doc)
+        builder.writeln("Text added to a protected document.")
+        self.assertEqual("Text added to a protected document.", protected_doc.range.text.strip())
+        doc.unprotect()
+        self.assertEqual(aspose.words.ProtectionType.NO_PROTECTION, doc.protection_type)
+        doc.protect(type = aspose.words.ProtectionType.READ_ONLY, password = "NewPassword")
+        self.assertEqual(aspose.words.ProtectionType.READ_ONLY, doc.protection_type)
+        doc.unprotect("WrongPassword")
+        self.assertEqual(aspose.words.ProtectionType.READ_ONLY, doc.protection_type)
+        doc.unprotect("NewPassword")
+        self.assertEqual(aspose.words.ProtectionType.NO_PROTECTION, doc.protection_type)
 
     def test_document_ensure_minimum(self):
-        raise NotImplementedError("Unsupported target type System.String")
+        doc = aspose.words.Document()
+        nodes = doc.get_child_nodes(aspose.words.NodeType.ANY, True)
+        self.assertEqual(aspose.words.NodeType.SECTION, nodes[0].node_type)
+        self.assertEqual(doc, nodes[0].parent_node)
+        self.assertEqual(aspose.words.NodeType.BODY, nodes[1].node_type)
+        self.assertEqual(nodes[0], nodes[1].parent_node)
+        self.assertEqual(aspose.words.NodeType.PARAGRAPH, nodes[2].node_type)
+        self.assertEqual(nodes[1], nodes[2].parent_node)
+        doc.remove_all_children()
+        self.assertEqual(0, doc.get_child_nodes(aspose.words.NodeType.ANY, True).count)
+        doc.ensure_minimum()
+        self.assertEqual(aspose.words.NodeType.SECTION, nodes[0].node_type)
+        self.assertEqual(aspose.words.NodeType.BODY, nodes[1].node_type)
+        self.assertEqual(aspose.words.NodeType.PARAGRAPH, nodes[2].node_type)
+        (nodes[2].as_paragraph()).runs.add(aspose.words.Run(doc = doc, text = "Hello world!"))
+        self.assertEqual("Hello world!", doc.get_text().strip())
 
     def test_remove_macros_from_document(self):
         raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
@@ -211,7 +256,17 @@ class ExDocument(ApiExampleBase):
         raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
 
     def test_accept_all_revisions(self):
-        raise NotImplementedError("Unsupported target type System.String")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        doc.start_track_revisions(author = "John Doe")
+        builder.write("Hello world! ")
+        builder.write("Hello again! ")
+        builder.write("This is another revision.")
+        doc.stop_track_revisions()
+        self.assertEqual(3, doc.revisions.count)
+        doc.accept_all_revisions()
+        self.assertEqual(0, doc.revisions.count)
+        self.assertEqual("Hello world! Hello again! This is another revision.", doc.get_text().strip())
 
     def test_get_revised_properties_of_list(self):
         doc = aspose.words.Document(file_name = MY_DIR + "Revisions at list levels.docx")
@@ -381,16 +436,16 @@ class ExDocument(ApiExampleBase):
         raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
 
     def test_open_azw(self):
-        raise NotImplementedError("Unsupported target type System.String")
+        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
 
     def test_open_epub(self):
-        raise NotImplementedError("Unsupported target type System.String")
+        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
 
     def test_open_xml(self):
-        raise NotImplementedError("Unsupported target type System.String")
+        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
 
     def test_move_to_structured_document_tag(self):
-        raise NotImplementedError("Unsupported target type System.String")
+        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
 
     def test_include_textboxes_footnotes_endnotes_in_stat(self):
         doc = aspose.words.Document()

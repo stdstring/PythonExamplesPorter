@@ -8,7 +8,12 @@ from api_example_base import ApiExampleBase, ARTIFACTS_DIR
 
 class ExRange(ApiExampleBase):
     def test_replace(self):
-        raise NotImplementedError("Unsupported target type System.String")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        builder.writeln("Greetings, _FullName_!")
+        replacement_count = doc.range.replace(pattern = "_FullName_", replacement = "John Doe")
+        self.assertEqual(1, replacement_count)
+        self.assertEqual("Greetings, John Doe!", doc.get_text().strip())
 
     def test_ignore_shapes(self):
         raise NotImplementedError("Forbidden object initializer")
@@ -41,10 +46,37 @@ class ExRange(ApiExampleBase):
         raise NotImplementedError("Unsupported type: Regex")
 
     def test_apply_paragraph_format(self):
-        raise NotImplementedError("Unsupported target type System.String")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        builder.writeln("Every paragraph that ends with a full stop like this one will be right aligned.")
+        builder.writeln("This one will not!")
+        builder.write("This one also will.")
+        paragraphs = doc.first_section.body.paragraphs
+        self.assertEqual(aspose.words.ParagraphAlignment.LEFT, paragraphs[0].paragraph_format.alignment)
+        self.assertEqual(aspose.words.ParagraphAlignment.LEFT, paragraphs[1].paragraph_format.alignment)
+        self.assertEqual(aspose.words.ParagraphAlignment.LEFT, paragraphs[2].paragraph_format.alignment)
+        options = aspose.words.replacing.FindReplaceOptions()
+        options.apply_paragraph_format.alignment = aspose.words.ParagraphAlignment.RIGHT
+        count = doc.range.replace(pattern = ".&p", replacement = "!&p", options = options)
+        self.assertEqual(2, count)
+        self.assertEqual(aspose.words.ParagraphAlignment.RIGHT, paragraphs[0].paragraph_format.alignment)
+        self.assertEqual(aspose.words.ParagraphAlignment.LEFT, paragraphs[1].paragraph_format.alignment)
+        self.assertEqual(aspose.words.ParagraphAlignment.RIGHT, paragraphs[2].paragraph_format.alignment)
+        self.assertEqual("Every paragraph that ends with a full stop like this one will be right aligned!\r" + "This one will not!\r" + "This one also will!", doc.get_text().strip())
 
     def test_delete_selection(self):
-        raise NotImplementedError("Unsupported target type System.String")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        builder.write("Section 1. ")
+        builder.insert_break(aspose.words.BreakType.SECTION_BREAK_CONTINUOUS)
+        builder.write("Section 2.")
+        self.assertEqual("Section 1. \fSection 2.", doc.get_text().strip())
+        doc.sections[0].range.delete()
+        self.assertEqual(1, doc.sections.count)
+        self.assertEqual("Section 2.", doc.get_text().strip())
 
     def test_ranges_get_text(self):
-        raise NotImplementedError("Unsupported target type System.String")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        builder.write("Hello world!")
+        self.assertEqual("Hello world!", doc.range.text.strip())
