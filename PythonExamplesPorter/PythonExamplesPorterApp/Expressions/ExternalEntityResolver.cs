@@ -13,6 +13,7 @@ namespace PythonExamplesPorterApp.Expressions
 
     internal record MemberRepresentation(String Target, ConvertedArguments Arguments);
 
+    // TODO (std_string) : use ImportData instead of single module name
     internal record MemberResolveData(String Member, String ModuleName);
 
     internal record CastResolveData(String Cast, String ModuleName);
@@ -244,6 +245,7 @@ namespace PythonExamplesPorterApp.Expressions
             String sourceTypeFullName = sourceType.GetTypeFullName();
             SimpleNameSyntax memberName = data.Name;
             SymbolInfo memberInfo = ModelExtensions.GetSymbolInfo(_model, memberName);
+            LiteralConverter literalConverter = new LiteralConverter();
             switch (sourceTypeFullName)
             {
                 case "System.String":
@@ -261,8 +263,8 @@ namespace PythonExamplesPorterApp.Expressions
                                     {
                                         case LiteralExpressionSyntax literal when literal.Kind() == SyntaxKind.CharacterLiteralExpression:
                                         {
-                                                String member = $"{representation.Target}.strip(\"{literal.Token.Text.Trim('\'')}\")";
-                                                MemberResolveData memberData = new MemberResolveData(member, "");
+                                            String member = $"{representation.Target}.strip({literalConverter.Convert(literal)})";
+                                            MemberResolveData memberData = new MemberResolveData(member, "");
                                             return new OperationResult<MemberResolveData>(true, "", memberData);
                                         }
                                         default:
@@ -280,7 +282,7 @@ namespace PythonExamplesPorterApp.Expressions
                                     {
                                         case LiteralExpressionSyntax literal when literal.Kind() == SyntaxKind.CharacterLiteralExpression:
                                         {
-                                            String member = $"{representation.Target}.startswith(\"{literal.Token.Text.Trim('\'')}\")";
+                                            String member = $"{representation.Target}.startswith({literalConverter.Convert(literal)})";
                                             MemberResolveData memberData = new MemberResolveData(member, "");
                                             return new OperationResult<MemberResolveData>(true, "", memberData);
                                         }
@@ -303,7 +305,7 @@ namespace PythonExamplesPorterApp.Expressions
                                     {
                                         case LiteralExpressionSyntax literal when literal.Kind() == SyntaxKind.CharacterLiteralExpression:
                                         {
-                                            String member = $"(\"{literal.Token.Text.Trim('\'')}\" in {representation.Target})";
+                                            String member = $"({literalConverter.Convert(literal)} in {representation.Target})";
                                             MemberResolveData memberData = new MemberResolveData(member, "");
                                             return new OperationResult<MemberResolveData>(true, "", memberData);
                                         }
@@ -329,7 +331,7 @@ namespace PythonExamplesPorterApp.Expressions
                                             literal1.Kind() == SyntaxKind.CharacterLiteralExpression &&
                                             literal2.Kind() == SyntaxKind.CharacterLiteralExpression:
                                         {
-                                            String member = $"{representation.Target}.replace(\"{literal1.Token.Text.Trim('\'')}\", \"{literal2.Token.Text.Trim('\'')}\")";
+                                            String member = $"{representation.Target}.replace({literalConverter.Convert(literal1)}, {literalConverter.Convert(literal2)})";
                                             MemberResolveData memberData = new MemberResolveData(member, "");
                                             return new OperationResult<MemberResolveData>(true, "", memberData);
                                         }

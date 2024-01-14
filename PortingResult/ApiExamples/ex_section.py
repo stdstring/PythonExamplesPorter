@@ -16,13 +16,13 @@ class ExSection(ApiExampleBase):
         builder.write("Section 1")
         builder.insert_break(aspose.words.BreakType.SECTION_BREAK_NEW_PAGE)
         builder.write("Section 2")
-        self.assertEqual("Section 1\x000cSection 2", doc.get_text().strip())
+        self.assertEqual("Section 1\u000cSection 2", doc.get_text().strip())
         doc.sections.remove_at(0)
         self.assertEqual("Section 2", doc.get_text().strip())
         last_section_idx = doc.sections.count - 1
         new_section = doc.sections[last_section_idx].clone()
         doc.sections.add(new_section)
-        self.assertEqual("Section 2\x000cSection 2", doc.get_text().strip())
+        self.assertEqual("Section 2\u000cSection 2", doc.get_text().strip())
 
     def test_first_and_last(self):
         doc = aspose.words.Document()

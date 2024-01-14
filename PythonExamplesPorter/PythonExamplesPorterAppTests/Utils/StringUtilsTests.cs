@@ -15,5 +15,21 @@ namespace PythonExamplesPorterAppTests.Utils
         {
             Assert.AreEqual(expected, StringUtils.Escape(source));
         }
+
+        [TestCase("", "")]
+        [TestCase("abcd", "abcd")]
+        [TestCase("abcd efgh", "abcd efgh")]
+        [TestCase("a\\t\\r\\nbc", "a\\t\\r\\nbc")]
+        [TestCase("a\\u00A7bcd", "a\\u00A7bcd")]
+        [TestCase("a\\U000000A7bcd", "a\\U000000A7bcd")]
+        [TestCase("z\\x7zz", "z\\u0007zz")]
+        [TestCase("z\\x7Azz", "z\\u007azz")]
+        [TestCase("z\\x7Abzz", "z\\u07abzz")]
+        [TestCase("z\\x7AbCzz", "z\\u7abczz")]
+        [TestCase("z\\x7AbCcc", "z\\u7abccc")]
+        public void ConvertEscapeSequences(String source, String expected)
+        {
+            Assert.AreEqual(expected, StringUtils.ConvertEscapeSequences(source));
+        }
     }
 }
