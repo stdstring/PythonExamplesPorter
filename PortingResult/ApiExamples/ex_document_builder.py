@@ -17,7 +17,7 @@ class ExDocumentBuilder(ApiExampleBase):
         raise NotImplementedError("Unsupported type of expression: HeaderFooterType.HeaderFirst")
 
     def test_merge_fields(self):
-        raise NotImplementedError("Unsupported target type System.String")
+        raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_insert_horizontal_rule(self):
         raise NotImplementedError("Unsupported target type System.Drawing.Color")
@@ -35,13 +35,20 @@ class ExDocumentBuilder(ApiExampleBase):
         raise NotImplementedError("Unsupported statement type: UsingStatement")
 
     def test_insert_html(self):
-        raise NotImplementedError("Unsupported target type System.String")
+        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
 
     def test_math_ml(self):
         raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")
 
     def test_insert_text_and_bookmark(self):
-        raise NotImplementedError("Unsupported target type System.String")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        builder.start_bookmark("MyBookmark")
+        builder.writeln("Hello world!")
+        builder.end_bookmark("MyBookmark")
+        self.assertEqual(1, doc.range.bookmarks.count)
+        self.assertEqual("MyBookmark", doc.range.bookmarks[0].name)
+        self.assertEqual("Hello world!", doc.range.bookmarks[0].text.strip())
 
     def test_create_column_bookmark(self):
         raise NotImplementedError("Unsupported expression: TypeOfExpression")
@@ -100,7 +107,7 @@ class ExDocumentBuilder(ApiExampleBase):
         builder.insert_check_box(name = "", checked_value = False, size = 1)
 
     def test_working_with_nodes(self):
-        raise NotImplementedError("Unsupported target type System.String")
+        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
 
     def test_fill_merge_fields(self):
         raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
@@ -169,7 +176,27 @@ class ExDocumentBuilder(ApiExampleBase):
         self.assertEqual(2, cell.tables[0].first_row.cells.count)
 
     def test_create_table(self):
-        raise NotImplementedError("Unsupported target type System.String")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        builder.start_table()
+        builder.insert_cell()
+        builder.write("Row 1, Cell 1.")
+        builder.insert_cell()
+        builder.write("Row 1, Cell 2.")
+        builder.end_row()
+        builder.insert_cell()
+        builder.write("Row 2, Cell 1.")
+        builder.insert_cell()
+        builder.write("Row 2, Cell 2.")
+        builder.end_table()
+        doc.save(file_name = ARTIFACTS_DIR + "DocumentBuilder.CreateTable.docx")
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "DocumentBuilder.CreateTable.docx")
+        table = doc.first_section.body.tables[0]
+        self.assertEqual(4, table.get_child_nodes(aspose.words.NodeType.CELL, True).count)
+        self.assertEqual("Row 1, Cell 1.\a", table.rows[0].cells[0].get_text().strip())
+        self.assertEqual("Row 1, Cell 2.\a", table.rows[0].cells[1].get_text().strip())
+        self.assertEqual("Row 2, Cell 1.\a", table.rows[1].cells[0].get_text().strip())
+        self.assertEqual("Row 2, Cell 2.\a", table.rows[1].cells[1].get_text().strip())
 
     def test_build_formatted_table(self):
         raise NotImplementedError("Unsupported target type System.Drawing.Color")
@@ -192,19 +219,87 @@ class ExDocumentBuilder(ApiExampleBase):
         raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
 
     def test_move_to(self):
-        raise NotImplementedError("Unsupported target type System.String")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        builder.writeln("Run 1. ")
+        self.assertEqual(doc.first_section.body.last_paragraph, builder.current_paragraph)
+        builder.move_to(doc.first_section.body.first_paragraph.runs[0])
+        self.assertEqual(doc.first_section.body.first_paragraph, builder.current_paragraph)
+        builder.writeln("Run 2. ")
+        self.assertEqual("Run 2. \rRun 1.", doc.get_text().strip())
+        builder.move_to(doc.last_section.body.last_paragraph)
+        builder.writeln("Run 3. ")
+        self.assertEqual("Run 2. \rRun 1. \rRun 3.", doc.get_text().strip())
+        self.assertEqual(doc.first_section.body.last_paragraph, builder.current_paragraph)
 
     def test_move_to_paragraph(self):
         raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")
 
     def test_move_to_cell(self):
-        raise NotImplementedError("Unsupported target type System.String")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        builder.start_table()
+        builder.insert_cell()
+        builder.insert_cell()
+        builder.end_row()
+        builder.insert_cell()
+        builder.insert_cell()
+        builder.end_table()
+        builder.move_to_cell(0, 1, 1, 0)
+        builder.write("Column 2, cell 2.")
+        doc.save(file_name = ARTIFACTS_DIR + "DocumentBuilder.MoveToCell.docx")
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "DocumentBuilder.MoveToCell.docx")
+        table = doc.first_section.body.tables[0]
+        self.assertEqual("Column 2, cell 2.\a", table.rows[1].cells[1].get_text().strip())
 
     def test_move_to_bookmark(self):
         raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
 
     def test_build_table(self):
-        raise NotImplementedError("Unsupported target type System.String")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        table = builder.start_table()
+        builder.insert_cell()
+        builder.cell_format.vertical_alignment = aspose.words.tables.CellVerticalAlignment.CENTER
+        builder.write("Row 1, cell 1.")
+        builder.insert_cell()
+        builder.write("Row 1, cell 2.")
+        builder.end_row()
+        self.assertEqual(aspose.words.tables.CellVerticalAlignment.CENTER, table.rows[0].cells[0].cell_format.vertical_alignment)
+        self.assertEqual(aspose.words.tables.CellVerticalAlignment.CENTER, table.rows[0].cells[1].cell_format.vertical_alignment)
+        builder.insert_cell()
+        builder.row_format.height = 100
+        builder.row_format.height_rule = aspose.words.HeightRule.EXACTLY
+        builder.cell_format.orientation = aspose.words.TextOrientation.UPWARD
+        builder.write("Row 2, cell 1.")
+        builder.insert_cell()
+        builder.cell_format.orientation = aspose.words.TextOrientation.DOWNWARD
+        builder.write("Row 2, cell 2.")
+        builder.end_row()
+        builder.end_table()
+        self.assertEqual(0, table.rows[0].row_format.height)
+        self.assertEqual(aspose.words.HeightRule.AUTO, table.rows[0].row_format.height_rule)
+        self.assertEqual(100, table.rows[1].row_format.height)
+        self.assertEqual(aspose.words.HeightRule.EXACTLY, table.rows[1].row_format.height_rule)
+        self.assertEqual(aspose.words.TextOrientation.UPWARD, table.rows[1].cells[0].cell_format.orientation)
+        self.assertEqual(aspose.words.TextOrientation.DOWNWARD, table.rows[1].cells[1].cell_format.orientation)
+        doc.save(file_name = ARTIFACTS_DIR + "DocumentBuilder.BuildTable.docx")
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "DocumentBuilder.BuildTable.docx")
+        table = doc.first_section.body.tables[0]
+        self.assertEqual(2, table.rows.count)
+        self.assertEqual(2, table.rows[0].cells.count)
+        self.assertEqual(2, table.rows[1].cells.count)
+        self.assertEqual(0, table.rows[0].row_format.height)
+        self.assertEqual(aspose.words.HeightRule.AUTO, table.rows[0].row_format.height_rule)
+        self.assertEqual(100, table.rows[1].row_format.height)
+        self.assertEqual(aspose.words.HeightRule.EXACTLY, table.rows[1].row_format.height_rule)
+        self.assertEqual("Row 1, cell 1.\a", table.rows[0].cells[0].get_text().strip())
+        self.assertEqual(aspose.words.tables.CellVerticalAlignment.CENTER, table.rows[0].cells[0].cell_format.vertical_alignment)
+        self.assertEqual("Row 1, cell 2.\a", table.rows[0].cells[1].get_text().strip())
+        self.assertEqual("Row 2, cell 1.\a", table.rows[1].cells[0].get_text().strip())
+        self.assertEqual(aspose.words.TextOrientation.UPWARD, table.rows[1].cells[0].cell_format.orientation)
+        self.assertEqual("Row 2, cell 2.\a", table.rows[1].cells[1].get_text().strip())
+        self.assertEqual(aspose.words.TextOrientation.DOWNWARD, table.rows[1].cells[1].cell_format.orientation)
 
     def test_table_cell_vertical_rotated_far_east_text_orientation(self):
         raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")
@@ -280,7 +375,23 @@ class ExDocumentBuilder(ApiExampleBase):
         raise NotImplementedError("Unsupported type of expression: BorderType.Left")
 
     def test_delete_row(self):
-        raise NotImplementedError("Unsupported target type System.String")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        table = builder.start_table()
+        builder.insert_cell()
+        builder.write("Row 1, cell 1.")
+        builder.insert_cell()
+        builder.write("Row 1, cell 2.")
+        builder.end_row()
+        builder.insert_cell()
+        builder.write("Row 2, cell 1.")
+        builder.insert_cell()
+        builder.write("Row 2, cell 2.")
+        builder.end_table()
+        self.assertEqual(2, table.rows.count)
+        builder.delete_row(0, 0)
+        self.assertEqual(1, table.rows.count)
+        self.assertEqual("Row 2, cell 1.\aRow 2, cell 2.\a\a", table.get_text().strip())
 
     def test_insert_ole_object_exception(self):
         raise NotImplementedError("Unsupported expression: ParenthesizedLambdaExpression")
@@ -310,7 +421,7 @@ class ExDocumentBuilder(ApiExampleBase):
         raise NotImplementedError("Unsupported statement type: UsingStatement")
 
     def test_insert_style_separator(self):
-        raise NotImplementedError("Unsupported target type System.String")
+        raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_smart_style_behavior(self):
         raise NotImplementedError("Unsupported target type System.Drawing.Color")

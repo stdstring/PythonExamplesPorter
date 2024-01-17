@@ -43,7 +43,26 @@ class ExParagraph(ApiExampleBase):
         raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")
 
     def test_composite_node_children(self):
-        raise NotImplementedError("Unsupported target type System.String")
+        doc = aspose.words.Document()
+        self.assertEqual(1, doc.first_section.body.paragraphs.count)
+        paragraph = doc.first_section.body.first_paragraph
+        paragraph_text = aspose.words.Run(doc = doc, text = "Initial text. ")
+        paragraph.append_child(paragraph_text)
+        run1 = aspose.words.Run(doc = doc, text = "Run 1. ")
+        run2 = aspose.words.Run(doc = doc, text = "Run 2. ")
+        run3 = aspose.words.Run(doc = doc, text = "Run 3. ")
+        self.assertEqual("Initial text.", paragraph.get_text().strip())
+        paragraph.insert_before(run2, paragraph_text)
+        self.assertEqual("Run 2. Initial text.", paragraph.get_text().strip())
+        paragraph.insert_after(run3, paragraph_text)
+        self.assertEqual("Run 2. Initial text. Run 3.", paragraph.get_text().strip())
+        paragraph.prepend_child(run1)
+        self.assertEqual("Run 1. Run 2. Initial text. Run 3.", paragraph.get_text().strip())
+        self.assertEqual(4, paragraph.get_child_nodes(aspose.words.NodeType.ANY, True).count)
+        (paragraph.get_child_nodes(aspose.words.NodeType.RUN, True)[1].as_run()).text = "Updated run 2. "
+        paragraph.get_child_nodes(aspose.words.NodeType.RUN, True).remove(paragraph_text)
+        self.assertEqual("Run 1. Updated run 2. Run 3.", paragraph.get_text().strip())
+        self.assertEqual(3, paragraph.get_child_nodes(aspose.words.NodeType.ANY, True).count)
 
     def test_move_revisions(self):
         raise NotImplementedError("Unsupported expression: SimpleLambdaExpression")

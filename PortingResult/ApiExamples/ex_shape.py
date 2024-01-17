@@ -124,7 +124,7 @@ class ExShape(ApiExampleBase):
         raise NotImplementedError("Unsupported expression: InterpolatedStringExpression")
 
     def test_linked_chart_source_full_name(self):
-        raise NotImplementedError("Unsupported target type System.String")
+        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
 
     def test_ole_control(self):
         raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")

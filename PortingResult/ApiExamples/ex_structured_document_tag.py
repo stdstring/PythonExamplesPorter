@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import aspose.words
 import aspose.words.markup
+import aspose.words.replacing
 import aspose.words.tables
 import unittest
 from api_example_base import ApiExampleBase, ARTIFACTS_DIR, MY_DIR
@@ -55,7 +56,7 @@ class ExStructuredDocumentTag(ApiExampleBase):
         raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")
 
     def test_clear_text_from_structured_document_tags(self):
-        raise NotImplementedError("Unsupported target type System.String")
+        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
 
     def test_access_to_building_block_properties_from_doc_part_obj_sdt(self):
         doc = aspose.words.Document(file_name = MY_DIR + "Structured document tags with building blocks.docx")
@@ -123,7 +124,15 @@ class ExStructuredDocumentTag(ApiExampleBase):
         doc.save(file_name = ARTIFACTS_DIR + "StructuredDocumentTag.SdtAtRowLevel.docx")
 
     def test_ignore_structured_document_tags(self):
-        raise NotImplementedError("Unsupported target type System.String")
+        doc = aspose.words.Document(file_name = MY_DIR + "Structured document tags.docx")
+        p = doc.first_section.body.get_child(aspose.words.NodeType.PARAGRAPH, 2, True).as_paragraph()
+        text_to_search = p.to_string(save_format = aspose.words.SaveFormat.TEXT).strip()
+        options = aspose.words.replacing.FindReplaceOptions()
+        options.ignore_structured_document_tags = True
+        doc.range.replace(pattern = text_to_search, replacement = "replacement", options = options)
+        doc.save(file_name = ARTIFACTS_DIR + "StructuredDocumentTag.IgnoreStructuredDocumentTags.docx")
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "StructuredDocumentTag.IgnoreStructuredDocumentTags.docx")
+        self.assertEqual("This document contains Structured Document Tags with text inside them\r\rRepeatingSection\rRichText\rreplacement", doc.get_text().strip())
 
     def test_citation(self):
         doc = aspose.words.Document()

@@ -51,7 +51,18 @@ class ExNode(ApiExampleBase):
         raise NotImplementedError("Unsupported expression: ConditionalAccessExpression")
 
     def test_remove_child(self):
-        raise NotImplementedError("Unsupported target type System.String")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        builder.writeln("Section 1 text.")
+        builder.insert_break(aspose.words.BreakType.SECTION_BREAK_CONTINUOUS)
+        builder.writeln("Section 2 text.")
+        last_section = doc.last_child.as_section()
+        first_section = last_section.previous_sibling.as_section()
+        # if begin
+        if last_section.previous_sibling != None:
+            doc.remove_child(first_section)
+        # if end
+        self.assertEqual("Section 2 text.", doc.get_text().strip())
 
     def test_select_composite_nodes(self):
         raise NotImplementedError("Unsupported statement type: UsingStatement")
@@ -88,7 +99,7 @@ class ExNode(ApiExampleBase):
         raise NotImplementedError("Unsupported member target type - Aspose.Words.Paragraph[] for expression: paras")
 
     def test_node_enumeration_hot_remove(self):
-        raise NotImplementedError("Unsupported target type System.String")
+        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
 
     def test_node_collection(self):
         raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")

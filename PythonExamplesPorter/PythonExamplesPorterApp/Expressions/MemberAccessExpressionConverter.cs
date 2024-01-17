@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis;
 using PythonExamplesPorterApp.Common;
 using PythonExamplesPorterApp.Converter;
 using PythonExamplesPorterApp.DestStorage;
+using PythonExamplesPorterApp.ExternalEntities;
 
 namespace PythonExamplesPorterApp.Expressions
 {

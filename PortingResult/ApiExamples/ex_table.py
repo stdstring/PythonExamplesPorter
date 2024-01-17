@@ -9,7 +9,23 @@ from api_example_base import ApiExampleBase, ARTIFACTS_DIR, MY_DIR
 
 class ExTable(ApiExampleBase):
     def test_create_table(self):
-        raise NotImplementedError("Unsupported target type System.String")
+        doc = aspose.words.Document()
+        table = aspose.words.tables.Table(doc)
+        doc.first_section.body.append_child(table)
+        first_row = aspose.words.tables.Row(doc)
+        table.append_child(first_row)
+        first_cell = aspose.words.tables.Cell(doc)
+        first_row.append_child(first_cell)
+        paragraph = aspose.words.Paragraph(doc)
+        first_cell.append_child(paragraph)
+        run = aspose.words.Run(doc = doc, text = "Hello world!")
+        paragraph.append_child(run)
+        doc.save(file_name = ARTIFACTS_DIR + "Table.CreateTable.docx")
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Table.CreateTable.docx")
+        table = doc.first_section.body.tables[0]
+        self.assertEqual(1, table.rows.count)
+        self.assertEqual(1, table.first_row.cells.count)
+        self.assertEqual("Hello world!\a\a", table.get_text().strip())
 
     def test_padding(self):
         doc = aspose.words.Document()
@@ -104,13 +120,43 @@ class ExTable(ApiExampleBase):
         raise NotImplementedError("Unsupported type of expression: BorderType.Top")
 
     def test_replace_cell_text(self):
-        raise NotImplementedError("Unsupported target type System.String")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        table = builder.start_table()
+        builder.insert_cell()
+        builder.write("Carrots")
+        builder.insert_cell()
+        builder.write("50")
+        builder.end_row()
+        builder.insert_cell()
+        builder.write("Potatoes")
+        builder.insert_cell()
+        builder.write("50")
+        builder.end_table()
+        options = aspose.words.replacing.FindReplaceOptions()
+        options.match_case = True
+        options.find_whole_words_only = True
+        table.range.replace(pattern = "Carrots", replacement = "Eggs", options = options)
+        table.last_row.last_cell.range.replace(pattern = "50", replacement = "20", options = options)
+        self.assertEqual("Eggs\a50\a\a" + "Potatoes\a20\a\a", table.get_text().strip())
 
     def test_print_table_range(self):
         raise NotImplementedError("Unsupported target type System.Console")
 
     def test_clone_table(self):
-        raise NotImplementedError("Unsupported target type System.String")
+        doc = aspose.words.Document(file_name = MY_DIR + "Tables.docx")
+        table = doc.first_section.body.tables[0]
+        table_clone = table.clone(True).as_table()
+        table.parent_node.insert_after(table_clone, table)
+        table.parent_node.insert_after(aspose.words.Paragraph(doc), table)
+        doc.save(file_name = ARTIFACTS_DIR + "Table.CloneTable.doc")
+        self.assertEqual(3, doc.get_child_nodes(aspose.words.NodeType.TABLE, True).count)
+        self.assertEqual(table.range.text, table_clone.range.text)
+        # for each loop begin
+        for cell in table_clone.get_child_nodes(aspose.words.NodeType.CELL, True).of_type():
+            cell.remove_all_children()
+        # for loop end
+        self.assertEqual("", table_clone.to_string(save_format = aspose.words.SaveFormat.TEXT).strip())
 
     def test_keep_table_together(self):
         raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
