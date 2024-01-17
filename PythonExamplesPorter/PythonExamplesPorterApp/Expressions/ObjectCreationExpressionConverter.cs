@@ -5,6 +5,7 @@ using PythonExamplesPorterApp.Checker;
 using PythonExamplesPorterApp.Common;
 using PythonExamplesPorterApp.Converter;
 using PythonExamplesPorterApp.DestStorage;
+using PythonExamplesPorterApp.ExternalEntities;
 using PythonExamplesPorterApp.Utils;
 
 namespace PythonExamplesPorterApp.Expressions
