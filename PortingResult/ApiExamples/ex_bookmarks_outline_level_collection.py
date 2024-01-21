@@ -2,9 +2,9 @@
 import aspose.words
 import aspose.words.saving
 import unittest
-from api_example_base import ApiExampleBase
+from api_example_base import ApiExampleBase, ARTIFACTS_DIR
 
 
 class ExBookmarksOutlineLevelCollection(ApiExampleBase):
     def test_bookmark_levels(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        raise NotImplementedError("Unsupported type: Aspose.Pdf.Facades.PdfBookmarkEditor")

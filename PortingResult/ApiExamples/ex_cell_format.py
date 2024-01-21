@@ -7,7 +7,29 @@ from api_example_base import ApiExampleBase, ARTIFACTS_DIR
 
 class ExCellFormat(ApiExampleBase):
     def test_vertical_merge(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        builder.insert_cell()
+        builder.cell_format.vertical_merge = aspose.words.tables.CellMerge.FIRST
+        builder.write("Text in merged cells.")
+        builder.insert_cell()
+        builder.cell_format.vertical_merge = aspose.words.tables.CellMerge.NONE
+        builder.write("Text in unmerged cell.")
+        builder.end_row()
+        builder.insert_cell()
+        builder.cell_format.vertical_merge = aspose.words.tables.CellMerge.PREVIOUS
+        builder.insert_cell()
+        builder.cell_format.vertical_merge = aspose.words.tables.CellMerge.NONE
+        builder.write("Text in unmerged cell.")
+        builder.end_row()
+        builder.end_table()
+        doc.save(file_name = ARTIFACTS_DIR + "CellFormat.VerticalMerge.docx")
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "CellFormat.VerticalMerge.docx")
+        table = doc.first_section.body.tables[0]
+        self.assertEqual(aspose.words.tables.CellMerge.FIRST, table.rows[0].cells[0].cell_format.vertical_merge)
+        self.assertEqual(aspose.words.tables.CellMerge.PREVIOUS, table.rows[1].cells[0].cell_format.vertical_merge)
+        self.assertEqual("Text in merged cells.", table.rows[0].cells[0].get_text().strip("\a"))
+        self.assertNotEqual(table.rows[0].cells[0].get_text(), table.rows[1].cells[0].get_text())
 
     def test_horizontal_merge(self):
         doc = aspose.words.Document()

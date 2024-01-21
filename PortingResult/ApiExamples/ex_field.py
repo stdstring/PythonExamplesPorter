@@ -91,7 +91,7 @@ class ExField(ApiExampleBase):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_field_auto_num(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_field_auto_num_lgl(self):
         raise NotImplementedError("Unsupported call of method named InsertNumberedClause")
@@ -106,7 +106,7 @@ class ExField(ApiExampleBase):
         raise NotImplementedError("Unsupported call of method named AppendAutoTextEntry")
 
     def test_field_list_num(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_field_toc(self):
         raise NotImplementedError("Unsupported call of method named InsertNewPageWithHeading")
@@ -151,7 +151,7 @@ class ExField(ApiExampleBase):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_field_author(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_field_doc_variable(self):
         raise NotImplementedError("Unsupported target type NUnit.Framework.Is")
@@ -172,7 +172,7 @@ class ExField(ApiExampleBase):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_field_macro_button(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_field_keywords(self):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
@@ -184,7 +184,22 @@ class ExField(ApiExampleBase):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_field_print_date(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        doc = aspose.words.Document(file_name = MY_DIR + "Field sample - PRINTDATE.docx")
+        field = doc.range.fields[0].as_field_print_date()
+        self.assertEqual("3/25/2020 12:00:00 AM", field.result)
+        self.assertEqual(" PRINTDATE ", field.get_field_code())
+        field = doc.range.fields[1].as_field_print_date()
+        self.assertTrue(field.use_lunar_calendar)
+        self.assertEqual("8/1/1441 12:00:00 AM", field.result)
+        self.assertEqual(" PRINTDATE  \\h", field.get_field_code())
+        field = doc.range.fields[2].as_field_print_date()
+        self.assertTrue(field.use_um_al_qura_calendar)
+        self.assertEqual("8/1/1441 12:00:00 AM", field.result)
+        self.assertEqual(" PRINTDATE  \\u", field.get_field_code())
+        field = doc.range.fields[3].as_field_print_date()
+        self.assertTrue(field.use_saka_era_calendar)
+        self.assertEqual("1/5/1942 12:00:00 AM", field.result)
+        self.assertEqual(" PRINTDATE  \\s", field.get_field_code())
 
     def test_field_set_ref(self):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")

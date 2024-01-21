@@ -8,7 +8,14 @@ from api_example_base import ApiExampleBase, ARTIFACTS_DIR, FONTS_DIR, MY_DIR
 
 class ExFontSettings(ApiExampleBase):
     def test_default_font_instance(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        aspose.words.fonts.FontSettings.default_instance.substitution_settings.default_font_substitution.default_font_name = "Courier New"
+        self.assertTrue(aspose.words.fonts.FontSettings.default_instance.substitution_settings.default_font_substitution.enabled)
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        builder.font.name = "Non-existent font"
+        builder.write("Hello world!")
+        self.assertIsNone(doc.font_settings)
+        doc.save(file_name = ARTIFACTS_DIR + "FontSettings.DefaultFontInstance.pdf")
 
     def test_default_font_name(self):
         raise NotImplementedError("Unsupported member target type - Aspose.Words.Fonts.FontSourceBase[] for expression: fontSources")
@@ -36,13 +43,30 @@ class ExFontSettings(ApiExampleBase):
         raise NotImplementedError("Unsupported member target type - Aspose.Words.Fonts.FontSourceBase[] for expression: originalFontSources")
 
     def test_set_specify_font_folder(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        font_settings = aspose.words.fonts.FontSettings()
+        font_settings.set_fonts_folder(FONTS_DIR, False)
+        load_options = aspose.words.loading.LoadOptions()
+        load_options.font_settings = font_settings
+        doc = aspose.words.Document(file_name = MY_DIR + "Rendering.docx", load_options = load_options)
+        folder_source = (doc.font_settings.get_fonts_sources()[0].as_folder_font_source())
+        self.assertEqual(FONTS_DIR, folder_source.folder_path)
+        self.assertFalse(folder_source.scan_subfolders)
 
     def test_table_substitution(self):
         raise NotImplementedError("Unsupported member target type - Aspose.Words.Fonts.FontSourceBase[] for expression: fontSources")
 
     def test_set_specify_font_folders(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        font_settings = aspose.words.fonts.FontSettings()
+        font_settings.set_fonts_folders([FONTS_DIR, """C:\Windows\Fonts\"""], True)
+        load_options = aspose.words.loading.LoadOptions()
+        load_options.font_settings = font_settings
+        doc = aspose.words.Document(file_name = MY_DIR + "Rendering.docx", load_options = load_options)
+        folder_source = (doc.font_settings.get_fonts_sources()[0].as_folder_font_source())
+        self.assertEqual(FONTS_DIR, folder_source.folder_path)
+        self.assertTrue(folder_source.scan_subfolders)
+        folder_source = (doc.font_settings.get_fonts_sources()[1].as_folder_font_source())
+        self.assertEqual("""C:\Windows\Fonts\""", folder_source.folder_path)
+        self.assertTrue(folder_source.scan_subfolders)
 
     def test_add_font_substitutes(self):
         raise NotImplementedError("Unsupported target type System.Collections.Generic.IEnumerable")
@@ -68,7 +92,18 @@ class ExFontSettings(ApiExampleBase):
         raise NotImplementedError("Unsupported expression: AwaitExpression")
 
     def test_default_font_substitution_rule(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        doc = aspose.words.Document()
+        font_settings = aspose.words.fonts.FontSettings()
+        doc.font_settings = font_settings
+        default_font_substitution_rule = font_settings.substitution_settings.default_font_substitution
+        self.assertTrue(default_font_substitution_rule.enabled)
+        self.assertEqual("Times New Roman", default_font_substitution_rule.default_font_name)
+        default_font_substitution_rule.default_font_name = "Courier New"
+        builder = aspose.words.DocumentBuilder(doc)
+        builder.font.name = "Missing Font"
+        builder.writeln("Line written in a missing font, which will be substituted with Courier New.")
+        doc.save(file_name = ARTIFACTS_DIR + "FontSettings.DefaultFontSubstitutionRule.pdf")
+        self.assertEqual("Courier New", default_font_substitution_rule.default_font_name)
 
     def test_fallback_settings(self):
         raise NotImplementedError("Unsupported type: XmlDocument")

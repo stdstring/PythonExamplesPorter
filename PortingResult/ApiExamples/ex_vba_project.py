@@ -7,7 +7,26 @@ from api_example_base import ApiExampleBase, ARTIFACTS_DIR, MY_DIR
 
 class ExVbaProject(ApiExampleBase):
     def test_create_new_vba_project(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        doc = aspose.words.Document()
+        project = aspose.words.vba.VbaProject()
+        project.name = "Aspose.Project"
+        doc.vba_project = project
+        module = aspose.words.vba.VbaModule()
+        module.name = "Aspose.Module"
+        module.type = aspose.words.vba.VbaModuleType.PROCEDURAL_MODULE
+        module.source_code = "New source code"
+        doc.vba_project.modules.add(module)
+        doc.save(file_name = ARTIFACTS_DIR + "VbaProject.CreateVBAMacros.docm")
+        project = aspose.words.Document(file_name = ARTIFACTS_DIR + "VbaProject.CreateVBAMacros.docm").vba_project
+        self.assertEqual("Aspose.Project", project.name)
+        modules = doc.vba_project.modules
+        self.assertEqual(2, modules.count)
+        self.assertEqual("ThisDocument", modules[0].name)
+        self.assertEqual(aspose.words.vba.VbaModuleType.DOCUMENT_MODULE, modules[0].type)
+        self.assertIsNone(modules[0].source_code)
+        self.assertEqual("Aspose.Module", modules[1].name)
+        self.assertEqual(aspose.words.vba.VbaModuleType.PROCEDURAL_MODULE, modules[1].type)
+        self.assertEqual("New source code", modules[1].source_code)
 
     def test_clone_vba_project(self):
         doc = aspose.words.Document(file_name = MY_DIR + "VBA project.docm")

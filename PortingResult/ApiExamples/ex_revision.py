@@ -7,7 +7,7 @@ from api_example_base import ApiExampleBase, ARTIFACTS_DIR, MY_DIR
 
 class ExRevision(ApiExampleBase):
     def test_revisions(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        raise NotImplementedError("Unsupported target type System.DateTime")
 
     def test_revision_collection(self):
         raise NotImplementedError("Unsupported expression: InterpolatedStringExpression")

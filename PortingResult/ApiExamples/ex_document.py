@@ -91,7 +91,15 @@ class ExDocument(ApiExampleBase):
         raise NotImplementedError("Unsupported expression: ParenthesizedLambdaExpression")
 
     def test_keep_source_numbering_same_list_ids(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        src_doc = aspose.words.Document(file_name = MY_DIR + "List with the same definition identifier - source.docx")
+        dst_doc = aspose.words.Document(file_name = MY_DIR + "List with the same definition identifier - destination.docx")
+        import_format_options = aspose.words.ImportFormatOptions()
+        import_format_options.keep_source_numbering = True
+        dst_doc.append_document(src_doc = src_doc, import_format_mode = aspose.words.ImportFormatMode.USE_DESTINATION_STYLES, import_format_options = import_format_options)
+        dst_doc.update_list_labels()
+        para_text = dst_doc.sections[1].body.last_paragraph.get_text()
+        self.assertTrue(para_text.startswith("13->13"), msg=para_text)
+        self.assertEqual("1.", dst_doc.sections[1].body.last_paragraph.list_label.label_string)
 
     def test_merge_pasted_lists(self):
         src_doc = aspose.words.Document(file_name = MY_DIR + "List item.docx")
@@ -143,7 +151,12 @@ class ExDocument(ApiExampleBase):
         raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")
 
     def test_clone_document(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        builder.write("Hello world!")
+        clone = doc.clone()
+        self.assertEqual(doc.first_section.body.first_paragraph.runs[0].get_text(), clone.first_section.body.first_paragraph.runs[0].text)
+        self.assertNotEqual(doc.first_section.body.first_paragraph.runs[0].get_hash_code(), clone.first_section.body.first_paragraph.runs[0].get_hash_code())
 
     def test_document_get_text_to_string(self):
         doc = aspose.words.Document()
@@ -193,7 +206,12 @@ class ExDocument(ApiExampleBase):
         self.assertEqual("Hello world!", doc.get_text().strip())
 
     def test_remove_macros_from_document(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        doc = aspose.words.Document(file_name = MY_DIR + "Macro.docm")
+        self.assertTrue(doc.has_macros)
+        self.assertEqual("Project", doc.vba_project.name)
+        doc.remove_macros()
+        self.assertFalse(doc.has_macros)
+        self.assertIsNone(doc.vba_project)
 
     def test_get_page_count(self):
         doc = aspose.words.Document()
@@ -253,7 +271,7 @@ class ExDocument(ApiExampleBase):
         doc.remove_external_schema_references()
 
     def test_track_revisions(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        raise NotImplementedError("Unsupported target type System.DateTime")
 
     def test_accept_all_revisions(self):
         doc = aspose.words.Document()
@@ -324,7 +342,7 @@ class ExDocument(ApiExampleBase):
         self.assertEqual(4, doc.styles.count)
 
     def test_automatically_update_styles(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        raise NotImplementedError("Unsupported target type System.IO.File")
 
     def test_default_template(self):
         raise NotImplementedError("Unsupported target type System.IO.File")
@@ -374,7 +392,25 @@ class ExDocument(ApiExampleBase):
         self.assertEqual(0, doc.versions_count)
 
     def test_write_protection(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        builder.writeln("Hello world! This document is protected.")
+        self.assertFalse(doc.write_protection.is_write_protected)
+        self.assertFalse(doc.write_protection.read_only_recommended)
+        doc.write_protection.set_password("MyPassword")
+        doc.write_protection.read_only_recommended = True
+        self.assertTrue(doc.write_protection.is_write_protected)
+        self.assertTrue(doc.write_protection.validate_password("MyPassword"))
+        doc.save(file_name = ARTIFACTS_DIR + "Document.WriteProtection.docx")
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Document.WriteProtection.docx")
+        self.assertTrue(doc.write_protection.is_write_protected)
+        builder = aspose.words.DocumentBuilder(doc)
+        builder.move_to_document_end()
+        builder.writeln("Writing text in a protected document.")
+        self.assertEqual("Hello world! This document is protected." + "\rWriting text in a protected document.", doc.get_text().strip())
+        self.assertTrue(doc.write_protection.read_only_recommended)
+        self.assertTrue(doc.write_protection.validate_password("MyPassword"))
+        self.assertFalse(doc.write_protection.validate_password("wrongpassword"))
 
     def test_show_comments(self):
         raise NotImplementedError("Unsupported target type System.DateTime")
@@ -391,7 +427,7 @@ class ExDocument(ApiExampleBase):
         raise NotImplementedError("Unsupported target type System.Drawing.Color")
 
     def test_read_macros_from_existing_document(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        raise NotImplementedError("Unsupported expression: ConditionalExpression")
 
     def test_save_output_parameters(self):
         doc = aspose.words.Document()
@@ -403,7 +439,11 @@ class ExDocument(ApiExampleBase):
         self.assertEqual("application/pdf", parameters.content_type)
 
     def test_sub_document(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        doc = aspose.words.Document(file_name = MY_DIR + "Master document.docx")
+        sub_documents = doc.get_child_nodes(aspose.words.NodeType.SUB_DOCUMENT, True)
+        self.assertEqual(1, sub_documents.count)
+        sub_document = sub_documents[0].as_sub_document()
+        self.assertFalse(sub_document.is_composite)
 
     def test_create_web_extension(self):
         raise NotImplementedError("Unsupported target type System.Globalization.CultureInfo")
@@ -433,19 +473,28 @@ class ExDocument(ApiExampleBase):
         raise NotImplementedError("Unsupported target type System.IO.File")
 
     def test_frameset(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")
 
     def test_open_azw(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        info = aspose.words.FileFormatUtil.detect_file_format(file_name = MY_DIR + "Azw3 document.azw3")
+        self.assertEqual(info.load_format, aspose.words.LoadFormat.AZW3)
+        doc = aspose.words.Document(file_name = MY_DIR + "Azw3 document.azw3")
+        self.assertTrue(("Hachette Book Group USA" in doc.get_text()))
 
     def test_open_epub(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        info = aspose.words.FileFormatUtil.detect_file_format(file_name = MY_DIR + "Epub document.epub")
+        self.assertEqual(info.load_format, aspose.words.LoadFormat.EPUB)
+        doc = aspose.words.Document(file_name = MY_DIR + "Epub document.epub")
+        self.assertTrue(("Down the Rabbit-Hole" in doc.get_text()))
 
     def test_open_xml(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        info = aspose.words.FileFormatUtil.detect_file_format(file_name = MY_DIR + "Mail merge data - Customers.xml")
+        self.assertEqual(info.load_format, aspose.words.LoadFormat.XML)
+        doc = aspose.words.Document(file_name = MY_DIR + "Mail merge data - Purchase order.xml")
+        self.assertTrue(("Ellen Adams\r123 Maple Street" in doc.get_text()))
 
     def test_move_to_structured_document_tag(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        raise NotImplementedError("Unsupported target type System.Drawing.Color")
 
     def test_include_textboxes_footnotes_endnotes_in_stat(self):
         doc = aspose.words.Document()
@@ -468,4 +517,5 @@ class ExDocument(ApiExampleBase):
         doc.save(file_name = ARTIFACTS_DIR + "Document.SetJustificationMode.docx")
 
     def test_page_is_in_color(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        doc = aspose.words.Document(file_name = MY_DIR + "Document.docx")
+        self.assertFalse(doc.get_page_info(0).colored)

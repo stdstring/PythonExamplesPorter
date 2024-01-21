@@ -2,6 +2,7 @@
 import aspose.words
 import aspose.words.digitalsignatures
 import aspose.words.saving
+import unittest
 from api_example_base import ApiExampleBase, ARTIFACTS_DIR, MY_DIR
 
 
@@ -10,13 +11,13 @@ class ExPdfSaveOptions(ApiExampleBase):
         raise NotImplementedError("Unsupported statement type: UsingStatement")
 
     def test_headings_outline_levels(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        raise NotImplementedError("Unsupported type: Aspose.Pdf.Facades.PdfBookmarkEditor")
 
     def test_expanded_outline_levels(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        raise NotImplementedError("Unsupported type: Aspose.Pdf.Document")
 
     def test_downsample_options(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        raise NotImplementedError("Unsupported type: Aspose.Pdf.Document")
 
     def test_zoom_behaviour(self):
         raise NotImplementedError("Unsupported type: Aspose.Pdf.Document")

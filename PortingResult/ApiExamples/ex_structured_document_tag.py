@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import aspose.words
+import aspose.words.buildingblocks
 import aspose.words.markup
 import aspose.words.replacing
 import aspose.words.tables
@@ -27,7 +28,25 @@ class ExStructuredDocumentTag(ApiExampleBase):
         raise NotImplementedError("Unsupported target type System.Drawing.Color")
 
     def test_lock(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        tag = aspose.words.markup.StructuredDocumentTag(doc, aspose.words.markup.SdtType.PLAIN_TEXT, aspose.words.markup.MarkupLevel.INLINE)
+        tag.lock_contents = True
+        builder.write("The contents of this structured document tag cannot be edited: ")
+        builder.insert_node(tag)
+        tag = aspose.words.markup.StructuredDocumentTag(doc, aspose.words.markup.SdtType.PLAIN_TEXT, aspose.words.markup.MarkupLevel.INLINE)
+        tag.lock_content_control = True
+        builder.insert_paragraph()
+        builder.write("This structured document tag cannot be deleted but its contents can be edited: ")
+        builder.insert_node(tag)
+        doc.save(file_name = ARTIFACTS_DIR + "StructuredDocumentTag.Lock.docx")
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "StructuredDocumentTag.Lock.docx")
+        tag = doc.get_child(aspose.words.NodeType.STRUCTURED_DOCUMENT_TAG, 0, True).as_structured_document_tag()
+        self.assertTrue(tag.lock_contents)
+        self.assertFalse(tag.lock_content_control)
+        tag = doc.get_child(aspose.words.NodeType.STRUCTURED_DOCUMENT_TAG, 1, True).as_structured_document_tag()
+        self.assertFalse(tag.lock_contents)
+        self.assertTrue(tag.lock_content_control)
 
     def test_list_item_collection(self):
         raise NotImplementedError("Unsupported statement type: UsingStatement")
@@ -56,7 +75,28 @@ class ExStructuredDocumentTag(ApiExampleBase):
         raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")
 
     def test_clear_text_from_structured_document_tags(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        doc = aspose.words.Document()
+        tag = aspose.words.markup.StructuredDocumentTag(doc, aspose.words.markup.SdtType.PLAIN_TEXT, aspose.words.markup.MarkupLevel.BLOCK)
+        doc.first_section.body.append_child(tag)
+        self.assertEqual("Click here to enter text.", tag.get_text().strip())
+        self.assertTrue(tag.is_showing_placeholder_text)
+        glossary_doc = doc.glossary_document
+        substitute_block = aspose.words.buildingblocks.BuildingBlock(glossary_doc)
+        substitute_block.name = "My placeholder"
+        substitute_block.append_child(aspose.words.Section(glossary_doc))
+        substitute_block.first_section.ensure_minimum()
+        substitute_block.first_section.body.first_paragraph.append_child(aspose.words.Run(doc = glossary_doc, text = "Custom placeholder text."))
+        glossary_doc.append_child(substitute_block)
+        tag.placeholder_name = "My placeholder"
+        self.assertEqual("Custom placeholder text.", tag.get_text().strip())
+        self.assertTrue(tag.is_showing_placeholder_text)
+        run = tag.get_child(aspose.words.NodeType.RUN, 0, True).as_run()
+        run.text = "New text."
+        tag.is_showing_placeholder_text = False
+        self.assertEqual("New text.", tag.get_text().strip())
+        tag.clear()
+        self.assertTrue(tag.is_showing_placeholder_text)
+        self.assertEqual("Custom placeholder text.", tag.get_text().strip())
 
     def test_access_to_building_block_properties_from_doc_part_obj_sdt(self):
         doc = aspose.words.Document(file_name = MY_DIR + "Structured document tags with building blocks.docx")

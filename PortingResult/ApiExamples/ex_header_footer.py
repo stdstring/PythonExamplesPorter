@@ -2,15 +2,16 @@
 import aspose.words
 import aspose.words.drawing
 import aspose.words.tables
-from api_example_base import ApiExampleBase, IMAGE_DIR, MY_DIR
+import unittest
+from api_example_base import ApiExampleBase, ARTIFACTS_DIR, IMAGE_DIR, MY_DIR
 
 
 class ExHeaderFooter(ApiExampleBase):
     def test_create(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        raise NotImplementedError("Unsupported type of expression: HeaderFooterType.HeaderPrimary")
 
     def test_link(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        raise NotImplementedError("Unsupported expression: SimpleLambdaExpression")
 
     def test_remove_footers(self):
         raise NotImplementedError("Unsupported type of expression: HeaderFooterType.FooterFirst")

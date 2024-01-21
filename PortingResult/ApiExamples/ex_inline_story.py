@@ -18,7 +18,7 @@ class ExInlineStory(ApiExampleBase):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_add_footnote(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_footnote_endnote(self):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
@@ -27,7 +27,7 @@ class ExInlineStory(ApiExampleBase):
         raise NotImplementedError("Unsupported target type System.DateTime")
 
     def test_inline_story_revisions(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        raise NotImplementedError("Unsupported target type System.Collections.Generic.IEnumerable")
 
     def test_insert_inline_story_nodes(self):
         raise NotImplementedError("Unsupported target type NUnit.Framework.Is")
