@@ -57,7 +57,7 @@ class ExFontSettings(ApiExampleBase):
 
     def test_set_specify_font_folders(self):
         font_settings = aspose.words.fonts.FontSettings()
-        font_settings.set_fonts_folders([FONTS_DIR, """C:\Windows\Fonts\"""], True)
+        font_settings.set_fonts_folders([FONTS_DIR, """C:\\Windows\\Fonts\\"""], True)
         load_options = aspose.words.loading.LoadOptions()
         load_options.font_settings = font_settings
         doc = aspose.words.Document(file_name = MY_DIR + "Rendering.docx", load_options = load_options)
@@ -65,7 +65,7 @@ class ExFontSettings(ApiExampleBase):
         self.assertEqual(FONTS_DIR, folder_source.folder_path)
         self.assertTrue(folder_source.scan_subfolders)
         folder_source = (doc.font_settings.get_fonts_sources()[1].as_folder_font_source())
-        self.assertEqual("""C:\Windows\Fonts\""", folder_source.folder_path)
+        self.assertEqual("""C:\\Windows\\Fonts\\""", folder_source.folder_path)
         self.assertTrue(folder_source.scan_subfolders)
 
     def test_add_font_substitutes(self):

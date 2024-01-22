@@ -31,5 +31,14 @@ namespace PythonExamplesPorterAppTests.Utils
         {
             Assert.AreEqual(expected, StringUtils.ConvertEscapeSequences(source));
         }
+
+        [TestCase(@"", "")]
+        [TestCase(@"abcd", "abcd")]
+        [TestCase(@"abcd efgh", "abcd efgh")]
+        [TestCase(@"\a\b\c\d\", "\\\\a\\\\b\\\\c\\\\d\\\\")]
+        public void PrepareVerbatimString(String source, String expected)
+        {
+            Assert.AreEqual(expected, StringUtils.PrepareVerbatimString(source));
+        }
     }
 }
