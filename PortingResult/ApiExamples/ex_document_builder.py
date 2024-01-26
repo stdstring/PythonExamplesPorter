@@ -450,7 +450,7 @@ class ExDocumentBuilder(ApiExampleBase):
         self.assertTrue(form_field.enabled)
         self.assertEqual("DropDown", form_field.name)
         self.assertEqual(0, form_field.drop_down_selected_index)
-        self.assertSequenceEqual(items, form_field.drop_down_items)
+        self.assertSequenceEqual(items, list(form_field.drop_down_items))
         self.assertEqual(aspose.words.fields.FieldType.FIELD_FORM_DROP_DOWN, form_field.type)
 
     def test_signature_line_provider_id(self):
