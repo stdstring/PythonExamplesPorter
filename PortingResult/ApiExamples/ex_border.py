@@ -30,7 +30,44 @@ class ExBorder(ApiExampleBase):
         raise NotImplementedError("Unsupported target type System.Drawing.Color")
 
     def test_shared_elements(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        builder.writeln("Paragraph 1.")
+        builder.write("Paragraph 2.")
+        first_paragraph_borders = doc.first_section.body.first_paragraph.paragraph_format.borders
+        second_paragraph_borders = builder.current_paragraph.paragraph_format.borders
+        self.assertEqual(6, first_paragraph_borders.count)
+        # for loop begin
+        i = 0
+        while i < first_paragraph_borders.count:
+            self.assertTrue(first_paragraph_borders[i].equals(rhs = second_paragraph_borders[i]))
+            self.assertEqual(first_paragraph_borders[i].get_hash_code(), second_paragraph_borders[i].get_hash_code())
+            self.assertFalse(first_paragraph_borders[i].is_visible)
+            i += 1
+        # for loop end
+        # for each loop begin
+        for border in second_paragraph_borders:
+            border.line_style = aspose.words.LineStyle.DOT_DASH
+        # for loop end
+        # for loop begin
+        i = 0
+        while i < first_paragraph_borders.count:
+            self.assertFalse(first_paragraph_borders[i].equals(rhs = second_paragraph_borders[i]))
+            self.assertNotEqual(first_paragraph_borders[i].get_hash_code(), second_paragraph_borders[i].get_hash_code())
+            self.assertTrue(second_paragraph_borders[i].is_visible)
+            i += 1
+        # for loop end
+        doc.save(file_name = ARTIFACTS_DIR + "Border.SharedElements.docx")
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Border.SharedElements.docx")
+        paragraphs = doc.first_section.body.paragraphs
+        # for each loop begin
+        for test_border in paragraphs[0].paragraph_format.borders:
+            self.assertEqual(aspose.words.LineStyle.NONE, test_border.line_style)
+        # for loop end
+        # for each loop begin
+        for test_border in paragraphs[1].paragraph_format.borders:
+            self.assertEqual(aspose.words.LineStyle.DOT_DASH, test_border.line_style)
+        # for loop end
 
     def test_horizontal_borders(self):
         raise NotImplementedError("Unsupported target type System.Drawing.Color")

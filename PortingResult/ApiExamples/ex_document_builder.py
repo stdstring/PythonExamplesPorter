@@ -35,7 +35,21 @@ class ExDocumentBuilder(ApiExampleBase):
         raise NotImplementedError("Unsupported statement type: UsingStatement")
 
     def test_insert_html(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        html = "<p align='right'>Paragraph right</p>" + "<b>Implicit paragraph left</b>" + "<div align='center'>Div center</div>" + "<h1 align='left'>Heading 1 left.</h1>"
+        builder.insert_html(html = html)
+        paragraphs = doc.first_section.body.paragraphs
+        self.assertEqual("Paragraph right", paragraphs[0].get_text().strip())
+        self.assertEqual(aspose.words.ParagraphAlignment.RIGHT, paragraphs[0].paragraph_format.alignment)
+        self.assertEqual("Implicit paragraph left", paragraphs[1].get_text().strip())
+        self.assertEqual(aspose.words.ParagraphAlignment.LEFT, paragraphs[1].paragraph_format.alignment)
+        self.assertTrue(paragraphs[1].runs[0].font.bold)
+        self.assertEqual("Div center", paragraphs[2].get_text().strip())
+        self.assertEqual(aspose.words.ParagraphAlignment.CENTER, paragraphs[2].paragraph_format.alignment)
+        self.assertEqual("Heading 1 left.", paragraphs[3].get_text().strip())
+        self.assertEqual("Heading 1", paragraphs[3].paragraph_format.style.name)
+        doc.save(file_name = ARTIFACTS_DIR + "DocumentBuilder.InsertHtml.docx")
 
     def test_math_ml(self):
         raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")
@@ -107,13 +121,86 @@ class ExDocumentBuilder(ApiExampleBase):
         builder.insert_check_box(name = "", checked_value = False, size = 1)
 
     def test_working_with_nodes(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        builder.start_bookmark("MyBookmark")
+        builder.write("Bookmark contents.")
+        builder.end_bookmark("MyBookmark")
+        first_paragraph_nodes = doc.first_section.body.first_paragraph.get_child_nodes(aspose.words.NodeType.ANY, False)
+        self.assertEqual(aspose.words.NodeType.BOOKMARK_START, first_paragraph_nodes[0].node_type)
+        self.assertEqual(aspose.words.NodeType.RUN, first_paragraph_nodes[1].node_type)
+        self.assertEqual("Bookmark contents.", first_paragraph_nodes[1].get_text().strip())
+        self.assertEqual(aspose.words.NodeType.BOOKMARK_END, first_paragraph_nodes[2].node_type)
+        self.assertIsNone(builder.current_node)
+        builder.move_to_bookmark(bookmark_name = "MyBookmark")
+        self.assertEqual(first_paragraph_nodes[1], builder.current_node)
+        builder.move_to(doc.first_section.body.first_paragraph.get_child_nodes(aspose.words.NodeType.ANY, False)[0])
+        self.assertEqual(aspose.words.NodeType.BOOKMARK_START, builder.current_node.node_type)
+        self.assertEqual(doc.first_section.body.first_paragraph, builder.current_paragraph)
+        self.assertTrue(builder.is_at_start_of_paragraph)
+        builder.move_to_document_end()
+        self.assertTrue(builder.is_at_end_of_paragraph)
+        builder.move_to_document_start()
+        self.assertTrue(builder.is_at_start_of_paragraph)
 
     def test_fill_merge_fields(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        builder.insert_field(field_code = " MERGEFIELD Chairman ")
+        builder.insert_field(field_code = " MERGEFIELD ChiefFinancialOfficer ")
+        builder.insert_field(field_code = " MERGEFIELD ChiefTechnologyOfficer ")
+        builder.move_to_merge_field(field_name = "Chairman")
+        builder.bold = True
+        builder.writeln("John Doe")
+        builder.move_to_merge_field(field_name = "ChiefFinancialOfficer")
+        builder.italic = True
+        builder.writeln("Jane Doe")
+        builder.move_to_merge_field(field_name = "ChiefTechnologyOfficer")
+        builder.italic = True
+        builder.writeln("John Bloggs")
+        doc.save(file_name = ARTIFACTS_DIR + "DocumentBuilder.FillMergeFields.docx")
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "DocumentBuilder.FillMergeFields.docx")
+        paragraphs = doc.first_section.body.paragraphs
+        self.assertTrue(paragraphs[0].runs[0].font.bold)
+        self.assertEqual("John Doe", paragraphs[0].runs[0].get_text().strip())
+        self.assertTrue(paragraphs[1].runs[0].font.italic)
+        self.assertEqual("Jane Doe", paragraphs[1].runs[0].get_text().strip())
+        self.assertTrue(paragraphs[2].runs[0].font.italic)
+        self.assertEqual("John Bloggs", paragraphs[2].runs[0].get_text().strip())
 
     def test_insert_toc(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        builder.insert_table_of_contents("\\o \"1-3\" \\h \\z \\u")
+        builder.insert_break(aspose.words.BreakType.PAGE_BREAK)
+        builder.paragraph_format.style_identifier = aspose.words.StyleIdentifier.HEADING1
+        builder.writeln("Heading 1")
+        builder.paragraph_format.style_identifier = aspose.words.StyleIdentifier.HEADING2
+        builder.writeln("Heading 1.1")
+        builder.writeln("Heading 1.2")
+        builder.paragraph_format.style_identifier = aspose.words.StyleIdentifier.HEADING1
+        builder.writeln("Heading 2")
+        builder.writeln("Heading 3")
+        builder.paragraph_format.style_identifier = aspose.words.StyleIdentifier.HEADING2
+        builder.writeln("Heading 3.1")
+        builder.paragraph_format.style_identifier = aspose.words.StyleIdentifier.HEADING3
+        builder.writeln("Heading 3.1.1")
+        builder.writeln("Heading 3.1.2")
+        builder.writeln("Heading 3.1.3")
+        builder.paragraph_format.style_identifier = aspose.words.StyleIdentifier.HEADING4
+        builder.writeln("Heading 3.1.3.1")
+        builder.writeln("Heading 3.1.3.2")
+        builder.paragraph_format.style_identifier = aspose.words.StyleIdentifier.HEADING2
+        builder.writeln("Heading 3.2")
+        builder.writeln("Heading 3.3")
+        doc.update_fields()
+        doc.save(file_name = ARTIFACTS_DIR + "DocumentBuilder.InsertToc.docx")
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "DocumentBuilder.InsertToc.docx")
+        table_of_contents = doc.range.fields[0].as_field_toc()
+        self.assertEqual("1-3", table_of_contents.heading_level_range)
+        self.assertTrue(table_of_contents.insert_hyperlinks)
+        self.assertTrue(table_of_contents.hide_in_web_layout)
+        self.assertTrue(table_of_contents.use_paragraph_outline_level)
 
     def test_insert_table(self):
         raise NotImplementedError("Unsupported target type System.Drawing.Color")
@@ -216,7 +303,13 @@ class ExDocumentBuilder(ApiExampleBase):
         raise NotImplementedError("Unsupported target type System.Drawing.Color")
 
     def test_cursor_position(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        builder.write("Hello world!")
+        self.assertIsNone(builder.current_node)
+        self.assertEqual("Hello world!", builder.current_paragraph.get_text().strip())
+        builder.move_to_document_start()
+        self.assertEqual(aspose.words.NodeType.RUN, builder.current_node.node_type)
 
     def test_move_to(self):
         doc = aspose.words.Document()
@@ -253,7 +346,27 @@ class ExDocumentBuilder(ApiExampleBase):
         self.assertEqual("Column 2, cell 2.\a", table.rows[1].cells[1].get_text().strip())
 
     def test_move_to_bookmark(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        builder.start_bookmark("MyBookmark")
+        builder.write("Hello world! ")
+        builder.end_bookmark("MyBookmark")
+        self.assertTrue(builder.move_to_bookmark(bookmark_name = "MyBookmark", is_start = True, is_after = False))
+        builder.write("1. ")
+        self.assertEqual("Hello world! ", doc.range.bookmarks.get_by_name("MyBookmark").text)
+        self.assertEqual("1. Hello world!", doc.get_text().strip())
+        self.assertTrue(builder.move_to_bookmark(bookmark_name = "MyBookmark", is_start = True, is_after = True))
+        builder.write("2. ")
+        self.assertEqual("2. Hello world! ", doc.range.bookmarks.get_by_name("MyBookmark").text)
+        self.assertEqual("1. 2. Hello world!", doc.get_text().strip())
+        self.assertTrue(builder.move_to_bookmark(bookmark_name = "MyBookmark", is_start = False, is_after = False))
+        builder.write("3. ")
+        self.assertEqual("2. Hello world! 3. ", doc.range.bookmarks.get_by_name("MyBookmark").text)
+        self.assertEqual("1. 2. Hello world! 3.", doc.get_text().strip())
+        self.assertTrue(builder.move_to_bookmark(bookmark_name = "MyBookmark", is_start = False, is_after = True))
+        builder.write("4.")
+        self.assertEqual("2. Hello world! 3. ", doc.range.bookmarks.get_by_name("MyBookmark").text)
+        self.assertEqual("1. 2. Hello world! 3. 4.", doc.get_text().strip())
 
     def test_build_table(self):
         doc = aspose.words.Document()
@@ -311,16 +424,63 @@ class ExDocumentBuilder(ApiExampleBase):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_insert_text_input(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        builder.insert_text_input("TextInput", aspose.words.fields.TextFormFieldType.REGULAR, "", "Enter your text here", 0)
+        doc.save(file_name = ARTIFACTS_DIR + "DocumentBuilder.InsertTextInput.docx")
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "DocumentBuilder.InsertTextInput.docx")
+        form_field = doc.range.form_fields[0]
+        self.assertTrue(form_field.enabled)
+        self.assertEqual("TextInput", form_field.name)
+        self.assertEqual(0, form_field.max_length)
+        self.assertEqual("Enter your text here", form_field.result)
+        self.assertEqual(aspose.words.fields.FieldType.FIELD_FORM_TEXT_INPUT, form_field.type)
+        self.assertEqual("", form_field.text_input_format)
+        self.assertEqual(aspose.words.fields.TextFormFieldType.REGULAR, form_field.text_input_type)
 
     def test_insert_combo_box(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        builder.write("Pick a fruit: ")
+        items = ["Apple", "Banana", "Cherry"]
+        builder.insert_combo_box("DropDown", items, 0)
+        doc.save(file_name = ARTIFACTS_DIR + "DocumentBuilder.InsertComboBox.docx")
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "DocumentBuilder.InsertComboBox.docx")
+        form_field = doc.range.form_fields[0]
+        self.assertTrue(form_field.enabled)
+        self.assertEqual("DropDown", form_field.name)
+        self.assertEqual(0, form_field.drop_down_selected_index)
+        self.assertSequenceEqual(items, list(form_field.drop_down_items))
+        self.assertEqual(aspose.words.fields.FieldType.FIELD_FORM_DROP_DOWN, form_field.type)
 
     def test_signature_line_provider_id(self):
         raise NotImplementedError("Unsupported target type System.Guid")
 
     def test_signature_line_inline(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        options = aspose.words.SignatureLineOptions()
+        options.signer = "John Doe"
+        options.signer_title = "Manager"
+        options.email = "johndoe@aspose.com"
+        options.show_date = True
+        options.default_instructions = False
+        options.instructions = "Please sign here."
+        options.allow_comments = True
+        builder.insert_signature_line(signature_line_options = options, horz_pos = aspose.words.drawing.RelativeHorizontalPosition.RIGHT_MARGIN, left = 2, vert_pos = aspose.words.drawing.RelativeVerticalPosition.PAGE, top = 3, wrap_type = aspose.words.drawing.WrapType.INLINE)
+        doc.save(file_name = ARTIFACTS_DIR + "DocumentBuilder.SignatureLineInline.docx")
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "DocumentBuilder.SignatureLineInline.docx")
+        shape = doc.get_child(aspose.words.NodeType.SHAPE, 0, True).as_shape()
+        signature_line = shape.signature_line
+        self.assertEqual("John Doe", signature_line.signer)
+        self.assertEqual("Manager", signature_line.signer_title)
+        self.assertEqual("johndoe@aspose.com", signature_line.email)
+        self.assertTrue(signature_line.show_date)
+        self.assertFalse(signature_line.default_instructions)
+        self.assertEqual("Please sign here.", signature_line.instructions)
+        self.assertTrue(signature_line.allow_comments)
+        self.assertFalse(signature_line.is_signed)
+        self.assertFalse(signature_line.is_valid)
 
     def test_set_paragraph_formatting(self):
         doc = aspose.words.Document()
@@ -415,7 +575,7 @@ class ExDocumentBuilder(ApiExampleBase):
         raise NotImplementedError("Unsupported target type System.Drawing.Color")
 
     def test_current_story(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")
 
     def test_insert_ole_objects(self):
         raise NotImplementedError("Unsupported statement type: UsingStatement")

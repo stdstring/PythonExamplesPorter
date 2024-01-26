@@ -121,7 +121,47 @@ class ExPageSetup(ApiExampleBase):
         raise NotImplementedError("Unsupported target type System.Drawing.Color")
 
     def test_page_numbering(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        builder.writeln("Section 1, page 1.")
+        builder.insert_break(aspose.words.BreakType.PAGE_BREAK)
+        builder.writeln("Section 1, page 2.")
+        builder.insert_break(aspose.words.BreakType.PAGE_BREAK)
+        builder.writeln("Section 1, page 3.")
+        builder.insert_break(aspose.words.BreakType.SECTION_BREAK_NEW_PAGE)
+        builder.writeln("Section 2, page 1.")
+        builder.insert_break(aspose.words.BreakType.PAGE_BREAK)
+        builder.writeln("Section 2, page 2.")
+        builder.insert_break(aspose.words.BreakType.PAGE_BREAK)
+        builder.writeln("Section 2, page 3.")
+        builder.move_to_section(0)
+        builder.move_to_header_footer(aspose.words.HeaderFooterType.HEADER_PRIMARY)
+        builder.write("Page ")
+        builder.insert_field(field_code = "PAGE", field_value = "")
+        page_setup = doc.sections[0].page_setup
+        page_setup.restart_page_numbering = True
+        page_setup.page_starting_number = 5
+        page_setup.page_number_style = aspose.words.NumberStyle.UPPERCASE_ROMAN
+        builder.move_to_section(1)
+        builder.move_to_header_footer(aspose.words.HeaderFooterType.HEADER_PRIMARY)
+        builder.paragraph_format.alignment = aspose.words.ParagraphAlignment.CENTER
+        builder.write(" - ")
+        builder.insert_field(field_code = "PAGE", field_value = "")
+        builder.write(" - ")
+        page_setup = doc.sections[1].page_setup
+        page_setup.page_starting_number = 10
+        page_setup.restart_page_numbering = True
+        page_setup.page_number_style = aspose.words.NumberStyle.ARABIC
+        doc.save(file_name = ARTIFACTS_DIR + "PageSetup.PageNumbering.docx")
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "PageSetup.PageNumbering.docx")
+        page_setup = doc.sections[0].page_setup
+        self.assertTrue(page_setup.restart_page_numbering)
+        self.assertEqual(5, page_setup.page_starting_number)
+        self.assertEqual(aspose.words.NumberStyle.UPPERCASE_ROMAN, page_setup.page_number_style)
+        page_setup = doc.sections[1].page_setup
+        self.assertTrue(page_setup.restart_page_numbering)
+        self.assertEqual(10, page_setup.page_starting_number)
+        self.assertEqual(aspose.words.NumberStyle.ARABIC, page_setup.page_number_style)
 
     def test_footnote_options(self):
         doc = aspose.words.Document()

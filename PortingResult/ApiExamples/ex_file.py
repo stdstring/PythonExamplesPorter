@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import aspose.words
+import aspose.words.digitalsignatures
 import aspose.words.saving
 import unittest
 from api_example_base import ApiExampleBase, ARTIFACTS_DIR, MY_DIR
@@ -13,10 +14,16 @@ class ExFile(ApiExampleBase):
         raise NotImplementedError("Unsupported expression: ParenthesizedLambdaExpression")
 
     def test_detect_document_encryption(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        doc = aspose.words.Document()
+        save_options = aspose.words.saving.OdtSaveOptions(save_format = aspose.words.SaveFormat.ODT)
+        save_options.password = "MyPassword"
+        doc.save(file_name = ARTIFACTS_DIR + "File.DetectDocumentEncryption.odt", save_options = save_options)
+        info = aspose.words.FileFormatUtil.detect_file_format(file_name = ARTIFACTS_DIR + "File.DetectDocumentEncryption.odt")
+        self.assertEqual(".odt", aspose.words.FileFormatUtil.load_format_to_extension(info.load_format))
+        self.assertTrue(info.is_encrypted)
 
     def test_detect_digital_signatures(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        raise NotImplementedError("Forbidden object initializer")
 
     def test_save_to_detected_file_format(self):
         raise NotImplementedError("Unsupported statement type: UsingStatement")

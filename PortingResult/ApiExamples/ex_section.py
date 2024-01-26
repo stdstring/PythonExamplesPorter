@@ -8,7 +8,19 @@ from api_example_base import ApiExampleBase, ARTIFACTS_DIR, IMAGE_DIR, MY_DIR
 
 class ExSection(ApiExampleBase):
     def test_protect(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        builder.writeln("Section 1. Hello world!")
+        builder.insert_break(aspose.words.BreakType.SECTION_BREAK_NEW_PAGE)
+        builder.writeln("Section 2. Hello again!")
+        builder.write("Please enter text here: ")
+        builder.insert_text_input("TextInput1", aspose.words.fields.TextFormFieldType.REGULAR, "", "Placeholder text", 0)
+        doc.protect(type = aspose.words.ProtectionType.ALLOW_ONLY_FORM_FIELDS)
+        doc.sections[0].protected_for_forms = False
+        doc.save(file_name = ARTIFACTS_DIR + "Section.Protect.docx")
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Section.Protect.docx")
+        self.assertFalse(doc.sections[0].protected_for_forms)
+        self.assertTrue(doc.sections[1].protected_for_forms)
 
     def test_add_remove(self):
         doc = aspose.words.Document()

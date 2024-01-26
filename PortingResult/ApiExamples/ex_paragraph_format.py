@@ -6,7 +6,17 @@ from api_example_base import ApiExampleBase, ARTIFACTS_DIR, MY_DIR
 
 class ExParagraphFormat(ApiExampleBase):
     def test_asian_typography_properties(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        doc = aspose.words.Document(file_name = MY_DIR + "Document.docx")
+        format = doc.first_section.body.first_paragraph.paragraph_format
+        format.far_east_line_break_control = True
+        format.word_wrap = False
+        format.hanging_punctuation = True
+        doc.save(file_name = ARTIFACTS_DIR + "ParagraphFormat.AsianTypographyProperties.docx")
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "ParagraphFormat.AsianTypographyProperties.docx")
+        format = doc.first_section.body.first_paragraph.paragraph_format
+        self.assertTrue(format.far_east_line_break_control)
+        self.assertFalse(format.word_wrap)
+        self.assertTrue(format.hanging_punctuation)
 
     def test_line_spacing(self):
         doc = aspose.words.Document()

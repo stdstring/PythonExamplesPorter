@@ -21,7 +21,15 @@ class ExShape(ApiExampleBase):
         raise NotImplementedError("Unsupported type: RectangleF")
 
     def test_is_top_level(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        doc = aspose.words.Document()
+        shape = aspose.words.drawing.Shape(doc, aspose.words.drawing.ShapeType.RECTANGLE)
+        shape.width = 200
+        shape.height = 200
+        shape.wrap_type = aspose.words.drawing.WrapType.NONE
+        self.assertTrue(shape.is_top_level)
+        group = aspose.words.drawing.GroupShape(doc)
+        group.append_child(shape)
+        self.assertFalse(shape.is_top_level)
 
     def test_local_to_parent(self):
         raise NotImplementedError("Unsupported type: RectangleF")
@@ -124,10 +132,10 @@ class ExShape(ApiExampleBase):
         raise NotImplementedError("Unsupported expression: InterpolatedStringExpression")
 
     def test_linked_chart_source_full_name(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        raise NotImplementedError("Unsupported target type System.StringComparison")
 
     def test_ole_control(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        raise NotImplementedError("Unsupported statement type: UsingStatement")
 
     def test_ole_links(self):
         raise NotImplementedError("Unsupported target type System.Collections.Generic.IEnumerable")
@@ -201,7 +209,7 @@ class ExShape(ApiExampleBase):
         raise NotImplementedError("Unsupported target type System.Collections.Generic.IEnumerable")
 
     def test_signature_line(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_text_box_fit_shape_to_text(self):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
@@ -220,13 +228,13 @@ class ExShape(ApiExampleBase):
         doc.save(file_name = ARTIFACTS_DIR + "Shape.TextBoxShapeType.docx")
 
     def test_create_link_between_text_boxes(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        raise NotImplementedError("Unsupported target type System.Console")
 
     def test_insert_text_paths(self):
         raise NotImplementedError("Unsupported call of method named AppendWordArt")
 
     def test_shape_revision(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        raise NotImplementedError("Unsupported target type System.Collections.Generic.IEnumerable")
 
     def test_move_revisions(self):
         raise NotImplementedError("Unsupported target type System.Collections.Generic.IEnumerable")
@@ -244,7 +252,16 @@ class ExShape(ApiExampleBase):
         raise NotImplementedError("Unsupported target type System.Collections.Generic.IEnumerable")
 
     def test_is_decorative(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        doc = aspose.words.Document(file_name = MY_DIR + "Decorative shapes.docx")
+        shape = doc.get_child_nodes(aspose.words.NodeType.SHAPE, True)[0].as_shape()
+        self.assertTrue(shape.is_decorative)
+        shape.alternative_text = "Alternative text."
+        self.assertFalse(shape.is_decorative)
+        builder = aspose.words.DocumentBuilder(doc)
+        builder.move_to_document_end()
+        shape = builder.insert_shape(shape_type = aspose.words.drawing.ShapeType.RECTANGLE, width = 100, height = 100)
+        shape.is_decorative = True
+        doc.save(file_name = ARTIFACTS_DIR + "Shape.IsDecorative.docx")
 
     def test_fill_image(self):
         raise NotImplementedError("Unsupported target type System.IO.File")

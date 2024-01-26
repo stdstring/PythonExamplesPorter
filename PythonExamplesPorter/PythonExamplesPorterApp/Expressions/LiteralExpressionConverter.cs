@@ -27,7 +27,7 @@ namespace PythonExamplesPorterApp.Expressions
                 Boolean value => value ? "True" : "False",
                 Char value => $"\"{StringUtils.ConvertEscapeSequences(expression.Token.Text.Trim('\''))}\"",
                 // TODO (std_string) : there are problems with some unicode symbols - investigate their
-                String _ when expression.Token.Text.StartsWith('@') => $"\"\"{StringUtils.ConvertEscapeSequences(expression.Token.Text.Substring(1))}\"\"",
+                String _ when expression.Token.Text.StartsWith('@') => $"\"\"{StringUtils.PrepareVerbatimString(expression.Token.Text.Substring(1))}\"\"",
                 String => StringUtils.ConvertEscapeSequences(expression.Token.Text),
                 var value => value.ToString() ?? expression.Token.Text
             };

@@ -36,7 +36,11 @@ class ExFormFields(ApiExampleBase):
         self.assertEqual(0, text_input.max_length)
 
     def test_delete_form_field(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        doc = aspose.words.Document(file_name = MY_DIR + "Form fields.docx")
+        form_field = doc.range.form_fields[3]
+        form_field.remove_field()
+        form_field_after = doc.range.form_fields[3]
+        self.assertIsNone(form_field_after)
 
     def test_delete_form_field_associated_with_bookmark(self):
         raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")
@@ -45,4 +49,4 @@ class ExFormFields(ApiExampleBase):
         raise NotImplementedError("Unsupported target type System.Drawing.Color")
 
     def test_drop_down_item_collection(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        raise NotImplementedError("Unsupported statement type: UsingStatement")

@@ -15,7 +15,7 @@ class ExHtmlLoadOptions(ApiExampleBase):
         raise NotImplementedError("Unsupported target type System.DateTime")
 
     def test_base_uri(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        raise NotImplementedError("Unsupported member target type - System.Byte[] for expression: ((Shape)doc.GetChild(NodeType.Shape, 0, true)).ImageData.ImageBytes")
 
     def test_get_select_as_sdt(self):
         raise NotImplementedError("Unsupported type: MemoryStream")

@@ -9,10 +9,43 @@ from api_example_base import ApiExampleBase, ARTIFACTS_DIR, MY_DIR
 
 class ExCharts(ApiExampleBase):
     def test_chart_title(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        chart_shape = builder.insert_chart(chart_type = aspose.words.drawing.charts.ChartType.BAR, width = 400, height = 300)
+        chart = chart_shape.chart
+        title = chart.title
+        title.text = "My Chart"
+        title.show = True
+        title.overlay = True
+        doc.save(file_name = ARTIFACTS_DIR + "Charts.ChartTitle.docx")
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Charts.ChartTitle.docx")
+        chart_shape = doc.get_child(aspose.words.NodeType.SHAPE, 0, True).as_shape()
+        self.assertEqual(aspose.words.drawing.ShapeType.NON_PRIMITIVE, chart_shape.shape_type)
+        self.assertTrue(chart_shape.has_chart)
+        title = chart_shape.chart.title
+        self.assertEqual("My Chart", title.text)
+        self.assertTrue(title.overlay)
+        self.assertTrue(title.show)
 
     def test_data_label_number_format(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        shape = builder.insert_chart(chart_type = aspose.words.drawing.charts.ChartType.LINE, width = 500, height = 300)
+        chart = shape.chart
+        chart.series.clear()
+        chart.title.text = "Monthly sales report"
+        series = chart.series.add(series_name = "Revenue", categories = ["January", "February", "March"], values = [25.611, 21.439, 33.75])
+        series.has_data_labels = True
+        data_labels = series.data_labels
+        data_labels.show_value = True
+        data_labels.number_format.format_code = "\"US$\" #,##0.000\"M\""
+        data_labels.font.size = 12
+        doc.save(file_name = ARTIFACTS_DIR + "Charts.DataLabelNumberFormat.docx")
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Charts.DataLabelNumberFormat.docx")
+        series = (doc.get_child(aspose.words.NodeType.SHAPE, 0, True).as_shape()).chart.series[0]
+        self.assertTrue(series.has_data_labels)
+        self.assertTrue(series.data_labels.show_value)
+        self.assertEqual("\"US$\" #,##0.000\"M\"", series.data_labels.number_format.format_code)
 
     def test_data_arrays_wrong_size(self):
         raise NotImplementedError("Unsupported expression: ParenthesizedLambdaExpression")
@@ -32,7 +65,56 @@ class ExCharts(ApiExampleBase):
         doc.save(file_name = ARTIFACTS_DIR + "Charts.EmptyValuesInChartData.docx")
 
     def test_axis_properties(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        shape = builder.insert_chart(chart_type = aspose.words.drawing.charts.ChartType.COLUMN, width = 500, height = 300)
+        chart = shape.chart
+        chart.series.clear()
+        chart.series.add(series_name = "Aspose Test Series", categories = ["Word", "PDF", "Excel", "GoogleDocs", "Note"], values = [640, 320, 280, 120, 150])
+        x_axis = chart.axis_x
+        x_axis.category_type = aspose.words.drawing.charts.AxisCategoryType.CATEGORY
+        x_axis.crosses = aspose.words.drawing.charts.AxisCrosses.MINIMUM
+        x_axis.reverse_order = False
+        x_axis.major_tick_mark = aspose.words.drawing.charts.AxisTickMark.INSIDE
+        x_axis.minor_tick_mark = aspose.words.drawing.charts.AxisTickMark.CROSS
+        x_axis.major_unit = 10
+        x_axis.minor_unit = 15
+        x_axis.tick_label_offset = 50
+        x_axis.tick_label_position = aspose.words.drawing.charts.AxisTickLabelPosition.LOW
+        x_axis.tick_label_spacing_is_auto = False
+        x_axis.tick_mark_spacing = 1
+        y_axis = chart.axis_y
+        y_axis.category_type = aspose.words.drawing.charts.AxisCategoryType.AUTOMATIC
+        y_axis.crosses = aspose.words.drawing.charts.AxisCrosses.MAXIMUM
+        y_axis.reverse_order = True
+        y_axis.major_tick_mark = aspose.words.drawing.charts.AxisTickMark.INSIDE
+        y_axis.minor_tick_mark = aspose.words.drawing.charts.AxisTickMark.CROSS
+        y_axis.major_unit = 100
+        y_axis.minor_unit = 20
+        y_axis.tick_label_position = aspose.words.drawing.charts.AxisTickLabelPosition.NEXT_TO_AXIS
+        self.assertIsNone(chart.axis_z)
+        doc.save(file_name = ARTIFACTS_DIR + "Charts.AxisProperties.docx")
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Charts.AxisProperties.docx")
+        chart = (doc.get_child(aspose.words.NodeType.SHAPE, 0, True).as_shape()).chart
+        self.assertEqual(aspose.words.drawing.charts.AxisCategoryType.CATEGORY, chart.axis_x.category_type)
+        self.assertEqual(aspose.words.drawing.charts.AxisCrosses.MINIMUM, chart.axis_x.crosses)
+        self.assertFalse(chart.axis_x.reverse_order)
+        self.assertEqual(aspose.words.drawing.charts.AxisTickMark.INSIDE, chart.axis_x.major_tick_mark)
+        self.assertEqual(aspose.words.drawing.charts.AxisTickMark.CROSS, chart.axis_x.minor_tick_mark)
+        self.assertEqual(1, chart.axis_x.major_unit)
+        self.assertEqual(0.5, chart.axis_x.minor_unit)
+        self.assertEqual(50, chart.axis_x.tick_label_offset)
+        self.assertEqual(aspose.words.drawing.charts.AxisTickLabelPosition.LOW, chart.axis_x.tick_label_position)
+        self.assertFalse(chart.axis_x.tick_label_spacing_is_auto)
+        self.assertEqual(1, chart.axis_x.tick_mark_spacing)
+        self.assertEqual(aspose.words.drawing.charts.AxisCategoryType.CATEGORY, chart.axis_y.category_type)
+        self.assertEqual(aspose.words.drawing.charts.AxisCrosses.MAXIMUM, chart.axis_y.crosses)
+        self.assertTrue(chart.axis_y.reverse_order)
+        self.assertEqual(aspose.words.drawing.charts.AxisTickMark.INSIDE, chart.axis_y.major_tick_mark)
+        self.assertEqual(aspose.words.drawing.charts.AxisTickMark.CROSS, chart.axis_y.minor_tick_mark)
+        self.assertEqual(100, chart.axis_y.major_unit)
+        self.assertEqual(20, chart.axis_y.minor_unit)
+        self.assertEqual(aspose.words.drawing.charts.AxisTickLabelPosition.NEXT_TO_AXIS, chart.axis_y.tick_label_position)
 
     def test_axis_collection(self):
         doc = aspose.words.Document()
@@ -52,10 +134,33 @@ class ExCharts(ApiExampleBase):
         raise NotImplementedError("Unsupported type: DateTime")
 
     def test_hide_chart_axis(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        shape = builder.insert_chart(chart_type = aspose.words.drawing.charts.ChartType.LINE, width = 500, height = 300)
+        chart = shape.chart
+        chart.series.clear()
+        chart.series.add(series_name = "AW Series 1", categories = ["Item 1", "Item 2", "Item 3", "Item 4", "Item 5"], values = [1.2, 0.3, 2.1, 2.9, 4.2])
+        chart.axis_x.hidden = True
+        chart.axis_y.hidden = True
+        doc.save(file_name = ARTIFACTS_DIR + "Charts.HideChartAxis.docx")
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Charts.HideChartAxis.docx")
+        chart = (doc.get_child(aspose.words.NodeType.SHAPE, 0, True).as_shape()).chart
+        self.assertTrue(chart.axis_x.hidden)
+        self.assertTrue(chart.axis_y.hidden)
 
     def test_set_number_format_to_chart_axis(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        shape = builder.insert_chart(chart_type = aspose.words.drawing.charts.ChartType.COLUMN, width = 500, height = 300)
+        chart = shape.chart
+        chart.series.clear()
+        chart.series.add(series_name = "Aspose Test Series", categories = ["Word", "PDF", "Excel", "GoogleDocs", "Note"], values = [1900000, 850000, 2100000, 600000, 1500000])
+        chart.axis_y.number_format.format_code = "#,##0"
+        self.assertFalse(chart.axis_y.number_format.is_linked_to_source)
+        doc.save(file_name = ARTIFACTS_DIR + "Charts.SetNumberFormatToChartAxis.docx")
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Charts.SetNumberFormatToChartAxis.docx")
+        chart = (doc.get_child(aspose.words.NodeType.SHAPE, 0, True).as_shape()).chart
+        self.assertEqual("#,##0", chart.axis_y.number_format.format_code)
 
     def test_surface_3d_chart(self):
         doc = aspose.words.Document()
@@ -70,10 +175,46 @@ class ExCharts(ApiExampleBase):
         doc.save(file_name = ARTIFACTS_DIR + "Charts.SurfaceChart.pdf")
 
     def test_data_labels_bubble_chart(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        chart = builder.insert_chart(chart_type = aspose.words.drawing.charts.ChartType.BUBBLE, width = 500, height = 300).chart
+        chart.series.clear()
+        series = chart.series.add(series_name = "Aspose Test Series", x_values = [2.9, 3.5, 1.1, 4, 4], y_values = [1.9, 8.5, 2.1, 6, 1.5], bubble_sizes = [9, 4.5, 2.5, 8, 5])
+        series.has_data_labels = True
+        data_labels = series.data_labels
+        data_labels.show_bubble_size = True
+        data_labels.show_category_name = True
+        data_labels.show_series_name = True
+        data_labels.separator = " & "
+        doc.save(file_name = ARTIFACTS_DIR + "Charts.DataLabelsBubbleChart.docx")
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Charts.DataLabelsBubbleChart.docx")
+        data_labels = (doc.get_child(aspose.words.NodeType.SHAPE, 0, True).as_shape()).chart.series[0].data_labels
+        self.assertTrue(data_labels.show_bubble_size)
+        self.assertTrue(data_labels.show_category_name)
+        self.assertTrue(data_labels.show_series_name)
+        self.assertEqual(" & ", data_labels.separator)
 
     def test_data_labels_pie_chart(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        chart = builder.insert_chart(chart_type = aspose.words.drawing.charts.ChartType.PIE, width = 500, height = 300).chart
+        chart.series.clear()
+        series = chart.series.add(series_name = "Aspose Test Series", categories = ["Word", "PDF", "Excel"], values = [2.7, 3.2, 0.8])
+        series.has_data_labels = True
+        data_labels = series.data_labels
+        data_labels.show_leader_lines = True
+        data_labels.show_legend_key = True
+        data_labels.show_percentage = True
+        data_labels.show_value = True
+        data_labels.separator = "; "
+        doc.save(file_name = ARTIFACTS_DIR + "Charts.DataLabelsPieChart.docx")
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Charts.DataLabelsPieChart.docx")
+        data_labels = (doc.get_child(aspose.words.NodeType.SHAPE, 0, True).as_shape()).chart.series[0].data_labels
+        self.assertTrue(data_labels.show_leader_lines)
+        self.assertTrue(data_labels.show_legend_key)
+        self.assertTrue(data_labels.show_percentage)
+        self.assertTrue(data_labels.show_value)
+        self.assertEqual("; ", data_labels.separator)
 
     def test_data_labels(self):
         raise NotImplementedError("Unsupported call of method named ApplyDataLabels")
@@ -99,7 +240,30 @@ class ExCharts(ApiExampleBase):
         self.assertEqual(40, series.data_points[1].explosion)
 
     def test_bubble_3d(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        shape = builder.insert_chart(chart_type = aspose.words.drawing.charts.ChartType.BUBBLE_3D, width = 500, height = 350)
+        chart = shape.chart
+        self.assertEqual(1, chart.series.count)
+        self.assertEqual("Y-Values", chart.series[0].name)
+        self.assertTrue(chart.series[0].bubble_3d)
+        # for loop begin
+        i = 0
+        while i < 3:
+            chart.series[0].has_data_labels = True
+            chart.series[0].data_labels[i].show_bubble_size = True
+            chart.series[0].data_labels[i].font.size = 12
+            i += 1
+        # for loop end
+        doc.save(file_name = ARTIFACTS_DIR + "Charts.Bubble3D.docx")
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Charts.Bubble3D.docx")
+        series = (doc.get_child(aspose.words.NodeType.SHAPE, 0, True).as_shape()).chart.series[0]
+        # for loop begin
+        i = 0
+        while i < 3:
+            self.assertTrue(series.data_labels[i].show_bubble_size)
+            i += 1
+        # for loop end
 
     def test_chart_series_collection(self):
         raise NotImplementedError("Unsupported call of method named AppendChart")
@@ -124,13 +288,45 @@ class ExCharts(ApiExampleBase):
         self.assertEqual(20, chart.axis_y.scaling.log_base)
 
     def test_axis_bound(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        raise NotImplementedError("Unsupported type: DateTime")
 
     def test_chart_legend(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        shape = builder.insert_chart(chart_type = aspose.words.drawing.charts.ChartType.LINE, width = 450, height = 300)
+        chart = shape.chart
+        self.assertEqual(3, chart.series.count)
+        self.assertEqual("Series 1", chart.series[0].name)
+        self.assertEqual("Series 2", chart.series[1].name)
+        self.assertEqual("Series 3", chart.series[2].name)
+        legend = chart.legend
+        legend.position = aspose.words.drawing.charts.LegendPosition.TOP_RIGHT
+        legend.overlay = True
+        doc.save(file_name = ARTIFACTS_DIR + "Charts.ChartLegend.docx")
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Charts.ChartLegend.docx")
+        legend = (doc.get_child(aspose.words.NodeType.SHAPE, 0, True).as_shape()).chart.legend
+        self.assertTrue(legend.overlay)
+        self.assertEqual(aspose.words.drawing.charts.LegendPosition.TOP_RIGHT, legend.position)
 
     def test_axis_cross(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        shape = builder.insert_chart(chart_type = aspose.words.drawing.charts.ChartType.COLUMN, width = 450, height = 250)
+        chart = shape.chart
+        self.assertEqual(3, chart.series.count)
+        self.assertEqual("Series 1", chart.series[0].name)
+        self.assertEqual("Series 2", chart.series[1].name)
+        self.assertEqual("Series 3", chart.series[2].name)
+        axis = chart.axis_x
+        axis.crosses = aspose.words.drawing.charts.AxisCrosses.CUSTOM
+        axis.crosses_at = 3
+        axis.axis_between_categories = True
+        doc.save(file_name = ARTIFACTS_DIR + "Charts.AxisCross.docx")
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Charts.AxisCross.docx")
+        axis = (doc.get_child(aspose.words.NodeType.SHAPE, 0, True).as_shape()).chart.axis_x
+        self.assertTrue(axis.axis_between_categories)
+        self.assertEqual(aspose.words.drawing.charts.AxisCrosses.CUSTOM, axis.crosses)
+        self.assertEqual(3, axis.crosses_at)
 
     def test_axis_display_unit(self):
         doc = aspose.words.Document()

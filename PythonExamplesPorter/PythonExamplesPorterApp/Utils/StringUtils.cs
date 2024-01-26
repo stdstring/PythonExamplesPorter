@@ -46,7 +46,6 @@ namespace PythonExamplesPorterApp.Utils
                         break;
                     dest.Append(Char.ToLower(source[start + shift]));
                 }
-
                 return dest.ToString();
             }
             Int32 maxIndex = source.Length - 1;
@@ -64,6 +63,11 @@ namespace PythonExamplesPorterApp.Utils
                     dest.Append(source[index++]);
             }
             return dest.ToString();
+        }
+
+        public static String PrepareVerbatimString(String source)
+        {
+            return source.Replace("\\", "\\\\");
         }
     }
 }

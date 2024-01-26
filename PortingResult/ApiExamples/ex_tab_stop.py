@@ -9,7 +9,7 @@ class ExTabStop(ApiExampleBase):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_tab_stop_collection(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_remove_by_index(self):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")

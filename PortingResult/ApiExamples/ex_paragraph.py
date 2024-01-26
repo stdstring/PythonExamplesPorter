@@ -2,7 +2,7 @@
 import aspose.words
 import aspose.words.fields
 import unittest
-from api_example_base import ApiExampleBase, MY_DIR
+from api_example_base import ApiExampleBase, ARTIFACTS_DIR, MY_DIR
 
 
 class ExParagraph(ApiExampleBase):
@@ -80,7 +80,8 @@ class ExParagraph(ApiExampleBase):
         doc.first_section.range.revisions.reject_all()
 
     def test_get_format_revision(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        doc = aspose.words.Document(file_name = MY_DIR + "Format revision.docx")
+        self.assertTrue(doc.first_section.body.first_paragraph.is_format_revision)
 
     def test_get_frame_properties(self):
         raise NotImplementedError("Unsupported expression: SimpleLambdaExpression")
@@ -89,7 +90,7 @@ class ExParagraph(ApiExampleBase):
         raise NotImplementedError("Unsupported target type System.DateTime")
 
     def test_break_is_style_separator(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_tab_stops(self):
         raise NotImplementedError("Unsupported member target type - Aspose.Words.TabStop[] for expression: doc.FirstSection.Body.FirstParagraph.GetEffectiveTabStops()")

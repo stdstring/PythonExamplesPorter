@@ -15,10 +15,10 @@ class ExDrawing(ApiExampleBase):
         raise NotImplementedError("Unsupported initializer expression: ObjectInitializerExpression")
 
     def test_get_data_from_image(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        raise NotImplementedError("Unsupported statement type: UsingStatement")
 
     def test_image_data(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        raise NotImplementedError("Unsupported target type System.Drawing.Color")
 
     def test_image_size(self):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")

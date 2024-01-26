@@ -98,7 +98,18 @@ class ExTable(ApiExampleBase):
         raise NotImplementedError("Unsupported target type System.Drawing.Color")
 
     def test_row_format(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        doc = aspose.words.Document(file_name = MY_DIR + "Tables.docx")
+        table = doc.first_section.body.tables[0]
+        first_row = table.first_row
+        first_row.row_format.borders.line_style = aspose.words.LineStyle.NONE
+        first_row.row_format.height_rule = aspose.words.HeightRule.AUTO
+        first_row.row_format.allow_break_across_pages = True
+        doc.save(file_name = ARTIFACTS_DIR + "Table.RowFormat.docx")
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Table.RowFormat.docx")
+        table = doc.first_section.body.tables[0]
+        self.assertEqual(aspose.words.LineStyle.NONE, table.first_row.row_format.borders.line_style)
+        self.assertEqual(aspose.words.HeightRule.AUTO, table.first_row.row_format.height_rule)
+        self.assertTrue(table.first_row.row_format.allow_break_across_pages)
 
     def test_cell_format(self):
         raise NotImplementedError("Unsupported target type System.Drawing.Color")
@@ -159,7 +170,31 @@ class ExTable(ApiExampleBase):
         self.assertEqual("", table_clone.to_string(save_format = aspose.words.SaveFormat.TEXT).strip())
 
     def test_keep_table_together(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Assert")
+        doc = aspose.words.Document(file_name = MY_DIR + "Table spanning two pages.docx")
+        table = doc.first_section.body.tables[0]
+        # for each loop begin
+        for cell in table.get_child_nodes(aspose.words.NodeType.CELL, True).of_type():
+            # for each loop begin
+            for para in cell.paragraphs.of_type():
+                self.assertTrue(para.is_in_cell)
+                # if begin
+                if not (cell.parent_row.is_last_row and para.is_end_of_cell):
+                    para.paragraph_format.keep_with_next = True
+                # if end
+            # for loop end
+        # for loop end
+        doc.save(file_name = ARTIFACTS_DIR + "Table.KeepTableTogether.docx")
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Table.KeepTableTogether.docx")
+        table = doc.first_section.body.tables[0]
+        # for each loop begin
+        for para in table.get_child_nodes(aspose.words.NodeType.PARAGRAPH, True).of_type():
+            # if begin
+            if para.is_end_of_cell and (para.parent_node.as_cell()).parent_row.is_last_row:
+                self.assertFalse(para.paragraph_format.keep_with_next)
+            else:
+                self.assertTrue(para.paragraph_format.keep_with_next)
+            # if end
+        # for loop end
 
     def test_get_index_of_table_elements(self):
         doc = aspose.words.Document(file_name = MY_DIR + "Tables.docx")
