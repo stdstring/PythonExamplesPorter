@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import aspose.pydrawing
 import aspose.words
 import aspose.words.buildingblocks
 import aspose.words.drawing
@@ -231,7 +232,7 @@ class ExField(ApiExampleBase):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_field_toa(self):
-        raise NotImplementedError("Unsupported target type System.Drawing.Color")
+        raise NotImplementedError("Unsupported call of method named InsertToaEntry")
 
     def test_field_add_in(self):
         raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")

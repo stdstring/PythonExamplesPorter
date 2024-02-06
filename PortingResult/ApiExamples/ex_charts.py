@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import aspose.pydrawing
 import aspose.words
 import aspose.words.drawing
 import aspose.words.drawing.charts
@@ -378,13 +379,57 @@ class ExCharts(ApiExampleBase):
         self.assertEqual(20, axis.scaling.maximum.value)
 
     def test_marker_formatting(self):
-        raise NotImplementedError("Unsupported target type System.Drawing.Color")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        shape = builder.insert_chart(chart_type = aspose.words.drawing.charts.ChartType.SCATTER, width = 432, height = 252)
+        chart = shape.chart
+        chart.series.clear()
+        series = chart.series.add(series_name = "AW Series 1", x_values = [0.7, 1.8, 2.6, 3.9], y_values = [2.7, 3.2, 0.8, 1.7])
+        series.marker.size = 40
+        series.marker.symbol = aspose.words.drawing.charts.MarkerSymbol.SQUARE
+        data_points = series.data_points
+        data_points[0].marker.format.fill.preset_textured(aspose.words.drawing.PresetTexture.DENIM)
+        data_points[0].marker.format.stroke.fore_color = aspose.pydrawing.Color.yellow
+        data_points[0].marker.format.stroke.back_color = aspose.pydrawing.Color.red
+        data_points[1].marker.format.fill.preset_textured(aspose.words.drawing.PresetTexture.WATER_DROPLETS)
+        data_points[1].marker.format.stroke.fore_color = aspose.pydrawing.Color.yellow
+        data_points[1].marker.format.stroke.visible = False
+        data_points[2].marker.format.fill.preset_textured(aspose.words.drawing.PresetTexture.GREEN_MARBLE)
+        data_points[2].marker.format.stroke.fore_color = aspose.pydrawing.Color.yellow
+        data_points[3].marker.format.fill.preset_textured(aspose.words.drawing.PresetTexture.OAK)
+        data_points[3].marker.format.stroke.fore_color = aspose.pydrawing.Color.yellow
+        data_points[3].marker.format.stroke.transparency = 0.5
+        doc.save(file_name = ARTIFACTS_DIR + "Charts.MarkerFormatting.docx")
 
     def test_series_color(self):
-        raise NotImplementedError("Unsupported target type System.Drawing.Color")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        shape = builder.insert_chart(chart_type = aspose.words.drawing.charts.ChartType.COLUMN, width = 432, height = 252)
+        chart = shape.chart
+        series_coll = chart.series
+        series_coll.clear()
+        categories = ["Category 1", "Category 2"]
+        series1 = series_coll.add(series_name = "Series 1", categories = categories, values = [1, 2])
+        series2 = series_coll.add(series_name = "Series 2", categories = categories, values = [3, 4])
+        series3 = series_coll.add(series_name = "Series 3", categories = categories, values = [5, 6])
+        series1.format.fill.fore_color = aspose.pydrawing.Color.red
+        series2.format.fill.fore_color = aspose.pydrawing.Color.yellow
+        series3.format.fill.fore_color = aspose.pydrawing.Color.blue
+        doc.save(file_name = ARTIFACTS_DIR + "Charts.SeriesColor.docx")
 
     def test_data_points_formatting(self):
-        raise NotImplementedError("Unsupported target type System.Drawing.Color")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        shape = builder.insert_chart(chart_type = aspose.words.drawing.charts.ChartType.COLUMN, width = 432, height = 252)
+        chart = shape.chart
+        chart.series.clear()
+        series = chart.series.add(series_name = "Series 1", categories = ["Category 1", "Category 2", "Category 3", "Category 4"], values = [1, 2, 3, 4])
+        data_points = series.data_points
+        data_points[0].format.fill.preset_textured(aspose.words.drawing.PresetTexture.DENIM)
+        data_points[1].format.fill.fore_color = aspose.pydrawing.Color.red
+        data_points[2].format.fill.fore_color = aspose.pydrawing.Color.yellow
+        data_points[3].format.fill.fore_color = aspose.pydrawing.Color.blue
+        doc.save(file_name = ARTIFACTS_DIR + "Charts.DataPointsFormatting.docx")
 
     def test_legend_entries(self):
         doc = aspose.words.Document()
@@ -442,7 +487,35 @@ class ExCharts(ApiExampleBase):
         doc.save(file_name = ARTIFACTS_DIR + "Charts.PopulateChartWithData.docx")
 
     def test_get_chart_series_data(self):
-        raise NotImplementedError("Unsupported target type System.Drawing.Color")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder()
+        shape = builder.insert_chart(chart_type = aspose.words.drawing.charts.ChartType.COLUMN, width = 432, height = 252)
+        chart = shape.chart
+        series = chart.series[0]
+        min_value = 1.7976931348623157E+308
+        min_value_index = 0
+        max_value = -1.7976931348623157E+308
+        max_value_index = 0
+        # for loop begin
+        i = 0
+        while i < series.y_values.count:
+            series.data_points[i].clear_format()
+            y_value = series.y_values[i].double_value
+            # if begin
+            if y_value < min_value:
+                min_value = y_value
+                min_value_index = i
+            # if end
+            # if begin
+            if y_value > max_value:
+                max_value = y_value
+                max_value_index = i
+            # if end
+            i += 1
+        # for loop end
+        series.data_points[min_value_index].format.fill.fore_color = aspose.pydrawing.Color.red
+        series.data_points[max_value_index].format.fill.fore_color = aspose.pydrawing.Color.green
+        doc.save(file_name = ARTIFACTS_DIR + "Charts.GetChartSeriesData.docx")
 
     def test_chart_data_values(self):
         doc = aspose.words.Document()
@@ -459,4 +532,20 @@ class ExCharts(ApiExampleBase):
         doc.save(file_name = ARTIFACTS_DIR + "Charts.ChartDataValues.docx")
 
     def test_format_data_lables(self):
-        raise NotImplementedError("Unsupported target type System.Drawing.Color")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        shape = builder.insert_chart(chart_type = aspose.words.drawing.charts.ChartType.COLUMN, width = 432, height = 252)
+        chart = shape.chart
+        chart.series.clear()
+        series = chart.series.add(series_name = "AW Series 1", categories = ["AW Category 1", "AW Category 2", "AW Category 3", "AW Category 4"], values = [100, 200, 300, 400])
+        series.has_data_labels = True
+        series.data_labels.show_value = True
+        format = series.data_labels.format
+        format.shape_type = aspose.words.drawing.charts.ChartShapeType.WEDGE_RECT_CALLOUT
+        format.stroke.color = aspose.pydrawing.Color.dark_green
+        format.fill.solid(aspose.pydrawing.Color.green)
+        series.data_labels.font.color = aspose.pydrawing.Color.yellow
+        label_format = series.data_labels[0].format
+        label_format.stroke.color = aspose.pydrawing.Color.dark_blue
+        label_format.fill.solid(aspose.pydrawing.Color.blue)
+        doc.save(file_name = ARTIFACTS_DIR + "Charts.FormatDataLables.docx")

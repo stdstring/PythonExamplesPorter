@@ -16,7 +16,7 @@ namespace PythonExamplesPorterApp.ExternalEntities
             _resolvers = new IExternalEntityResolver[]
             {
                 new KnownNamespacesEntityResolver(model, appData),
-                new SystemEntityResolver(model),
+                new SystemEntityResolver(model, _appData),
                 new NUnitEntityResolver(model)
             };
         }
@@ -35,7 +35,7 @@ namespace PythonExamplesPorterApp.ExternalEntities
         }
 
         // TODO (std_string) : move into resolvers
-        public OperationResult<TypeResolveData> ResolveType(INamedTypeSymbol typeSymbol)
+        public OperationResult<TypeResolveData> ResolveType(ITypeSymbol typeSymbol)
         {
             String sourceNamespaceName = typeSymbol.ContainingNamespace.ToDisplayString();
             String sourceTypeName = typeSymbol.Name;

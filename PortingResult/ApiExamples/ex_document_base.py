@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
+import aspose.pydrawing
 import aspose.words
 import aspose.words.drawing
+import aspose.words.saving
 import unittest
-from api_example_base import ApiExampleBase
+from api_example_base import ApiExampleBase, ARTIFACTS_DIR, IMAGE_DIR
 
 
 class ExDocumentBase(ApiExampleBase):
@@ -10,7 +12,13 @@ class ExDocumentBase(ApiExampleBase):
         raise NotImplementedError("Unsupported expression: TypeOfExpression")
 
     def test_set_page_color(self):
-        raise NotImplementedError("Unsupported target type System.Drawing.Color")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        builder.writeln("Hello world!")
+        doc.page_color = aspose.pydrawing.Color.light_gray
+        doc.save(file_name = ARTIFACTS_DIR + "DocumentBase.SetPageColor.docx")
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "DocumentBase.SetPageColor.docx")
+        self.assertEqual(aspose.pydrawing.Color.light_gray.to_argb(), doc.page_color.to_argb())
 
     def test_import_node(self):
         raise NotImplementedError("Unsupported expression: ParenthesizedLambdaExpression")
@@ -38,4 +46,4 @@ class ExDocumentBase(ApiExampleBase):
         self.assertEqual(src_style.font.name, dst_doc.styles.get_by_name("My style_0").font.name)
 
     def test_background_shape(self):
-        raise NotImplementedError("Unsupported target type System.Drawing.Color")
+        raise NotImplementedError("Unsupported expression: ParenthesizedLambdaExpression")

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import aspose.pydrawing
 import aspose.words
 import aspose.words.themes
 import unittest
@@ -7,7 +8,18 @@ from api_example_base import ApiExampleBase, ARTIFACTS_DIR, MY_DIR
 
 class ExBorder(ApiExampleBase):
     def test_font_border(self):
-        raise NotImplementedError("Unsupported target type System.Drawing.Color")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        builder.font.border.color = aspose.pydrawing.Color.green
+        builder.font.border.line_width = 2.5
+        builder.font.border.line_style = aspose.words.LineStyle.DASH_DOT_STROKER
+        builder.write("Text surrounded by green border.")
+        doc.save(file_name = ARTIFACTS_DIR + "Border.FontBorder.docx")
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Border.FontBorder.docx")
+        border = doc.first_section.body.first_paragraph.runs[0].font.border
+        self.assertEqual(aspose.pydrawing.Color.green.to_argb(), border.color.to_argb())
+        self.assertEqual(2.5, border.line_width)
+        self.assertEqual(aspose.words.LineStyle.DASH_DOT_STROKER, border.line_style)
 
     def test_paragraph_top_border(self):
         doc = aspose.words.Document()
@@ -27,7 +39,28 @@ class ExBorder(ApiExampleBase):
         self.assertAlmostEqual(0.25, border.tint_and_shade, delta=0.01)
 
     def test_clear_formatting(self):
-        raise NotImplementedError("Unsupported target type System.Drawing.Color")
+        doc = aspose.words.Document(file_name = MY_DIR + "Borders.docx")
+        borders = doc.first_section.body.first_paragraph.paragraph_format.borders
+        self.assertEqual(aspose.pydrawing.Color.red.to_argb(), borders[0].color.to_argb())
+        self.assertEqual(3, borders[0].line_width)
+        self.assertEqual(aspose.words.LineStyle.SINGLE, borders[0].line_style)
+        self.assertTrue(borders[0].is_visible)
+        # for each loop begin
+        for border in borders:
+            border.clear_formatting()
+        # for loop end
+        self.assertEqual(aspose.pydrawing.Color.empty().to_argb(), borders[0].color.to_argb())
+        self.assertEqual(0, borders[0].line_width)
+        self.assertEqual(aspose.words.LineStyle.NONE, borders[0].line_style)
+        self.assertFalse(borders[0].is_visible)
+        doc.save(file_name = ARTIFACTS_DIR + "Border.ClearFormatting.docx")
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Border.ClearFormatting.docx")
+        # for each loop begin
+        for test_border in doc.first_section.body.first_paragraph.paragraph_format.borders:
+            self.assertEqual(aspose.pydrawing.Color.empty().to_argb(), test_border.color.to_argb())
+            self.assertEqual(0, test_border.line_width)
+            self.assertEqual(aspose.words.LineStyle.NONE, test_border.line_style)
+        # for loop end
 
     def test_shared_elements(self):
         doc = aspose.words.Document()
@@ -70,7 +103,20 @@ class ExBorder(ApiExampleBase):
         # for loop end
 
     def test_horizontal_borders(self):
-        raise NotImplementedError("Unsupported target type System.Drawing.Color")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        borders = doc.first_section.body.first_paragraph.paragraph_format.borders
+        borders.horizontal.color = aspose.pydrawing.Color.red
+        borders.horizontal.line_style = aspose.words.LineStyle.DASH_SMALL_GAP
+        borders.horizontal.line_width = 3
+        builder.write("Paragraph above horizontal border.")
+        builder.insert_paragraph()
+        builder.write("Paragraph below horizontal border.")
+        doc.save(file_name = ARTIFACTS_DIR + "Border.HorizontalBorders.docx")
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Border.HorizontalBorders.docx")
+        paragraphs = doc.first_section.body.paragraphs
+        self.assertEqual(aspose.words.LineStyle.DASH_SMALL_GAP, paragraphs[0].paragraph_format.borders.get_by_border_type(aspose.words.BorderType.HORIZONTAL).line_style)
+        self.assertEqual(aspose.words.LineStyle.DASH_SMALL_GAP, paragraphs[1].paragraph_format.borders.get_by_border_type(aspose.words.BorderType.HORIZONTAL).line_style)
 
     def test_vertical_borders(self):
         raise NotImplementedError("Unsupported expression: InterpolatedStringExpression")

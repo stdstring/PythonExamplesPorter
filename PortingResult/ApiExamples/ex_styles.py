@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import aspose.pydrawing
 import aspose.words
 import aspose.words.lists
 import unittest
@@ -10,7 +11,7 @@ class ExStyles(ApiExampleBase):
         raise NotImplementedError("Unsupported statement type: UsingStatement")
 
     def test_create_style(self):
-        raise NotImplementedError("Unsupported target type System.Drawing.Color")
+        raise NotImplementedError("Unsupported expression: SimpleLambdaExpression")
 
     def test_style_collection(self):
         doc = aspose.words.Document()
@@ -51,10 +52,25 @@ class ExStyles(ApiExampleBase):
         # for loop end
 
     def test_copy_style_same_document(self):
-        raise NotImplementedError("Unsupported target type System.Drawing.Color")
+        doc = aspose.words.Document()
+        new_style = doc.styles.add_copy(doc.styles.get_by_name("Heading 1"))
+        new_style.name = "My Heading 1"
+        new_style.font.color = aspose.pydrawing.Color.red
+        self.assertEqual("My Heading 1", new_style.name)
+        self.assertEqual("Heading 1", doc.styles.get_by_name("Heading 1").name)
+        self.assertEqual(doc.styles.get_by_name("Heading 1").type, new_style.type)
+        self.assertEqual(doc.styles.get_by_name("Heading 1").font.name, new_style.font.name)
+        self.assertEqual(doc.styles.get_by_name("Heading 1").font.size, new_style.font.size)
+        self.assertNotEqual(doc.styles.get_by_name("Heading 1").font.color, new_style.font.color)
 
     def test_copy_style_different_document(self):
-        raise NotImplementedError("Unsupported target type System.Drawing.Color")
+        src_doc = aspose.words.Document()
+        src_style = src_doc.styles.add(aspose.words.StyleType.PARAGRAPH, "MyStyle")
+        src_style.font.color = aspose.pydrawing.Color.red
+        dst_doc = aspose.words.Document()
+        new_style = dst_doc.styles.add_copy(src_style)
+        self.assertEqual("MyStyle", new_style.name)
+        self.assertEqual(aspose.pydrawing.Color.red.to_argb(), new_style.font.color.to_argb())
 
     def test_default_styles(self):
         raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")

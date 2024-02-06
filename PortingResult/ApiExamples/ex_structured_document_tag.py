@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import aspose.pydrawing
 import aspose.words
 import aspose.words.buildingblocks
 import aspose.words.markup
@@ -16,7 +17,7 @@ class ExStructuredDocumentTag(ApiExampleBase):
         raise NotImplementedError("Unsupported target type System.Collections.Generic.IEnumerable")
 
     def test_apply_style(self):
-        raise NotImplementedError("Unsupported type of expression: StyleIdentifier.Quote")
+        raise NotImplementedError("Unsupported target type System.Console")
 
     def test_check_box(self):
         raise NotImplementedError("Unsupported target type System.Collections.Generic.IEnumerable")
@@ -25,7 +26,7 @@ class ExStructuredDocumentTag(ApiExampleBase):
         raise NotImplementedError("Unsupported target type System.Globalization.CultureInfo")
 
     def test_plain_text(self):
-        raise NotImplementedError("Unsupported target type System.Drawing.Color")
+        raise NotImplementedError("Unsupported target type NUnit.Framework.Is")
 
     def test_lock(self):
         doc = aspose.words.Document()
