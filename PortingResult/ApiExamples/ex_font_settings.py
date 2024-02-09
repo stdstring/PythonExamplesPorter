@@ -106,7 +106,7 @@ class ExFontSettings(ApiExampleBase):
         self.assertEqual("Courier New", default_font_substitution_rule.default_font_name)
 
     def test_fallback_settings(self):
-        raise NotImplementedError("Unsupported type: XmlDocument")
+        raise NotImplementedError("Unsupported ctor for type XmlDocument")
 
     def test_fallback_settings_custom(self):
         raise NotImplementedError("Unsupported expression: InterpolatedStringExpression")

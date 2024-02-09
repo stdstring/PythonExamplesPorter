@@ -167,7 +167,7 @@ class ExDocument(ApiExampleBase):
         self.assertEqual("«Field»\r\n", doc.to_string(save_format = aspose.words.SaveFormat.TEXT))
 
     def test_document_byte_array(self):
-        raise NotImplementedError("Unsupported type: MemoryStream")
+        raise NotImplementedError("Unsupported ctor for type MemoryStream")
 
     def test_protect_unprotect(self):
         doc = aspose.words.Document()
@@ -305,7 +305,19 @@ class ExDocument(ApiExampleBase):
         self.assertEqual("b.", paragraphs[2].list_label.label_string)
 
     def test_update_thumbnail(self):
-        raise NotImplementedError("Unsupported type: Size")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        builder.writeln("Hello world!")
+        builder.insert_image(file_name = IMAGE_DIR + "Logo.jpg")
+        doc.update_thumbnail()
+        doc.save(file_name = ARTIFACTS_DIR + "Document.UpdateThumbnail.FirstPage.epub")
+        options = aspose.words.rendering.ThumbnailGeneratingOptions()
+        self.assertEqual(aspose.pydrawing.Size(600, 900), options.thumbnail_size)
+        self.assertTrue(options.generate_from_first_page)
+        options.thumbnail_size = aspose.pydrawing.Size(400, 400)
+        options.generate_from_first_page = False
+        doc.update_thumbnail(options)
+        doc.save(file_name = ARTIFACTS_DIR + "Document.UpdateThumbnail.FirstImage.epub")
 
     def test_hyphenation_options(self):
         raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")
@@ -349,7 +361,7 @@ class ExDocument(ApiExampleBase):
         raise NotImplementedError("Unsupported target type System.IO.File")
 
     def test_use_substitutions(self):
-        raise NotImplementedError("Unsupported type: Regex")
+        raise NotImplementedError("Unsupported ctor for type Regex")
 
     def test_set_invalidate_field_types(self):
         doc = aspose.words.Document()

@@ -6,4 +6,4 @@ from api_example_base import ApiExampleBase
 
 class ExRenameMergeFields(ApiExampleBase):
     def test_rename(self):
-        raise NotImplementedError("Unsupported type: ApiExamples.MergeField")
+        raise NotImplementedError("Unsupported ctor for type MergeField")

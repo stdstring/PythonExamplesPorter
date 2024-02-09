@@ -227,7 +227,7 @@ class ExFont(ApiExampleBase):
         self.assertTrue(run.font.no_proofing)
 
     def test_locale_id(self):
-        raise NotImplementedError("Unsupported type: CultureInfo")
+        raise NotImplementedError("Unsupported ctor for type CultureInfo")
 
     def test_underlines(self):
         doc = aspose.words.Document()
@@ -306,10 +306,10 @@ class ExFont(ApiExampleBase):
         self.assertEqual(aspose.pydrawing.Color.dark_blue.to_argb(), run.font.shading.foreground_pattern_color.to_argb())
 
     def test_bidi(self):
-        raise NotImplementedError("Unsupported type: CultureInfo")
+        raise NotImplementedError("Unsupported ctor for type CultureInfo")
 
     def test_far_east(self):
-        raise NotImplementedError("Unsupported type: CultureInfo")
+        raise NotImplementedError("Unsupported ctor for type CultureInfo")
 
     def test_name_ascii(self):
         doc = aspose.words.Document()

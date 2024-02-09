@@ -19,7 +19,7 @@ class ExShape(ApiExampleBase):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_group_shape(self):
-        raise NotImplementedError("Unsupported type: RectangleF")
+        raise NotImplementedError("Forbidden object initializer")
 
     def test_is_top_level(self):
         doc = aspose.words.Document()
@@ -33,16 +33,63 @@ class ExShape(ApiExampleBase):
         self.assertFalse(shape.is_top_level)
 
     def test_local_to_parent(self):
-        raise NotImplementedError("Unsupported type: RectangleF")
+        doc = aspose.words.Document()
+        group = aspose.words.drawing.GroupShape(doc)
+        group.bounds = aspose.pydrawing.RectangleF(100, 100, 500, 500)
+        self.assertEqual(aspose.pydrawing.PointF(100, 100), group.local_to_parent(aspose.pydrawing.PointF(0, 0)))
+        self.assertEqual(aspose.pydrawing.PointF(150, 150), group.local_to_parent(aspose.pydrawing.PointF(100, 100)))
+        self.assertEqual(aspose.pydrawing.PointF(200, 200), group.local_to_parent(aspose.pydrawing.PointF(200, 200)))
+        self.assertEqual(aspose.pydrawing.PointF(250, 250), group.local_to_parent(aspose.pydrawing.PointF(300, 300)))
+        group.coord_origin = aspose.pydrawing.Point(-250, -250)
+        self.assertEqual(aspose.pydrawing.PointF(375, 375), group.local_to_parent(aspose.pydrawing.PointF(300, 300)))
+        group.coord_size = aspose.pydrawing.Size(500, 500)
+        self.assertEqual(aspose.pydrawing.PointF(650, 650), group.local_to_parent(aspose.pydrawing.PointF(300, 300)))
+        self.assertEqual(aspose.pydrawing.PointF(700, 700), group.local_to_parent(aspose.pydrawing.PointF(350, 350)))
+        shape = aspose.words.drawing.Shape(doc, aspose.words.drawing.ShapeType.RECTANGLE)
+        shape.width = 100
+        shape.height = 100
+        shape.left = 700
+        shape.top = 700
+        group.append_child(shape)
+        doc.first_section.body.first_paragraph.append_child(group)
+        doc.save(file_name = ARTIFACTS_DIR + "Shape.LocalToParent.docx")
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Shape.LocalToParent.docx")
+        group = doc.get_child(aspose.words.NodeType.GROUP_SHAPE, 0, True).as_group_shape()
+        self.assertEqual(aspose.pydrawing.RectangleF(100, 100, 500, 500), group.bounds)
+        self.assertEqual(aspose.pydrawing.Size(500, 500), group.coord_size)
+        self.assertEqual(aspose.pydrawing.Point(-250, -250), group.coord_origin)
 
     def test_delete_all_shapes(self):
-        raise NotImplementedError("Unsupported type: RectangleF")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        builder.insert_shape(shape_type = aspose.words.drawing.ShapeType.RECTANGLE, width = 400, height = 200)
+        builder.insert_shape(shape_type = aspose.words.drawing.ShapeType.STAR, width = 300, height = 300)
+        group = aspose.words.drawing.GroupShape(doc)
+        group.bounds = aspose.pydrawing.RectangleF(100, 50, 200, 100)
+        group.coord_origin = aspose.pydrawing.Point(-1000, -500)
+        sub_shape = aspose.words.drawing.Shape(doc, aspose.words.drawing.ShapeType.CUBE)
+        sub_shape.width = 500
+        sub_shape.height = 700
+        sub_shape.left = 0
+        sub_shape.top = 0
+        group.append_child(sub_shape)
+        builder.insert_node(group)
+        self.assertEqual(3, doc.get_child_nodes(aspose.words.NodeType.SHAPE, True).count)
+        self.assertEqual(1, doc.get_child_nodes(aspose.words.NodeType.GROUP_SHAPE, True).count)
+        shapes = doc.get_child_nodes(aspose.words.NodeType.SHAPE, True)
+        shapes.clear()
+        self.assertEqual(1, doc.get_child_nodes(aspose.words.NodeType.GROUP_SHAPE, True).count)
+        self.assertEqual(0, doc.get_child_nodes(aspose.words.NodeType.SHAPE, True).count)
+        group_shapes = doc.get_child_nodes(aspose.words.NodeType.GROUP_SHAPE, True)
+        group_shapes.clear()
+        self.assertEqual(0, doc.get_child_nodes(aspose.words.NodeType.GROUP_SHAPE, True).count)
+        self.assertEqual(0, doc.get_child_nodes(aspose.words.NodeType.SHAPE, True).count)
 
     def test_is_inline(self):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_bounds(self):
-        raise NotImplementedError("Unsupported type: RectangleF")
+        raise NotImplementedError("Forbidden object initializer")
 
     def test_flip_shape_orientation(self):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
@@ -243,7 +290,11 @@ class ExShape(ApiExampleBase):
         self.assertEqual(aspose.words.math.OfficeMathJustification.CENTER, office_math.justification)
 
     def test_markup_language_by_default(self):
-        raise NotImplementedError("Unsupported type: SizeF")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        shape = builder.insert_image(file_name = IMAGE_DIR + "Transparent background logo.png")
+        self.assertEqual(aspose.words.drawing.ShapeMarkupLanguage.DML, shape.markup_language)
+        self.assertEqual(aspose.pydrawing.SizeF(300, 300), shape.size_in_points)
 
     def test_stroke(self):
         doc = aspose.words.Document()

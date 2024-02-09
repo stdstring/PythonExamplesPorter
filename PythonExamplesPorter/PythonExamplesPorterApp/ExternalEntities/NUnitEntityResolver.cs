@@ -2,6 +2,7 @@
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using PythonExamplesPorterApp.Common;
 using PythonExamplesPorterApp.Converter;
+using PythonExamplesPorterApp.Expressions;
 
 namespace PythonExamplesPorterApp.ExternalEntities
 {
@@ -10,6 +11,11 @@ namespace PythonExamplesPorterApp.ExternalEntities
         public NUnitEntityResolver(SemanticModel model)
         {
             _model = model;
+        }
+
+        public OperationResult<MemberResolveData> ResolveCtor(ITypeSymbol sourceType, IReadOnlyList<ArgumentSyntax> argumentsData, ConvertedArguments argumentsRepresentation)
+        {
+            return new OperationResult<MemberResolveData>(false, "Not supported now for NUnit types");
         }
 
         public OperationResult<MemberResolveData> ResolveMember(MemberData data, ITypeSymbol sourceType, MemberRepresentation representation)

@@ -9,7 +9,7 @@ from api_example_base import ApiExampleBase, ARTIFACTS_DIR, IMAGE_DIR, MY_DIR
 
 class ExHtmlLoadOptions(ApiExampleBase):
     def test_load_html_fixed(self):
-        raise NotImplementedError("Unsupported type: ApiExamples.ListDocumentWarnings")
+        raise NotImplementedError("Unsupported ctor for type ListDocumentWarnings")
 
     def test_encrypted_html(self):
         raise NotImplementedError("Unsupported target type System.DateTime")
@@ -18,7 +18,7 @@ class ExHtmlLoadOptions(ApiExampleBase):
         raise NotImplementedError("Unsupported member target type - System.Byte[] for expression: ((Shape)doc.GetChild(NodeType.Shape, 0, true)).ImageData.ImageBytes")
 
     def test_get_select_as_sdt(self):
-        raise NotImplementedError("Unsupported type: MemoryStream")
+        raise NotImplementedError("Unsupported target type System.Text.Encoding")
 
     def test_get_input_as_form_field(self):
-        raise NotImplementedError("Unsupported type: MemoryStream")
+        raise NotImplementedError("Unsupported target type System.Text.Encoding")

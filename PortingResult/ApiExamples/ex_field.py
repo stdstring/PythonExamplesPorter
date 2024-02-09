@@ -61,7 +61,7 @@ class ExField(ApiExampleBase):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_field_address_block(self):
-        raise NotImplementedError("Unsupported type: CultureInfo")
+        raise NotImplementedError("Unsupported ctor for type CultureInfo")
 
     def test_remove_fields(self):
         doc = aspose.words.Document()
@@ -125,7 +125,7 @@ class ExField(ApiExampleBase):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_change_bibliography_styles(self):
-        raise NotImplementedError("Unsupported type: ApiExamples.BibliographyStylesProvider")
+        raise NotImplementedError("Unsupported ctor for type BibliographyStylesProvider")
 
     def test_field_data(self):
         raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")

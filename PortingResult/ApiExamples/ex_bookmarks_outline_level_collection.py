@@ -7,4 +7,4 @@ from api_example_base import ApiExampleBase, ARTIFACTS_DIR
 
 class ExBookmarksOutlineLevelCollection(ApiExampleBase):
     def test_bookmark_levels(self):
-        raise NotImplementedError("Unsupported type: Aspose.Pdf.Facades.PdfBookmarkEditor")
+        raise NotImplementedError("Unsupported ctor for type PdfBookmarkEditor")

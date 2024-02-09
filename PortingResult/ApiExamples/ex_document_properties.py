@@ -20,7 +20,7 @@ class ExDocumentProperties(ApiExampleBase):
         raise NotImplementedError("Unsupported expression: InterpolatedStringExpression")
 
     def test_content(self):
-        raise NotImplementedError("Unsupported type: ApiExamples.LineCounter")
+        raise NotImplementedError("Unsupported ctor for type LineCounter")
 
     def test_thumbnail(self):
         raise NotImplementedError("Unsupported target type System.IO.File")

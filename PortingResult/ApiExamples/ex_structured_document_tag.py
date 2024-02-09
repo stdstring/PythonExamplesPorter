@@ -121,7 +121,7 @@ class ExStructuredDocumentTag(ApiExampleBase):
         self.assertEqual("Built-in", building_block_sdt.building_block_category)
 
     def test_update_sdt_content(self):
-        raise NotImplementedError("Unsupported type: Aspose.Pdf.Document")
+        raise NotImplementedError("Unsupported ctor for type Aspose.Pdf.Document")
 
     def test_fill_table_using_repeating_section_item(self):
         raise NotImplementedError("Unsupported target type System.Collections.Generic.IEnumerable")

@@ -4,6 +4,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using PythonExamplesPorterApp.Common;
 using PythonExamplesPorterApp.Config;
 using PythonExamplesPorterApp.Converter;
+using PythonExamplesPorterApp.Expressions;
 
 namespace PythonExamplesPorterApp.ExternalEntities
 {
@@ -52,6 +53,21 @@ namespace PythonExamplesPorterApp.ExternalEntities
             String destModuleName = _appData.NameTransformer.TransformNamespaceName(sourceNamespaceName);
             String destTypeName = _appData.NameTransformer.TransformTypeName(sourceTypeName);
             return new OperationResult<TypeResolveData>(true, "", new TypeResolveData(destTypeName, destModuleName));
+        }
+
+        public OperationResult<MemberResolveData> ResolveCtor(TypeSyntax type, IReadOnlyList<ArgumentSyntax> argumentsData, ConvertedArguments argumentsRepresentation)
+        {
+            OperationResult<ITypeSymbol> typeResult = ExtractExpressionType(type);
+            if (!typeResult.Success)
+                return new OperationResult<MemberResolveData>(false, typeResult.Reason);
+            ITypeSymbol typeSymbol = typeResult.Data!;
+            foreach (IExternalEntityResolver resolver in _resolvers)
+            {
+                OperationResult<MemberResolveData> result = resolver.ResolveCtor(typeSymbol, argumentsData, argumentsRepresentation);
+                if (result.Success)
+                    return result;
+            }
+            return new OperationResult<MemberResolveData>(false, $"Unsupported ctor for type {type}");
         }
 
         public OperationResult<MemberResolveData> ResolveMember(MemberData data, MemberRepresentation representation)

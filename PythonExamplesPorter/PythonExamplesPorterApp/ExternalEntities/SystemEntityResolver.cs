@@ -2,6 +2,7 @@
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using PythonExamplesPorterApp.Common;
 using PythonExamplesPorterApp.Converter;
+using PythonExamplesPorterApp.Expressions;
 
 namespace PythonExamplesPorterApp.ExternalEntities
 {
@@ -9,8 +10,35 @@ namespace PythonExamplesPorterApp.ExternalEntities
     {
         public SystemEntityResolver(SemanticModel model, AppData appData)
         {
-            _model = model;
-            _appData = appData;
+            _systemStringResolver = new SystemStringMemberResolver(model);
+            _systemDrawingColorResolver = new SystemDrawingColorMemberResolver(model, appData);
+            _systemDrawingPointResolver = new SystemDrawingPointMemberResolver(model, "Point");
+            _systemDrawingPointFResolver = new SystemDrawingPointMemberResolver(model, "PointF");
+            _systemDrawingSizeResolver = new SystemDrawingSizeMemberResolver(model, "Size");
+            _systemDrawingSizeFResolver = new SystemDrawingSizeMemberResolver(model, "SizeF");
+            _systemDrawingRectangleResolver = new SystemDrawingRectangleMemberResolver(model, "Rectangle");
+            _systemDrawingRectangleFResolver = new SystemDrawingRectangleMemberResolver(model, "RectangleF");
+        }
+
+        public OperationResult<MemberResolveData> ResolveCtor(ITypeSymbol sourceType, IReadOnlyList<ArgumentSyntax> argumentsData, ConvertedArguments argumentsRepresentation)
+        {
+            String sourceTypeFullName = sourceType.GetTypeFullName();
+            switch (sourceTypeFullName)
+            {
+                case "System.Drawing.PointF":
+                    return _systemDrawingPointFResolver.ResolveCtor(argumentsData, argumentsRepresentation);
+                case "System.Drawing.Point":
+                    return _systemDrawingPointResolver.ResolveCtor(argumentsData, argumentsRepresentation);
+                case "System.Drawing.SizeF":
+                    return _systemDrawingSizeFResolver.ResolveCtor(argumentsData, argumentsRepresentation);
+                case "System.Drawing.Size":
+                    return _systemDrawingSizeResolver.ResolveCtor(argumentsData, argumentsRepresentation);
+                case "System.Drawing.RectangleF":
+                    return _systemDrawingRectangleFResolver.ResolveCtor(argumentsData, argumentsRepresentation);
+                case "System.Drawing.Rectangle":
+                    return _systemDrawingRectangleResolver.ResolveCtor(argumentsData, argumentsRepresentation);
+            }
+            return new OperationResult<MemberResolveData>(false, $"Unsupported type: {sourceTypeFullName}");
         }
 
         public OperationResult<MemberResolveData> ResolveMember(MemberData data, ITypeSymbol sourceType, MemberRepresentation representation)
@@ -19,9 +47,21 @@ namespace PythonExamplesPorterApp.ExternalEntities
             switch (sourceTypeFullName)
             {
                 case "System.String":
-                    return new SystemStringMemberResolver(_model).ResolveMember(data, representation);
+                    return _systemStringResolver.ResolveMember(data, representation);
                 case "System.Drawing.Color":
-                    return new SystemDrawingColorMemberResolver(_model, _appData).ResolveMember(data, representation);
+                    return _systemDrawingColorResolver.ResolveMember(data, representation);
+                case "System.Drawing.PointF":
+                    return _systemDrawingPointFResolver.ResolveMember(data, representation);
+                case "System.Drawing.Point":
+                    return _systemDrawingPointResolver.ResolveMember(data, representation);
+                case "System.Drawing.SizeF":
+                    return _systemDrawingSizeFResolver.ResolveMember(data, representation);
+                case "System.Drawing.Size":
+                    return _systemDrawingSizeResolver.ResolveMember(data, representation);
+                case "System.Drawing.RectangleF":
+                    return _systemDrawingRectangleFResolver.ResolveMember(data, representation);
+                case "System.Drawing.Rectangle":
+                    return _systemDrawingRectangleResolver.ResolveMember(data, representation);
             }
             return new OperationResult<MemberResolveData>(false, $"Unsupported type: {sourceTypeFullName}");
         }
@@ -31,8 +71,14 @@ namespace PythonExamplesPorterApp.ExternalEntities
             return new OperationResult<CastResolveData>(false, "Not supported now");
         }
 
-        private readonly SemanticModel _model;
-        private readonly AppData _appData;
+        private readonly SystemStringMemberResolver _systemStringResolver;
+        private readonly SystemDrawingColorMemberResolver _systemDrawingColorResolver;
+        private readonly SystemDrawingPointMemberResolver _systemDrawingPointResolver;
+        private readonly SystemDrawingPointMemberResolver _systemDrawingPointFResolver;
+        private readonly SystemDrawingSizeMemberResolver _systemDrawingSizeResolver;
+        private readonly SystemDrawingSizeMemberResolver _systemDrawingSizeFResolver;
+        private readonly SystemDrawingRectangleMemberResolver _systemDrawingRectangleResolver;
+        private readonly SystemDrawingRectangleMemberResolver _systemDrawingRectangleFResolver;
     }
 
     internal class SystemStringMemberResolver
@@ -155,13 +201,13 @@ namespace PythonExamplesPorterApp.ExternalEntities
                 case IFieldSymbol {Name: "Empty"}:
                     return ResolveEmptyField();
                 case IPropertySymbol {Name: "A"}:
-                    return ResolveInstanceProperty(representation, "a");
+                    return ExternalEntityResolverHelper.ResolveInstanceProperty(representation, "a");
                 case IPropertySymbol {Name: "R"}:
-                    return ResolveInstanceProperty(representation, "r");
+                    return ExternalEntityResolverHelper.ResolveInstanceProperty(representation, "r");
                 case IPropertySymbol {Name: "G"}:
-                    return ResolveInstanceProperty(representation, "g");
+                    return ExternalEntityResolverHelper.ResolveInstanceProperty(representation, "g");
                 case IPropertySymbol {Name: "B"}:
-                    return ResolveInstanceProperty(representation, "b");
+                    return ExternalEntityResolverHelper.ResolveInstanceProperty(representation, "b");
                 case IMethodSymbol {Name: "ToArgb"}:
                     return ResolveToArgbMethod(representation);
                 case IMethodSymbol {Name: "FromArgb" }:
@@ -184,12 +230,6 @@ namespace PythonExamplesPorterApp.ExternalEntities
             return new OperationResult<MemberResolveData>(true, "", colorData);
         }
 
-        private OperationResult<MemberResolveData> ResolveInstanceProperty(MemberRepresentation representation, String propertyName)
-        {
-            MemberResolveData memberData = new MemberResolveData($"{representation.Target}.{propertyName}");
-            return new OperationResult<MemberResolveData>(true, "", memberData);
-        }
-
         private OperationResult<MemberResolveData> ResolveFromArgbMethod(MemberRepresentation representation)
         {
             String arguments = String.Join(", ", representation.Arguments.Values);
@@ -206,5 +246,171 @@ namespace PythonExamplesPorterApp.ExternalEntities
 
         private readonly AppData _appData;
         private readonly SemanticModel _model;
+    }
+
+    // resolver for System.Drawing.Point and System.Drawing.PointF
+    internal class SystemDrawingPointMemberResolver
+    {
+        public SystemDrawingPointMemberResolver(SemanticModel model, String typeName)
+        {
+            _model = model;
+            _typeName = typeName;
+            String[] knownNames = {"Point", "PointF"};
+            if (!knownNames.Contains(typeName))
+                throw new InvalidOperationException($"Unsupported name of type: {typeName}");
+        }
+
+        public OperationResult<MemberResolveData> ResolveCtor(IReadOnlyList<ArgumentSyntax> argumentsData, ConvertedArguments argumentsRepresentation)
+        {
+            // TODO (std_string) : add check of arg type
+            switch (argumentsRepresentation.Values)
+            {
+                case [var x, var y]:
+                {
+                    MemberResolveData ctorData = new MemberResolveData($"aspose.pydrawing.{_typeName}({x}, {y})", "aspose.pydrawing");
+                    return new OperationResult<MemberResolveData>(true, "", ctorData);
+                }
+            }
+            return new OperationResult<MemberResolveData>(false, $"Unsupported ctor for System.Drawing.{_typeName}");
+        }
+
+        public OperationResult<MemberResolveData> ResolveMember(MemberData data, MemberRepresentation representation)
+        {
+            SimpleNameSyntax memberName = data.Name;
+            SymbolInfo memberInfo = _model.GetSymbolInfo(memberName);
+            switch (memberInfo.Symbol)
+            {
+                case null:
+                    return new OperationResult<MemberResolveData>(false, $"Unsupported member: System.Drawing.{_typeName}.{memberName}");
+                case IPropertySymbol {Name: "IsEmpty"}:
+                    return ExternalEntityResolverHelper.ResolveInstanceProperty(representation, "is_empty");
+                case IPropertySymbol {Name: "X"}:
+                    return ExternalEntityResolverHelper.ResolveInstanceProperty(representation, "x");
+                case IPropertySymbol {Name: "Y"}:
+                    return ExternalEntityResolverHelper.ResolveInstanceProperty(representation, "y");
+            }
+            return new OperationResult<MemberResolveData>(false, $"Unsupported member: System.Drawing.{_typeName}.{memberName}");
+        }
+
+        private readonly SemanticModel _model;
+        private readonly String _typeName;
+    }
+
+    // resolver for System.Drawing.Rectangle and System.Drawing.RectangleF
+    internal class SystemDrawingRectangleMemberResolver
+    {
+        public SystemDrawingRectangleMemberResolver(SemanticModel model, String typeName)
+        {
+            _model = model;
+            _typeName = typeName;
+            String[] knownNames = {"Rectangle", "RectangleF"};
+            if (!knownNames.Contains(typeName))
+                throw new InvalidOperationException($"Unsupported name of type: {typeName}");
+        }
+
+        public OperationResult<MemberResolveData> ResolveCtor(IReadOnlyList<ArgumentSyntax> argumentsData, ConvertedArguments argumentsRepresentation)
+        {
+            // TODO (std_string) : add check of arg type
+            switch (argumentsRepresentation.Values)
+            {
+                case [var location, var size]:
+                {
+                    MemberResolveData ctorData = new MemberResolveData($"aspose.pydrawing{_typeName}({location}, {size})", "aspose.pydrawing");
+                    return new OperationResult<MemberResolveData>(true, "", ctorData);
+                }
+                case [var x, var y, var width, var height]:
+                {
+                    String member = $"aspose.pydrawing.{_typeName}({x}, {y}, {width}, {height})";
+                    MemberResolveData ctorData = new MemberResolveData(member, "aspose.pydrawing");
+                    return new OperationResult<MemberResolveData>(true, "", ctorData);
+                }
+            }
+            return new OperationResult<MemberResolveData>(false, $"Not supported now for System.Drawing.{_typeName}");
+        }
+
+        public OperationResult<MemberResolveData> ResolveMember(MemberData data, MemberRepresentation representation)
+        {
+            SimpleNameSyntax memberName = data.Name;
+            SymbolInfo memberInfo = _model.GetSymbolInfo(memberName);
+            switch (memberInfo.Symbol)
+            {
+                case null:
+                    return new OperationResult<MemberResolveData>(false, $"Unsupported member: System.Drawing.{_typeName}.{memberName}");
+                case IPropertySymbol {Name: "Bottom"}:
+                    return ExternalEntityResolverHelper.ResolveInstanceProperty(representation, "bottom");
+                case IPropertySymbol {Name: "Height"}:
+                    return ExternalEntityResolverHelper.ResolveInstanceProperty(representation, "height");
+                case IPropertySymbol {Name: "IsEmpty"}:
+                    return ExternalEntityResolverHelper.ResolveInstanceProperty(representation, "is_empty");
+                case IPropertySymbol {Name: "Left"}:
+                    return ExternalEntityResolverHelper.ResolveInstanceProperty(representation, "left");
+                case IPropertySymbol {Name: "Location"}:
+                    return ExternalEntityResolverHelper.ResolveInstanceProperty(representation, "location");
+                case IPropertySymbol {Name: "Right"}:
+                    return ExternalEntityResolverHelper.ResolveInstanceProperty(representation, "right");
+                case IPropertySymbol {Name: "Size"}:
+                    return ExternalEntityResolverHelper.ResolveInstanceProperty(representation, "size");
+                case IPropertySymbol {Name: "Top"}:
+                    return ExternalEntityResolverHelper.ResolveInstanceProperty(representation, "top");
+                case IPropertySymbol {Name: "Width"}:
+                    return ExternalEntityResolverHelper.ResolveInstanceProperty(representation, "width");
+                case IPropertySymbol {Name: "X"}:
+                    return ExternalEntityResolverHelper.ResolveInstanceProperty(representation, "x");
+                case IPropertySymbol {Name: "Y"}:
+                    return ExternalEntityResolverHelper.ResolveInstanceProperty(representation, "y");
+            }
+            return new OperationResult<MemberResolveData>(false, $"Unsupported member: System.Drawing.{_typeName}.{memberName}");
+        }
+
+        private readonly SemanticModel _model;
+        private readonly String _typeName;
+    }
+
+    // resolver for System.Drawing.Size and System.Drawing.SizeF
+    internal class SystemDrawingSizeMemberResolver
+    {
+        public SystemDrawingSizeMemberResolver(SemanticModel model, String typeName)
+        {
+            _model = model;
+            _typeName = typeName;
+            String[] knownNames = {"Size", "SizeF"};
+            if (!knownNames.Contains(typeName))
+                throw new InvalidOperationException($"Unsupported name of type: {typeName}");
+        }
+
+        public OperationResult<MemberResolveData> ResolveCtor(IReadOnlyList<ArgumentSyntax> argumentsData, ConvertedArguments argumentsRepresentation)
+        {
+            // TODO (std_string) : add check of arg type
+            switch (argumentsRepresentation.Values)
+            {
+                case [var width, var height]:
+                {
+                    MemberResolveData ctorData = new MemberResolveData($"aspose.pydrawing.{_typeName}({width}, {height})", "aspose.pydrawing");
+                    return new OperationResult<MemberResolveData>(true, "", ctorData);
+                }
+            }
+            return new OperationResult<MemberResolveData>(false, $"Not supported now for System.Drawing.{_typeName}");
+        }
+
+        public OperationResult<MemberResolveData> ResolveMember(MemberData data, MemberRepresentation representation)
+        {
+            SimpleNameSyntax memberName = data.Name;
+            SymbolInfo memberInfo = _model.GetSymbolInfo(memberName);
+            switch (memberInfo.Symbol)
+            {
+                case null:
+                    return new OperationResult<MemberResolveData>(false, $"Unsupported member: System.Drawing.{_typeName}.{memberName}");
+                case IPropertySymbol {Name: "Height"}:
+                    return ExternalEntityResolverHelper.ResolveInstanceProperty(representation, "height");
+                case IPropertySymbol {Name: "IsEmpty"}:
+                    return ExternalEntityResolverHelper.ResolveInstanceProperty(representation, "is_empty");
+                case IPropertySymbol {Name: "Width"}:
+                    return ExternalEntityResolverHelper.ResolveInstanceProperty(representation, "width");
+            }
+            return new OperationResult<MemberResolveData>(false, $"Unsupported member: System.Drawing.{_typeName}.{memberName}");
+        }
+
+        private readonly SemanticModel _model;
+        private readonly String _typeName;
     }
 }

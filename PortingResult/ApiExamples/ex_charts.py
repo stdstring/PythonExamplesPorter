@@ -132,7 +132,7 @@ class ExCharts(ApiExampleBase):
         doc.save(file_name = ARTIFACTS_DIR + "Charts.AxisCollection.docx")
 
     def test_date_time_values(self):
-        raise NotImplementedError("Unsupported type: DateTime")
+        raise NotImplementedError("Unsupported ctor for type DateTime")
 
     def test_hide_chart_axis(self):
         doc = aspose.words.Document()
@@ -289,7 +289,7 @@ class ExCharts(ApiExampleBase):
         self.assertEqual(20, chart.axis_y.scaling.log_base)
 
     def test_axis_bound(self):
-        raise NotImplementedError("Unsupported type: DateTime")
+        raise NotImplementedError("Unsupported ctor for type DateTime")
 
     def test_chart_legend(self):
         doc = aspose.words.Document()
