@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import aspose.pydrawing
 import aspose.words
 import aspose.words.fields
 import unittest
@@ -7,7 +8,7 @@ from api_example_base import ApiExampleBase, ARTIFACTS_DIR, MY_DIR
 
 class ExParagraph(ApiExampleBase):
     def test_document_builder_insert_paragraph(self):
-        raise NotImplementedError("Unsupported target type System.Drawing.Color")
+        raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")
 
     def test_insert_field(self):
         raise NotImplementedError("Forbidden object initializer")

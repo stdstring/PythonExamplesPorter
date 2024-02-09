@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import aspose.pydrawing
 import aspose.words
 import aspose.words.drawing
 import aspose.words.fields
@@ -55,7 +56,24 @@ class ExSection(ApiExampleBase):
         self.assertEqual(2, doc.last_section.page_setup.text_columns.count)
 
     def test_create_manually(self):
-        raise NotImplementedError("Unsupported target type System.Drawing.Color")
+        doc = aspose.words.Document()
+        doc.remove_all_children()
+        section = aspose.words.Section(doc)
+        doc.append_child(section)
+        section.page_setup.section_start = aspose.words.SectionStart.NEW_PAGE
+        section.page_setup.paper_size = aspose.words.PaperSize.LETTER
+        body = aspose.words.Body(doc)
+        section.append_child(body)
+        para = aspose.words.Paragraph(doc)
+        para.paragraph_format.style_name = "Heading 1"
+        para.paragraph_format.alignment = aspose.words.ParagraphAlignment.CENTER
+        body.append_child(para)
+        run = aspose.words.Run(doc = doc)
+        run.text = "Hello World!"
+        run.font.color = aspose.pydrawing.Color.red
+        para.append_child(run)
+        self.assertEqual("Hello World!", doc.get_text().strip())
+        doc.save(file_name = ARTIFACTS_DIR + "Section.CreateManually.docx")
 
     def test_ensure_minimum(self):
         doc = aspose.words.Document()
@@ -122,10 +140,33 @@ class ExSection(ApiExampleBase):
         self.assertEqual(1, doc.first_section.body.paragraphs.count)
 
     def test_clear_headers_footers(self):
-        raise NotImplementedError("Unsupported type of expression: HeaderFooterType.HeaderPrimary")
+        doc = aspose.words.Document()
+        self.assertEqual(0, doc.first_section.headers_footers.count)
+        builder = aspose.words.DocumentBuilder(doc)
+        builder.move_to_header_footer(aspose.words.HeaderFooterType.HEADER_PRIMARY)
+        builder.writeln("This is the primary header.")
+        builder.move_to_header_footer(aspose.words.HeaderFooterType.FOOTER_PRIMARY)
+        builder.writeln("This is the primary footer.")
+        self.assertEqual(2, doc.first_section.headers_footers.count)
+        self.assertEqual("This is the primary header.", doc.first_section.headers_footers.get_by_header_footer_type(aspose.words.HeaderFooterType.HEADER_PRIMARY).get_text().strip())
+        self.assertEqual("This is the primary footer.", doc.first_section.headers_footers.get_by_header_footer_type(aspose.words.HeaderFooterType.FOOTER_PRIMARY).get_text().strip())
+        doc.first_section.clear_headers_footers()
+        self.assertEqual(2, doc.first_section.headers_footers.count)
+        self.assertEqual("", doc.first_section.headers_footers.get_by_header_footer_type(aspose.words.HeaderFooterType.HEADER_PRIMARY).get_text().strip())
+        self.assertEqual("", doc.first_section.headers_footers.get_by_header_footer_type(aspose.words.HeaderFooterType.FOOTER_PRIMARY).get_text().strip())
 
     def test_delete_header_footer_shapes(self):
-        raise NotImplementedError("Unsupported type of expression: HeaderFooterType.HeaderPrimary")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        builder.move_to_header_footer(aspose.words.HeaderFooterType.HEADER_PRIMARY)
+        builder.insert_shape(shape_type = aspose.words.drawing.ShapeType.RECTANGLE, width = 100, height = 100)
+        builder.move_to_header_footer(aspose.words.HeaderFooterType.FOOTER_PRIMARY)
+        builder.insert_image(file_name = IMAGE_DIR + "Logo Icon.ico")
+        self.assertEqual(1, doc.first_section.headers_footers.get_by_header_footer_type(aspose.words.HeaderFooterType.HEADER_PRIMARY).get_child_nodes(aspose.words.NodeType.SHAPE, True).count)
+        self.assertEqual(1, doc.first_section.headers_footers.get_by_header_footer_type(aspose.words.HeaderFooterType.FOOTER_PRIMARY).get_child_nodes(aspose.words.NodeType.SHAPE, True).count)
+        doc.first_section.delete_header_footer_shapes()
+        self.assertEqual(0, doc.first_section.headers_footers.get_by_header_footer_type(aspose.words.HeaderFooterType.HEADER_PRIMARY).get_child_nodes(aspose.words.NodeType.SHAPE, True).count)
+        self.assertEqual(0, doc.first_section.headers_footers.get_by_header_footer_type(aspose.words.HeaderFooterType.FOOTER_PRIMARY).get_child_nodes(aspose.words.NodeType.SHAPE, True).count)
 
     def test_sections_clone_section(self):
         doc = aspose.words.Document(file_name = MY_DIR + "Document.docx")

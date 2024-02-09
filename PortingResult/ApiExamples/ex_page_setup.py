@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import aspose.pydrawing
 import aspose.words
 import aspose.words.notes
 import unittest
@@ -115,10 +116,47 @@ class ExPageSetup(ApiExampleBase):
         raise NotImplementedError("Unsupported expression: InterpolatedStringExpression")
 
     def test_page_border_properties(self):
-        raise NotImplementedError("Unsupported type of expression: BorderType.Top")
+        doc = aspose.words.Document()
+        page_setup = doc.sections[0].page_setup
+        page_setup.border_always_in_front = False
+        page_setup.border_distance_from = aspose.words.PageBorderDistanceFrom.PAGE_EDGE
+        page_setup.border_applies_to = aspose.words.PageBorderAppliesTo.FIRST_PAGE
+        border = page_setup.borders.get_by_border_type(aspose.words.BorderType.TOP)
+        border.line_style = aspose.words.LineStyle.SINGLE
+        border.line_width = 30
+        border.color = aspose.pydrawing.Color.blue
+        border.distance_from_text = 0
+        doc.save(file_name = ARTIFACTS_DIR + "PageSetup.PageBorderProperties.docx")
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "PageSetup.PageBorderProperties.docx")
+        page_setup = doc.first_section.page_setup
+        self.assertFalse(page_setup.border_always_in_front)
+        self.assertEqual(aspose.words.PageBorderDistanceFrom.PAGE_EDGE, page_setup.border_distance_from)
+        self.assertEqual(aspose.words.PageBorderAppliesTo.FIRST_PAGE, page_setup.border_applies_to)
+        border = page_setup.borders.get_by_border_type(aspose.words.BorderType.TOP)
+        self.assertEqual(aspose.words.LineStyle.SINGLE, border.line_style)
+        self.assertEqual(30, border.line_width)
+        self.assertEqual(aspose.pydrawing.Color.blue.to_argb(), border.color.to_argb())
+        self.assertEqual(0, border.distance_from_text)
 
     def test_page_borders(self):
-        raise NotImplementedError("Unsupported target type System.Drawing.Color")
+        doc = aspose.words.Document()
+        page_setup = doc.sections[0].page_setup
+        page_setup.borders.line_style = aspose.words.LineStyle.DOUBLE_WAVE
+        page_setup.borders.line_width = 2
+        page_setup.borders.color = aspose.pydrawing.Color.green
+        page_setup.borders.distance_from_text = 24
+        page_setup.borders.shadow = True
+        doc.save(file_name = ARTIFACTS_DIR + "PageSetup.PageBorders.docx")
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "PageSetup.PageBorders.docx")
+        page_setup = doc.first_section.page_setup
+        # for each loop begin
+        for border in page_setup.borders:
+            self.assertEqual(aspose.words.LineStyle.DOUBLE_WAVE, border.line_style)
+            self.assertEqual(2, border.line_width)
+            self.assertEqual(aspose.pydrawing.Color.green.to_argb(), border.color.to_argb())
+            self.assertEqual(24, border.distance_from_text)
+            self.assertTrue(border.shadow)
+        # for loop end
 
     def test_page_numbering(self):
         doc = aspose.words.Document()
@@ -190,7 +228,24 @@ class ExPageSetup(ApiExampleBase):
         self.assertEqual(1, endnote_options.start_number)
 
     def test_page_border(self):
-        raise NotImplementedError("Unsupported target type System.Drawing.Color")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        builder.writeln("Hello world! This is the main body text.")
+        builder.move_to_header_footer(aspose.words.HeaderFooterType.HEADER_PRIMARY)
+        builder.write("This is the header.")
+        builder.move_to_header_footer(aspose.words.HeaderFooterType.FOOTER_PRIMARY)
+        builder.write("This is the footer.")
+        builder.move_to_document_end()
+        page_setup = doc.sections[0].page_setup
+        page_setup.borders.line_style = aspose.words.LineStyle.DOUBLE
+        page_setup.borders.color = aspose.pydrawing.Color.blue
+        page_setup.border_surrounds_header = True
+        page_setup.border_surrounds_footer = False
+        doc.save(file_name = ARTIFACTS_DIR + "PageSetup.PageBorder.docx")
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "PageSetup.PageBorder.docx")
+        page_setup = doc.first_section.page_setup
+        self.assertTrue(page_setup.border_surrounds_header)
+        self.assertFalse(page_setup.border_surrounds_footer)
 
     def test_booklet(self):
         raise NotImplementedError("Unsupported expression: InterpolatedStringExpression")

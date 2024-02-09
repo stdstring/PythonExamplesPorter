@@ -11,16 +11,16 @@ class ExPdfSaveOptions(ApiExampleBase):
         raise NotImplementedError("Unsupported statement type: UsingStatement")
 
     def test_headings_outline_levels(self):
-        raise NotImplementedError("Unsupported type: Aspose.Pdf.Facades.PdfBookmarkEditor")
+        raise NotImplementedError("Unsupported ctor for type PdfBookmarkEditor")
 
     def test_expanded_outline_levels(self):
-        raise NotImplementedError("Unsupported type: Aspose.Pdf.Document")
+        raise NotImplementedError("Unsupported ctor for type Aspose.Pdf.Document")
 
     def test_downsample_options(self):
-        raise NotImplementedError("Unsupported type: Aspose.Pdf.Document")
+        raise NotImplementedError("Unsupported ctor for type Aspose.Pdf.Document")
 
     def test_zoom_behaviour(self):
-        raise NotImplementedError("Unsupported type: Aspose.Pdf.Document")
+        raise NotImplementedError("Unsupported ctor for type Aspose.Pdf.Document")
 
     def test_pdf_digital_signature(self):
         raise NotImplementedError("Unsupported target type System.DateTime")
@@ -53,7 +53,7 @@ class ExPdfSaveOptions(ApiExampleBase):
         doc.save(file_name = ARTIFACTS_DIR + "PdfSaveOptions.PdfEmbedAttachments.pdf", save_options = options)
 
     def test_cache_background_graphics(self):
-        raise NotImplementedError("Unsupported type: FileInfo")
+        raise NotImplementedError("Unsupported ctor for type FileInfo")
 
     def test_export_paragraph_graphics_to_artifact(self):
-        raise NotImplementedError("Unsupported type: Aspose.Pdf.Document")
+        raise NotImplementedError("Unsupported ctor for type Aspose.Pdf.Document")

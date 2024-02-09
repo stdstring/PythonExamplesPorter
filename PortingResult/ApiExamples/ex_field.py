@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import aspose.pydrawing
 import aspose.words
 import aspose.words.buildingblocks
 import aspose.words.drawing
@@ -60,7 +61,7 @@ class ExField(ApiExampleBase):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_field_address_block(self):
-        raise NotImplementedError("Unsupported type: CultureInfo")
+        raise NotImplementedError("Unsupported ctor for type CultureInfo")
 
     def test_remove_fields(self):
         doc = aspose.words.Document()
@@ -124,7 +125,7 @@ class ExField(ApiExampleBase):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_change_bibliography_styles(self):
-        raise NotImplementedError("Unsupported type: ApiExamples.BibliographyStylesProvider")
+        raise NotImplementedError("Unsupported ctor for type BibliographyStylesProvider")
 
     def test_field_data(self):
         raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")
@@ -231,7 +232,7 @@ class ExField(ApiExampleBase):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_field_toa(self):
-        raise NotImplementedError("Unsupported target type System.Drawing.Color")
+        raise NotImplementedError("Unsupported call of method named InsertToaEntry")
 
     def test_field_add_in(self):
         raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")

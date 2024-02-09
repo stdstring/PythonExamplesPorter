@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import aspose.pydrawing
 import aspose.words
 import unittest
 from api_example_base import ApiExampleBase, ARTIFACTS_DIR, IMAGE_DIR, MY_DIR
@@ -9,7 +10,7 @@ class ExDrawing(ApiExampleBase):
         raise NotImplementedError("Unsupported target type System.Console")
 
     def test_stroke_pattern(self):
-        raise NotImplementedError("Unsupported target type System.Drawing.Color")
+        raise NotImplementedError("Unsupported target type System.IO.File")
 
     def test_text_box(self):
         raise NotImplementedError("Unsupported initializer expression: ObjectInitializerExpression")
@@ -18,7 +19,7 @@ class ExDrawing(ApiExampleBase):
         raise NotImplementedError("Unsupported statement type: UsingStatement")
 
     def test_image_data(self):
-        raise NotImplementedError("Unsupported target type System.Drawing.Color")
+        raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_image_size(self):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")

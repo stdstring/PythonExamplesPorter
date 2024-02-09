@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import aspose.pydrawing
 import aspose.words
 import aspose.words.drawing
 import aspose.words.replacing
@@ -50,7 +51,35 @@ class ExTable(ApiExampleBase):
         self.assertEqual(90, table.bottom_padding)
 
     def test_row_cell_format(self):
-        raise NotImplementedError("Unsupported type of expression: BorderType.Bottom")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        table = builder.start_table()
+        builder.insert_cell()
+        builder.write("City")
+        builder.insert_cell()
+        builder.write("Country")
+        builder.end_row()
+        builder.insert_cell()
+        builder.write("London")
+        builder.insert_cell()
+        builder.write("U.K.")
+        builder.end_table()
+        row_format = table.first_row.row_format
+        row_format.height = 25
+        row_format.borders.get_by_border_type(aspose.words.BorderType.BOTTOM).color = aspose.pydrawing.Color.red
+        cell_format = table.last_row.first_cell.cell_format
+        cell_format.width = 100
+        cell_format.shading.background_pattern_color = aspose.pydrawing.Color.orange
+        doc.save(file_name = ARTIFACTS_DIR + "Table.RowCellFormat.docx")
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Table.RowCellFormat.docx")
+        table = doc.first_section.body.tables[0]
+        self.assertEqual("City\aCountry\a\aLondon\aU.K.\a\a", table.get_text().strip())
+        row_format = table.first_row.row_format
+        self.assertEqual(25, row_format.height)
+        self.assertEqual(aspose.pydrawing.Color.red.to_argb(), row_format.borders.get_by_border_type(aspose.words.BorderType.BOTTOM).color.to_argb())
+        cell_format = table.last_row.first_cell.cell_format
+        self.assertEqual(110.8, cell_format.width)
+        self.assertEqual(aspose.pydrawing.Color.orange.to_argb(), cell_format.shading.background_pattern_color.to_argb())
 
     def test_display_content_of_tables(self):
         raise NotImplementedError("Unsupported member target type - Aspose.Words.Tables.Table[] for expression: tables.ToArray()")
@@ -92,10 +121,43 @@ class ExTable(ApiExampleBase):
         self.assertEqual(2, cell.get_child_nodes(aspose.words.NodeType.ANY, True).count)
 
     def test_set_outline_borders(self):
-        raise NotImplementedError("Unsupported target type System.Drawing.Color")
+        doc = aspose.words.Document(file_name = MY_DIR + "Tables.docx")
+        table = doc.first_section.body.tables[0]
+        table.alignment = aspose.words.tables.TableAlignment.CENTER
+        table.clear_borders()
+        table.clear_shading()
+        table.set_border(aspose.words.BorderType.LEFT, aspose.words.LineStyle.SINGLE, 1.5, aspose.pydrawing.Color.green, True)
+        table.set_border(aspose.words.BorderType.RIGHT, aspose.words.LineStyle.SINGLE, 1.5, aspose.pydrawing.Color.green, True)
+        table.set_border(aspose.words.BorderType.TOP, aspose.words.LineStyle.SINGLE, 1.5, aspose.pydrawing.Color.green, True)
+        table.set_border(aspose.words.BorderType.BOTTOM, aspose.words.LineStyle.SINGLE, 1.5, aspose.pydrawing.Color.green, True)
+        table.set_shading(aspose.words.TextureIndex.TEXTURE_SOLID, aspose.pydrawing.Color.light_green, aspose.pydrawing.Color.empty())
+        doc.save(file_name = ARTIFACTS_DIR + "Table.SetOutlineBorders.docx")
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Table.SetOutlineBorders.docx")
+        table = doc.first_section.body.tables[0]
+        self.assertEqual(aspose.words.tables.TableAlignment.CENTER, table.alignment)
+        borders = table.first_row.row_format.borders
+        self.assertEqual(aspose.pydrawing.Color.green.to_argb(), borders.top.color.to_argb())
+        self.assertEqual(aspose.pydrawing.Color.green.to_argb(), borders.left.color.to_argb())
+        self.assertEqual(aspose.pydrawing.Color.green.to_argb(), borders.right.color.to_argb())
+        self.assertEqual(aspose.pydrawing.Color.green.to_argb(), borders.bottom.color.to_argb())
+        self.assertNotEqual(aspose.pydrawing.Color.green.to_argb(), borders.horizontal.color.to_argb())
+        self.assertNotEqual(aspose.pydrawing.Color.green.to_argb(), borders.vertical.color.to_argb())
+        self.assertEqual(aspose.pydrawing.Color.light_green.to_argb(), table.first_row.first_cell.cell_format.shading.foreground_pattern_color.to_argb())
 
     def test_set_borders(self):
-        raise NotImplementedError("Unsupported target type System.Drawing.Color")
+        doc = aspose.words.Document(file_name = MY_DIR + "Tables.docx")
+        table = doc.first_section.body.tables[0]
+        table.clear_borders()
+        table.set_borders(aspose.words.LineStyle.SINGLE, 1.5, aspose.pydrawing.Color.green)
+        doc.save(file_name = ARTIFACTS_DIR + "Table.SetBorders.docx")
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Table.SetBorders.docx")
+        table = doc.first_section.body.tables[0]
+        self.assertEqual(aspose.pydrawing.Color.green.to_argb(), table.first_row.row_format.borders.top.color.to_argb())
+        self.assertEqual(aspose.pydrawing.Color.green.to_argb(), table.first_row.row_format.borders.left.color.to_argb())
+        self.assertEqual(aspose.pydrawing.Color.green.to_argb(), table.first_row.row_format.borders.right.color.to_argb())
+        self.assertEqual(aspose.pydrawing.Color.green.to_argb(), table.first_row.row_format.borders.bottom.color.to_argb())
+        self.assertEqual(aspose.pydrawing.Color.green.to_argb(), table.first_row.row_format.borders.horizontal.color.to_argb())
+        self.assertEqual(aspose.pydrawing.Color.green.to_argb(), table.first_row.row_format.borders.vertical.color.to_argb())
 
     def test_row_format(self):
         doc = aspose.words.Document(file_name = MY_DIR + "Tables.docx")
@@ -112,7 +174,18 @@ class ExTable(ApiExampleBase):
         self.assertTrue(table.first_row.row_format.allow_break_across_pages)
 
     def test_cell_format(self):
-        raise NotImplementedError("Unsupported target type System.Drawing.Color")
+        doc = aspose.words.Document(file_name = MY_DIR + "Tables.docx")
+        table = doc.first_section.body.tables[0]
+        first_cell = table.first_row.first_cell
+        first_cell.cell_format.width = 30
+        first_cell.cell_format.orientation = aspose.words.TextOrientation.DOWNWARD
+        first_cell.cell_format.shading.foreground_pattern_color = aspose.pydrawing.Color.light_green
+        doc.save(file_name = ARTIFACTS_DIR + "Table.CellFormat.docx")
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Table.CellFormat.docx")
+        table = doc.first_section.body.tables[0]
+        self.assertEqual(30, table.first_row.first_cell.cell_format.width)
+        self.assertEqual(aspose.words.TextOrientation.DOWNWARD, table.first_row.first_cell.cell_format.orientation)
+        self.assertEqual(aspose.pydrawing.Color.light_green.to_argb(), table.first_row.first_cell.cell_format.shading.foreground_pattern_color.to_argb())
 
     def test_distance_between_table_and_text(self):
         doc = aspose.words.Document(file_name = MY_DIR + "Table wrapped by text.docx")
@@ -128,7 +201,7 @@ class ExTable(ApiExampleBase):
         doc.save(file_name = ARTIFACTS_DIR + "Table.DistanceBetweenTableAndText.docx")
 
     def test_borders(self):
-        raise NotImplementedError("Unsupported type of expression: BorderType.Top")
+        raise NotImplementedError("Unsupported expression: ParenthesizedLambdaExpression")
 
     def test_replace_cell_text(self):
         doc = aspose.words.Document()
@@ -301,16 +374,45 @@ class ExTable(ApiExampleBase):
         self.assertEqual(100, table.absolute_horizontal_distance)
 
     def test_table_style_creation(self):
-        raise NotImplementedError("Unsupported target type System.Drawing.Color")
+        raise NotImplementedError("Unsupported expression: SimpleLambdaExpression")
 
     def test_set_table_alignment(self):
-        raise NotImplementedError("Unsupported target type System.Drawing.Color")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        table_style = doc.styles.add(aspose.words.StyleType.TABLE, "MyTableStyle1").as_table_style()
+        table_style.alignment = aspose.words.tables.TableAlignment.CENTER
+        table_style.borders.color = aspose.pydrawing.Color.blue
+        table_style.borders.line_style = aspose.words.LineStyle.SINGLE
+        table = builder.start_table()
+        builder.insert_cell()
+        builder.write("Aligned to the center of the page")
+        builder.end_table()
+        table.preferred_width = aspose.words.tables.PreferredWidth.from_points(300)
+        table.style = table_style
+        table_style = doc.styles.add(aspose.words.StyleType.TABLE, "MyTableStyle2").as_table_style()
+        table_style.left_indent = 55
+        table_style.borders.color = aspose.pydrawing.Color.green
+        table_style.borders.line_style = aspose.words.LineStyle.SINGLE
+        table = builder.start_table()
+        builder.insert_cell()
+        builder.write("Aligned according to left indent")
+        builder.end_table()
+        table.preferred_width = aspose.words.tables.PreferredWidth.from_points(300)
+        table.style = table_style
+        doc.save(file_name = ARTIFACTS_DIR + "Table.SetTableAlignment.docx")
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Table.SetTableAlignment.docx")
+        table_style = doc.styles.get_by_name("MyTableStyle1").as_table_style()
+        self.assertEqual(aspose.words.tables.TableAlignment.CENTER, table_style.alignment)
+        self.assertEqual(table_style, doc.first_section.body.tables[0].style)
+        table_style = doc.styles.get_by_name("MyTableStyle2").as_table_style()
+        self.assertEqual(55, table_style.left_indent)
+        self.assertEqual(table_style, (doc.get_child(aspose.words.NodeType.TABLE, 1, True).as_table()).style)
 
     def test_conditional_styles(self):
-        raise NotImplementedError("Unsupported type of expression: ConditionalStyleType.FirstRow")
+        raise NotImplementedError("Unsupported statement type: UsingStatement")
 
     def test_clear_table_style_formatting(self):
-        raise NotImplementedError("Unsupported target type System.Drawing.Color")
+        raise NotImplementedError("Unsupported expression: SimpleLambdaExpression")
 
     def test_alternating_row_styles(self):
         raise NotImplementedError("Unsupported expression: InterpolatedStringExpression")

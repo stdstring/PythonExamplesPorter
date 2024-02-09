@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import aspose.pydrawing
 import aspose.words
 import aspose.words.drawing
 import aspose.words.drawing.charts
@@ -11,25 +12,46 @@ from api_example_base import ApiExampleBase, ARTIFACTS_DIR, IMAGE_DIR, IMAGE_URL
 
 class ExDocumentBuilder(ApiExampleBase):
     def test_write_and_font(self):
-        raise NotImplementedError("Unsupported target type System.Drawing.Color")
+        raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")
 
     def test_headers_and_footers(self):
-        raise NotImplementedError("Unsupported type of expression: HeaderFooterType.HeaderFirst")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        builder.page_setup.different_first_page_header_footer = True
+        builder.page_setup.odd_and_even_pages_header_footer = True
+        builder.move_to_header_footer(aspose.words.HeaderFooterType.HEADER_FIRST)
+        builder.write("Header for the first page")
+        builder.move_to_header_footer(aspose.words.HeaderFooterType.HEADER_EVEN)
+        builder.write("Header for even pages")
+        builder.move_to_header_footer(aspose.words.HeaderFooterType.HEADER_PRIMARY)
+        builder.write("Header for all other pages")
+        builder.move_to_section(0)
+        builder.writeln("Page1")
+        builder.insert_break(aspose.words.BreakType.PAGE_BREAK)
+        builder.writeln("Page2")
+        builder.insert_break(aspose.words.BreakType.PAGE_BREAK)
+        builder.writeln("Page3")
+        doc.save(file_name = ARTIFACTS_DIR + "DocumentBuilder.HeadersAndFooters.docx")
+        headers_footers = aspose.words.Document(file_name = ARTIFACTS_DIR + "DocumentBuilder.HeadersAndFooters.docx").first_section.headers_footers
+        self.assertEqual(3, headers_footers.count)
+        self.assertEqual("Header for the first page", headers_footers.get_by_header_footer_type(aspose.words.HeaderFooterType.HEADER_FIRST).get_text().strip())
+        self.assertEqual("Header for even pages", headers_footers.get_by_header_footer_type(aspose.words.HeaderFooterType.HEADER_EVEN).get_text().strip())
+        self.assertEqual("Header for all other pages", headers_footers.get_by_header_footer_type(aspose.words.HeaderFooterType.HEADER_PRIMARY).get_text().strip())
 
     def test_merge_fields(self):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_insert_horizontal_rule(self):
-        raise NotImplementedError("Unsupported target type System.Drawing.Color")
+        raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")
 
     def test_horizontal_rule_format_exceptions(self):
         raise NotImplementedError("Unsupported expression: ParenthesizedLambdaExpression")
 
     def test_insert_hyperlink_async(self):
-        raise NotImplementedError("Unsupported target type System.Drawing.Color")
+        raise NotImplementedError("Unsupported expression: AwaitExpression")
 
     def test_push_pop_font(self):
-        raise NotImplementedError("Unsupported target type System.Drawing.Color")
+        raise NotImplementedError("Unsupported expression: AwaitExpression")
 
     def test_insert_ole_object(self):
         raise NotImplementedError("Unsupported statement type: UsingStatement")
@@ -203,10 +225,117 @@ class ExDocumentBuilder(ApiExampleBase):
         self.assertTrue(table_of_contents.use_paragraph_outline_level)
 
     def test_insert_table(self):
-        raise NotImplementedError("Unsupported target type System.Drawing.Color")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        builder.start_table()
+        builder.paragraph_format.alignment = aspose.words.ParagraphAlignment.CENTER
+        builder.cell_format.clear_formatting()
+        builder.cell_format.width = 150
+        builder.cell_format.vertical_alignment = aspose.words.tables.CellVerticalAlignment.CENTER
+        builder.cell_format.shading.background_pattern_color = aspose.pydrawing.Color.green_yellow
+        builder.cell_format.wrap_text = False
+        builder.cell_format.fit_text = True
+        builder.row_format.clear_formatting()
+        builder.row_format.height_rule = aspose.words.HeightRule.EXACTLY
+        builder.row_format.height = 50
+        builder.row_format.borders.line_style = aspose.words.LineStyle.ENGRAVE_3D
+        builder.row_format.borders.color = aspose.pydrawing.Color.orange
+        builder.insert_cell()
+        builder.write("Row 1, Col 1")
+        builder.insert_cell()
+        builder.write("Row 1, Col 2")
+        builder.end_row()
+        builder.cell_format.shading.clear_formatting()
+        builder.insert_cell()
+        builder.write("Row 2, Col 1")
+        builder.insert_cell()
+        builder.write("Row 2, Col 2")
+        builder.end_row()
+        builder.insert_cell()
+        builder.row_format.height = 150
+        builder.cell_format.orientation = aspose.words.TextOrientation.UPWARD
+        builder.write("Row 3, Col 1")
+        builder.insert_cell()
+        builder.cell_format.orientation = aspose.words.TextOrientation.DOWNWARD
+        builder.write("Row 3, Col 2")
+        builder.end_row()
+        builder.end_table()
+        doc.save(file_name = ARTIFACTS_DIR + "DocumentBuilder.InsertTable.docx")
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "DocumentBuilder.InsertTable.docx")
+        table = doc.first_section.body.tables[0]
+        self.assertEqual("Row 1, Col 1\a", table.rows[0].cells[0].get_text().strip())
+        self.assertEqual("Row 1, Col 2\a", table.rows[0].cells[1].get_text().strip())
+        self.assertEqual(aspose.words.HeightRule.EXACTLY, table.rows[0].row_format.height_rule)
+        self.assertEqual(50, table.rows[0].row_format.height)
+        self.assertEqual(aspose.words.LineStyle.ENGRAVE_3D, table.rows[0].row_format.borders.line_style)
+        self.assertEqual(aspose.pydrawing.Color.orange.to_argb(), table.rows[0].row_format.borders.color.to_argb())
+        # for each loop begin
+        for c in table.rows[0].cells:
+            c = c.as_cell()
+            self.assertEqual(150, c.cell_format.width)
+            self.assertEqual(aspose.words.tables.CellVerticalAlignment.CENTER, c.cell_format.vertical_alignment)
+            self.assertEqual(aspose.pydrawing.Color.green_yellow.to_argb(), c.cell_format.shading.background_pattern_color.to_argb())
+            self.assertFalse(c.cell_format.wrap_text)
+            self.assertTrue(c.cell_format.fit_text)
+            self.assertEqual(aspose.words.ParagraphAlignment.CENTER, c.first_paragraph.paragraph_format.alignment)
+        # for loop end
+        self.assertEqual("Row 2, Col 1\a", table.rows[1].cells[0].get_text().strip())
+        self.assertEqual("Row 2, Col 2\a", table.rows[1].cells[1].get_text().strip())
+        # for each loop begin
+        for c in table.rows[1].cells:
+            c = c.as_cell()
+            self.assertEqual(150, c.cell_format.width)
+            self.assertEqual(aspose.words.tables.CellVerticalAlignment.CENTER, c.cell_format.vertical_alignment)
+            self.assertEqual(aspose.pydrawing.Color.empty().to_argb(), c.cell_format.shading.background_pattern_color.to_argb())
+            self.assertFalse(c.cell_format.wrap_text)
+            self.assertTrue(c.cell_format.fit_text)
+            self.assertEqual(aspose.words.ParagraphAlignment.CENTER, c.first_paragraph.paragraph_format.alignment)
+        # for loop end
+        self.assertEqual(150, table.rows[2].row_format.height)
+        self.assertEqual("Row 3, Col 1\a", table.rows[2].cells[0].get_text().strip())
+        self.assertEqual(aspose.words.TextOrientation.UPWARD, table.rows[2].cells[0].cell_format.orientation)
+        self.assertEqual(aspose.words.ParagraphAlignment.CENTER, table.rows[2].cells[0].first_paragraph.paragraph_format.alignment)
+        self.assertEqual("Row 3, Col 2\a", table.rows[2].cells[1].get_text().strip())
+        self.assertEqual(aspose.words.TextOrientation.DOWNWARD, table.rows[2].cells[1].cell_format.orientation)
+        self.assertEqual(aspose.words.ParagraphAlignment.CENTER, table.rows[2].cells[1].first_paragraph.paragraph_format.alignment)
 
     def test_insert_table_with_style(self):
-        raise NotImplementedError("Unsupported target type System.Drawing.Color")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        table = builder.start_table()
+        builder.insert_cell()
+        table.style_identifier = aspose.words.StyleIdentifier.MEDIUM_SHADING1_ACCENT1
+        table.style_options = aspose.words.tables.TableStyleOptions.FIRST_COLUMN | aspose.words.tables.TableStyleOptions.ROW_BANDS | aspose.words.tables.TableStyleOptions.FIRST_ROW
+        table.auto_fit(aspose.words.tables.AutoFitBehavior.AUTO_FIT_TO_CONTENTS)
+        builder.writeln("Item")
+        builder.cell_format.right_padding = 40
+        builder.insert_cell()
+        builder.writeln("Quantity (kg)")
+        builder.end_row()
+        builder.insert_cell()
+        builder.writeln("Apples")
+        builder.insert_cell()
+        builder.writeln("20")
+        builder.end_row()
+        builder.insert_cell()
+        builder.writeln("Bananas")
+        builder.insert_cell()
+        builder.writeln("40")
+        builder.end_row()
+        builder.insert_cell()
+        builder.writeln("Carrots")
+        builder.insert_cell()
+        builder.writeln("50")
+        builder.end_row()
+        doc.save(file_name = ARTIFACTS_DIR + "DocumentBuilder.InsertTableWithStyle.docx")
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "DocumentBuilder.InsertTableWithStyle.docx")
+        doc.expand_table_styles_to_direct_formatting()
+        self.assertEqual("Medium Shading 1 Accent 1", table.style.name)
+        self.assertEqual(aspose.words.tables.TableStyleOptions.FIRST_COLUMN | aspose.words.tables.TableStyleOptions.ROW_BANDS | aspose.words.tables.TableStyleOptions.FIRST_ROW, table.style_options)
+        self.assertEqual(189, table.first_row.first_cell.cell_format.shading.background_pattern_color.b)
+        self.assertEqual(aspose.pydrawing.Color.white.to_argb(), table.first_row.first_cell.first_paragraph.runs[0].font.color.to_argb())
+        self.assertNotEqual(aspose.pydrawing.Color.light_blue.to_argb(), table.last_row.first_cell.cell_format.shading.background_pattern_color.b)
+        self.assertEqual(aspose.pydrawing.Color.empty().to_argb(), table.last_row.first_cell.first_paragraph.runs[0].font.color.to_argb())
 
     def test_insert_table_set_heading_row(self):
         raise NotImplementedError("Unsupported expression: InterpolatedStringExpression")
@@ -229,7 +358,7 @@ class ExDocumentBuilder(ApiExampleBase):
         self.assertEqual(50, table.preferred_width.value)
 
     def test_insert_cells_with_preferred_widths(self):
-        raise NotImplementedError("Unsupported target type System.Drawing.Color")
+        raise NotImplementedError("Unsupported expression: InterpolatedStringExpression")
 
     def test_insert_table_from_html(self):
         doc = aspose.words.Document()
@@ -286,10 +415,117 @@ class ExDocumentBuilder(ApiExampleBase):
         self.assertEqual("Row 2, Cell 2.\a", table.rows[1].cells[1].get_text().strip())
 
     def test_build_formatted_table(self):
-        raise NotImplementedError("Unsupported target type System.Drawing.Color")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        table = builder.start_table()
+        builder.insert_cell()
+        table.left_indent = 20
+        builder.row_format.height = 40
+        builder.row_format.height_rule = aspose.words.HeightRule.AT_LEAST
+        builder.cell_format.shading.background_pattern_color = aspose.pydrawing.Color.from_argb(198, 217, 241)
+        builder.paragraph_format.alignment = aspose.words.ParagraphAlignment.CENTER
+        builder.font.size = 16
+        builder.font.name = "Arial"
+        builder.font.bold = True
+        builder.write("Header Row,\n Cell 1")
+        builder.insert_cell()
+        builder.write("Header Row,\n Cell 2")
+        builder.insert_cell()
+        builder.write("Header Row,\n Cell 3")
+        builder.end_row()
+        builder.cell_format.shading.background_pattern_color = aspose.pydrawing.Color.white
+        builder.cell_format.vertical_alignment = aspose.words.tables.CellVerticalAlignment.CENTER
+        builder.row_format.height = 30
+        builder.row_format.height_rule = aspose.words.HeightRule.AUTO
+        builder.insert_cell()
+        builder.font.size = 12
+        builder.font.bold = False
+        builder.write("Row 1, Cell 1.")
+        builder.insert_cell()
+        builder.write("Row 1, Cell 2.")
+        builder.insert_cell()
+        builder.write("Row 1, Cell 3.")
+        builder.end_row()
+        builder.insert_cell()
+        builder.write("Row 2, Cell 1.")
+        builder.insert_cell()
+        builder.write("Row 2, Cell 2.")
+        builder.insert_cell()
+        builder.write("Row 2, Cell 3.")
+        builder.end_row()
+        builder.end_table()
+        doc.save(file_name = ARTIFACTS_DIR + "DocumentBuilder.CreateFormattedTable.docx")
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "DocumentBuilder.CreateFormattedTable.docx")
+        table = doc.first_section.body.tables[0]
+        self.assertEqual(20, table.left_indent)
+        self.assertEqual(aspose.words.HeightRule.AT_LEAST, table.rows[0].row_format.height_rule)
+        self.assertEqual(40, table.rows[0].row_format.height)
+        # for each loop begin
+        for c in doc.get_child_nodes(aspose.words.NodeType.CELL, True):
+            c = c.as_cell()
+            self.assertEqual(aspose.words.ParagraphAlignment.CENTER, c.first_paragraph.paragraph_format.alignment)
+            # for each loop begin
+            for r in c.first_paragraph.runs:
+                r = r.as_run()
+                self.assertEqual("Arial", r.font.name)
+                # if begin
+                if c.parent_row == table.first_row:
+                    self.assertEqual(16, r.font.size)
+                    self.assertTrue(r.font.bold)
+                else:
+                    self.assertEqual(12, r.font.size)
+                    self.assertFalse(r.font.bold)
+                # if end
+            # for loop end
+        # for loop end
 
     def test_table_borders_and_shading(self):
-        raise NotImplementedError("Unsupported target type System.Drawing.Color")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        table = builder.start_table()
+        table.set_borders(aspose.words.LineStyle.SINGLE, 2, aspose.pydrawing.Color.black)
+        builder.insert_cell()
+        builder.cell_format.shading.background_pattern_color = aspose.pydrawing.Color.light_sky_blue
+        builder.writeln("Row 1, Cell 1.")
+        builder.insert_cell()
+        builder.cell_format.shading.background_pattern_color = aspose.pydrawing.Color.orange
+        builder.writeln("Row 1, Cell 2.")
+        builder.end_row()
+        builder.cell_format.clear_formatting()
+        builder.cell_format.borders.left.line_width = 4
+        builder.cell_format.borders.right.line_width = 4
+        builder.cell_format.borders.top.line_width = 4
+        builder.cell_format.borders.bottom.line_width = 4
+        builder.insert_cell()
+        builder.writeln("Row 2, Cell 1.")
+        builder.insert_cell()
+        builder.writeln("Row 2, Cell 2.")
+        doc.save(file_name = ARTIFACTS_DIR + "DocumentBuilder.TableBordersAndShading.docx")
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "DocumentBuilder.TableBordersAndShading.docx")
+        table = doc.first_section.body.tables[0]
+        # for each loop begin
+        for c in table.first_row:
+            c = c.as_cell()
+            self.assertEqual(0.5, c.cell_format.borders.top.line_width)
+            self.assertEqual(0.5, c.cell_format.borders.bottom.line_width)
+            self.assertEqual(0.5, c.cell_format.borders.left.line_width)
+            self.assertEqual(0.5, c.cell_format.borders.right.line_width)
+            self.assertEqual(aspose.pydrawing.Color.empty().to_argb(), c.cell_format.borders.left.color.to_argb())
+            self.assertEqual(aspose.words.LineStyle.SINGLE, c.cell_format.borders.left.line_style)
+        # for loop end
+        self.assertEqual(aspose.pydrawing.Color.light_sky_blue.to_argb(), table.first_row.first_cell.cell_format.shading.background_pattern_color.to_argb())
+        self.assertEqual(aspose.pydrawing.Color.orange.to_argb(), table.first_row.cells[1].cell_format.shading.background_pattern_color.to_argb())
+        # for each loop begin
+        for c in table.last_row:
+            c = c.as_cell()
+            self.assertEqual(4, c.cell_format.borders.top.line_width)
+            self.assertEqual(4, c.cell_format.borders.bottom.line_width)
+            self.assertEqual(4, c.cell_format.borders.left.line_width)
+            self.assertEqual(4, c.cell_format.borders.right.line_width)
+            self.assertEqual(aspose.pydrawing.Color.empty().to_argb(), c.cell_format.borders.left.color.to_argb())
+            self.assertEqual(aspose.words.LineStyle.SINGLE, c.cell_format.borders.left.line_style)
+            self.assertEqual(aspose.pydrawing.Color.empty().to_argb(), c.cell_format.shading.background_pattern_color.to_argb())
+        # for loop end
 
     def test_set_preferred_type_convert_util(self):
         doc = aspose.words.Document()
@@ -300,7 +536,7 @@ class ExDocumentBuilder(ApiExampleBase):
         self.assertEqual(216, table.first_row.first_cell.cell_format.preferred_width.value)
 
     def test_insert_hyperlink_to_local_bookmark(self):
-        raise NotImplementedError("Unsupported target type System.Drawing.Color")
+        raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_cursor_position(self):
         doc = aspose.words.Document()
@@ -532,7 +768,30 @@ class ExDocumentBuilder(ApiExampleBase):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_apply_borders_and_shading(self):
-        raise NotImplementedError("Unsupported type of expression: BorderType.Left")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        borders = builder.paragraph_format.borders
+        borders.distance_from_text = 20
+        borders.get_by_border_type(aspose.words.BorderType.LEFT).line_style = aspose.words.LineStyle.DOUBLE
+        borders.get_by_border_type(aspose.words.BorderType.RIGHT).line_style = aspose.words.LineStyle.DOUBLE
+        borders.get_by_border_type(aspose.words.BorderType.TOP).line_style = aspose.words.LineStyle.DOUBLE
+        borders.get_by_border_type(aspose.words.BorderType.BOTTOM).line_style = aspose.words.LineStyle.DOUBLE
+        shading = builder.paragraph_format.shading
+        shading.texture = aspose.words.TextureIndex.TEXTURE_DIAGONAL_CROSS
+        shading.background_pattern_color = aspose.pydrawing.Color.light_coral
+        shading.foreground_pattern_color = aspose.pydrawing.Color.light_salmon
+        builder.write("This paragraph is formatted with a double border and shading.")
+        doc.save(file_name = ARTIFACTS_DIR + "DocumentBuilder.ApplyBordersAndShading.docx")
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "DocumentBuilder.ApplyBordersAndShading.docx")
+        borders = doc.first_section.body.first_paragraph.paragraph_format.borders
+        self.assertEqual(20, borders.distance_from_text)
+        self.assertEqual(aspose.words.LineStyle.DOUBLE, borders.get_by_border_type(aspose.words.BorderType.LEFT).line_style)
+        self.assertEqual(aspose.words.LineStyle.DOUBLE, borders.get_by_border_type(aspose.words.BorderType.RIGHT).line_style)
+        self.assertEqual(aspose.words.LineStyle.DOUBLE, borders.get_by_border_type(aspose.words.BorderType.TOP).line_style)
+        self.assertEqual(aspose.words.LineStyle.DOUBLE, borders.get_by_border_type(aspose.words.BorderType.BOTTOM).line_style)
+        self.assertEqual(aspose.words.TextureIndex.TEXTURE_DIAGONAL_CROSS, shading.texture)
+        self.assertEqual(aspose.pydrawing.Color.light_coral.to_argb(), shading.background_pattern_color.to_argb())
+        self.assertEqual(aspose.pydrawing.Color.light_salmon.to_argb(), shading.foreground_pattern_color.to_argb())
 
     def test_delete_row(self):
         doc = aspose.words.Document()
@@ -572,7 +831,19 @@ class ExDocumentBuilder(ApiExampleBase):
         self.assertEqual(aspose.words.drawing.RelativeVerticalPosition.MARGIN, chart_shape.relative_vertical_position)
 
     def test_insert_underline(self):
-        raise NotImplementedError("Unsupported target type System.Drawing.Color")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        builder.underline = aspose.words.Underline.DASH
+        builder.font.color = aspose.pydrawing.Color.blue
+        builder.font.size = 32
+        builder.writeln("Large, blue, and underlined text.")
+        doc.save(file_name = ARTIFACTS_DIR + "DocumentBuilder.InsertUnderline.docx")
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "DocumentBuilder.InsertUnderline.docx")
+        first_run = doc.first_section.body.first_paragraph.runs[0]
+        self.assertEqual("Large, blue, and underlined text.", first_run.get_text().strip())
+        self.assertEqual(aspose.words.Underline.DASH, first_run.font.underline)
+        self.assertEqual(aspose.pydrawing.Color.blue.to_argb(), first_run.font.color.to_argb())
+        self.assertEqual(32, first_run.font.size)
 
     def test_current_story(self):
         raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")
@@ -584,7 +855,27 @@ class ExDocumentBuilder(ApiExampleBase):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_smart_style_behavior(self):
-        raise NotImplementedError("Unsupported target type System.Drawing.Color")
+        dst_doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(dst_doc)
+        my_style = builder.document.styles.add(aspose.words.StyleType.PARAGRAPH, "MyStyle")
+        my_style.font.size = 14
+        my_style.font.name = "Courier New"
+        my_style.font.color = aspose.pydrawing.Color.blue
+        builder.paragraph_format.style_name = my_style.name
+        builder.writeln("Hello world!")
+        src_doc = dst_doc.clone()
+        src_doc.styles.get_by_name("MyStyle").font.color = aspose.pydrawing.Color.red
+        options = aspose.words.ImportFormatOptions()
+        options.smart_style_behavior = True
+        builder.insert_document(src_doc = src_doc, import_format_mode = aspose.words.ImportFormatMode.KEEP_SOURCE_FORMATTING, import_format_options = options)
+        dst_doc.save(file_name = ARTIFACTS_DIR + "DocumentBuilder.SmartStyleBehavior.docx")
+        dst_doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "DocumentBuilder.SmartStyleBehavior.docx")
+        self.assertEqual(aspose.pydrawing.Color.blue.to_argb(), dst_doc.styles.get_by_name("MyStyle").font.color.to_argb())
+        self.assertEqual("MyStyle", dst_doc.first_section.body.paragraphs[0].paragraph_format.style.name)
+        self.assertEqual("Normal", dst_doc.first_section.body.paragraphs[1].paragraph_format.style.name)
+        self.assertEqual(14, dst_doc.first_section.body.paragraphs[1].runs[0].font.size)
+        self.assertEqual("Courier New", dst_doc.first_section.body.paragraphs[1].runs[0].font.name)
+        self.assertEqual(aspose.pydrawing.Color.red.to_argb(), dst_doc.first_section.body.paragraphs[1].runs[0].font.color.to_argb())
 
     def test_emphases_warning_source_markdown(self):
         doc = aspose.words.Document(file_name = MY_DIR + "Emphases markdown warning.docx")

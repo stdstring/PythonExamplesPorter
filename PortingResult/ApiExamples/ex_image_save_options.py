@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import aspose.pydrawing
 import aspose.words
 import aspose.words.saving
 import unittest
@@ -13,20 +14,20 @@ class ExImageSaveOptions(ApiExampleBase):
         raise NotImplementedError("Unsupported expression: InterpolatedStringExpression")
 
     def test_page_by_page(self):
-        raise NotImplementedError("Unsupported type: Size")
+        raise NotImplementedError("Unsupported expression: InterpolatedStringExpression")
 
     def test_floyd_steinberg_dithering(self):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_jpeg_quality(self):
-        raise NotImplementedError("Unsupported type: FileInfo")
+        raise NotImplementedError("Unsupported ctor for type FileInfo")
 
     def test_save_to_tiff_default(self):
         doc = aspose.words.Document(file_name = MY_DIR + "Rendering.docx")
         doc.save(file_name = ARTIFACTS_DIR + "ImageSaveOptions.SaveToTiffDefault.tiff")
 
     def test_resolution(self):
-        raise NotImplementedError("Unsupported type: FileInfo")
+        raise NotImplementedError("Unsupported ctor for type FileInfo")
 
     def test_export_various_page_ranges(self):
         doc = aspose.words.Document(file_name = MY_DIR + "Images.docx")

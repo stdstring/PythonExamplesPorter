@@ -27,8 +27,9 @@ namespace PythonExamplesPorterApp.Expressions
         {
             ImportData importData = new ImportData();
             ArgumentListConverter argumentListConverter = new ArgumentListConverter(_model, _appData, _settings.CreateChild());
-            ConvertArgumentsResult arguments = argumentListConverter.Convert(expression, argumentList.GetArguments());
-            importData.Append(arguments.ImportData);
+            IReadOnlyList<ArgumentSyntax> arguments = argumentList.GetArguments();
+            ConvertArgumentsResult convertedArguments = argumentListConverter.Convert(expression, arguments);
+            importData.Append(convertedArguments.ImportData);
             ExpressionSyntax target = expression.Expression;
             SymbolInfo targetInfo = _model.GetSymbolInfo(target);
             switch (targetInfo.Symbol)
@@ -36,21 +37,41 @@ namespace PythonExamplesPorterApp.Expressions
                 // TODO (std_string) : for some types of expression we receive null, but this is not error of recognition. Think about this
                 case INamespaceSymbol:
                     return _expressionConverter.Convert(expression.Name);
+                case ITypeSymbol type:
+                {
+                    OperationResult<TypeResolveData> typeResolveResult = _externalEntityResolver.ResolveType(type);
+                    if (!typeResolveResult.Success)
+                        throw new UnsupportedSyntaxException(typeResolveResult.Reason);
+                    TypeResolveData typeResolveData = typeResolveResult.Data!;
+                    importData.AddImport(typeResolveData.ModuleName);
+                    String typeName = $"{typeResolveData.ModuleName}.{typeResolveData.TypeName}";
+                    return ConvertImpl(expression, target, arguments, importData: importData, typeName, convertedArguments.Result);
+                }
                 default:
-                    //String targetDest = ConvertExpression(expressionConverter, target);
+                {
                     ConvertResult targetDest = _expressionConverter.Convert(target);
                     importData.Append(targetDest.ImportData);
-                    SimpleNameSyntax name = expression.Name;
-                    MemberData memberData = new MemberData(target, name, argumentList.GetArguments());
-                    MemberRepresentation memberRepresentation = new MemberRepresentation(targetDest.Result, arguments.Result);
-                    OperationResult<MemberResolveData> resolveResult = _externalEntityResolver.ResolveMember(memberData, memberRepresentation);
-                    if (!resolveResult.Success)
-                        throw new UnsupportedSyntaxException(resolveResult.Reason);
-                    MemberResolveData memberResolveData = resolveResult.Data!;
-                    //Buffer.Append(memberResolveData.Member);
-                    importData.AddImport(memberResolveData.ModuleName);
-                    return new ConvertResult(memberResolveData.Member, importData);
+                    return ConvertImpl(expression, target, arguments, importData: importData, targetDest.Result, convertedArguments.Result);
+                }
             }
+        }
+
+        private ConvertResult ConvertImpl(MemberAccessExpressionSyntax expression,
+                                          ExpressionSyntax target,
+                                          IReadOnlyList<ArgumentSyntax> arguments,
+                                          ImportData importData,
+                                          String targetRepresentation,
+                                          ConvertedArguments convertedArguments)
+        {
+            SimpleNameSyntax name = expression.Name;
+            MemberData memberData = new MemberData(target, name, arguments);
+            MemberRepresentation memberRepresentation = new MemberRepresentation(targetRepresentation, convertedArguments);
+            OperationResult<MemberResolveData> resolveResult = _externalEntityResolver.ResolveMember(memberData, memberRepresentation);
+            if (!resolveResult.Success)
+                throw new UnsupportedSyntaxException(resolveResult.Reason);
+            MemberResolveData memberResolveData = resolveResult.Data!;
+            importData.AddImport(memberResolveData.ModuleName);
+            return new ConvertResult(memberResolveData.Member, importData);
         }
 
         private readonly SemanticModel _model;

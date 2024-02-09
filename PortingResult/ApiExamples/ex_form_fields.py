@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import aspose.pydrawing
 import aspose.words
 import aspose.words.fields
 import unittest
@@ -46,7 +47,7 @@ class ExFormFields(ApiExampleBase):
         raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")
 
     def test_form_field_font_formatting(self):
-        raise NotImplementedError("Unsupported target type System.Drawing.Color")
+        raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")
 
     def test_drop_down_item_collection(self):
         raise NotImplementedError("Unsupported statement type: UsingStatement")

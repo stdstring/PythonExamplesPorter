@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import aspose.pydrawing
 import aspose.words
 import aspose.words.lists
 import unittest
@@ -16,13 +17,13 @@ class ExLists(ApiExampleBase):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_create_custom_list(self):
-        raise NotImplementedError("Unsupported target type System.Drawing.Color")
+        raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_restart_numbering_using_list_copy(self):
-        raise NotImplementedError("Unsupported target type System.Drawing.Color")
+        raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_create_and_use_list_style(self):
-        raise NotImplementedError("Unsupported target type System.Drawing.Color")
+        raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_detect_bulleted_paragraphs(self):
         raise NotImplementedError("Unsupported expression: SimpleLambdaExpression")

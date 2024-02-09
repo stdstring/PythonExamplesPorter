@@ -75,7 +75,7 @@ class ExReportingEngine(ApiExampleBase):
         raise NotImplementedError("Unsupported call of method named BuildReport")
 
     def test_table_row_conditional_blocks(self):
-        raise NotImplementedError("Unsupported type: List<ClientTestClass>")
+        raise NotImplementedError("Unsupported ctor for type List<ClientTestClass>")
 
     def test_without_missing_members(self):
         raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")

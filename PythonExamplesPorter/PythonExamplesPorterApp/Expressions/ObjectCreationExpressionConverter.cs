@@ -24,28 +24,25 @@ namespace PythonExamplesPorterApp.Expressions
         public ConvertResult Convert(ObjectCreationExpressionSyntax expression)
         {
             ImportData importData = new ImportData();
-            CheckResult argumentsCheckResult = expression.ArgumentList.GetArguments().CheckForMethod();
+            IReadOnlyList<ArgumentSyntax> arguments = expression.ArgumentList.GetArguments();
+            CheckResult argumentsCheckResult = arguments.CheckForMethod();
             if (!argumentsCheckResult.Result)
                 throw new UnsupportedSyntaxException(argumentsCheckResult.Reason);
             if ((expression.Initializer is {Expressions.Count: > 0}) && !_settings.AllowObjectInitializer)
                 throw new UnsupportedSyntaxException("Forbidden object initializer");
             TypeSyntax type = expression.Type;
-            OperationResult<TypeResolveData> resolveResult = _externalEntityResolver.ResolveType(type);
+            ArgumentListConverter argumentListConverter = new ArgumentListConverter(_model, _appData, _settings.CreateChild());
+            ConvertArgumentsResult convertedArguments = argumentListConverter.Convert(expression, arguments);
+            importData.Append(convertedArguments.ImportData);
+            OperationResult<MemberResolveData> resolveResult = _externalEntityResolver.ResolveCtor(type, arguments, convertedArguments.Result);
             if (!resolveResult.Success)
                 throw new UnsupportedSyntaxException(resolveResult.Reason);
-            TypeResolveData data = resolveResult.Data!;
-            // TODO (std_string) : i return empty type for system type because we need in additional analysis - think about approach
-            if (String.IsNullOrEmpty(data.TypeName))
-                throw new UnsupportedSyntaxException($"Unsupported type: {type}");
-            importData.AddImport(data.ModuleName);
-            ArgumentListConverter argumentListConverter = new ArgumentListConverter(_model, _appData, _settings.CreateChild());
-            ConvertArgumentsResult arguments = argumentListConverter.Convert(expression, expression.ArgumentList.GetArguments());
-            importData.Append(arguments.ImportData);
-            String result = $"{data.ModuleName}.{data.TypeName}({String.Join(", ", arguments.Result.GetArguments(true))})";
+            MemberResolveData resolveData = resolveResult.Data!;
+            importData.AddImport(resolveData.ModuleName);
             IList<String> afterResults = new List<String>();
             if (expression.Initializer is {Expressions.Count: > 0})
                 afterResults.AddRange(ConvertObjectInitializerExpressions(expression.Initializer.Expressions, importData));
-            return new ConvertResult(result, importData, afterResults);
+            return new ConvertResult(resolveData.Member, importData, afterResults);
         }
 
         private IList<String> ConvertObjectInitializerExpressions(IReadOnlyList<ExpressionSyntax> initializerExpressions, ImportData importData)

@@ -43,7 +43,7 @@ class ExRange(ApiExampleBase):
         doc.save(file_name = ARTIFACTS_DIR + "Range.ReplaceWithString.docx")
 
     def test_replace_with_regex(self):
-        raise NotImplementedError("Unsupported type: Regex")
+        raise NotImplementedError("Unsupported ctor for type Regex")
 
     def test_apply_paragraph_format(self):
         doc = aspose.words.Document()

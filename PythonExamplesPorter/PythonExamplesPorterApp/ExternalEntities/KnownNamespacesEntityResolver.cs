@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis;
 using PythonExamplesPorterApp.Common;
 using PythonExamplesPorterApp.Config;
 using PythonExamplesPorterApp.Converter;
+using PythonExamplesPorterApp.Expressions;
 
 namespace PythonExamplesPorterApp.ExternalEntities
 {
@@ -12,6 +13,21 @@ namespace PythonExamplesPorterApp.ExternalEntities
         {
             _model = model;
             _appData = appData;
+        }
+
+        public OperationResult<MemberResolveData> ResolveCtor(ITypeSymbol sourceType, IReadOnlyList<ArgumentSyntax> argumentsData, ConvertedArguments argumentsRepresentation)
+        {
+            String sourceTypeFullName = sourceType.GetTypeFullName();
+            // TODO (std_string) : think about check containing assemblies
+            String[] knownNamespaces = _appData.AppConfig.GetSourceDetails().KnownNamespaces ?? Array.Empty<String>();
+            Boolean isSupportedType = knownNamespaces.Any(sourceTypeFullName.StartsWith);
+            if (!isSupportedType)
+                return new OperationResult<MemberResolveData>(false, $"Unsupported type: {sourceTypeFullName}");
+            String moduleName = _appData.NameTransformer.TransformNamespaceName(sourceType.ContainingNamespace.ToDisplayString());
+            String typeName = _appData.NameTransformer.TransformTypeName(sourceType.Name);
+            String ctorCall = $"{moduleName}.{typeName}({String.Join(", ", argumentsRepresentation.GetArguments(true))})";
+            MemberResolveData resolveData = new MemberResolveData(ctorCall, moduleName);
+            return new OperationResult<MemberResolveData>(true, "", resolveData);
         }
 
         public OperationResult<MemberResolveData> ResolveMember(MemberData data, ITypeSymbol sourceType, MemberRepresentation representation)
@@ -28,7 +44,6 @@ namespace PythonExamplesPorterApp.ExternalEntities
             {
                 case null:
                     return new OperationResult<MemberResolveData>(false, $"Unrecognizable member {name.Identifier} for type {sourceTypeFullName}");
-                // TODO (std_string) : think about separation between methods, properties and fields
                 case IMethodSymbol methodSymbol:
                     {
                         String methodName = _appData.NameTransformer.TransformMethodName(sourceTypeFullName, methodSymbol.Name);
@@ -44,7 +59,7 @@ namespace PythonExamplesPorterApp.ExternalEntities
                         MemberResolveData resolveData = new MemberResolveData(propertyCall);
                         return new OperationResult<MemberResolveData>(true, "", resolveData);
                     }
-                case IFieldSymbol { IsStatic: var isStatic, IsReadOnly: var isReadOnly, Type.TypeKind: var typeKind } fieldSymbol:
+                case IFieldSymbol {IsStatic: var isStatic, IsReadOnly: var isReadOnly, Type.TypeKind: var typeKind} fieldSymbol:
                     {
                         String fieldName = typeKind switch
                         {

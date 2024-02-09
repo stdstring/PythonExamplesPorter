@@ -25,7 +25,7 @@ class ExImage(ApiExampleBase):
         raise NotImplementedError("Unsupported expression: AwaitExpression")
 
     def test_create_linked_image(self):
-        raise NotImplementedError("Unsupported type: FileInfo")
+        raise NotImplementedError("Unsupported ctor for type FileInfo")
 
     def test_delete_all_images(self):
         raise NotImplementedError("Unsupported expression: SimpleLambdaExpression")

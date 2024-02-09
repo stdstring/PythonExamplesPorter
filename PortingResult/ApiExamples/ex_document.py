@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import aspose.pydrawing
 import aspose.words
 import aspose.words.drawing
 import aspose.words.fields
@@ -166,7 +167,7 @@ class ExDocument(ApiExampleBase):
         self.assertEqual("«Field»\r\n", doc.to_string(save_format = aspose.words.SaveFormat.TEXT))
 
     def test_document_byte_array(self):
-        raise NotImplementedError("Unsupported type: MemoryStream")
+        raise NotImplementedError("Unsupported ctor for type MemoryStream")
 
     def test_protect_unprotect(self):
         doc = aspose.words.Document()
@@ -242,7 +243,7 @@ class ExDocument(ApiExampleBase):
         self.assertEqual(4, doc.built_in_document_properties.lines)
 
     def test_table_style_to_direct_formatting(self):
-        raise NotImplementedError("Unsupported target type System.Drawing.Color")
+        raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_get_original_file_info(self):
         doc = aspose.words.Document(file_name = MY_DIR + "Document.docx")
@@ -304,7 +305,19 @@ class ExDocument(ApiExampleBase):
         self.assertEqual("b.", paragraphs[2].list_label.label_string)
 
     def test_update_thumbnail(self):
-        raise NotImplementedError("Unsupported type: Size")
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        builder.writeln("Hello world!")
+        builder.insert_image(file_name = IMAGE_DIR + "Logo.jpg")
+        doc.update_thumbnail()
+        doc.save(file_name = ARTIFACTS_DIR + "Document.UpdateThumbnail.FirstPage.epub")
+        options = aspose.words.rendering.ThumbnailGeneratingOptions()
+        self.assertEqual(aspose.pydrawing.Size(600, 900), options.thumbnail_size)
+        self.assertTrue(options.generate_from_first_page)
+        options.thumbnail_size = aspose.pydrawing.Size(400, 400)
+        options.generate_from_first_page = False
+        doc.update_thumbnail(options)
+        doc.save(file_name = ARTIFACTS_DIR + "Document.UpdateThumbnail.FirstImage.epub")
 
     def test_hyphenation_options(self):
         raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")
@@ -348,7 +361,7 @@ class ExDocument(ApiExampleBase):
         raise NotImplementedError("Unsupported target type System.IO.File")
 
     def test_use_substitutions(self):
-        raise NotImplementedError("Unsupported type: Regex")
+        raise NotImplementedError("Unsupported ctor for type Regex")
 
     def test_set_invalidate_field_types(self):
         doc = aspose.words.Document()
@@ -424,7 +437,28 @@ class ExDocument(ApiExampleBase):
         self.assertEqual(22, target.styles.count)
 
     def test_copy_template_styles_via_document_new(self):
-        raise NotImplementedError("Unsupported target type System.Drawing.Color")
+        template = aspose.words.Document()
+        style = template.styles.add(aspose.words.StyleType.PARAGRAPH, "TemplateStyle1")
+        style.font.name = "Times New Roman"
+        style.font.color = aspose.pydrawing.Color.navy
+        style = template.styles.add(aspose.words.StyleType.PARAGRAPH, "TemplateStyle2")
+        style.font.name = "Arial"
+        style.font.color = aspose.pydrawing.Color.deep_sky_blue
+        style = template.styles.add(aspose.words.StyleType.PARAGRAPH, "TemplateStyle3")
+        style.font.name = "Courier New"
+        style.font.color = aspose.pydrawing.Color.royal_blue
+        self.assertEqual(7, template.styles.count)
+        target = aspose.words.Document()
+        style = target.styles.add(aspose.words.StyleType.PARAGRAPH, "TemplateStyle3")
+        style.font.name = "Calibri"
+        style.font.color = aspose.pydrawing.Color.orange
+        self.assertEqual(5, target.styles.count)
+        target.copy_styles_from_template(template = template)
+        self.assertEqual(7, target.styles.count)
+        self.assertEqual("Courier New", target.styles.get_by_name("TemplateStyle3").font.name)
+        self.assertEqual(aspose.pydrawing.Color.royal_blue.to_argb(), target.styles.get_by_name("TemplateStyle3").font.color.to_argb())
+        target.copy_styles_from_template(template = MY_DIR + "Rendering.docx")
+        self.assertEqual(21, target.styles.count)
 
     def test_read_macros_from_existing_document(self):
         raise NotImplementedError("Unsupported expression: ConditionalExpression")
@@ -455,7 +489,22 @@ class ExDocument(ApiExampleBase):
         raise NotImplementedError("Unsupported target type System.IO.File")
 
     def test_text_watermark(self):
-        raise NotImplementedError("Unsupported target type System.Drawing.Color")
+        doc = aspose.words.Document()
+        doc.watermark.set_text(text = "Aspose Watermark")
+        text_watermark_options = aspose.words.TextWatermarkOptions()
+        text_watermark_options.font_family = "Arial"
+        text_watermark_options.font_size = 36
+        text_watermark_options.color = aspose.pydrawing.Color.black
+        text_watermark_options.layout = aspose.words.WatermarkLayout.DIAGONAL
+        text_watermark_options.is_semitrasparent = False
+        doc.watermark.set_text(text = "Aspose Watermark", options = text_watermark_options)
+        doc.save(file_name = ARTIFACTS_DIR + "Document.TextWatermark.docx")
+        # if begin
+        if doc.watermark.type == aspose.words.WatermarkType.TEXT:
+            doc.watermark.remove()
+        # if end
+        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Document.TextWatermark.docx")
+        self.assertEqual(aspose.words.WatermarkType.TEXT, doc.watermark.type)
 
     def test_ignore_printer_metrics(self):
         doc = aspose.words.Document(file_name = MY_DIR + "Rendering.docx")
@@ -494,7 +543,17 @@ class ExDocument(ApiExampleBase):
         self.assertTrue(("Ellen Adams\r123 Maple Street" in doc.get_text()))
 
     def test_move_to_structured_document_tag(self):
-        raise NotImplementedError("Unsupported target type System.Drawing.Color")
+        doc = aspose.words.Document(file_name = MY_DIR + "Structured document tags.docx")
+        builder = aspose.words.DocumentBuilder(doc)
+        builder.move_to_structured_document_tag(structured_document_tag_index = 1, character_index = 1)
+        tag = doc.get_child(aspose.words.NodeType.STRUCTURED_DOCUMENT_TAG, 2, True).as_structured_document_tag()
+        builder.move_to_structured_document_tag(structured_document_tag = tag, character_index = 1)
+        builder.write(" New text.")
+        self.assertEqual("R New text.ichText", tag.get_text().strip())
+        builder.move_to_structured_document_tag(structured_document_tag_index = 1, character_index = -1)
+        self.assertTrue(builder.is_at_end_of_structured_document_tag)
+        builder.current_structured_document_tag.color = aspose.pydrawing.Color.green
+        doc.save(file_name = ARTIFACTS_DIR + "Document.MoveToStructuredDocumentTag.docx")
 
     def test_include_textboxes_footnotes_endnotes_in_stat(self):
         doc = aspose.words.Document()

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import aspose.pydrawing
 import aspose.words
 import unittest
 from api_example_base import ApiExampleBase
@@ -30,4 +31,27 @@ class ExCleanupOptions(ApiExampleBase):
         self.assertEqual(2, doc.styles.count)
 
     def test_remove_duplicate_styles(self):
-        raise NotImplementedError("Unsupported target type System.Drawing.Color")
+        doc = aspose.words.Document()
+        my_style = doc.styles.add(aspose.words.StyleType.PARAGRAPH, "MyStyle1")
+        my_style.font.size = 14
+        my_style.font.name = "Courier New"
+        my_style.font.color = aspose.pydrawing.Color.blue
+        duplicate_style = doc.styles.add(aspose.words.StyleType.PARAGRAPH, "MyStyle2")
+        duplicate_style.font.size = 14
+        duplicate_style.font.name = "Courier New"
+        duplicate_style.font.color = aspose.pydrawing.Color.blue
+        self.assertEqual(6, doc.styles.count)
+        builder = aspose.words.DocumentBuilder(doc)
+        builder.paragraph_format.style_name = my_style.name
+        builder.writeln("Hello world!")
+        builder.paragraph_format.style_name = duplicate_style.name
+        builder.writeln("Hello again!")
+        paragraphs = doc.first_section.body.paragraphs
+        self.assertEqual(my_style, paragraphs[0].paragraph_format.style)
+        self.assertEqual(duplicate_style, paragraphs[1].paragraph_format.style)
+        cleanup_options = aspose.words.CleanupOptions()
+        cleanup_options.duplicate_style = True
+        doc.cleanup(cleanup_options)
+        self.assertEqual(5, doc.styles.count)
+        self.assertEqual(my_style, paragraphs[0].paragraph_format.style)
+        self.assertEqual(my_style, paragraphs[1].paragraph_format.style)
