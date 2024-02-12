@@ -8,6 +8,7 @@
             </KnownNamespaces>
         </SourceDetails>
         <Dest RelativePathBase="config">.\ApiExamples</Dest>
+        <ForceDestDelete>true</ForceDestDelete>
     </BaseConfig>
     <IgnoredEntities>
         <Directories>

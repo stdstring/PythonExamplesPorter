@@ -29,7 +29,8 @@
                     break;
             }
             String destDirectory = appConfig.ResolveDestDirectory();
-            if (Directory.Exists(destDirectory) && !IsEmpty(destDirectory))
+            Boolean forceDestDelete = appConfig.ConfigData.BaseConfig!.ForceDestDelete;
+            if (!forceDestDelete && Directory.Exists(destDirectory) && !IsEmpty(destDirectory))
             {
                 problems.Add($"\"{destDirectory}\" must be non existing or empty directory");
                 result = false;

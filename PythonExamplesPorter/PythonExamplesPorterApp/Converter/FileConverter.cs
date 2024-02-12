@@ -22,7 +22,6 @@ namespace PythonExamplesPorterApp.Converter
             converter.Visit(tree.GetRoot());
             if (currentFile.IsEmpty())
                 return;
-            Directory.CreateDirectory(destDirectory);
             currentFile.Save();
         }
 
