@@ -43,14 +43,12 @@ class ExVbaProject(ApiExampleBase):
         self.assertEqual(copy_vba_project.code_page, original_vba_project.code_page)
         self.assertEqual(copy_vba_project.is_signed, original_vba_project.is_signed)
         self.assertEqual(copy_vba_project.modules.count, original_vba_project.modules.count)
-        # for loop begin
         i = 0
         while i < original_vba_project.modules.count:
             self.assertEqual(copy_vba_project.modules[i].name, original_vba_project.modules[i].name)
             self.assertEqual(copy_vba_project.modules[i].type, original_vba_project.modules[i].type)
             self.assertEqual(copy_vba_project.modules[i].source_code, original_vba_project.modules[i].source_code)
             i += 1
-        # for loop end
 
     def test_remove_vba_reference(self):
         raise NotImplementedError("Unsupported call of method named GetLibIdPath")

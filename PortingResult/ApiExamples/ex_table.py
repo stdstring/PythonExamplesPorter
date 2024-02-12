@@ -236,38 +236,26 @@ class ExTable(ApiExampleBase):
         doc.save(file_name = ARTIFACTS_DIR + "Table.CloneTable.doc")
         self.assertEqual(3, doc.get_child_nodes(aspose.words.NodeType.TABLE, True).count)
         self.assertEqual(table.range.text, table_clone.range.text)
-        # for each loop begin
         for cell in table_clone.get_child_nodes(aspose.words.NodeType.CELL, True).of_type():
             cell.remove_all_children()
-        # for loop end
         self.assertEqual("", table_clone.to_string(save_format = aspose.words.SaveFormat.TEXT).strip())
 
     def test_keep_table_together(self):
         doc = aspose.words.Document(file_name = MY_DIR + "Table spanning two pages.docx")
         table = doc.first_section.body.tables[0]
-        # for each loop begin
         for cell in table.get_child_nodes(aspose.words.NodeType.CELL, True).of_type():
-            # for each loop begin
             for para in cell.paragraphs.of_type():
                 self.assertTrue(para.is_in_cell)
-                # if begin
                 if not (cell.parent_row.is_last_row and para.is_end_of_cell):
                     para.paragraph_format.keep_with_next = True
-                # if end
-            # for loop end
-        # for loop end
         doc.save(file_name = ARTIFACTS_DIR + "Table.KeepTableTogether.docx")
         doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Table.KeepTableTogether.docx")
         table = doc.first_section.body.tables[0]
-        # for each loop begin
         for para in table.get_child_nodes(aspose.words.NodeType.PARAGRAPH, True).of_type():
-            # if begin
             if para.is_end_of_cell and (para.parent_node.as_cell()).parent_row.is_last_row:
                 self.assertFalse(para.paragraph_format.keep_with_next)
             else:
                 self.assertTrue(para.paragraph_format.keep_with_next)
-            # if end
-        # for loop end
 
     def test_get_index_of_table_elements(self):
         doc = aspose.words.Document(file_name = MY_DIR + "Tables.docx")
@@ -299,10 +287,8 @@ class ExTable(ApiExampleBase):
         doc = aspose.words.Document(file_name = MY_DIR + "Tables.docx")
         first_table = doc.first_section.body.tables[0]
         second_table = doc.get_child(aspose.words.NodeType.TABLE, 1, True).as_table()
-        # while begin
         while second_table.has_child_nodes:
             first_table.rows.add(second_table.first_row)
-        # while end
         second_table.remove()
         doc.save(file_name = ARTIFACTS_DIR + "Table.CombineTables.docx")
         doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Table.CombineTables.docx")
@@ -338,14 +324,12 @@ class ExTable(ApiExampleBase):
     def test_get_floating_table_properties(self):
         doc = aspose.words.Document(file_name = MY_DIR + "Table wrapped by text.docx")
         table = doc.first_section.body.tables[0]
-        # if begin
         if table.text_wrapping == aspose.words.tables.TextWrapping.AROUND:
             self.assertEqual(aspose.words.drawing.RelativeHorizontalPosition.MARGIN, table.horizontal_anchor)
             self.assertEqual(aspose.words.drawing.RelativeVerticalPosition.PARAGRAPH, table.vertical_anchor)
             self.assertEqual(False, table.allow_overlap)
             table.horizontal_anchor = aspose.words.drawing.RelativeHorizontalPosition.COLUMN
             table.vertical_anchor = aspose.words.drawing.RelativeVerticalPosition.PAGE
-        # if end
 
     def test_change_floating_table_properties(self):
         doc = aspose.words.Document()

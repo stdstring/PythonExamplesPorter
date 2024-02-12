@@ -32,9 +32,7 @@ class ExPclSaveOptions(ApiExampleBase):
 
     def test_get_preserved_paper_tray_information(self):
         doc = aspose.words.Document(file_name = MY_DIR + "Rendering.docx")
-        # for each loop begin
         for section in doc.sections.of_type():
             section.page_setup.first_page_tray = 15
             section.page_setup.other_pages_tray = 12
-        # for loop end
         doc.save(file_name = ARTIFACTS_DIR + "PclSaveOptions.GetPreservedPaperTrayInformation.pcl")

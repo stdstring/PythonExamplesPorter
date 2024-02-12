@@ -122,13 +122,9 @@ class ExCharts(ApiExampleBase):
         builder = aspose.words.DocumentBuilder(doc)
         shape = builder.insert_chart(chart_type = aspose.words.drawing.charts.ChartType.COLUMN, width = 500, height = 300)
         chart = shape.chart
-        # for each loop begin
         for axis in chart.axes:
-            # if begin
             if axis.type == aspose.words.drawing.charts.ChartAxisType.VALUE:
                 axis.has_major_gridlines = False
-            # if end
-        # for loop end
         doc.save(file_name = ARTIFACTS_DIR + "Charts.AxisCollection.docx")
 
     def test_date_time_values(self):
@@ -248,23 +244,19 @@ class ExCharts(ApiExampleBase):
         self.assertEqual(1, chart.series.count)
         self.assertEqual("Y-Values", chart.series[0].name)
         self.assertTrue(chart.series[0].bubble_3d)
-        # for loop begin
         i = 0
         while i < 3:
             chart.series[0].has_data_labels = True
             chart.series[0].data_labels[i].show_bubble_size = True
             chart.series[0].data_labels[i].font.size = 12
             i += 1
-        # for loop end
         doc.save(file_name = ARTIFACTS_DIR + "Charts.Bubble3D.docx")
         doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Charts.Bubble3D.docx")
         series = (doc.get_child(aspose.words.NodeType.SHAPE, 0, True).as_shape()).chart.series[0]
-        # for loop begin
         i = 0
         while i < 3:
             self.assertTrue(series.data_labels[i].show_bubble_size)
             i += 1
-        # for loop end
 
     def test_chart_series_collection(self):
         raise NotImplementedError("Unsupported call of method named AppendChart")
@@ -445,25 +437,19 @@ class ExCharts(ApiExampleBase):
         series.add(series_name = "Series 4", categories = categories, values = [0, 0])
         legend_entries = chart.legend.legend_entries
         legend_entries[3].is_hidden = True
-        # for each loop begin
         for legend_entry in legend_entries:
             legend_entry.font.size = 12
-        # for loop end
         series1.legend_entry.font.italic = True
         doc.save(file_name = ARTIFACTS_DIR + "Charts.LegendEntries.docx")
 
     def test_remove_specific_chart_series(self):
         doc = aspose.words.Document(file_name = MY_DIR + "Reporting engine template - Chart series.docx")
         chart = (doc.get_child(aspose.words.NodeType.SHAPE, 0, True).as_shape()).chart
-        # for loop begin
         i = chart.series.count - 1
         while i >= 0:
-            # if begin
             if chart.series[i].series_type == aspose.words.drawing.charts.ChartSeriesType.COLUMN:
                 chart.series.remove_at(i)
-            # if end
             i -= 1
-        # for loop end
         chart.series.add(series_name = "Aspose Series", categories = ["Category 1", "Category 2", "Category 3", "Category 4"], values = [5.6, 7.1, 2.9, 8.9])
         doc.save(file_name = ARTIFACTS_DIR + "Charts.RemoveSpecificChartSeries.docx")
 
@@ -496,23 +482,17 @@ class ExCharts(ApiExampleBase):
         min_value_index = 0
         max_value = -1.7976931348623157E+308
         max_value_index = 0
-        # for loop begin
         i = 0
         while i < series.y_values.count:
             series.data_points[i].clear_format()
             y_value = series.y_values[i].double_value
-            # if begin
             if y_value < min_value:
                 min_value = y_value
                 min_value_index = i
-            # if end
-            # if begin
             if y_value > max_value:
                 max_value = y_value
                 max_value_index = i
-            # if end
             i += 1
-        # for loop end
         series.data_points[min_value_index].format.fill.fore_color = aspose.pydrawing.Color.red
         series.data_points[max_value_index].format.fill.fore_color = aspose.pydrawing.Color.green
         doc.save(file_name = ARTIFACTS_DIR + "Charts.GetChartSeriesData.docx")

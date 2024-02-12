@@ -269,7 +269,6 @@ class ExDocumentBuilder(ApiExampleBase):
         self.assertEqual(50, table.rows[0].row_format.height)
         self.assertEqual(aspose.words.LineStyle.ENGRAVE_3D, table.rows[0].row_format.borders.line_style)
         self.assertEqual(aspose.pydrawing.Color.orange.to_argb(), table.rows[0].row_format.borders.color.to_argb())
-        # for each loop begin
         for c in table.rows[0].cells:
             c = c.as_cell()
             self.assertEqual(150, c.cell_format.width)
@@ -278,10 +277,8 @@ class ExDocumentBuilder(ApiExampleBase):
             self.assertFalse(c.cell_format.wrap_text)
             self.assertTrue(c.cell_format.fit_text)
             self.assertEqual(aspose.words.ParagraphAlignment.CENTER, c.first_paragraph.paragraph_format.alignment)
-        # for loop end
         self.assertEqual("Row 2, Col 1\a", table.rows[1].cells[0].get_text().strip())
         self.assertEqual("Row 2, Col 2\a", table.rows[1].cells[1].get_text().strip())
-        # for each loop begin
         for c in table.rows[1].cells:
             c = c.as_cell()
             self.assertEqual(150, c.cell_format.width)
@@ -290,7 +287,6 @@ class ExDocumentBuilder(ApiExampleBase):
             self.assertFalse(c.cell_format.wrap_text)
             self.assertTrue(c.cell_format.fit_text)
             self.assertEqual(aspose.words.ParagraphAlignment.CENTER, c.first_paragraph.paragraph_format.alignment)
-        # for loop end
         self.assertEqual(150, table.rows[2].row_format.height)
         self.assertEqual("Row 3, Col 1\a", table.rows[2].cells[0].get_text().strip())
         self.assertEqual(aspose.words.TextOrientation.UPWARD, table.rows[2].cells[0].cell_format.orientation)
@@ -460,24 +456,18 @@ class ExDocumentBuilder(ApiExampleBase):
         self.assertEqual(20, table.left_indent)
         self.assertEqual(aspose.words.HeightRule.AT_LEAST, table.rows[0].row_format.height_rule)
         self.assertEqual(40, table.rows[0].row_format.height)
-        # for each loop begin
         for c in doc.get_child_nodes(aspose.words.NodeType.CELL, True):
             c = c.as_cell()
             self.assertEqual(aspose.words.ParagraphAlignment.CENTER, c.first_paragraph.paragraph_format.alignment)
-            # for each loop begin
             for r in c.first_paragraph.runs:
                 r = r.as_run()
                 self.assertEqual("Arial", r.font.name)
-                # if begin
                 if c.parent_row == table.first_row:
                     self.assertEqual(16, r.font.size)
                     self.assertTrue(r.font.bold)
                 else:
                     self.assertEqual(12, r.font.size)
                     self.assertFalse(r.font.bold)
-                # if end
-            # for loop end
-        # for loop end
 
     def test_table_borders_and_shading(self):
         doc = aspose.words.Document()
@@ -503,7 +493,6 @@ class ExDocumentBuilder(ApiExampleBase):
         doc.save(file_name = ARTIFACTS_DIR + "DocumentBuilder.TableBordersAndShading.docx")
         doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "DocumentBuilder.TableBordersAndShading.docx")
         table = doc.first_section.body.tables[0]
-        # for each loop begin
         for c in table.first_row:
             c = c.as_cell()
             self.assertEqual(0.5, c.cell_format.borders.top.line_width)
@@ -512,10 +501,8 @@ class ExDocumentBuilder(ApiExampleBase):
             self.assertEqual(0.5, c.cell_format.borders.right.line_width)
             self.assertEqual(aspose.pydrawing.Color.empty().to_argb(), c.cell_format.borders.left.color.to_argb())
             self.assertEqual(aspose.words.LineStyle.SINGLE, c.cell_format.borders.left.line_style)
-        # for loop end
         self.assertEqual(aspose.pydrawing.Color.light_sky_blue.to_argb(), table.first_row.first_cell.cell_format.shading.background_pattern_color.to_argb())
         self.assertEqual(aspose.pydrawing.Color.orange.to_argb(), table.first_row.cells[1].cell_format.shading.background_pattern_color.to_argb())
-        # for each loop begin
         for c in table.last_row:
             c = c.as_cell()
             self.assertEqual(4, c.cell_format.borders.top.line_width)
@@ -525,7 +512,6 @@ class ExDocumentBuilder(ApiExampleBase):
             self.assertEqual(aspose.pydrawing.Color.empty().to_argb(), c.cell_format.borders.left.color.to_argb())
             self.assertEqual(aspose.words.LineStyle.SINGLE, c.cell_format.borders.left.line_style)
             self.assertEqual(aspose.pydrawing.Color.empty().to_argb(), c.cell_format.shading.background_pattern_color.to_argb())
-        # for loop end
 
     def test_set_preferred_type_convert_util(self):
         doc = aspose.words.Document()
@@ -730,14 +716,12 @@ class ExDocumentBuilder(ApiExampleBase):
         builder.writeln("The space between the above paragraph and this one depends on the DocumentBuilder's paragraph format.")
         doc.save(file_name = ARTIFACTS_DIR + "DocumentBuilder.SetParagraphFormatting.docx")
         doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "DocumentBuilder.SetParagraphFormatting.docx")
-        # for each loop begin
         for paragraph in doc.first_section.body.paragraphs:
             paragraph = paragraph.as_paragraph()
             self.assertEqual(aspose.words.ParagraphAlignment.CENTER, paragraph.paragraph_format.alignment)
             self.assertEqual(100, paragraph.paragraph_format.left_indent)
             self.assertEqual(50, paragraph.paragraph_format.right_indent)
             self.assertEqual(25, paragraph.paragraph_format.space_after)
-        # for loop end
 
     def test_set_row_formatting(self):
         doc = aspose.words.Document()
@@ -882,13 +866,9 @@ class ExDocumentBuilder(ApiExampleBase):
         warnings = aspose.words.WarningInfoCollection()
         doc.warning_callback = warnings
         doc.save(file_name = ARTIFACTS_DIR + "DocumentBuilder.EmphasesWarningSourceMarkdown.md")
-        # for each loop begin
         for warning_info in warnings:
-            # if begin
             if warning_info.source == aspose.words.WarningSource.MARKDOWN:
                 self.assertEqual("The (*, 0:11) cannot be properly written into Markdown.", warning_info.description)
-            # if end
-        # for loop end
 
     def test_do_not_ignore_header_footer(self):
         dst_doc = aspose.words.Document(file_name = MY_DIR + "Document.docx")

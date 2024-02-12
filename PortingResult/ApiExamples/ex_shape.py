@@ -189,20 +189,16 @@ class ExShape(ApiExampleBase):
         fill = shape.fill
         fill.fore_theme_color = aspose.words.themes.ThemeColor.DARK1
         fill.back_theme_color = aspose.words.themes.ThemeColor.BACKGROUND2
-        # if begin
         if fill.back_tint_and_shade == 0:
             fill.back_tint_and_shade = 0.2
-        # if end
         doc.save(file_name = ARTIFACTS_DIR + "Shape.FillThemeColor.docx")
 
     def test_fill_tint_and_shade(self):
         doc = aspose.words.Document(file_name = MY_DIR + "Big document.docx")
         text_fill = doc.first_section.body.first_paragraph.runs[0].font.fill
         text_fill.fore_theme_color = aspose.words.themes.ThemeColor.ACCENT1
-        # if begin
         if text_fill.fore_tint_and_shade == 0:
             text_fill.fore_tint_and_shade = 0.5
-        # if end
         doc.save(file_name = ARTIFACTS_DIR + "Shape.FillTintAndShade.docx")
 
     def test_title(self):
@@ -222,7 +218,6 @@ class ExShape(ApiExampleBase):
         shape = doc.get_child(aspose.words.NodeType.SHAPE, 0, True).as_shape()
         ole_control = shape.ole_format.ole_control
         self.assertEqual("CheckBox1", ole_control.name)
-        # if begin
         if ole_control.is_forms2_ole_control:
             check_box = ole_control.as_forms2_ole_control()
             self.assertEqual("Первый", check_box.caption)
@@ -232,7 +227,6 @@ class ExShape(ApiExampleBase):
             self.assertEqual(None, check_box.child_nodes)
             self.assertEqual("", check_box.group_name)
             check_box.group_name = "Aspose group name"
-        # if end
         doc.save(file_name = ARTIFACTS_DIR + "Shape.GetActiveXControlProperties.docx")
         doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Shape.GetActiveXControlProperties.docx")
         shape = doc.get_child(aspose.words.NodeType.SHAPE, 0, True).as_shape()
@@ -407,14 +401,10 @@ class ExShape(ApiExampleBase):
     def test_shadow_format(self):
         doc = aspose.words.Document(file_name = MY_DIR + "Shape stroke pattern border.docx")
         shape = doc.get_child_nodes(aspose.words.NodeType.SHAPE, True)[0].as_shape()
-        # if begin
         if shape.shadow_format.visible and shape.shadow_format.type == aspose.words.drawing.ShadowType.SHADOW2:
             shape.shadow_format.type = aspose.words.drawing.ShadowType.SHADOW7
-        # if end
-        # if begin
         if shape.shadow_format.type == aspose.words.drawing.ShadowType.SHADOW_MIXED:
             shape.shadow_format.clear()
-        # if end
 
     def test_no_text_rotation(self):
         doc = aspose.words.Document()
@@ -431,24 +421,16 @@ class ExShape(ApiExampleBase):
         builder = aspose.words.DocumentBuilder(doc)
         shape = builder.insert_shape(shape_type = aspose.words.drawing.ShapeType.RECTANGLE, width = 100, height = 40)
         shape.wrap_type = aspose.words.drawing.WrapType.NONE
-        # if begin
         if shape.relative_horizontal_size == aspose.words.drawing.RelativeHorizontalSize.DEFAULT:
             shape.relative_horizontal_size = aspose.words.drawing.RelativeHorizontalSize.MARGIN
             shape.width_relative = 50
-        # if end
-        # if begin
         if shape.relative_vertical_size == aspose.words.drawing.RelativeVerticalSize.DEFAULT:
             shape.relative_vertical_size = aspose.words.drawing.RelativeVerticalSize.MARGIN
             shape.height_relative = 30
-        # if end
-        # if begin
         if shape.relative_vertical_position == aspose.words.drawing.RelativeVerticalPosition.PARAGRAPH:
             shape.relative_vertical_position = aspose.words.drawing.RelativeVerticalPosition.TOP_MARGIN
             shape.top_relative = 30
-        # if end
-        # if begin
         if shape.relative_horizontal_position == aspose.words.drawing.RelativeHorizontalPosition.DEFAULT:
             shape.relative_horizontal_position = aspose.words.drawing.RelativeHorizontalPosition.RIGHT_MARGIN
             shape.left_relative = -260
-        # if end
         doc.save(file_name = ARTIFACTS_DIR + "Shape.RelativeSizeAndPosition.docx")

@@ -45,22 +45,18 @@ class ExBorder(ApiExampleBase):
         self.assertEqual(3, borders[0].line_width)
         self.assertEqual(aspose.words.LineStyle.SINGLE, borders[0].line_style)
         self.assertTrue(borders[0].is_visible)
-        # for each loop begin
         for border in borders:
             border.clear_formatting()
-        # for loop end
         self.assertEqual(aspose.pydrawing.Color.empty().to_argb(), borders[0].color.to_argb())
         self.assertEqual(0, borders[0].line_width)
         self.assertEqual(aspose.words.LineStyle.NONE, borders[0].line_style)
         self.assertFalse(borders[0].is_visible)
         doc.save(file_name = ARTIFACTS_DIR + "Border.ClearFormatting.docx")
         doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Border.ClearFormatting.docx")
-        # for each loop begin
         for test_border in doc.first_section.body.first_paragraph.paragraph_format.borders:
             self.assertEqual(aspose.pydrawing.Color.empty().to_argb(), test_border.color.to_argb())
             self.assertEqual(0, test_border.line_width)
             self.assertEqual(aspose.words.LineStyle.NONE, test_border.line_style)
-        # for loop end
 
     def test_shared_elements(self):
         doc = aspose.words.Document()
@@ -70,37 +66,27 @@ class ExBorder(ApiExampleBase):
         first_paragraph_borders = doc.first_section.body.first_paragraph.paragraph_format.borders
         second_paragraph_borders = builder.current_paragraph.paragraph_format.borders
         self.assertEqual(6, first_paragraph_borders.count)
-        # for loop begin
         i = 0
         while i < first_paragraph_borders.count:
             self.assertTrue(first_paragraph_borders[i].equals(rhs = second_paragraph_borders[i]))
             self.assertEqual(first_paragraph_borders[i].get_hash_code(), second_paragraph_borders[i].get_hash_code())
             self.assertFalse(first_paragraph_borders[i].is_visible)
             i += 1
-        # for loop end
-        # for each loop begin
         for border in second_paragraph_borders:
             border.line_style = aspose.words.LineStyle.DOT_DASH
-        # for loop end
-        # for loop begin
         i = 0
         while i < first_paragraph_borders.count:
             self.assertFalse(first_paragraph_borders[i].equals(rhs = second_paragraph_borders[i]))
             self.assertNotEqual(first_paragraph_borders[i].get_hash_code(), second_paragraph_borders[i].get_hash_code())
             self.assertTrue(second_paragraph_borders[i].is_visible)
             i += 1
-        # for loop end
         doc.save(file_name = ARTIFACTS_DIR + "Border.SharedElements.docx")
         doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Border.SharedElements.docx")
         paragraphs = doc.first_section.body.paragraphs
-        # for each loop begin
         for test_border in paragraphs[0].paragraph_format.borders:
             self.assertEqual(aspose.words.LineStyle.NONE, test_border.line_style)
-        # for loop end
-        # for each loop begin
         for test_border in paragraphs[1].paragraph_format.borders:
             self.assertEqual(aspose.words.LineStyle.DOT_DASH, test_border.line_style)
-        # for loop end
 
     def test_horizontal_borders(self):
         doc = aspose.words.Document()

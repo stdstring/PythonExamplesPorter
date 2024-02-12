@@ -183,8 +183,6 @@ class ExStructuredDocumentTag(ApiExampleBase):
         builder = aspose.words.DocumentBuilder(doc)
         builder.move_to_paragraph(0, -1)
         builder.insert_field(field_code = """CITATION Ath22 \\l 1033 """, field_value = "(John Lennon, 2022)")
-        # while begin
         while sdt.next_sibling != None:
             sdt.append_child(sdt.next_sibling)
-        # while end
         doc.save(file_name = ARTIFACTS_DIR + "StructuredDocumentTag.Citation.docx")

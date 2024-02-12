@@ -149,14 +149,12 @@ class ExPageSetup(ApiExampleBase):
         doc.save(file_name = ARTIFACTS_DIR + "PageSetup.PageBorders.docx")
         doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "PageSetup.PageBorders.docx")
         page_setup = doc.first_section.page_setup
-        # for each loop begin
         for border in page_setup.borders:
             self.assertEqual(aspose.words.LineStyle.DOUBLE_WAVE, border.line_style)
             self.assertEqual(2, border.line_width)
             self.assertEqual(aspose.pydrawing.Color.green.to_argb(), border.color.to_argb())
             self.assertEqual(24, border.distance_from_text)
             self.assertTrue(border.shadow)
-        # for loop end
 
     def test_page_numbering(self):
         doc = aspose.words.Document()

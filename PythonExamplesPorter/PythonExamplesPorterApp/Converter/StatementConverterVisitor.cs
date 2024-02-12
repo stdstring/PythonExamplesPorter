@@ -47,7 +47,6 @@ namespace PythonExamplesPorterApp.Converter
             if (loopSourceInfo.Type == null)
                 throw new UnsupportedSyntaxException("Unrecognizable type of foreach loop source");
             INamedTypeSymbol? enumerableInterface = loopSourceInfo.Type.AllInterfaces.FirstOrDefault(ci => ci.MetadataName == "IEnumerable`1");
-            _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}# for each loop begin");
             String enumerationVariable = _appData.NameTransformer.TransformLocalVariableName(node.Identifier.Text);
             String forEachExpression = ConvertExpression(node.Expression, _expressionCommonSettings);
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}for {enumerationVariable} in {forEachExpression}:");
@@ -67,13 +66,11 @@ namespace PythonExamplesPorterApp.Converter
                 }
             }
             VisitStatement(node.Statement, true);
-            _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}# for loop end");
         }
 
         public override void VisitForStatement(ForStatementSyntax node)
         {
             ExpressionConverterSettings incrementSettings = new ExpressionConverterSettings(_expressionCommonSettings){AllowIncrementDecrement = true};
-            _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}# for loop begin");
             if (node.Declaration != null)
             {
                 foreach (VariableDeclaratorSyntax variable in node.Declaration.Variables)
@@ -89,19 +86,15 @@ namespace PythonExamplesPorterApp.Converter
                 _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}{incrementExpression}");
             }
             _indentation -= StorageDef.IndentationDelta;
-            _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}# for loop end");
         }
 
         public override void VisitIfStatement(IfStatementSyntax node)
         {
-            _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}# if begin");
             VisitIfStatementImpl(node, "if");
-            _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}# if end");
         }
 
         public override void VisitSwitchStatement(SwitchStatementSyntax node)
         {
-            _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}# switch begin");
             // TODO (std_string) : think about possible other definition of switchCondition variable
             const String switchConditionVariable = "switch_condition";
             String switchCondition = ConvertExpression(node.Expression, _expressionCommonSettings);
@@ -128,21 +121,17 @@ namespace PythonExamplesPorterApp.Converter
                     VisitSwitchSectionStatements(statements);
                 }
             }
-            _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}# switch end");
         }
 
         public override void VisitWhileStatement(WhileStatementSyntax node)
         {
-            _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}# while begin");
             String condition = ConvertExpression(node.Condition, _expressionCommonSettings);
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}while {condition}:");
             VisitStatement(node.Statement, true);
-            _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}# while end");
         }
 
         public override void VisitDoStatement(DoStatementSyntax node)
         {
-            _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}# do ... while begin");
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}while true:");
             VisitStatement(node.Statement, true);
             _indentation += StorageDef.IndentationDelta;
@@ -150,7 +139,6 @@ namespace PythonExamplesPorterApp.Converter
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}if {condition}:");
             _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation + StorageDef.IndentationDelta)}break");
             _indentation -= StorageDef.IndentationDelta;
-            _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}# do ... while end");
         }
 
         public override void VisitBreakStatement(BreakStatementSyntax node)

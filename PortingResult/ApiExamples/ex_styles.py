@@ -29,27 +29,19 @@ class ExStyles(ApiExampleBase):
 
     def test_change_tocs_tab_stops(self):
         doc = aspose.words.Document(file_name = MY_DIR + "Table of contents.docx")
-        # for each loop begin
         for para in doc.get_child_nodes(aspose.words.NodeType.PARAGRAPH, True).of_type():
-            # if begin
             if para.paragraph_format.style.style_identifier >= aspose.words.StyleIdentifier.TOC1 and para.paragraph_format.style.style_identifier <= aspose.words.StyleIdentifier.TOC9:
                 tab = para.paragraph_format.tab_stops[0]
                 para.paragraph_format.tab_stops.remove_by_position(tab.position)
                 para.paragraph_format.tab_stops.add(position = tab.position - 50, alignment = tab.alignment, leader = tab.leader)
-            # if end
-        # for loop end
         doc.save(file_name = ARTIFACTS_DIR + "Styles.ChangeTocsTabStops.docx")
         doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Styles.ChangeTocsTabStops.docx")
-        # for each loop begin
         for para in doc.get_child_nodes(aspose.words.NodeType.PARAGRAPH, True).of_type():
-            # if begin
             if para.paragraph_format.style.style_identifier >= aspose.words.StyleIdentifier.TOC1 and para.paragraph_format.style.style_identifier <= aspose.words.StyleIdentifier.TOC9:
                 tab_stop = para.get_effective_tab_stops()[0]
                 self.assertEqual(400.8, tab_stop.position)
                 self.assertEqual(aspose.words.TabAlignment.RIGHT, tab_stop.alignment)
                 self.assertEqual(aspose.words.TabLeader.DOTS, tab_stop.leader)
-            # if end
-        # for loop end
 
     def test_copy_style_same_document(self):
         doc = aspose.words.Document()
