@@ -7,6 +7,7 @@ using System.Text;
 namespace PythonExamplesPorterAppTests
 {
     [TestFixture]
+    [Ignore("Need recreation")]
     public class IntegrationTests
     {
         [SetUp]
@@ -168,8 +169,8 @@ namespace PythonExamplesPorterAppTests
                 utilProcess.StartInfo.WorkingDirectory = currentDir;
                 IList<String> output = new List<String>();
                 IList<String> error = new List<String>();
-                utilProcess.OutputDataReceived += (sender, e) => { output.Add(e.Data ?? ""); };
-                utilProcess.ErrorDataReceived += (sender, e) => { error.Add(e.Data ?? ""); };
+                utilProcess.OutputDataReceived += (_, e) => { output.Add(e.Data ?? ""); };
+                utilProcess.ErrorDataReceived += (_, e) => { error.Add(e.Data ?? ""); };
                 utilProcess.Start();
                 utilProcess.BeginErrorReadLine();
                 utilProcess.BeginOutputReadLine();

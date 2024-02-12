@@ -76,6 +76,8 @@ namespace PythonExamplesPorterApp.Names
                         parts.Add(digitPart);
                         index += digitPart.Length;
                         break;
+                    default:
+                        throw new ArgumentException("Bad name");
                 }
             }
             return JoinParts(parts);
@@ -143,6 +145,8 @@ namespace PythonExamplesPorterApp.Names
                         builder.Append(part);
                         state.HasDigitParts = true;
                         break;
+                    default:
+                        throw new ArgumentException("Bad parts");
                 }
             }
             return builder.ToString();
