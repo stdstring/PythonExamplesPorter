@@ -71,7 +71,7 @@ namespace PythonExamplesPorterApp
 
         private static void RunPorter(AppConfig appConfig, TextWriter outputWriter, TextWriter errorWriter)
         {
-            PrerequisitesManager.Run();
+            PrerequisitesManager.Run(appConfig);
             AppData appData = CreateAppData(appConfig, outputWriter, errorWriter);
             ProjectProcessor projectProcessor = new ProjectProcessor(appData);
             projectProcessor.Process(appData.AppConfig.ResolveSource());

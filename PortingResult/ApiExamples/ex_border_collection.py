@@ -15,22 +15,16 @@ class ExBorderCollection(ApiExampleBase):
         self.assertEqual(aspose.pydrawing.Color.red.to_argb(), first_paragraph_borders.color.to_argb())
         self.assertEqual(aspose.words.LineStyle.SINGLE, first_paragraph_borders.line_style)
         self.assertEqual(3, first_paragraph_borders.line_width)
-        # for each loop begin
         for paragraph in doc.first_section.body.paragraphs:
             paragraph = paragraph.as_paragraph()
             paragraph.paragraph_format.borders.clear_formatting()
-            # for each loop begin
             for border in paragraph.paragraph_format.borders:
                 self.assertEqual(aspose.pydrawing.Color.empty().to_argb(), border.color.to_argb())
                 self.assertEqual(aspose.words.LineStyle.NONE, border.line_style)
                 self.assertEqual(0, border.line_width)
-            # for loop end
-        # for loop end
         doc.save(file_name = ARTIFACTS_DIR + "BorderCollection.RemoveAllBorders.docx")
         doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "BorderCollection.RemoveAllBorders.docx")
-        # for each loop begin
         for border in doc.first_section.body.first_paragraph.paragraph_format.borders:
             self.assertEqual(aspose.pydrawing.Color.empty().to_argb(), border.color.to_argb())
             self.assertEqual(aspose.words.LineStyle.NONE, border.line_style)
             self.assertEqual(0, border.line_width)
-        # for loop end

@@ -38,19 +38,25 @@ namespace PythonExamplesPorterApp.Converter
                 _appData.Logger.LogInfo($"{logHead} skipped for nested class");
                 return;
             }
-            IReadOnlyList<AttributeListSyntax> attributes = node.AttributeLists;
-            // we don't process classes not marked by NUnit.Framework.TestFixtureAttribute attribute
-            if (!attributes.ContainAttribute(_model, "NUnit.Framework.TestFixtureAttribute"))
-            {
-                _appData.Logger.LogInfo($"{logHead} skipped for class non marked by NUnit.Framework.TestFixtureAttribute attribute");
-                return;
-            }
             // TODO (std_string) : think about using SymbolDisplayFormat
             String currentTypeFullName = currentType.ToDisplayString();
             // we don't process ignored class
             if (_appData.IgnoredManager.IsIgnoredType(currentTypeFullName))
             {
                 _appData.Logger.LogInfo($"{logHead} skipped because ignored class");
+                return;
+            }
+            // we don't process handmade class
+            if (_appData.HandmadeManager.IsHandmadeType(currentTypeFullName))
+            {
+                _appData.Logger.LogInfo($"{logHead} skipped because handmade class");
+                return;
+            }
+            IReadOnlyList<AttributeListSyntax> attributes = node.AttributeLists;
+            // we don't process classes not marked by NUnit.Framework.TestFixtureAttribute attribute
+            if (!attributes.ContainAttribute(_model, "NUnit.Framework.TestFixtureAttribute"))
+            {
+                _appData.Logger.LogInfo($"{logHead} skipped for class non marked by NUnit.Framework.TestFixtureAttribute attribute");
                 return;
             }
             _appData.Logger.LogInfo($"{logHead} processed");

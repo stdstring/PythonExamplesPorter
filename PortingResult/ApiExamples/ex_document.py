@@ -499,10 +499,8 @@ class ExDocument(ApiExampleBase):
         text_watermark_options.is_semitrasparent = False
         doc.watermark.set_text(text = "Aspose Watermark", options = text_watermark_options)
         doc.save(file_name = ARTIFACTS_DIR + "Document.TextWatermark.docx")
-        # if begin
         if doc.watermark.type == aspose.words.WatermarkType.TEXT:
             doc.watermark.remove()
-        # if end
         doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Document.TextWatermark.docx")
         self.assertEqual(aspose.words.WatermarkType.TEXT, doc.watermark.type)
 
@@ -569,10 +567,8 @@ class ExDocument(ApiExampleBase):
     def test_set_justification_mode(self):
         doc = aspose.words.Document(file_name = MY_DIR + "Document.docx")
         justification_mode = doc.justification_mode
-        # if begin
         if justification_mode == aspose.words.settings.JustificationMode.EXPAND:
             doc.justification_mode = aspose.words.settings.JustificationMode.COMPRESS
-        # if end
         doc.save(file_name = ARTIFACTS_DIR + "Document.SetJustificationMode.docx")
 
     def test_page_is_in_color(self):

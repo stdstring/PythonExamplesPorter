@@ -192,8 +192,6 @@ class ExSection(ApiExampleBase):
         builder.write("Section 1")
         builder.insert_break(aspose.words.BreakType.SECTION_BREAK_NEW_PAGE)
         builder.write("Section 2")
-        # for each loop begin
         for section in doc.of_type():
             section.page_setup.paper_size = aspose.words.PaperSize.LETTER
-        # for loop end
         doc.save(file_name = ARTIFACTS_DIR + "Section.ModifyPageSetupInAllSections.doc")

@@ -333,17 +333,11 @@ class ExFont(ApiExampleBase):
         builder.writeln("Text originally in \"Emphasis\" style")
         builder.font.style_identifier = aspose.words.StyleIdentifier.INTENSE_EMPHASIS
         builder.writeln("Text originally in \"Intense Emphasis\" style")
-        # for each loop begin
         for run in doc.get_child_nodes(aspose.words.NodeType.RUN, True).of_type():
-            # if begin
             if run.font.style_name == "Emphasis":
                 run.font.style_name = "Strong"
-            # if end
-            # if begin
             if run.font.style_identifier == aspose.words.StyleIdentifier.INTENSE_EMPHASIS:
                 run.font.style_identifier = aspose.words.StyleIdentifier.STRONG
-            # if end
-        # for loop end
         doc.save(file_name = ARTIFACTS_DIR + "Font.ChangeStyle.docx")
         doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Font.ChangeStyle.docx")
         doc_run = doc.first_section.body.paragraphs[0].runs[0]
@@ -372,14 +366,10 @@ class ExFont(ApiExampleBase):
         style.font.name = "Courier New"
         builder.font.style_name = "MyStyle"
         builder.write("This text is in a custom style.")
-        # for each loop begin
         for run in doc.get_child_nodes(aspose.words.NodeType.RUN, True).of_type():
             char_style = run.font.style
-            # if begin
             if not char_style.built_in:
                 run.font.underline = aspose.words.Underline.DOUBLE
-            # if end
-        # for loop end
         doc.save(file_name = ARTIFACTS_DIR + "Font.Style.docx")
         doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Font.Style.docx")
         doc_run = doc.first_section.body.paragraphs[0].runs[0]

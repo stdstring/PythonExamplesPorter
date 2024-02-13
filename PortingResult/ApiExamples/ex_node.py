@@ -52,15 +52,11 @@ class ExNode(ApiExampleBase):
         doc = aspose.words.Document(file_name = MY_DIR + "Tables.docx")
         self.assertEqual(2, doc.get_child_nodes(aspose.words.NodeType.TABLE, True).count)
         cur_node = doc.first_section.body.first_child
-        # while begin
         while cur_node != None:
             next_node = cur_node.next_sibling
-            # if begin
             if cur_node.node_type == aspose.words.NodeType.TABLE:
                 cur_node.remove()
-            # if end
             cur_node = next_node
-        # while end
         self.assertEqual(0, doc.get_child_nodes(aspose.words.NodeType.TABLE, True).count)
 
     def test_enum_next_sibling(self):
@@ -77,10 +73,8 @@ class ExNode(ApiExampleBase):
         builder.writeln("Section 2 text.")
         last_section = doc.last_child.as_section()
         first_section = last_section.previous_sibling.as_section()
-        # if begin
         if last_section.previous_sibling != None:
             doc.remove_child(first_section)
-        # if end
         self.assertEqual("Section 2 text.", doc.get_text().strip())
 
     def test_select_composite_nodes(self):
@@ -124,13 +118,9 @@ class ExNode(ApiExampleBase):
         builder.writeln("The second paragraph")
         builder.writeln("The third paragraph")
         builder.writeln("The fourth paragraph")
-        # for each loop begin
         for para in doc.first_section.body.paragraphs.to_array():
-            # if begin
             if ("third" in para.range.text):
                 para.remove()
-            # if end
-        # for loop end
         self.assertFalse(("The third paragraph" in doc.get_text()))
 
     def test_node_collection(self):

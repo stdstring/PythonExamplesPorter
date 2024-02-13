@@ -71,13 +71,9 @@ class ExParagraph(ApiExampleBase):
     def test_range_revisions(self):
         doc = aspose.words.Document(file_name = MY_DIR + "Revisions.docx")
         paragraph = doc.first_section.body.first_paragraph
-        # for each loop begin
         for revision in paragraph.range.revisions:
-            # if begin
             if revision.revision_type == aspose.words.RevisionType.DELETION:
                 revision.accept()
-            # if end
-        # for loop end
         doc.first_section.range.revisions.reject_all()
 
     def test_get_format_revision(self):

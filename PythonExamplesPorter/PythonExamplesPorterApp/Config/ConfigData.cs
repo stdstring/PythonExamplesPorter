@@ -68,5 +68,8 @@ namespace PythonExamplesPorterApp.Config
 
         [XmlElement("Dest")]
         public TargetPath? DestDirectory { get; set; }
+
+        [XmlElement("ForceDestDelete")]
+        public Boolean ForceDestDelete { get; set; }
     }
 }

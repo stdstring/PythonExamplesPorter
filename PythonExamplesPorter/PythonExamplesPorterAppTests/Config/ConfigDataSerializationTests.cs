@@ -25,7 +25,8 @@ namespace PythonExamplesPorterAppTests.Config
                 BaseConfig = new BaseConfig
                 {
                     Source = new TargetPath(RelativePathBase.App, "..\\source\\someproj.csproj"),
-                    DestDirectory = new TargetPath(RelativePathBase.App, "..\\dest\\examples")
+                    DestDirectory = new TargetPath(RelativePathBase.App, "..\\dest\\examples"),
+                    ForceDestDelete = false
                 }
             };
             CheckDeserialization(expected, source);
@@ -46,7 +47,8 @@ namespace PythonExamplesPorterAppTests.Config
                 BaseConfig = new BaseConfig
                 {
                     Source = new TargetPath(RelativePathBase.Config, "..\\source\\someproj.csproj"),
-                    DestDirectory = new TargetPath(RelativePathBase.Config, "..\\dest\\examples")
+                    DestDirectory = new TargetPath(RelativePathBase.Config, "..\\dest\\examples"),
+                    ForceDestDelete = false
                 }
             };
             CheckDeserialization(expected, source);
@@ -77,7 +79,31 @@ namespace PythonExamplesPorterAppTests.Config
                     {
                         KnownNamespaces = new[]{"RootNamespace.OtherNamespace", "RootNamespace.AnotherNamespace"}
                     },
-                    DestDirectory = new TargetPath(RelativePathBase.App, "..\\dest\\examples")
+                    DestDirectory = new TargetPath(RelativePathBase.App, "..\\dest\\examples"),
+                    ForceDestDelete = false
+                }
+            };
+            CheckDeserialization(expected, source);
+        }
+
+        [Test]
+        public void DeserializeWithForceDestDeleteBaseConfigOnly()
+        {
+            const String source = "<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n" +
+                                  "<ConfigData>\r\n" +
+                                  "  <BaseConfig>\r\n" +
+                                  "    <Source RelativePathBase=\"app\">..\\source\\someproj.csproj</Source>\r\n" +
+                                  "    <Dest RelativePathBase=\"app\">..\\dest\\examples</Dest>\r\n" +
+                                  "    <ForceDestDelete>true</ForceDestDelete>\r\n" +
+                                  "  </BaseConfig>\r\n" +
+                                  "</ConfigData>";
+            ConfigData expected = new ConfigData
+            {
+                BaseConfig = new BaseConfig
+                {
+                    Source = new TargetPath(RelativePathBase.App, "..\\source\\someproj.csproj"),
+                    DestDirectory = new TargetPath(RelativePathBase.App, "..\\dest\\examples"),
+                    ForceDestDelete = true
                 }
             };
             CheckDeserialization(expected, source);
@@ -99,7 +125,8 @@ namespace PythonExamplesPorterAppTests.Config
                 BaseConfig = new BaseConfig
                 {
                     Source = new TargetPath(RelativePathBase.App, "..\\source\\someproj.csproj"),
-                    DestDirectory = new TargetPath(RelativePathBase.App, "..\\dest\\examples")
+                    DestDirectory = new TargetPath(RelativePathBase.App, "..\\dest\\examples"),
+                    ForceDestDelete = false
                 },
                 IgnoredEntities = new IgnoredEntities
                 {
@@ -133,7 +160,8 @@ namespace PythonExamplesPorterAppTests.Config
                 BaseConfig = new BaseConfig
                 {
                     Source = new TargetPath(RelativePathBase.App, "..\\source\\someproj.csproj"),
-                    DestDirectory = new TargetPath(RelativePathBase.App, "..\\dest\\examples")
+                    DestDirectory = new TargetPath(RelativePathBase.App, "..\\dest\\examples"),
+                    ForceDestDelete = false
                 },
                 IgnoredEntities = new IgnoredEntities
                 {
@@ -168,7 +196,8 @@ namespace PythonExamplesPorterAppTests.Config
                 BaseConfig = new BaseConfig
                 {
                     Source = new TargetPath(RelativePathBase.App, "..\\source\\someproj.csproj"),
-                    DestDirectory = new TargetPath(RelativePathBase.App, "..\\dest\\examples")
+                    DestDirectory = new TargetPath(RelativePathBase.App, "..\\dest\\examples"),
+                    ForceDestDelete = false
                 },
                 IgnoredEntities = new IgnoredEntities
                 {
@@ -202,7 +231,8 @@ namespace PythonExamplesPorterAppTests.Config
                 BaseConfig = new BaseConfig
                 {
                     Source = new TargetPath(RelativePathBase.App, "..\\source\\someproj.csproj"),
-                    DestDirectory = new TargetPath(RelativePathBase.App, "..\\dest\\examples")
+                    DestDirectory = new TargetPath(RelativePathBase.App, "..\\dest\\examples"),
+                    ForceDestDelete = false
                 },
                 IgnoredEntities = new IgnoredEntities
                 {
@@ -236,7 +266,8 @@ namespace PythonExamplesPorterAppTests.Config
                 BaseConfig = new BaseConfig
                 {
                     Source = new TargetPath(RelativePathBase.App, "..\\source\\someproj.csproj"),
-                    DestDirectory = new TargetPath(RelativePathBase.App, "..\\dest\\examples")
+                    DestDirectory = new TargetPath(RelativePathBase.App, "..\\dest\\examples"),
+                    ForceDestDelete = false
                 },
                 IgnoredEntities = new IgnoredEntities
                 {
@@ -283,7 +314,8 @@ namespace PythonExamplesPorterAppTests.Config
                 BaseConfig = new BaseConfig
                 {
                     Source = new TargetPath(RelativePathBase.App, "..\\source\\someproj.csproj"),
-                    DestDirectory = new TargetPath(RelativePathBase.App, "..\\dest\\examples")
+                    DestDirectory = new TargetPath(RelativePathBase.App, "..\\dest\\examples"),
+                    ForceDestDelete = false
                 },
                 IgnoredEntities = new IgnoredEntities
                 {
@@ -312,7 +344,8 @@ namespace PythonExamplesPorterAppTests.Config
                 BaseConfig = new BaseConfig
                 {
                     Source = new TargetPath(RelativePathBase.App, "..\\source\\someproj.csproj"),
-                    DestDirectory = new TargetPath(RelativePathBase.App, "..\\dest\\examples")
+                    DestDirectory = new TargetPath(RelativePathBase.App, "..\\dest\\examples"),
+                    ForceDestDelete = false
                 },
                 HandmadeEntities = new HandmadeEntities{HandmadeTypes = Array.Empty<HandmadeType>()}
             };
@@ -350,7 +383,8 @@ namespace PythonExamplesPorterAppTests.Config
                 BaseConfig = new BaseConfig
                 {
                     Source = new TargetPath(RelativePathBase.App, "..\\source\\someproj.csproj"),
-                    DestDirectory = new TargetPath(RelativePathBase.App, "..\\dest\\examples")
+                    DestDirectory = new TargetPath(RelativePathBase.App, "..\\dest\\examples"),
+                    ForceDestDelete = false
                 },
                 HandmadeEntities = new HandmadeEntities
                 {
@@ -427,7 +461,8 @@ namespace PythonExamplesPorterAppTests.Config
                 BaseConfig = new BaseConfig
                 {
                     Source = new TargetPath(RelativePathBase.App, "..\\source\\someproj.csproj"),
-                    DestDirectory = new TargetPath(RelativePathBase.App, "..\\dest\\examples")
+                    DestDirectory = new TargetPath(RelativePathBase.App, "..\\dest\\examples"),
+                    ForceDestDelete = false
                 },
                 HandmadeAliases = new HandmadeNameAliases
                 {
@@ -476,6 +511,7 @@ namespace PythonExamplesPorterAppTests.Config
                                   "        </KnownNamespaces>\r\n" +
                                   "    </SourceDetails>\r\n" +
                                   "    <Dest RelativePathBase=\"app\">..\\dest\\examples</Dest>\r\n" +
+                                  "    <ForceDestDelete>true</ForceDestDelete>\r\n" +
                                   "  </BaseConfig>\r\n" +
                                   "  <IgnoredEntities>\r\n" +
                                   "    <Directories>" +
@@ -555,7 +591,8 @@ namespace PythonExamplesPorterAppTests.Config
                     {
                         KnownNamespaces = new[]{"RootNamespace.OtherNamespace", "RootNamespace.AnotherNamespace"}
                     },
-                    DestDirectory = new TargetPath(RelativePathBase.App, "..\\dest\\examples")
+                    DestDirectory = new TargetPath(RelativePathBase.App, "..\\dest\\examples"),
+                    ForceDestDelete = true
                 },
                 IgnoredEntities = new IgnoredEntities
                 {
@@ -661,6 +698,7 @@ namespace PythonExamplesPorterAppTests.Config
             Assert.IsNotNull(actual.DestDirectory);
             CheckTargetPath(expected.DestDirectory!, actual.DestDirectory!);
             CheckSourceDetails(expected.SourceDetails, actual.SourceDetails);
+            Assert.AreEqual(expected.ForceDestDelete, actual.ForceDestDelete);
         }
 
         private void CheckIgnoredEntities(IgnoredEntities? expected, IgnoredEntities? actual)
