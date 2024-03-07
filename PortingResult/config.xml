@@ -240,6 +240,55 @@
             <Method>ApiExamples.ExXpsSaveOptions.OptimizeOutput</Method>
             <!-- not ported -->
             <Method>ApiExamples.ExDocument.NotSupportedWarning</Method>
+            <!-- unsupported features -->
+            <Method>ApiExamples.ExBookmarksOutlineLevelCollection.UsePdfBookmarkEditorForBookmarkLevels</Method>
+            <Method>ApiExamples.ExDocument.LoadFromWebAsync</Method>
+            <Method>ApiExamples.ExDocument.PdfRenderer</Method>
+            <Method>ApiExamples.ExDocument.InsertHtmlFromWebPageAsync</Method>
+            <Method>ApiExamples.ExDocument.UsePdfDocumentForLayoutOptionsHiddenText</Method>
+            <Method>ApiExamples.ExDocument.UsePdfDocumentForLayoutOptionsParagraphMarks</Method>
+            <Method>ApiExamples.ExDocument.UsePdfDocumentForShowComments</Method>
+            <Method>ApiExamples.ExDocumentBase.UsePdfDocumentForBackgroundShape</Method>
+            <Method>ApiExamples.ExHtmlLoadOptions.UsePdfDocumentForIgnoreNoscriptElements</Method>
+            <Method>ApiExamples.ExHyphenation.UsePdfDocumentForDictionary</Method>
+            <Method>ApiExamples.ExParagraphFormat.UsePdfDocumentForSuppressHyphens</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForOnePage</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfBookmarkEditorForHeadingsOutlineLevels</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfBookmarkEditorForCreateMissingOutlineLevels</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForTableHeadingOutlines</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForExpandedOutlineLevels</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForUpdateFields</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForPreserveFormFields</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForCompliance</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForImageCompression</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForImageColorSpaceExportMode</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForDownsampleOptions</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForColorRendering</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForDocTitle</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForEscapeUri</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForOpenHyperlinksInNewWindow</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForHeaderFooterBookmarksExportMode</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForEmulateRenderingToSizeOnPage</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForEmbedFullFonts</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForEmbedWindowsFonts</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForEmbedCoreFonts</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForAdditionalTextPositioning</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForSaveAsPdfBookFold</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForZoomBehaviour</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForPageMode</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForNoteHyperlinks</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForCustomPropertiesExport</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForDrawingMLEffects</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForDrawingMLFallback</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForPdfDigitalSignature</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForPdfDigitalSignatureTimestamp</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForRenderMetafile</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForEncryptionPermissions</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForSetNumeralFormat</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForExportPageSet</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForExportParagraphGraphicsToArtifact</Method>
+            <Method>ApiExamples.ExStructuredDocumentTag.UsePdfDocumentForUpdateSdtContent</Method>
+            <Method>ApiExamples.TestUtil.VerifyWebResponseStatusCodeAsync</Method>
             <!-- with runtime errors -->
             <Method>ApiExamples.ExDocument.LoadFromWeb</Method>
             <Method>ApiExamples.ExDocumentBuilder.InsertField</Method>

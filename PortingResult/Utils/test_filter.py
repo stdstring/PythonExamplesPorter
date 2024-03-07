@@ -12,7 +12,7 @@ def filter_test_output(source: str, dest: str) -> None:
     source_path = pathlib.Path(source)
     if not source_path.exists():
         raise ValueError("Bad source")
-    source_text = source_path.read_text(encoding="utf-16")
+    source_text = source_path.read_text(encoding="utf-8")
     source_lines = list(map(lambda line: line.strip(), source_text.split("\n")))
     dest_lines = []
     skipped_error_reasons = []
