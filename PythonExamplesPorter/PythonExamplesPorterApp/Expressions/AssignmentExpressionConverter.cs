@@ -22,10 +22,12 @@ namespace PythonExamplesPorterApp.Expressions
                 case SyntaxKind.SimpleAssignmentExpression:
                 {
                     ConvertResult leftAssignmentResult = _expressionConverter.Convert(expression.Left);
+                    String leftSide = leftAssignmentResult.Result;
                     importData.Append(leftAssignmentResult.ImportData);
                     ConvertResult rightAssignmentResult = _expressionConverter.Convert(expression.Right);
                     importData.Append(rightAssignmentResult.ImportData);
-                    return new ConvertResult($"{leftAssignmentResult.Result} = {rightAssignmentResult.Result}", importData);
+                    IList<String> afterResults = rightAssignmentResult.AfterResults.Select(entry => $"{leftSide}.{entry}").ToList();
+                    return new ConvertResult($"{leftSide} = {rightAssignmentResult.Result}", importData, afterResults);
                 }
                 default:
                     throw new UnsupportedSyntaxException($"Unsupported assignment expression: {expression.Kind()}");

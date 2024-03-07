@@ -161,7 +161,9 @@ namespace PythonExamplesPorterApp.Expressions
 
         public override void VisitAssignmentExpression(AssignmentExpressionSyntax node)
         {
-            AssignmentExpressionConverter converter = new AssignmentExpressionConverter(_model, _appData, _settings.CreateChild());
+            ExpressionConverterSettings childSettings = _settings.CreateChild();
+            childSettings.AllowObjectInitializer = true;
+            AssignmentExpressionConverter converter = new AssignmentExpressionConverter(_model, _appData, childSettings);
             AppendResult(converter.Convert(node));
         }
 
