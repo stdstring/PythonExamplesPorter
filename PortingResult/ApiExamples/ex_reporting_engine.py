@@ -100,3 +100,15 @@ class ExReportingEngine(ApiExampleBase):
 
     def test_json_data_preserve_spaces(self):
         raise NotImplementedError("Unsupported statement type: UsingStatement")
+
+    def test_update_fields_syntax_aware(self):
+        raise NotImplementedError("Unsupported call of method named BuildReport")
+
+    def test_dollar_text_format(self):
+        raise NotImplementedError("Unsupported ctor for type NumericTestBuilder")
+
+    def test_restricted_types(self):
+        raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")
+
+    def test_word_2016_charts(self):
+        raise NotImplementedError("Unsupported type: ApiExamples.TestData.Common")

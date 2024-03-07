@@ -16,7 +16,7 @@ class ExCleanupOptions(ApiExampleBase):
         builder = aspose.words.DocumentBuilder(doc)
         builder.font.style = doc.styles.get_by_name("MyParagraphStyle1")
         builder.writeln("Hello world!")
-        list = doc.lists.add(list_style = doc.styles.get_by_name("MyListStyle1"))
+        list = doc.lists.add(list_style=doc.styles.get_by_name("MyListStyle1"))
         builder.list_format.list = list
         builder.writeln("Item 1")
         builder.writeln("Item 2")

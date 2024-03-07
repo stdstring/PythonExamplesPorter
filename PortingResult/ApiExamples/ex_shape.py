@@ -19,7 +19,7 @@ class ExShape(ApiExampleBase):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_group_shape(self):
-        raise NotImplementedError("Forbidden object initializer")
+        raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_is_top_level(self):
         doc = aspose.words.Document()
@@ -52,8 +52,8 @@ class ExShape(ApiExampleBase):
         shape.top = 700
         group.append_child(shape)
         doc.first_section.body.first_paragraph.append_child(group)
-        doc.save(file_name = ARTIFACTS_DIR + "Shape.LocalToParent.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Shape.LocalToParent.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Shape.LocalToParent.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Shape.LocalToParent.docx")
         group = doc.get_child(aspose.words.NodeType.GROUP_SHAPE, 0, True).as_group_shape()
         self.assertEqual(aspose.pydrawing.RectangleF(100, 100, 500, 500), group.bounds)
         self.assertEqual(aspose.pydrawing.Size(500, 500), group.coord_size)
@@ -62,8 +62,8 @@ class ExShape(ApiExampleBase):
     def test_delete_all_shapes(self):
         doc = aspose.words.Document()
         builder = aspose.words.DocumentBuilder(doc)
-        builder.insert_shape(shape_type = aspose.words.drawing.ShapeType.RECTANGLE, width = 400, height = 200)
-        builder.insert_shape(shape_type = aspose.words.drawing.ShapeType.STAR, width = 300, height = 300)
+        builder.insert_shape(shape_type=aspose.words.drawing.ShapeType.RECTANGLE, width=400, height=200)
+        builder.insert_shape(shape_type=aspose.words.drawing.ShapeType.STAR, width=300, height=300)
         group = aspose.words.drawing.GroupShape(doc)
         group.bounds = aspose.pydrawing.RectangleF(100, 50, 200, 100)
         group.coord_origin = aspose.pydrawing.Point(-1000, -500)
@@ -100,27 +100,27 @@ class ExShape(ApiExampleBase):
     def test_texture_fill(self):
         doc = aspose.words.Document()
         builder = aspose.words.DocumentBuilder(doc)
-        shape = builder.insert_shape(shape_type = aspose.words.drawing.ShapeType.RECTANGLE, width = 80, height = 80)
+        shape = builder.insert_shape(shape_type=aspose.words.drawing.ShapeType.RECTANGLE, width=80, height=80)
         shape.fill.preset_textured(aspose.words.drawing.PresetTexture.CANVAS)
         shape.fill.texture_alignment = aspose.words.drawing.TextureAlignment.TOP_RIGHT
         save_options = aspose.words.saving.OoxmlSaveOptions()
         save_options.compliance = aspose.words.saving.OoxmlCompliance.ISO29500_2008_STRICT
-        doc.save(file_name = ARTIFACTS_DIR + "Shape.TextureFill.docx", save_options = save_options)
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Shape.TextureFill.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Shape.TextureFill.docx", save_options=save_options)
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Shape.TextureFill.docx")
         shape = doc.get_child(aspose.words.NodeType.SHAPE, 0, True).as_shape()
         self.assertEqual(aspose.words.drawing.TextureAlignment.TOP_RIGHT, shape.fill.texture_alignment)
 
     def test_gradient_fill(self):
         doc = aspose.words.Document()
         builder = aspose.words.DocumentBuilder(doc)
-        shape = builder.insert_shape(shape_type = aspose.words.drawing.ShapeType.RECTANGLE, width = 80, height = 80)
-        shape.fill.one_color_gradient(color = aspose.pydrawing.Color.red, style = aspose.words.drawing.GradientStyle.HORIZONTAL, variant = aspose.words.drawing.GradientVariant.VARIANT2, degree = 0.1)
+        shape = builder.insert_shape(shape_type=aspose.words.drawing.ShapeType.RECTANGLE, width=80, height=80)
+        shape.fill.one_color_gradient(color=aspose.pydrawing.Color.red, style=aspose.words.drawing.GradientStyle.HORIZONTAL, variant=aspose.words.drawing.GradientVariant.VARIANT2, degree=0.1)
         self.assertEqual(aspose.pydrawing.Color.red.to_argb(), shape.fill.fore_color.to_argb())
         self.assertEqual(aspose.words.drawing.GradientStyle.HORIZONTAL, shape.fill.gradient_style)
         self.assertEqual(aspose.words.drawing.GradientVariant.VARIANT2, shape.fill.gradient_variant)
         self.assertEqual(270, shape.fill.gradient_angle)
-        shape = builder.insert_shape(shape_type = aspose.words.drawing.ShapeType.RECTANGLE, width = 80, height = 80)
-        shape.fill.two_color_gradient(style = aspose.words.drawing.GradientStyle.FROM_CORNER, variant = aspose.words.drawing.GradientVariant.VARIANT4)
+        shape = builder.insert_shape(shape_type=aspose.words.drawing.ShapeType.RECTANGLE, width=80, height=80)
+        shape.fill.two_color_gradient(style=aspose.words.drawing.GradientStyle.FROM_CORNER, variant=aspose.words.drawing.GradientVariant.VARIANT4)
         shape.fill.back_color = aspose.pydrawing.Color.yellow
         shape.fill.gradient_angle = 15
         self.assertEqual(aspose.pydrawing.Color.yellow.to_argb(), shape.fill.back_color.to_argb())
@@ -129,8 +129,8 @@ class ExShape(ApiExampleBase):
         self.assertEqual(0, shape.fill.gradient_angle)
         save_options = aspose.words.saving.OoxmlSaveOptions()
         save_options.compliance = aspose.words.saving.OoxmlCompliance.ISO29500_2008_STRICT
-        doc.save(file_name = ARTIFACTS_DIR + "Shape.GradientFill.docx", save_options = save_options)
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Shape.GradientFill.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Shape.GradientFill.docx", save_options=save_options)
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Shape.GradientFill.docx")
         first_shape = doc.get_child(aspose.words.NodeType.SHAPE, 0, True).as_shape()
         self.assertEqual(aspose.pydrawing.Color.red.to_argb(), first_shape.fill.fore_color.to_argb())
         self.assertEqual(aspose.words.drawing.GradientStyle.HORIZONTAL, first_shape.fill.gradient_style)
@@ -145,16 +145,16 @@ class ExShape(ApiExampleBase):
     def test_gradient_stops(self):
         doc = aspose.words.Document()
         builder = aspose.words.DocumentBuilder(doc)
-        shape = builder.insert_shape(shape_type = aspose.words.drawing.ShapeType.RECTANGLE, width = 80, height = 80)
-        shape.fill.two_color_gradient(color1 = aspose.pydrawing.Color.green, color2 = aspose.pydrawing.Color.red, style = aspose.words.drawing.GradientStyle.HORIZONTAL, variant = aspose.words.drawing.GradientVariant.VARIANT2)
+        shape = builder.insert_shape(shape_type=aspose.words.drawing.ShapeType.RECTANGLE, width=80, height=80)
+        shape.fill.two_color_gradient(color1=aspose.pydrawing.Color.green, color2=aspose.pydrawing.Color.red, style=aspose.words.drawing.GradientStyle.HORIZONTAL, variant=aspose.words.drawing.GradientVariant.VARIANT2)
         gradient_stops = shape.fill.gradient_stops
         gradient_stops[0].color = aspose.pydrawing.Color.aqua
         gradient_stops[0].position = 0.1
         gradient_stops[0].transparency = 0.25
-        gradient_stop = aspose.words.drawing.GradientStop(color = aspose.pydrawing.Color.brown, position = 0.5)
+        gradient_stop = aspose.words.drawing.GradientStop(color=aspose.pydrawing.Color.brown, position=0.5)
         gradient_stops.add(gradient_stop)
         gradient_stops.remove_at(1)
-        gradient_stops.insert(1, aspose.words.drawing.GradientStop(color = aspose.pydrawing.Color.chocolate, position = 0.75, transparency = 0.3))
+        gradient_stops.insert(1, aspose.words.drawing.GradientStop(color=aspose.pydrawing.Color.chocolate, position=0.75, transparency=0.3))
         gradient_stop = gradient_stops[2]
         gradient_stops.remove(gradient_stop)
         self.assertEqual(2, gradient_stops.count)
@@ -167,8 +167,8 @@ class ExShape(ApiExampleBase):
         self.assertAlmostEqual(0.3, gradient_stops[1].transparency, delta=0.01)
         save_options = aspose.words.saving.OoxmlSaveOptions()
         save_options.compliance = aspose.words.saving.OoxmlCompliance.ISO29500_2008_STRICT
-        doc.save(file_name = ARTIFACTS_DIR + "Shape.GradientStops.docx", save_options = save_options)
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Shape.GradientStops.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Shape.GradientStops.docx", save_options=save_options)
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Shape.GradientStops.docx")
         shape = doc.get_child(aspose.words.NodeType.SHAPE, 0, True).as_shape()
         gradient_stops = shape.fill.gradient_stops
         self.assertEqual(2, gradient_stops.count)
@@ -185,21 +185,21 @@ class ExShape(ApiExampleBase):
     def test_fill_theme_color(self):
         doc = aspose.words.Document()
         builder = aspose.words.DocumentBuilder(doc)
-        shape = builder.insert_shape(shape_type = aspose.words.drawing.ShapeType.ROUND_RECTANGLE, width = 80, height = 80)
+        shape = builder.insert_shape(shape_type=aspose.words.drawing.ShapeType.ROUND_RECTANGLE, width=80, height=80)
         fill = shape.fill
         fill.fore_theme_color = aspose.words.themes.ThemeColor.DARK1
         fill.back_theme_color = aspose.words.themes.ThemeColor.BACKGROUND2
         if fill.back_tint_and_shade == 0:
             fill.back_tint_and_shade = 0.2
-        doc.save(file_name = ARTIFACTS_DIR + "Shape.FillThemeColor.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Shape.FillThemeColor.docx")
 
     def test_fill_tint_and_shade(self):
-        doc = aspose.words.Document(file_name = MY_DIR + "Big document.docx")
+        doc = aspose.words.Document(file_name=MY_DIR + "Big document.docx")
         text_fill = doc.first_section.body.first_paragraph.runs[0].font.fill
         text_fill.fore_theme_color = aspose.words.themes.ThemeColor.ACCENT1
         if text_fill.fore_tint_and_shade == 0:
             text_fill.fore_tint_and_shade = 0.5
-        doc.save(file_name = ARTIFACTS_DIR + "Shape.FillTintAndShade.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Shape.FillTintAndShade.docx")
 
     def test_title(self):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
@@ -214,21 +214,21 @@ class ExShape(ApiExampleBase):
         raise NotImplementedError("Unsupported target type System.Collections.Generic.IEnumerable")
 
     def test_get_active_x_control_properties(self):
-        doc = aspose.words.Document(file_name = MY_DIR + "ActiveX controls.docx")
+        doc = aspose.words.Document(file_name=MY_DIR + "ActiveX controls.docx")
         shape = doc.get_child(aspose.words.NodeType.SHAPE, 0, True).as_shape()
         ole_control = shape.ole_format.ole_control
         self.assertEqual("CheckBox1", ole_control.name)
         if ole_control.is_forms2_ole_control:
             check_box = ole_control.as_forms2_ole_control()
-            self.assertEqual("Первый", check_box.caption)
+            self.assertEqual("First", check_box.caption)
             self.assertEqual("0", check_box.value)
             self.assertEqual(True, check_box.enabled)
             self.assertEqual(aspose.words.drawing.ole.Forms2OleControlType.CHECK_BOX, check_box.type)
             self.assertEqual(None, check_box.child_nodes)
             self.assertEqual("", check_box.group_name)
             check_box.group_name = "Aspose group name"
-        doc.save(file_name = ARTIFACTS_DIR + "Shape.GetActiveXControlProperties.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Shape.GetActiveXControlProperties.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Shape.GetActiveXControlProperties.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Shape.GetActiveXControlProperties.docx")
         shape = doc.get_child(aspose.words.NodeType.SHAPE, 0, True).as_shape()
         forms_2_ole_control = shape.ole_format.ole_control.as_forms2_ole_control()
         self.assertEqual("Aspose group name", forms_2_ole_control.group_name)
@@ -252,18 +252,15 @@ class ExShape(ApiExampleBase):
         raise NotImplementedError("Unsupported statement type: UsingStatement")
 
     def test_object_did_not_have_suggested_file_name(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Is")
-
-    def test_resolution_default_values(self):
-        image_options = aspose.words.saving.ImageSaveOptions(aspose.words.SaveFormat.JPEG)
-        self.assertEqual(96, image_options.horizontal_resolution)
-        self.assertEqual(96, image_options.vertical_resolution)
+        doc = aspose.words.Document(file_name=MY_DIR + "ActiveX controls.docx")
+        shape = doc.get_child(aspose.words.NodeType.SHAPE, 0, True).as_shape()
+        self.assertEqual("", shape.ole_format.suggested_file_name)
 
     def test_office_math_display_exception(self):
         raise NotImplementedError("Unsupported expression: ParenthesizedLambdaExpression")
 
     def test_office_math_default_value(self):
-        doc = aspose.words.Document(file_name = MY_DIR + "Office math.docx")
+        doc = aspose.words.Document(file_name=MY_DIR + "Office math.docx")
         office_math = doc.get_child(aspose.words.NodeType.OFFICE_MATH, 6, True).as_office_math()
         self.assertEqual(aspose.words.math.OfficeMathDisplayType.INLINE, office_math.display_type)
         self.assertEqual(aspose.words.math.OfficeMathJustification.INLINE, office_math.justification)
@@ -278,7 +275,7 @@ class ExShape(ApiExampleBase):
         raise NotImplementedError("Unsupported expression: ParenthesizedLambdaExpression")
 
     def test_office_math_display_nested_objects(self):
-        doc = aspose.words.Document(file_name = MY_DIR + "Office math.docx")
+        doc = aspose.words.Document(file_name=MY_DIR + "Office math.docx")
         office_math = doc.get_child(aspose.words.NodeType.OFFICE_MATH, 0, True).as_office_math()
         self.assertEqual(aspose.words.math.OfficeMathDisplayType.DISPLAY, office_math.display_type)
         self.assertEqual(aspose.words.math.OfficeMathJustification.CENTER, office_math.justification)
@@ -286,14 +283,14 @@ class ExShape(ApiExampleBase):
     def test_markup_language_by_default(self):
         doc = aspose.words.Document()
         builder = aspose.words.DocumentBuilder(doc)
-        shape = builder.insert_image(file_name = IMAGE_DIR + "Transparent background logo.png")
+        shape = builder.insert_image(file_name=IMAGE_DIR + "Transparent background logo.png")
         self.assertEqual(aspose.words.drawing.ShapeMarkupLanguage.DML, shape.markup_language)
         self.assertEqual(aspose.pydrawing.SizeF(300, 300), shape.size_in_points)
 
     def test_stroke(self):
         doc = aspose.words.Document()
         builder = aspose.words.DocumentBuilder(doc)
-        shape = builder.insert_shape(shape_type = aspose.words.drawing.ShapeType.RECTANGLE, horz_pos = aspose.words.drawing.RelativeHorizontalPosition.LEFT_MARGIN, left = 100, vert_pos = aspose.words.drawing.RelativeVerticalPosition.TOP_MARGIN, top = 100, width = 200, height = 200, wrap_type = aspose.words.drawing.WrapType.NONE)
+        shape = builder.insert_shape(shape_type=aspose.words.drawing.ShapeType.RECTANGLE, horz_pos=aspose.words.drawing.RelativeHorizontalPosition.LEFT_MARGIN, left=100, vert_pos=aspose.words.drawing.RelativeVerticalPosition.TOP_MARGIN, top=100, width=200, height=200, wrap_type=aspose.words.drawing.WrapType.NONE)
         shape.fill.fore_color = aspose.pydrawing.Color.white
         stroke = shape.stroke
         stroke.on = True
@@ -303,9 +300,9 @@ class ExShape(ApiExampleBase):
         stroke.join_style = aspose.words.drawing.JoinStyle.MITER
         stroke.end_cap = aspose.words.drawing.EndCap.SQUARE
         stroke.line_style = aspose.words.drawing.ShapeLineStyle.TRIPLE
-        stroke.fill.two_color_gradient(color1 = aspose.pydrawing.Color.red, color2 = aspose.pydrawing.Color.blue, style = aspose.words.drawing.GradientStyle.VERTICAL, variant = aspose.words.drawing.GradientVariant.VARIANT1)
-        doc.save(file_name = ARTIFACTS_DIR + "Shape.Stroke.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Shape.Stroke.docx")
+        stroke.fill.two_color_gradient(color1=aspose.pydrawing.Color.red, color2=aspose.pydrawing.Color.blue, style=aspose.words.drawing.GradientStyle.VERTICAL, variant=aspose.words.drawing.GradientVariant.VARIANT1)
+        doc.save(file_name=ARTIFACTS_DIR + "Shape.Stroke.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Shape.Stroke.docx")
         shape = doc.get_child(aspose.words.NodeType.SHAPE, 0, True).as_shape()
         stroke = shape.stroke
         self.assertEqual(True, stroke.on)
@@ -319,8 +316,8 @@ class ExShape(ApiExampleBase):
     def test_insert_ole_object_as_html_file(self):
         doc = aspose.words.Document()
         builder = aspose.words.DocumentBuilder(doc)
-        builder.insert_ole_object(file_name = "http://www.aspose.com", prog_id = "htmlfile", is_linked = True, as_icon = False, presentation = None)
-        doc.save(file_name = ARTIFACTS_DIR + "Shape.InsertOleObjectAsHtmlFile.docx")
+        builder.insert_ole_object(file_name="http://www.aspose.com", prog_id="htmlfile", is_linked=True, as_icon=False, presentation=None)
+        doc.save(file_name=ARTIFACTS_DIR + "Shape.InsertOleObjectAsHtmlFile.docx")
 
     def test_get_access_to_ole_package(self):
         raise NotImplementedError("Unsupported expression: TypeOfExpression")
@@ -328,11 +325,11 @@ class ExShape(ApiExampleBase):
     def test_resize(self):
         doc = aspose.words.Document()
         builder = aspose.words.DocumentBuilder(doc)
-        shape = builder.insert_shape(shape_type = aspose.words.drawing.ShapeType.RECTANGLE, width = 200, height = 300)
+        shape = builder.insert_shape(shape_type=aspose.words.drawing.ShapeType.RECTANGLE, width=200, height=300)
         shape.height = 300
         shape.width = 500
         shape.rotation = 30
-        doc.save(file_name = ARTIFACTS_DIR + "Shape.Resize.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Shape.Resize.docx")
 
     def test_calendar(self):
         raise NotImplementedError("Unsupported target type System.String")
@@ -353,11 +350,11 @@ class ExShape(ApiExampleBase):
         doc = aspose.words.Document()
         builder = aspose.words.DocumentBuilder(doc)
         doc.compatibility_options.optimize_for(aspose.words.settings.MsWordVersion.WORD2016)
-        text_box_shape = builder.insert_shape(shape_type = aspose.words.drawing.ShapeType.TEXT_BOX, width = 100, height = 100)
+        text_box_shape = builder.insert_shape(shape_type=aspose.words.drawing.ShapeType.TEXT_BOX, width=100, height=100)
         text_box_shape.text_box.vertical_anchor = aspose.words.drawing.TextBoxAnchor.BOTTOM
         builder.move_to(text_box_shape.last_paragraph)
         builder.write("Text placed bottom")
-        doc.save(file_name = ARTIFACTS_DIR + "Shape.TextBoxShapeType.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Shape.TextBoxShapeType.docx")
 
     def test_create_link_between_text_boxes(self):
         raise NotImplementedError("Unsupported target type System.Console")
@@ -384,22 +381,22 @@ class ExShape(ApiExampleBase):
         raise NotImplementedError("Unsupported target type System.Collections.Generic.IEnumerable")
 
     def test_is_decorative(self):
-        doc = aspose.words.Document(file_name = MY_DIR + "Decorative shapes.docx")
+        doc = aspose.words.Document(file_name=MY_DIR + "Decorative shapes.docx")
         shape = doc.get_child_nodes(aspose.words.NodeType.SHAPE, True)[0].as_shape()
         self.assertTrue(shape.is_decorative)
         shape.alternative_text = "Alternative text."
         self.assertFalse(shape.is_decorative)
         builder = aspose.words.DocumentBuilder(doc)
         builder.move_to_document_end()
-        shape = builder.insert_shape(shape_type = aspose.words.drawing.ShapeType.RECTANGLE, width = 100, height = 100)
+        shape = builder.insert_shape(shape_type=aspose.words.drawing.ShapeType.RECTANGLE, width=100, height=100)
         shape.is_decorative = True
-        doc.save(file_name = ARTIFACTS_DIR + "Shape.IsDecorative.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Shape.IsDecorative.docx")
 
     def test_fill_image(self):
         raise NotImplementedError("Unsupported target type System.IO.File")
 
     def test_shadow_format(self):
-        doc = aspose.words.Document(file_name = MY_DIR + "Shape stroke pattern border.docx")
+        doc = aspose.words.Document(file_name=MY_DIR + "Shape stroke pattern border.docx")
         shape = doc.get_child_nodes(aspose.words.NodeType.SHAPE, True)[0].as_shape()
         if shape.shadow_format.visible and shape.shadow_format.type == aspose.words.drawing.ShadowType.SHADOW2:
             shape.shadow_format.type = aspose.words.drawing.ShadowType.SHADOW7
@@ -409,17 +406,17 @@ class ExShape(ApiExampleBase):
     def test_no_text_rotation(self):
         doc = aspose.words.Document()
         builder = aspose.words.DocumentBuilder(doc)
-        shape = builder.insert_shape(shape_type = aspose.words.drawing.ShapeType.ELLIPSE, width = 20, height = 20)
+        shape = builder.insert_shape(shape_type=aspose.words.drawing.ShapeType.ELLIPSE, width=20, height=20)
         shape.text_box.no_text_rotation = True
-        doc.save(file_name = ARTIFACTS_DIR + "Shape.NoTextRotation.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Shape.NoTextRotation.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Shape.NoTextRotation.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Shape.NoTextRotation.docx")
         shape = doc.get_child_nodes(aspose.words.NodeType.SHAPE, True)[0].as_shape()
         self.assertEqual(True, shape.text_box.no_text_rotation)
 
     def test_relative_size_and_position(self):
         doc = aspose.words.Document()
         builder = aspose.words.DocumentBuilder(doc)
-        shape = builder.insert_shape(shape_type = aspose.words.drawing.ShapeType.RECTANGLE, width = 100, height = 40)
+        shape = builder.insert_shape(shape_type=aspose.words.drawing.ShapeType.RECTANGLE, width=100, height=40)
         shape.wrap_type = aspose.words.drawing.WrapType.NONE
         if shape.relative_horizontal_size == aspose.words.drawing.RelativeHorizontalSize.DEFAULT:
             shape.relative_horizontal_size = aspose.words.drawing.RelativeHorizontalSize.MARGIN
@@ -433,4 +430,61 @@ class ExShape(ApiExampleBase):
         if shape.relative_horizontal_position == aspose.words.drawing.RelativeHorizontalPosition.DEFAULT:
             shape.relative_horizontal_position = aspose.words.drawing.RelativeHorizontalPosition.RIGHT_MARGIN
             shape.left_relative = -260
-        doc.save(file_name = ARTIFACTS_DIR + "Shape.RelativeSizeAndPosition.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Shape.RelativeSizeAndPosition.docx")
+
+    def test_fill_base_color(self):
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder()
+        shape = builder.insert_shape(shape_type=aspose.words.drawing.ShapeType.RECTANGLE, width=100, height=40)
+        shape.fill.fore_color = aspose.pydrawing.Color.red
+        shape.fill.fore_tint_and_shade = 0.5
+        shape.stroke.fill.fore_color = aspose.pydrawing.Color.green
+        shape.stroke.fill.transparency = 0.5
+        self.assertEqual(aspose.pydrawing.Color.from_argb(255, 255, 188, 188).to_argb(), shape.fill.fore_color.to_argb())
+        self.assertEqual(aspose.pydrawing.Color.red.to_argb(), shape.fill.base_fore_color.to_argb())
+        self.assertEqual(aspose.pydrawing.Color.from_argb(128, 0, 128, 0).to_argb(), shape.stroke.fore_color.to_argb())
+        self.assertEqual(aspose.pydrawing.Color.green.to_argb(), shape.stroke.base_fore_color.to_argb())
+        self.assertEqual(aspose.pydrawing.Color.green.to_argb(), shape.stroke.fill.fore_color.to_argb())
+        self.assertEqual(aspose.pydrawing.Color.green.to_argb(), shape.stroke.fill.base_fore_color.to_argb())
+
+    def test_fit_image_to_shape(self):
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        shape = builder.insert_shape(shape_type=aspose.words.drawing.ShapeType.RECTANGLE, width=300, height=450)
+        shape.image_data.set_image(file_name=IMAGE_DIR + "Barcode.png")
+        shape.image_data.fit_image_to_shape()
+        doc.save(file_name=ARTIFACTS_DIR + "Shape.FitImageToShape.docx")
+
+    def test_stroke_fore_theme_colors(self):
+        doc = aspose.words.Document()
+        builder = aspose.words.DocumentBuilder(doc)
+        shape = builder.insert_shape(shape_type=aspose.words.drawing.ShapeType.TEXT_BOX, width=100, height=40)
+        stroke = shape.stroke
+        stroke.fore_theme_color = aspose.words.themes.ThemeColor.DARK1
+        stroke.fore_tint_and_shade = 0.5
+        doc.save(file_name=ARTIFACTS_DIR + "Shape.StrokeForeThemeColors.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Shape.StrokeForeThemeColors.docx")
+        shape = doc.get_child(aspose.words.NodeType.SHAPE, 0, True).as_shape()
+        self.assertEqual(aspose.words.themes.ThemeColor.DARK1, shape.stroke.fore_theme_color)
+        self.assertEqual(0.5, shape.stroke.fore_tint_and_shade)
+
+    def test_stroke_back_theme_colors(self):
+        doc = aspose.words.Document(file_name=MY_DIR + "Stroke gradient outline.docx")
+        shape = doc.get_child(aspose.words.NodeType.SHAPE, 0, True).as_shape()
+        stroke = shape.stroke
+        stroke.back_theme_color = aspose.words.themes.ThemeColor.DARK2
+        stroke.back_tint_and_shade = 0.2
+        doc.save(file_name=ARTIFACTS_DIR + "Shape.StrokeBackThemeColors.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Shape.StrokeBackThemeColors.docx")
+        shape = doc.get_child(aspose.words.NodeType.SHAPE, 0, True).as_shape()
+        self.assertEqual(aspose.words.themes.ThemeColor.DARK2, shape.stroke.back_theme_color)
+        precision = 1E-06
+        self.assertAlmostEqual(0.2, shape.stroke.back_tint_and_shade, delta=precision)
+
+    def test_text_box_ole_control(self):
+        doc = aspose.words.Document(file_name=MY_DIR + "Textbox control.docm")
+        shape = doc.get_child(aspose.words.NodeType.SHAPE, 0, True).as_shape()
+        text_box_control = shape.ole_format.ole_control.as_text_box_control()
+        self.assertEqual("Aspose.Words test", text_box_control.text)
+        text_box_control.text = "Updated text"
+        self.assertEqual("Updated text", text_box_control.text)

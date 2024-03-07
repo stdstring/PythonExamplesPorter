@@ -26,7 +26,33 @@ class ExStructuredDocumentTag(ApiExampleBase):
         raise NotImplementedError("Unsupported target type System.Globalization.CultureInfo")
 
     def test_plain_text(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Is")
+        doc = aspose.words.Document()
+        tag = aspose.words.markup.StructuredDocumentTag(doc, aspose.words.markup.SdtType.PLAIN_TEXT, aspose.words.markup.MarkupLevel.INLINE)
+        tag.title = "My plain text"
+        tag.color = aspose.pydrawing.Color.magenta
+        tag.tag = "MyPlainTextSDT"
+        self.assertTrue(tag.id > 0)
+        tag.contents_font.name = "Arial"
+        tag.end_character_font.name = "Arial Black"
+        tag.multiline = True
+        tag.appearance = aspose.words.markup.SdtAppearance.TAGS
+        builder = aspose.words.DocumentBuilder(doc)
+        builder.insert_node(tag)
+        tag_clone = tag.clone(True).as_structured_document_tag()
+        builder.insert_paragraph()
+        builder.insert_node(tag_clone)
+        tag_clone.remove_self_only()
+        doc.save(file_name=ARTIFACTS_DIR + "StructuredDocumentTag.PlainText.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "StructuredDocumentTag.PlainText.docx")
+        tag = doc.get_child(aspose.words.NodeType.STRUCTURED_DOCUMENT_TAG, 0, True).as_structured_document_tag()
+        self.assertEqual("My plain text", tag.title)
+        self.assertEqual(aspose.pydrawing.Color.magenta.to_argb(), tag.color.to_argb())
+        self.assertEqual("MyPlainTextSDT", tag.tag)
+        self.assertTrue(tag.id > 0)
+        self.assertEqual("Arial", tag.contents_font.name)
+        self.assertEqual("Arial Black", tag.end_character_font.name)
+        self.assertTrue(tag.multiline)
+        self.assertEqual(aspose.words.markup.SdtAppearance.TAGS, tag.appearance)
 
     def test_lock(self):
         doc = aspose.words.Document()
@@ -40,8 +66,8 @@ class ExStructuredDocumentTag(ApiExampleBase):
         builder.insert_paragraph()
         builder.write("This structured document tag cannot be deleted but its contents can be edited: ")
         builder.insert_node(tag)
-        doc.save(file_name = ARTIFACTS_DIR + "StructuredDocumentTag.Lock.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "StructuredDocumentTag.Lock.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "StructuredDocumentTag.Lock.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "StructuredDocumentTag.Lock.docx")
         tag = doc.get_child(aspose.words.NodeType.STRUCTURED_DOCUMENT_TAG, 0, True).as_structured_document_tag()
         self.assertTrue(tag.lock_contents)
         self.assertFalse(tag.lock_content_control)
@@ -68,7 +94,7 @@ class ExStructuredDocumentTag(ApiExampleBase):
         raise NotImplementedError("Unsupported target type System.Guid")
 
     def test_custom_xml_part_store_item_id_read_only(self):
-        doc = aspose.words.Document(file_name = MY_DIR + "Custom XML part in structured document tag.docx")
+        doc = aspose.words.Document(file_name=MY_DIR + "Custom XML part in structured document tag.docx")
         tag = doc.get_child(aspose.words.NodeType.STRUCTURED_DOCUMENT_TAG, 0, True).as_structured_document_tag()
         self.assertEqual("{F3029283-4FF8-4DD2-9F31-395F19ACEE85}", tag.xml_mapping.store_item_id)
 
@@ -86,7 +112,7 @@ class ExStructuredDocumentTag(ApiExampleBase):
         substitute_block.name = "My placeholder"
         substitute_block.append_child(aspose.words.Section(glossary_doc))
         substitute_block.first_section.ensure_minimum()
-        substitute_block.first_section.body.first_paragraph.append_child(aspose.words.Run(doc = glossary_doc, text = "Custom placeholder text."))
+        substitute_block.first_section.body.first_paragraph.append_child(aspose.words.Run(doc=glossary_doc, text="Custom placeholder text."))
         glossary_doc.append_child(substitute_block)
         tag.placeholder_name = "My placeholder"
         self.assertEqual("Custom placeholder text.", tag.get_text().strip())
@@ -100,7 +126,7 @@ class ExStructuredDocumentTag(ApiExampleBase):
         self.assertEqual("Custom placeholder text.", tag.get_text().strip())
 
     def test_access_to_building_block_properties_from_doc_part_obj_sdt(self):
-        doc = aspose.words.Document(file_name = MY_DIR + "Structured document tags with building blocks.docx")
+        doc = aspose.words.Document(file_name=MY_DIR + "Structured document tags with building blocks.docx")
         doc_part_obj_sdt = doc.get_child(aspose.words.NodeType.STRUCTURED_DOCUMENT_TAG, 0, True).as_structured_document_tag()
         self.assertEqual(aspose.words.markup.SdtType.DOC_PART_OBJ, doc_part_obj_sdt.sdt_type)
         self.assertEqual("Table of Contents", doc_part_obj_sdt.building_block_gallery)
@@ -114,14 +140,24 @@ class ExStructuredDocumentTag(ApiExampleBase):
         building_block_sdt.building_block_category = "Built-in"
         building_block_sdt.building_block_gallery = "Table of Contents"
         doc.first_section.body.append_child(building_block_sdt)
-        doc.save(file_name = ARTIFACTS_DIR + "StructuredDocumentTag.BuildingBlockCategories.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "StructuredDocumentTag.BuildingBlockCategories.docx")
         building_block_sdt = doc.first_section.body.get_child(aspose.words.NodeType.STRUCTURED_DOCUMENT_TAG, 0, True).as_structured_document_tag()
         self.assertEqual(aspose.words.markup.SdtType.BUILDING_BLOCK_GALLERY, building_block_sdt.sdt_type)
         self.assertEqual("Table of Contents", building_block_sdt.building_block_gallery)
         self.assertEqual("Built-in", building_block_sdt.building_block_category)
 
     def test_update_sdt_content(self):
-        raise NotImplementedError("Unsupported ctor for type Aspose.Pdf.Document")
+        doc = aspose.words.Document()
+        tag = aspose.words.markup.StructuredDocumentTag(doc, aspose.words.markup.SdtType.DROP_DOWN_LIST, aspose.words.markup.MarkupLevel.BLOCK)
+        tag.list_items.add(aspose.words.markup.SdtListItem(value="Value 1"))
+        tag.list_items.add(aspose.words.markup.SdtListItem(value="Value 2"))
+        tag.list_items.add(aspose.words.markup.SdtListItem(value="Value 3"))
+        tag.list_items.selected_value = tag.list_items[1]
+        doc.first_section.body.append_child(tag)
+        doc.save(file_name=ARTIFACTS_DIR + "StructuredDocumentTag.UpdateSdtContent.pdf")
+
+    def test_use_pdf_document_for_update_sdt_content(self):
+        raise NotImplementedError("Unsupported call of method named UpdateSdtContent")
 
     def test_fill_table_using_repeating_section_item(self):
         raise NotImplementedError("Unsupported target type System.Collections.Generic.IEnumerable")
@@ -136,7 +172,7 @@ class ExStructuredDocumentTag(ApiExampleBase):
         raise NotImplementedError("Unsupported target type System.Console")
 
     def test_sdt_range_extended_methods(self):
-        raise NotImplementedError("Unsupported argument kind: ref")
+        raise NotImplementedError("Unsupported call of method named InsertStructuredDocumentTagRanges")
 
     def test_get_sdt(self):
         raise NotImplementedError("Unsupported target type System.Console")
@@ -162,17 +198,17 @@ class ExStructuredDocumentTag(ApiExampleBase):
         builder.write("Lorem ipsum dolor.")
         builder.move_to(table.next_sibling)
         builder.write("Nulla blandit nisi.")
-        doc.save(file_name = ARTIFACTS_DIR + "StructuredDocumentTag.SdtAtRowLevel.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "StructuredDocumentTag.SdtAtRowLevel.docx")
 
     def test_ignore_structured_document_tags(self):
-        doc = aspose.words.Document(file_name = MY_DIR + "Structured document tags.docx")
+        doc = aspose.words.Document(file_name=MY_DIR + "Structured document tags.docx")
         p = doc.first_section.body.get_child(aspose.words.NodeType.PARAGRAPH, 2, True).as_paragraph()
-        text_to_search = p.to_string(save_format = aspose.words.SaveFormat.TEXT).strip()
+        text_to_search = p.to_string(save_format=aspose.words.SaveFormat.TEXT).strip()
         options = aspose.words.replacing.FindReplaceOptions()
         options.ignore_structured_document_tags = True
-        doc.range.replace(pattern = text_to_search, replacement = "replacement", options = options)
-        doc.save(file_name = ARTIFACTS_DIR + "StructuredDocumentTag.IgnoreStructuredDocumentTags.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "StructuredDocumentTag.IgnoreStructuredDocumentTags.docx")
+        doc.range.replace(pattern=text_to_search, replacement="replacement", options=options)
+        doc.save(file_name=ARTIFACTS_DIR + "StructuredDocumentTag.IgnoreStructuredDocumentTags.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "StructuredDocumentTag.IgnoreStructuredDocumentTags.docx")
         self.assertEqual("This document contains Structured Document Tags with text inside them\r\rRepeatingSection\rRichText\rreplacement", doc.get_text().strip())
 
     def test_citation(self):
@@ -182,7 +218,22 @@ class ExStructuredDocumentTag(ApiExampleBase):
         paragraph.append_child(sdt)
         builder = aspose.words.DocumentBuilder(doc)
         builder.move_to_paragraph(0, -1)
-        builder.insert_field(field_code = """CITATION Ath22 \\l 1033 """, field_value = "(John Lennon, 2022)")
+        builder.insert_field(field_code="""CITATION Ath22 \\l 1033 """, field_value="(John Lennon, 2022)")
         while sdt.next_sibling != None:
             sdt.append_child(sdt.next_sibling)
-        doc.save(file_name = ARTIFACTS_DIR + "StructuredDocumentTag.Citation.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "StructuredDocumentTag.Citation.docx")
+
+    def test_range_start_word_open_xml_minimal(self):
+        doc = aspose.words.Document(file_name=MY_DIR + "Multi-section structured document tags.docx")
+        tag = doc.get_child(aspose.words.NodeType.STRUCTURED_DOCUMENT_TAG_RANGE_START, 0, True).as_structured_document_tag_range_start()
+        self.assertTrue(("<pkg:part pkg:name=\"/docProps/app.xml\" pkg:contentType=\"application/vnd.openxmlformats-officedocument.extended-properties+xml\">" in tag.word_open_xml_minimal))
+        self.assertFalse(("xmlns:w16cid=\"http://schemas.microsoft.com/office/word/2016/wordml/cid\"" in tag.word_open_xml_minimal))
+
+    def test_remove_self_only(self):
+        raise NotImplementedError("Unsupported target type System.Collections.Generic.IEnumerable")
+
+    def test_appearance(self):
+        doc = aspose.words.Document(file_name=MY_DIR + "Multi-section structured document tags.docx")
+        tag = doc.get_child(aspose.words.NodeType.STRUCTURED_DOCUMENT_TAG_RANGE_START, 0, True).as_structured_document_tag_range_start()
+        if tag.appearance == aspose.words.markup.SdtAppearance.HIDDEN:
+            tag.appearance = aspose.words.markup.SdtAppearance.TAGS

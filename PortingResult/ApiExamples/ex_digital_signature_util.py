@@ -11,7 +11,8 @@ class ExDigitalSignatureUtil(ApiExampleBase):
         raise NotImplementedError("Unsupported statement type: UsingStatement")
 
     def test_remove_signatures(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Is")
+        aspose.words.digitalsignatures.DigitalSignatureUtil.remove_all_signatures(src_file_name=MY_DIR + "Digitally signed.odt", dst_file_name=ARTIFACTS_DIR + "DigitalSignatureUtil.RemoveSignatures.odt")
+        self.assertEqual(0, aspose.words.digitalsignatures.DigitalSignatureUtil.load_signatures(file_name=ARTIFACTS_DIR + "DigitalSignatureUtil.RemoveSignatures.odt").count)
 
     def test_decryption_password(self):
         raise NotImplementedError("Unsupported target type System.DateTime")

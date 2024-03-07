@@ -6,13 +6,13 @@ from api_example_base import ApiExampleBase, ARTIFACTS_DIR, MY_DIR
 
 class ExParagraphFormat(ApiExampleBase):
     def test_asian_typography_properties(self):
-        doc = aspose.words.Document(file_name = MY_DIR + "Document.docx")
+        doc = aspose.words.Document(file_name=MY_DIR + "Document.docx")
         format = doc.first_section.body.first_paragraph.paragraph_format
         format.far_east_line_break_control = True
         format.word_wrap = False
         format.hanging_punctuation = True
-        doc.save(file_name = ARTIFACTS_DIR + "ParagraphFormat.AsianTypographyProperties.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "ParagraphFormat.AsianTypographyProperties.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "ParagraphFormat.AsianTypographyProperties.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "ParagraphFormat.AsianTypographyProperties.docx")
         format = doc.first_section.body.first_paragraph.paragraph_format
         self.assertTrue(format.far_east_line_break_control)
         self.assertFalse(format.word_wrap)
@@ -33,8 +33,8 @@ class ExParagraphFormat(ApiExampleBase):
         builder.paragraph_format.line_spacing = 18
         builder.writeln("Line spacing of 1.5 default lines.")
         builder.writeln("Line spacing of 1.5 default lines.")
-        doc.save(file_name = ARTIFACTS_DIR + "ParagraphFormat.LineSpacing.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "ParagraphFormat.LineSpacing.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "ParagraphFormat.LineSpacing.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "ParagraphFormat.LineSpacing.docx")
         paragraphs = doc.first_section.body.paragraphs
         self.assertEqual(aspose.words.LineSpacingRule.AT_LEAST, paragraphs[0].paragraph_format.line_spacing_rule)
         self.assertEqual(20, paragraphs[0].paragraph_format.line_spacing)
@@ -61,8 +61,8 @@ class ExParagraphFormat(ApiExampleBase):
         builder.writeln("Paragraph outline level 3.")
         builder.paragraph_format.outline_level = aspose.words.OutlineLevel.BODY_TEXT
         builder.writeln("Paragraph at main text level.")
-        doc.save(file_name = ARTIFACTS_DIR + "ParagraphFormat.ParagraphOutlineLevel.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "ParagraphFormat.ParagraphOutlineLevel.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "ParagraphFormat.ParagraphOutlineLevel.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "ParagraphFormat.ParagraphOutlineLevel.docx")
         paragraphs = doc.first_section.body.paragraphs
         self.assertEqual(aspose.words.OutlineLevel.LEVEL1, paragraphs[0].paragraph_format.outline_level)
         self.assertEqual(aspose.words.OutlineLevel.LEVEL2, paragraphs[1].paragraph_format.outline_level)
@@ -77,11 +77,21 @@ class ExParagraphFormat(ApiExampleBase):
         builder.writeln("H")
         builder.paragraph_format.lines_to_drop = 0
         builder.writeln("ello world!")
-        doc.save(file_name = ARTIFACTS_DIR + "ParagraphFormat.LinesToDrop.odt")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "ParagraphFormat.LinesToDrop.odt")
+        doc.save(file_name=ARTIFACTS_DIR + "ParagraphFormat.LinesToDrop.odt")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "ParagraphFormat.LinesToDrop.odt")
         paragraphs = doc.first_section.body.paragraphs
         self.assertEqual(4, paragraphs[0].paragraph_format.lines_to_drop)
         self.assertEqual(0, paragraphs[1].paragraph_format.lines_to_drop)
 
     def test_paragraph_spacing_and_indents(self):
         raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")
+
+    def test_paragraph_baseline_alignment(self):
+        doc = aspose.words.Document(file_name=MY_DIR + "Office math.docx")
+        format = doc.first_section.body.paragraphs[0].paragraph_format
+        if format.baseline_alignment == aspose.words.BaselineAlignment.AUTO:
+            format.baseline_alignment = aspose.words.BaselineAlignment.TOP
+        doc.save(file_name=ARTIFACTS_DIR + "ParagraphFormat.ParagraphBaselineAlignment.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "ParagraphFormat.ParagraphBaselineAlignment.docx")
+        format = doc.first_section.body.paragraphs[0].paragraph_format
+        self.assertEqual(aspose.words.BaselineAlignment.TOP, format.baseline_alignment)

@@ -47,11 +47,11 @@ class ExParagraph(ApiExampleBase):
         doc = aspose.words.Document()
         self.assertEqual(1, doc.first_section.body.paragraphs.count)
         paragraph = doc.first_section.body.first_paragraph
-        paragraph_text = aspose.words.Run(doc = doc, text = "Initial text. ")
+        paragraph_text = aspose.words.Run(doc=doc, text="Initial text. ")
         paragraph.append_child(paragraph_text)
-        run1 = aspose.words.Run(doc = doc, text = "Run 1. ")
-        run2 = aspose.words.Run(doc = doc, text = "Run 2. ")
-        run3 = aspose.words.Run(doc = doc, text = "Run 3. ")
+        run1 = aspose.words.Run(doc=doc, text="Run 1. ")
+        run2 = aspose.words.Run(doc=doc, text="Run 2. ")
+        run3 = aspose.words.Run(doc=doc, text="Run 3. ")
         self.assertEqual("Initial text.", paragraph.get_text().strip())
         paragraph.insert_before(run2, paragraph_text)
         self.assertEqual("Run 2. Initial text.", paragraph.get_text().strip())
@@ -69,7 +69,7 @@ class ExParagraph(ApiExampleBase):
         raise NotImplementedError("Unsupported expression: SimpleLambdaExpression")
 
     def test_range_revisions(self):
-        doc = aspose.words.Document(file_name = MY_DIR + "Revisions.docx")
+        doc = aspose.words.Document(file_name=MY_DIR + "Revisions.docx")
         paragraph = doc.first_section.body.first_paragraph
         for revision in paragraph.range.revisions:
             if revision.revision_type == aspose.words.RevisionType.DELETION:
@@ -77,7 +77,7 @@ class ExParagraph(ApiExampleBase):
         doc.first_section.range.revisions.reject_all()
 
     def test_get_format_revision(self):
-        doc = aspose.words.Document(file_name = MY_DIR + "Format revision.docx")
+        doc = aspose.words.Document(file_name=MY_DIR + "Format revision.docx")
         self.assertTrue(doc.first_section.body.first_paragraph.is_format_revision)
 
     def test_get_frame_properties(self):

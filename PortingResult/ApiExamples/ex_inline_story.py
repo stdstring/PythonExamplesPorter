@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import aspose.pydrawing
 import aspose.words
 import aspose.words.drawing
 import aspose.words.notes
@@ -30,13 +31,20 @@ class ExInlineStory(ApiExampleBase):
         raise NotImplementedError("Unsupported target type System.Collections.Generic.IEnumerable")
 
     def test_insert_inline_story_nodes(self):
-        raise NotImplementedError("Unsupported target type NUnit.Framework.Is")
+        raise NotImplementedError("Unsupported target type System.DateTime")
 
     def test_delete_shapes(self):
         doc = aspose.words.Document()
         builder = aspose.words.DocumentBuilder(doc)
-        builder.insert_shape(shape_type = aspose.words.drawing.ShapeType.CUBE, width = 100, height = 100)
+        builder.insert_shape(shape_type=aspose.words.drawing.ShapeType.CUBE, width=100, height=100)
         self.assertEqual(1, doc.get_child_nodes(aspose.words.NodeType.SHAPE, True).count)
         self.assertEqual(aspose.words.StoryType.MAIN_TEXT, doc.first_section.body.story_type)
         doc.first_section.body.delete_shapes()
         self.assertEqual(0, doc.get_child_nodes(aspose.words.NodeType.SHAPE, True).count)
+
+    def test_update_actual_reference_marks(self):
+        doc = aspose.words.Document(file_name=MY_DIR + "Footnotes and endnotes.docx")
+        footnote = doc.get_child(aspose.words.NodeType.FOOTNOTE, 1, True).as_footnote()
+        doc.update_fields()
+        doc.update_actual_reference_marks()
+        self.assertEqual("1", footnote.actual_reference_mark)

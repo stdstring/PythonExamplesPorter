@@ -12,8 +12,8 @@ class ExBookmarks(ApiExampleBase):
         builder.write("Contents of MyBookmark.")
         builder.end_bookmark("My Bookmark")
         self.assertEqual("My Bookmark", doc.range.bookmarks[0].name)
-        doc.save(file_name = ARTIFACTS_DIR + "Bookmarks.Insert.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Bookmarks.Insert.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Bookmarks.Insert.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Bookmarks.Insert.docx")
         self.assertEqual("My Bookmark", doc.range.bookmarks[0].name)
 
     def test_table_column_bookmarks(self):

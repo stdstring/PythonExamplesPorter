@@ -23,8 +23,8 @@ class ExCellFormat(ApiExampleBase):
         builder.write("Text in unmerged cell.")
         builder.end_row()
         builder.end_table()
-        doc.save(file_name = ARTIFACTS_DIR + "CellFormat.VerticalMerge.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "CellFormat.VerticalMerge.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "CellFormat.VerticalMerge.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "CellFormat.VerticalMerge.docx")
         table = doc.first_section.body.tables[0]
         self.assertEqual(aspose.words.tables.CellMerge.FIRST, table.rows[0].cells[0].cell_format.vertical_merge)
         self.assertEqual(aspose.words.tables.CellMerge.PREVIOUS, table.rows[1].cells[0].cell_format.vertical_merge)
@@ -47,8 +47,8 @@ class ExCellFormat(ApiExampleBase):
         builder.write("Text in unmerged cell.")
         builder.end_row()
         builder.end_table()
-        doc.save(file_name = ARTIFACTS_DIR + "CellFormat.HorizontalMerge.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "CellFormat.HorizontalMerge.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "CellFormat.HorizontalMerge.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "CellFormat.HorizontalMerge.docx")
         table = doc.first_section.body.tables[0]
         self.assertEqual(1, table.rows[0].cells.count)
         self.assertEqual(aspose.words.tables.CellMerge.NONE, table.rows[0].cells[0].cell_format.horizontal_merge)
@@ -61,8 +61,8 @@ class ExCellFormat(ApiExampleBase):
         builder.start_table()
         builder.insert_cell()
         builder.write("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. " + "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.")
-        doc.save(file_name = ARTIFACTS_DIR + "CellFormat.Padding.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "CellFormat.Padding.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "CellFormat.Padding.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "CellFormat.Padding.docx")
         table = doc.first_section.body.tables[0]
         cell = table.rows[0].cells[0]
         self.assertEqual(5, cell.cell_format.left_padding)

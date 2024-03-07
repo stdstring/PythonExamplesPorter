@@ -10,14 +10,14 @@ from api_example_base import ApiExampleBase, ARTIFACTS_DIR, FONTS_DIR, MY_DIR
 class ExFont(ApiExampleBase):
     def test_create_formatted_run(self):
         doc = aspose.words.Document()
-        run = aspose.words.Run(doc = doc, text = "Hello world!")
+        run = aspose.words.Run(doc=doc, text="Hello world!")
         font = run.font
         font.name = "Courier New"
         font.size = 36
         font.highlight_color = aspose.pydrawing.Color.yellow
         doc.first_section.body.first_paragraph.append_child(run)
-        doc.save(file_name = ARTIFACTS_DIR + "Font.CreateFormattedRun.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Font.CreateFormattedRun.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Font.CreateFormattedRun.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Font.CreateFormattedRun.docx")
         run = doc.first_section.body.first_paragraph.runs[0]
         self.assertEqual("Hello world!", run.get_text().strip())
         self.assertEqual("Courier New", run.font.name)
@@ -27,15 +27,15 @@ class ExFont(ApiExampleBase):
     def test_caps(self):
         doc = aspose.words.Document()
         para = doc.get_child(aspose.words.NodeType.PARAGRAPH, 0, True).as_paragraph()
-        run = aspose.words.Run(doc = doc, text = "all capitals")
+        run = aspose.words.Run(doc=doc, text="all capitals")
         run.font.all_caps = True
         para.append_child(run)
-        para = para.parent_node.append_child(aspose.words.Paragraph(doc)).as_paragraph()
-        run = aspose.words.Run(doc = doc, text = "Small Capitals")
+        para = para.parent_node.append_child(aspose.words.Paragraph(doc))
+        run = aspose.words.Run(doc=doc, text="Small Capitals")
         run.font.small_caps = True
         para.append_child(run)
-        doc.save(file_name = ARTIFACTS_DIR + "Font.Caps.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Font.Caps.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Font.Caps.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Font.Caps.docx")
         run = doc.first_section.body.paragraphs[0].runs[0]
         self.assertEqual("all capitals", run.get_text().strip())
         self.assertTrue(run.font.all_caps)
@@ -55,15 +55,15 @@ class ExFont(ApiExampleBase):
     def test_strike_through(self):
         doc = aspose.words.Document()
         para = doc.get_child(aspose.words.NodeType.PARAGRAPH, 0, True).as_paragraph()
-        run = aspose.words.Run(doc = doc, text = "Text with a single-line strikethrough.")
+        run = aspose.words.Run(doc=doc, text="Text with a single-line strikethrough.")
         run.font.strike_through = True
         para.append_child(run)
-        para = para.parent_node.append_child(aspose.words.Paragraph(doc)).as_paragraph()
-        run = aspose.words.Run(doc = doc, text = "Text with a double-line strikethrough.")
+        para = para.parent_node.append_child(aspose.words.Paragraph(doc))
+        run = aspose.words.Run(doc=doc, text="Text with a double-line strikethrough.")
         run.font.double_strike_through = True
         para.append_child(run)
-        doc.save(file_name = ARTIFACTS_DIR + "Font.StrikeThrough.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Font.StrikeThrough.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Font.StrikeThrough.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Font.StrikeThrough.docx")
         run = doc.first_section.body.paragraphs[0].runs[0]
         self.assertEqual("Text with a single-line strikethrough.", run.get_text().strip())
         self.assertTrue(run.font.strike_through)
@@ -74,26 +74,26 @@ class ExFont(ApiExampleBase):
     def test_position_subscript(self):
         doc = aspose.words.Document()
         para = doc.get_child(aspose.words.NodeType.PARAGRAPH, 0, True).as_paragraph()
-        run = aspose.words.Run(doc = doc, text = "Raised text. ")
+        run = aspose.words.Run(doc=doc, text="Raised text. ")
         run.font.position = 5
         para.append_child(run)
-        run = aspose.words.Run(doc = doc, text = "Lowered text. ")
+        run = aspose.words.Run(doc=doc, text="Lowered text. ")
         run.font.position = -10
         para.append_child(run)
-        run = aspose.words.Run(doc = doc, text = "Text in its default position. ")
+        run = aspose.words.Run(doc=doc, text="Text in its default position. ")
         para.append_child(run)
-        run = aspose.words.Run(doc = doc, text = "Subscript. ")
+        run = aspose.words.Run(doc=doc, text="Subscript. ")
         run.font.subscript = True
         para.append_child(run)
-        run = aspose.words.Run(doc = doc, text = "Superscript.")
+        run = aspose.words.Run(doc=doc, text="Superscript.")
         run.font.superscript = True
         para.append_child(run)
-        doc.save(file_name = ARTIFACTS_DIR + "Font.PositionSubscript.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Font.PositionSubscript.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Font.PositionSubscript.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Font.PositionSubscript.docx")
         run = doc.first_section.body.first_paragraph.runs[0]
         self.assertEqual("Raised text.", run.get_text().strip())
         self.assertEqual(5, run.font.position)
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Font.PositionSubscript.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Font.PositionSubscript.docx")
         run = doc.first_section.body.first_paragraph.runs[1]
         self.assertEqual("Lowered text.", run.get_text().strip())
         self.assertEqual(-10, run.font.position)
@@ -113,8 +113,8 @@ class ExFont(ApiExampleBase):
         builder.writeln("Expanded by 1pt")
         builder.font.spacing = -1
         builder.writeln("Condensed by 1pt")
-        doc.save(file_name = ARTIFACTS_DIR + "Font.ScalingSpacing.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Font.ScalingSpacing.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Font.ScalingSpacing.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Font.ScalingSpacing.docx")
         run = doc.first_section.body.paragraphs[0].runs[0]
         self.assertEqual("Wide characters", run.get_text().strip())
         self.assertEqual(150, run.font.scaling)
@@ -131,8 +131,8 @@ class ExFont(ApiExampleBase):
         builder.font.size = 36
         builder.font.italic = True
         builder.writeln("Hello world!")
-        doc.save(file_name = ARTIFACTS_DIR + "Font.Italic.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Font.Italic.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Font.Italic.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Font.Italic.docx")
         run = doc.first_section.body.first_paragraph.runs[0]
         self.assertEqual("Hello world!", run.get_text().strip())
         self.assertTrue(run.font.italic)
@@ -147,8 +147,8 @@ class ExFont(ApiExampleBase):
         builder.font.engrave = False
         builder.font.emboss = True
         builder.writeln("This text is embossed.")
-        doc.save(file_name = ARTIFACTS_DIR + "Font.EngraveEmboss.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Font.EngraveEmboss.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Font.EngraveEmboss.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Font.EngraveEmboss.docx")
         run = doc.first_section.body.paragraphs[0].runs[0]
         self.assertEqual("This text is engraved.", run.get_text().strip())
         self.assertTrue(run.font.engrave)
@@ -164,8 +164,8 @@ class ExFont(ApiExampleBase):
         builder.font.shadow = True
         builder.font.size = 36
         builder.writeln("This text has a shadow.")
-        doc.save(file_name = ARTIFACTS_DIR + "Font.Shadow.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Font.Shadow.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Font.Shadow.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Font.Shadow.docx")
         run = doc.first_section.body.paragraphs[0].runs[0]
         self.assertEqual("This text has a shadow.", run.get_text().strip())
         self.assertTrue(run.font.shadow)
@@ -177,8 +177,8 @@ class ExFont(ApiExampleBase):
         builder.font.color = aspose.pydrawing.Color.blue
         builder.font.size = 36
         builder.writeln("This text has an outline.")
-        doc.save(file_name = ARTIFACTS_DIR + "Font.Outline.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Font.Outline.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Font.Outline.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Font.Outline.docx")
         run = doc.first_section.body.paragraphs[0].runs[0]
         self.assertEqual("This text has an outline.", run.get_text().strip())
         self.assertTrue(run.font.outline)
@@ -189,8 +189,8 @@ class ExFont(ApiExampleBase):
         builder.font.hidden = True
         builder.font.size = 36
         builder.writeln("This text will not be visible in the document.")
-        doc.save(file_name = ARTIFACTS_DIR + "Font.Hidden.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Font.Hidden.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Font.Hidden.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Font.Hidden.docx")
         run = doc.first_section.body.paragraphs[0].runs[0]
         self.assertEqual("This text will not be visible in the document.", run.get_text().strip())
         self.assertTrue(run.font.hidden)
@@ -204,8 +204,8 @@ class ExFont(ApiExampleBase):
         builder.writeln("TALLY. (Kerning not applied)")
         builder.font.kerning = 12
         builder.writeln("TALLY. (Kerning applied)")
-        doc.save(file_name = ARTIFACTS_DIR + "Font.Kerning.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Font.Kerning.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Font.Kerning.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Font.Kerning.docx")
         run = doc.first_section.body.paragraphs[0].runs[0]
         self.assertEqual("TALLY. (Kerning not applied)", run.get_text().strip())
         self.assertEqual(24, run.font.kerning)
@@ -220,8 +220,8 @@ class ExFont(ApiExampleBase):
         builder = aspose.words.DocumentBuilder(doc)
         builder.font.no_proofing = True
         builder.writeln("Proofing has been disabled, so these spelking errrs will not display red lines underneath.")
-        doc.save(file_name = ARTIFACTS_DIR + "Font.NoProofing.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Font.NoProofing.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Font.NoProofing.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Font.NoProofing.docx")
         run = doc.first_section.body.paragraphs[0].runs[0]
         self.assertEqual("Proofing has been disabled, so these spelking errrs will not display red lines underneath.", run.get_text().strip())
         self.assertTrue(run.font.no_proofing)
@@ -235,8 +235,8 @@ class ExFont(ApiExampleBase):
         builder.font.underline = aspose.words.Underline.DOTTED
         builder.font.underline_color = aspose.pydrawing.Color.red
         builder.writeln("Underlined text.")
-        doc.save(file_name = ARTIFACTS_DIR + "Font.Underlines.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Font.Underlines.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Font.Underlines.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Font.Underlines.docx")
         run = doc.first_section.body.paragraphs[0].runs[0]
         self.assertEqual("Underlined text.", run.get_text().strip())
         self.assertEqual(aspose.words.Underline.DOTTED, run.font.underline)
@@ -247,8 +247,8 @@ class ExFont(ApiExampleBase):
         builder = aspose.words.DocumentBuilder(doc)
         builder.font.complex_script = True
         builder.writeln("Text treated as complex script.")
-        doc.save(file_name = ARTIFACTS_DIR + "Font.ComplexScript.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Font.ComplexScript.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Font.ComplexScript.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Font.ComplexScript.docx")
         run = doc.first_section.body.paragraphs[0].runs[0]
         self.assertEqual("Text treated as complex script.", run.get_text().strip())
         self.assertTrue(run.font.complex_script)
@@ -259,8 +259,8 @@ class ExFont(ApiExampleBase):
         builder.font.size = 36
         builder.font.text_effect = aspose.words.TextEffect.SPARKLE_TEXT
         builder.writeln("Text with a sparkle effect.")
-        doc.save(file_name = ARTIFACTS_DIR + "Font.SparklingText.doc")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Font.SparklingText.doc")
+        doc.save(file_name=ARTIFACTS_DIR + "Font.SparklingText.doc")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Font.SparklingText.doc")
         run = doc.first_section.body.paragraphs[0].runs[0]
         self.assertEqual("Text with a sparkle effect.", run.get_text().strip())
         self.assertEqual(aspose.words.TextEffect.SPARKLE_TEXT, run.font.text_effect)
@@ -278,8 +278,8 @@ class ExFont(ApiExampleBase):
         builder.font.border.line_width = 2.5
         builder.font.border.line_style = aspose.words.LineStyle.DASH_DOT_STROKER
         builder.writeln("Foreground and background pattern colors for shading texture.")
-        doc.save(file_name = ARTIFACTS_DIR + "Font.ForegroundAndBackground.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Font.ForegroundAndBackground.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Font.ForegroundAndBackground.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Font.ForegroundAndBackground.docx")
         run = doc.first_section.body.paragraphs[0].runs[0]
         self.assertEqual("Foreground and background pattern colors for shading texture.", run.get_text().strip())
         self.assertEqual(aspose.words.themes.ThemeColor.DARK1, doc.first_section.body.paragraphs[0].paragraph_format.shading.foreground_pattern_theme_color)
@@ -296,8 +296,8 @@ class ExFont(ApiExampleBase):
         shading.background_pattern_color = aspose.pydrawing.Color.orange_red
         shading.foreground_pattern_color = aspose.pydrawing.Color.dark_blue
         builder.writeln("White text on an orange background with a two-tone texture.")
-        doc.save(file_name = ARTIFACTS_DIR + "Font.Shading.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Font.Shading.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Font.Shading.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Font.Shading.docx")
         run = doc.first_section.body.paragraphs[0].runs[0]
         self.assertEqual("White text on an orange background with a two-tone texture.", run.get_text().strip())
         self.assertEqual(aspose.pydrawing.Color.white.to_argb(), run.font.color.to_argb())
@@ -318,8 +318,8 @@ class ExFont(ApiExampleBase):
         self.assertEqual("Calibri", builder.font.name)
         builder.font.name_other = "Courier New"
         builder.writeln("Hello, Привет")
-        doc.save(file_name = ARTIFACTS_DIR + "Font.NameAscii.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Font.NameAscii.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Font.NameAscii.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Font.NameAscii.docx")
         run = doc.first_section.body.paragraphs[0].runs[0]
         self.assertEqual("Hello, Привет", run.get_text().strip())
         self.assertEqual("Calibri", run.font.name)
@@ -338,8 +338,8 @@ class ExFont(ApiExampleBase):
                 run.font.style_name = "Strong"
             if run.font.style_identifier == aspose.words.StyleIdentifier.INTENSE_EMPHASIS:
                 run.font.style_identifier = aspose.words.StyleIdentifier.STRONG
-        doc.save(file_name = ARTIFACTS_DIR + "Font.ChangeStyle.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Font.ChangeStyle.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Font.ChangeStyle.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Font.ChangeStyle.docx")
         doc_run = doc.first_section.body.paragraphs[0].runs[0]
         self.assertEqual("Text originally in \"Emphasis\" style", doc_run.get_text().strip())
         self.assertEqual(aspose.words.StyleIdentifier.STRONG, doc_run.font.style_identifier)
@@ -370,8 +370,8 @@ class ExFont(ApiExampleBase):
             char_style = run.font.style
             if not char_style.built_in:
                 run.font.underline = aspose.words.Underline.DOUBLE
-        doc.save(file_name = ARTIFACTS_DIR + "Font.Style.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Font.Style.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Font.Style.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Font.Style.docx")
         doc_run = doc.first_section.body.paragraphs[0].runs[0]
         self.assertEqual("This text is in a custom style.", doc_run.get_text().strip())
         self.assertEqual("MyStyle", doc_run.font.style_name)
@@ -391,8 +391,8 @@ class ExFont(ApiExampleBase):
         builder.font.shading.background_pattern_color = aspose.pydrawing.Color.light_blue
         builder.writeln("The text color automatically chosen for this run is black.")
         self.assertEqual(aspose.pydrawing.Color.black.to_argb(), doc.first_section.body.paragraphs[1].runs[0].font.auto_color.to_argb())
-        doc.save(file_name = ARTIFACTS_DIR + "Font.SetFontAutoColor.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Font.SetFontAutoColor.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Font.SetFontAutoColor.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Font.SetFontAutoColor.docx")
         run = doc.first_section.body.paragraphs[0].runs[0]
         self.assertEqual("The text color automatically chosen for this run is white.", run.get_text().strip())
         self.assertEqual(aspose.pydrawing.Color.empty().to_argb(), run.font.color.to_argb())
@@ -417,7 +417,7 @@ class ExFont(ApiExampleBase):
         raise NotImplementedError("Unsupported target type System.Collections.Generic.IEnumerator")
 
     def test_has_dml_effect(self):
-        doc = aspose.words.Document(file_name = MY_DIR + "DrawingML text effects.docx")
+        doc = aspose.words.Document(file_name=MY_DIR + "DrawingML text effects.docx")
         runs = doc.first_section.body.first_paragraph.runs
         self.assertTrue(runs[0].font.has_dml_effect(aspose.words.TextDmlEffect.SHADOW))
         self.assertTrue(runs[1].font.has_dml_effect(aspose.words.TextDmlEffect.SHADOW))

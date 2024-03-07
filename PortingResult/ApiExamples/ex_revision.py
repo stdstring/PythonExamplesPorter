@@ -16,18 +16,18 @@ class ExRevision(ApiExampleBase):
         raise NotImplementedError("Unsupported expression: InterpolatedStringExpression")
 
     def test_get_specific_revision_group(self):
-        doc = aspose.words.Document(file_name = MY_DIR + "Revisions.docx")
+        doc = aspose.words.Document(file_name=MY_DIR + "Revisions.docx")
         revision_group = doc.revisions.groups[0]
         self.assertEqual(aspose.words.RevisionType.DELETION, revision_group.revision_type)
         self.assertEqual("Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. ", revision_group.text)
 
     def test_show_revision_balloons(self):
-        doc = aspose.words.Document(file_name = MY_DIR + "Revisions.docx")
+        doc = aspose.words.Document(file_name=MY_DIR + "Revisions.docx")
         doc.layout_options.revision_options.show_in_balloons = aspose.words.layout.ShowInBalloons.FORMAT_AND_DELETE
-        doc.save(file_name = ARTIFACTS_DIR + "Revision.ShowRevisionBalloons.pdf")
+        doc.save(file_name=ARTIFACTS_DIR + "Revision.ShowRevisionBalloons.pdf")
 
     def test_revision_options(self):
-        doc = aspose.words.Document(file_name = MY_DIR + "Revisions.docx")
+        doc = aspose.words.Document(file_name=MY_DIR + "Revisions.docx")
         revision_options = doc.layout_options.revision_options
         revision_options.inserted_text_color = aspose.words.layout.RevisionColor.GREEN
         revision_options.inserted_text_effect = aspose.words.layout.RevisionTextEffect.ITALIC
@@ -45,4 +45,7 @@ class ExRevision(ApiExampleBase):
         revision_options.show_revision_marks = True
         revision_options.show_in_balloons = aspose.words.layout.ShowInBalloons.FORMAT
         revision_options.comment_color = aspose.words.layout.RevisionColor.BRIGHT_GREEN
-        doc.save(file_name = ARTIFACTS_DIR + "Revision.RevisionOptions.pdf")
+        doc.save(file_name=ARTIFACTS_DIR + "Revision.RevisionOptions.pdf")
+
+    def test_revision_specified_criteria(self):
+        raise NotImplementedError("Unsupported target type System.DateTime")

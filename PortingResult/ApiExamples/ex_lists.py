@@ -54,24 +54,24 @@ class ExLists(ApiExampleBase):
 
     def test_create_picture_bullet(self):
         doc = aspose.words.Document()
-        list = doc.lists.add(list_template = aspose.words.lists.ListTemplate.BULLET_CIRCLE)
+        list = doc.lists.add(list_template=aspose.words.lists.ListTemplate.BULLET_CIRCLE)
         list.list_levels[0].create_picture_bullet()
-        list.list_levels[0].image_data.set_image(file_name = IMAGE_DIR + "Logo icon.ico")
+        list.list_levels[0].image_data.set_image(file_name=IMAGE_DIR + "Logo icon.ico")
         self.assertTrue(list.list_levels[0].image_data.has_image)
         builder = aspose.words.DocumentBuilder(doc)
         builder.list_format.list = list
         builder.writeln("Hello world!")
         builder.write("Hello again!")
-        doc.save(file_name = ARTIFACTS_DIR + "Lists.CreatePictureBullet.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Lists.CreatePictureBullet.docx")
         list.list_levels[0].delete_picture_bullet()
         self.assertIsNone(list.list_levels[0].image_data)
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Lists.CreatePictureBullet.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Lists.CreatePictureBullet.docx")
         self.assertTrue(doc.lists[0].list_levels[0].image_data.has_image)
 
     def test_custom_number_style_format(self):
         raise NotImplementedError("Unsupported expression: ParenthesizedLambdaExpression")
 
     def test_has_same_template(self):
-        doc = aspose.words.Document(file_name = MY_DIR + "Different lists.docx")
+        doc = aspose.words.Document(file_name=MY_DIR + "Different lists.docx")
         self.assertTrue(doc.lists[0].has_same_template(doc.lists[1]))
         self.assertFalse(doc.lists[1].has_same_template(doc.lists[2]))

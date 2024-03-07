@@ -22,7 +22,7 @@ class ExImage(ApiExampleBase):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_insert_image_with_hyperlink(self):
-        raise NotImplementedError("Unsupported expression: AwaitExpression")
+        raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_create_linked_image(self):
         raise NotImplementedError("Unsupported ctor for type FileInfo")
@@ -34,4 +34,4 @@ class ExImage(ApiExampleBase):
         raise NotImplementedError("Unsupported expression: SimpleLambdaExpression")
 
     def test_scale_image(self):
-        raise NotImplementedError("Unsupported target type System.Drawing.Image")
+        raise NotImplementedError("Unsupported assignment expression: MultiplyAssignmentExpression")

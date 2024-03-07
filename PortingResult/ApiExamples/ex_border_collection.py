@@ -10,7 +10,7 @@ class ExBorderCollection(ApiExampleBase):
         raise NotImplementedError("Unsupported statement type: UsingStatement")
 
     def test_remove_all_borders(self):
-        doc = aspose.words.Document(file_name = MY_DIR + "Borders.docx")
+        doc = aspose.words.Document(file_name=MY_DIR + "Borders.docx")
         first_paragraph_borders = doc.first_section.body.first_paragraph.paragraph_format.borders
         self.assertEqual(aspose.pydrawing.Color.red.to_argb(), first_paragraph_borders.color.to_argb())
         self.assertEqual(aspose.words.LineStyle.SINGLE, first_paragraph_borders.line_style)
@@ -22,8 +22,8 @@ class ExBorderCollection(ApiExampleBase):
                 self.assertEqual(aspose.pydrawing.Color.empty().to_argb(), border.color.to_argb())
                 self.assertEqual(aspose.words.LineStyle.NONE, border.line_style)
                 self.assertEqual(0, border.line_width)
-        doc.save(file_name = ARTIFACTS_DIR + "BorderCollection.RemoveAllBorders.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "BorderCollection.RemoveAllBorders.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "BorderCollection.RemoveAllBorders.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "BorderCollection.RemoveAllBorders.docx")
         for border in doc.first_section.body.first_paragraph.paragraph_format.borders:
             self.assertEqual(aspose.pydrawing.Color.empty().to_argb(), border.color.to_argb())
             self.assertEqual(aspose.words.LineStyle.NONE, border.line_style)

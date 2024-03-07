@@ -16,14 +16,14 @@ class ExDocumentBuilderImages(ApiExampleBase):
     def test_insert_svg_image(self):
         doc = aspose.words.Document()
         builder = aspose.words.DocumentBuilder(doc)
-        builder.insert_image(file_name = IMAGE_DIR + "Scalable Vector Graphics.svg")
-        doc.save(file_name = ARTIFACTS_DIR + "DocumentBuilderImages.InsertSvgImage.SvgWithSvgBlip.docx")
-        doc.save(file_name = ARTIFACTS_DIR + "DocumentBuilderImages.InsertSvgImage.Svg.doc")
+        builder.insert_image(file_name=IMAGE_DIR + "Scalable Vector Graphics.svg")
+        doc.save(file_name=ARTIFACTS_DIR + "DocumentBuilderImages.InsertSvgImage.SvgWithSvgBlip.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "DocumentBuilderImages.InsertSvgImage.Svg.doc")
         doc.compatibility_options.optimize_for(aspose.words.settings.MsWordVersion.WORD2003)
-        doc.save(file_name = ARTIFACTS_DIR + "DocumentBuilderImages.InsertSvgImage.Emf.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "DocumentBuilderImages.InsertSvgImage.Emf.docx")
 
     def test_insert_image_from_byte_array(self):
-        raise NotImplementedError("Unsupported target type System.Drawing.Image")
+        raise NotImplementedError("Unsupported target type System.IO.File")
 
     def test_insert_gif(self):
         raise NotImplementedError("Unsupported target type System.IO.File")

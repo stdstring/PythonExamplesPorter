@@ -88,7 +88,7 @@ namespace PythonExamplesPorterApp.Expressions
             return GetArgumentName(useNamedArguments, argument, parameter) switch
             {
                 null => (value: argumentValue, namedValue: null),
-                var name => (value: argumentValue, namedValue: $"{name} = {argumentValue}")
+                var name => (value: argumentValue, namedValue: $"{name}={argumentValue}")
             };
         }
 
@@ -122,7 +122,7 @@ namespace PythonExamplesPorterApp.Expressions
             return GetArgumentName(useNamedArguments, arguments[^1], parameter) switch
             {
                 null => (value: argumentValue, namedValue: null),
-                var name => (value: argumentValue, namedValue: $"{name} = {argumentValue}")
+                var name => (value: argumentValue, namedValue: $"{name}={argumentValue}")
             };
         }
 
