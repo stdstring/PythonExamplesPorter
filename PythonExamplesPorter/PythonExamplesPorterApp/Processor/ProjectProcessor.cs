@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System.Diagnostics;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.MSBuild;
 using PythonExamplesPorterApp.Common;
 using PythonExamplesPorterApp.Utils;
@@ -26,6 +27,10 @@ namespace PythonExamplesPorterApp.Processor
         {
             if (project.FilePath == null)
                 throw new InvalidOperationException();
+
+            if(!RestoreNuget(project.FilePath))
+                throw new InvalidOperationException();
+
             Compilation? compilation = project.GetCompilationAsync().Result;
             if (compilation == null)
                 throw new InvalidOperationException();
@@ -36,6 +41,46 @@ namespace PythonExamplesPorterApp.Processor
             {
                 String documentRelativePath = Path.GetRelativePath(projectDir, document.FilePath!);
                 _fileProcessor.Process(documentRelativePath, document, compilation);
+            }
+        }
+
+        private bool RestoreNuget(string projectPath)
+        {
+            // It seems that the best solution to restore nuget packages is to use "dotnet restore" command.
+            using (Process process = new Process())
+            {
+                process.StartInfo.FileName = "dotnet";
+                process.StartInfo.Arguments = $"restore {projectPath}";
+
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.RedirectStandardOutput = true;
+                process.StartInfo.RedirectStandardError = true;
+
+                process.OutputDataReceived += delegate(object sender, DataReceivedEventArgs e)
+                {
+                    if (e.Data != null)
+                        _appData.Logger.LogInfo($"{e.Data}");
+                };
+
+                process.ErrorDataReceived += delegate(object sender, DataReceivedEventArgs e)
+                {
+                    if (e.Data != null)
+                        _appData.Logger.LogError($"{e.Data}");
+                };
+
+                try
+                {
+                    process.Start();
+                    process.BeginOutputReadLine();
+                    process.BeginErrorReadLine();
+                    process.WaitForExit();
+                    return process.ExitCode == 0;
+                }
+                catch (Exception ex)
+                {
+                    _appData.Logger.LogError($"{ex.Message}");
+                    return false;
+                }
             }
         }
 
