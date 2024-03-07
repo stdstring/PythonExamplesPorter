@@ -19,10 +19,10 @@ class ExTable(ApiExampleBase):
         first_row.append_child(first_cell)
         paragraph = aspose.words.Paragraph(doc)
         first_cell.append_child(paragraph)
-        run = aspose.words.Run(doc = doc, text = "Hello world!")
+        run = aspose.words.Run(doc=doc, text="Hello world!")
         paragraph.append_child(run)
-        doc.save(file_name = ARTIFACTS_DIR + "Table.CreateTable.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Table.CreateTable.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Table.CreateTable.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Table.CreateTable.docx")
         table = doc.first_section.body.tables[0]
         self.assertEqual(1, table.rows.count)
         self.assertEqual(1, table.first_row.cells.count)
@@ -42,8 +42,8 @@ class ExTable(ApiExampleBase):
         table.top_padding = 10
         table.bottom_padding = 90
         table.preferred_width = aspose.words.tables.PreferredWidth.from_points(250)
-        doc.save(file_name = ARTIFACTS_DIR + "DocumentBuilder.SetRowFormatting.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "DocumentBuilder.SetRowFormatting.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "DocumentBuilder.SetRowFormatting.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "DocumentBuilder.SetRowFormatting.docx")
         table = doc.first_section.body.tables[0]
         self.assertEqual(30, table.left_padding)
         self.assertEqual(60, table.right_padding)
@@ -70,8 +70,8 @@ class ExTable(ApiExampleBase):
         cell_format = table.last_row.first_cell.cell_format
         cell_format.width = 100
         cell_format.shading.background_pattern_color = aspose.pydrawing.Color.orange
-        doc.save(file_name = ARTIFACTS_DIR + "Table.RowCellFormat.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Table.RowCellFormat.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Table.RowCellFormat.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Table.RowCellFormat.docx")
         table = doc.first_section.body.tables[0]
         self.assertEqual("City\aCountry\a\aLondon\aU.K.\a\a", table.get_text().strip())
         row_format = table.first_row.row_format
@@ -93,7 +93,7 @@ class ExTable(ApiExampleBase):
         doc.first_section.body.append_child(table)
         self.assertEqual(0, table.get_child_nodes(aspose.words.NodeType.ANY, True).count)
         table.ensure_minimum()
-        table.first_row.first_cell.first_paragraph.append_child(aspose.words.Run(doc = doc, text = "Hello world!"))
+        table.first_row.first_cell.first_paragraph.append_child(aspose.words.Run(doc=doc, text="Hello world!"))
         self.assertEqual(4, table.get_child_nodes(aspose.words.NodeType.ANY, True).count)
 
     def test_ensure_row_minimum(self):
@@ -104,7 +104,7 @@ class ExTable(ApiExampleBase):
         table.append_child(row)
         self.assertEqual(0, row.get_child_nodes(aspose.words.NodeType.ANY, True).count)
         row.ensure_minimum()
-        row.first_cell.first_paragraph.append_child(aspose.words.Run(doc = doc, text = "Hello world!"))
+        row.first_cell.first_paragraph.append_child(aspose.words.Run(doc=doc, text="Hello world!"))
         self.assertEqual(3, row.get_child_nodes(aspose.words.NodeType.ANY, True).count)
 
     def test_ensure_cell_minimum(self):
@@ -117,11 +117,11 @@ class ExTable(ApiExampleBase):
         row.append_child(cell)
         self.assertEqual(0, cell.get_child_nodes(aspose.words.NodeType.ANY, True).count)
         cell.ensure_minimum()
-        cell.first_paragraph.append_child(aspose.words.Run(doc = doc, text = "Hello world!"))
+        cell.first_paragraph.append_child(aspose.words.Run(doc=doc, text="Hello world!"))
         self.assertEqual(2, cell.get_child_nodes(aspose.words.NodeType.ANY, True).count)
 
     def test_set_outline_borders(self):
-        doc = aspose.words.Document(file_name = MY_DIR + "Tables.docx")
+        doc = aspose.words.Document(file_name=MY_DIR + "Tables.docx")
         table = doc.first_section.body.tables[0]
         table.alignment = aspose.words.tables.TableAlignment.CENTER
         table.clear_borders()
@@ -131,8 +131,8 @@ class ExTable(ApiExampleBase):
         table.set_border(aspose.words.BorderType.TOP, aspose.words.LineStyle.SINGLE, 1.5, aspose.pydrawing.Color.green, True)
         table.set_border(aspose.words.BorderType.BOTTOM, aspose.words.LineStyle.SINGLE, 1.5, aspose.pydrawing.Color.green, True)
         table.set_shading(aspose.words.TextureIndex.TEXTURE_SOLID, aspose.pydrawing.Color.light_green, aspose.pydrawing.Color.empty())
-        doc.save(file_name = ARTIFACTS_DIR + "Table.SetOutlineBorders.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Table.SetOutlineBorders.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Table.SetOutlineBorders.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Table.SetOutlineBorders.docx")
         table = doc.first_section.body.tables[0]
         self.assertEqual(aspose.words.tables.TableAlignment.CENTER, table.alignment)
         borders = table.first_row.row_format.borders
@@ -145,12 +145,12 @@ class ExTable(ApiExampleBase):
         self.assertEqual(aspose.pydrawing.Color.light_green.to_argb(), table.first_row.first_cell.cell_format.shading.foreground_pattern_color.to_argb())
 
     def test_set_borders(self):
-        doc = aspose.words.Document(file_name = MY_DIR + "Tables.docx")
+        doc = aspose.words.Document(file_name=MY_DIR + "Tables.docx")
         table = doc.first_section.body.tables[0]
         table.clear_borders()
         table.set_borders(aspose.words.LineStyle.SINGLE, 1.5, aspose.pydrawing.Color.green)
-        doc.save(file_name = ARTIFACTS_DIR + "Table.SetBorders.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Table.SetBorders.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Table.SetBorders.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Table.SetBorders.docx")
         table = doc.first_section.body.tables[0]
         self.assertEqual(aspose.pydrawing.Color.green.to_argb(), table.first_row.row_format.borders.top.color.to_argb())
         self.assertEqual(aspose.pydrawing.Color.green.to_argb(), table.first_row.row_format.borders.left.color.to_argb())
@@ -160,35 +160,35 @@ class ExTable(ApiExampleBase):
         self.assertEqual(aspose.pydrawing.Color.green.to_argb(), table.first_row.row_format.borders.vertical.color.to_argb())
 
     def test_row_format(self):
-        doc = aspose.words.Document(file_name = MY_DIR + "Tables.docx")
+        doc = aspose.words.Document(file_name=MY_DIR + "Tables.docx")
         table = doc.first_section.body.tables[0]
         first_row = table.first_row
         first_row.row_format.borders.line_style = aspose.words.LineStyle.NONE
         first_row.row_format.height_rule = aspose.words.HeightRule.AUTO
         first_row.row_format.allow_break_across_pages = True
-        doc.save(file_name = ARTIFACTS_DIR + "Table.RowFormat.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Table.RowFormat.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Table.RowFormat.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Table.RowFormat.docx")
         table = doc.first_section.body.tables[0]
         self.assertEqual(aspose.words.LineStyle.NONE, table.first_row.row_format.borders.line_style)
         self.assertEqual(aspose.words.HeightRule.AUTO, table.first_row.row_format.height_rule)
         self.assertTrue(table.first_row.row_format.allow_break_across_pages)
 
     def test_cell_format(self):
-        doc = aspose.words.Document(file_name = MY_DIR + "Tables.docx")
+        doc = aspose.words.Document(file_name=MY_DIR + "Tables.docx")
         table = doc.first_section.body.tables[0]
         first_cell = table.first_row.first_cell
         first_cell.cell_format.width = 30
         first_cell.cell_format.orientation = aspose.words.TextOrientation.DOWNWARD
         first_cell.cell_format.shading.foreground_pattern_color = aspose.pydrawing.Color.light_green
-        doc.save(file_name = ARTIFACTS_DIR + "Table.CellFormat.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Table.CellFormat.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Table.CellFormat.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Table.CellFormat.docx")
         table = doc.first_section.body.tables[0]
         self.assertEqual(30, table.first_row.first_cell.cell_format.width)
         self.assertEqual(aspose.words.TextOrientation.DOWNWARD, table.first_row.first_cell.cell_format.orientation)
         self.assertEqual(aspose.pydrawing.Color.light_green.to_argb(), table.first_row.first_cell.cell_format.shading.foreground_pattern_color.to_argb())
 
     def test_distance_between_table_and_text(self):
-        doc = aspose.words.Document(file_name = MY_DIR + "Table wrapped by text.docx")
+        doc = aspose.words.Document(file_name=MY_DIR + "Table wrapped by text.docx")
         table = doc.first_section.body.tables[0]
         self.assertEqual(25.9, table.distance_top)
         self.assertEqual(25.9, table.distance_bottom)
@@ -198,7 +198,7 @@ class ExTable(ApiExampleBase):
         table.distance_right = 24
         table.distance_top = 3
         table.distance_bottom = 3
-        doc.save(file_name = ARTIFACTS_DIR + "Table.DistanceBetweenTableAndText.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Table.DistanceBetweenTableAndText.docx")
 
     def test_borders(self):
         raise NotImplementedError("Unsupported expression: ParenthesizedLambdaExpression")
@@ -220,36 +220,36 @@ class ExTable(ApiExampleBase):
         options = aspose.words.replacing.FindReplaceOptions()
         options.match_case = True
         options.find_whole_words_only = True
-        table.range.replace(pattern = "Carrots", replacement = "Eggs", options = options)
-        table.last_row.last_cell.range.replace(pattern = "50", replacement = "20", options = options)
+        table.range.replace(pattern="Carrots", replacement="Eggs", options=options)
+        table.last_row.last_cell.range.replace(pattern="50", replacement="20", options=options)
         self.assertEqual("Eggs\a50\a\a" + "Potatoes\a20\a\a", table.get_text().strip())
 
     def test_print_table_range(self):
         raise NotImplementedError("Unsupported target type System.Console")
 
     def test_clone_table(self):
-        doc = aspose.words.Document(file_name = MY_DIR + "Tables.docx")
+        doc = aspose.words.Document(file_name=MY_DIR + "Tables.docx")
         table = doc.first_section.body.tables[0]
         table_clone = table.clone(True).as_table()
         table.parent_node.insert_after(table_clone, table)
         table.parent_node.insert_after(aspose.words.Paragraph(doc), table)
-        doc.save(file_name = ARTIFACTS_DIR + "Table.CloneTable.doc")
+        doc.save(file_name=ARTIFACTS_DIR + "Table.CloneTable.doc")
         self.assertEqual(3, doc.get_child_nodes(aspose.words.NodeType.TABLE, True).count)
         self.assertEqual(table.range.text, table_clone.range.text)
         for cell in table_clone.get_child_nodes(aspose.words.NodeType.CELL, True).of_type():
             cell.remove_all_children()
-        self.assertEqual("", table_clone.to_string(save_format = aspose.words.SaveFormat.TEXT).strip())
+        self.assertEqual("", table_clone.to_string(save_format=aspose.words.SaveFormat.TEXT).strip())
 
     def test_keep_table_together(self):
-        doc = aspose.words.Document(file_name = MY_DIR + "Table spanning two pages.docx")
+        doc = aspose.words.Document(file_name=MY_DIR + "Table spanning two pages.docx")
         table = doc.first_section.body.tables[0]
         for cell in table.get_child_nodes(aspose.words.NodeType.CELL, True).of_type():
             for para in cell.paragraphs.of_type():
                 self.assertTrue(para.is_in_cell)
                 if not (cell.parent_row.is_last_row and para.is_end_of_cell):
                     para.paragraph_format.keep_with_next = True
-        doc.save(file_name = ARTIFACTS_DIR + "Table.KeepTableTogether.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Table.KeepTableTogether.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Table.KeepTableTogether.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Table.KeepTableTogether.docx")
         table = doc.first_section.body.tables[0]
         for para in table.get_child_nodes(aspose.words.NodeType.PARAGRAPH, True).of_type():
             if para.is_end_of_cell and (para.parent_node.as_cell()).parent_row.is_last_row:
@@ -258,7 +258,7 @@ class ExTable(ApiExampleBase):
                 self.assertTrue(para.paragraph_format.keep_with_next)
 
     def test_get_index_of_table_elements(self):
-        doc = aspose.words.Document(file_name = MY_DIR + "Tables.docx")
+        doc = aspose.words.Document(file_name=MY_DIR + "Tables.docx")
         table = doc.first_section.body.tables[0]
         all_tables = doc.get_child_nodes(aspose.words.NodeType.TABLE, True)
         self.assertEqual(0, all_tables.index_of(table))
@@ -268,7 +268,7 @@ class ExTable(ApiExampleBase):
         self.assertEqual(4, row.index_of(cell))
 
     def test_get_preferred_width_type_and_value(self):
-        doc = aspose.words.Document(file_name = MY_DIR + "Tables.docx")
+        doc = aspose.words.Document(file_name=MY_DIR + "Tables.docx")
         table = doc.first_section.body.tables[0]
         first_cell = table.first_row.first_cell
         self.assertEqual(aspose.words.tables.PreferredWidthType.PERCENT, first_cell.cell_format.preferred_width.type)
@@ -284,14 +284,14 @@ class ExTable(ApiExampleBase):
         raise NotImplementedError("Unsupported call of method named MergeCells")
 
     def test_combine_tables(self):
-        doc = aspose.words.Document(file_name = MY_DIR + "Tables.docx")
+        doc = aspose.words.Document(file_name=MY_DIR + "Tables.docx")
         first_table = doc.first_section.body.tables[0]
         second_table = doc.get_child(aspose.words.NodeType.TABLE, 1, True).as_table()
         while second_table.has_child_nodes:
             first_table.rows.add(second_table.first_row)
         second_table.remove()
-        doc.save(file_name = ARTIFACTS_DIR + "Table.CombineTables.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Table.CombineTables.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Table.CombineTables.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Table.CombineTables.docx")
         self.assertEqual(1, doc.get_child_nodes(aspose.words.NodeType.TABLE, True).count)
         self.assertEqual(9, doc.first_section.body.tables[0].rows.count)
         self.assertEqual(42, doc.first_section.body.tables[0].get_child_nodes(aspose.words.NodeType.CELL, True).count)
@@ -314,15 +314,15 @@ class ExTable(ApiExampleBase):
         table.text_wrapping = aspose.words.tables.TextWrapping.AROUND
         table.absolute_horizontal_distance = 100
         table.absolute_vertical_distance = 20
-        doc.save(file_name = ARTIFACTS_DIR + "Table.WrapText.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Table.WrapText.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Table.WrapText.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Table.WrapText.docx")
         table = doc.first_section.body.tables[0]
         self.assertEqual(aspose.words.tables.TextWrapping.AROUND, table.text_wrapping)
         self.assertEqual(100, table.absolute_horizontal_distance)
         self.assertEqual(20, table.absolute_vertical_distance)
 
     def test_get_floating_table_properties(self):
-        doc = aspose.words.Document(file_name = MY_DIR + "Table wrapped by text.docx")
+        doc = aspose.words.Document(file_name=MY_DIR + "Table wrapped by text.docx")
         table = doc.first_section.body.tables[0]
         if table.text_wrapping == aspose.words.tables.TextWrapping.AROUND:
             self.assertEqual(aspose.words.drawing.RelativeHorizontalPosition.MARGIN, table.horizontal_anchor)
@@ -348,8 +348,8 @@ class ExTable(ApiExampleBase):
         table.preferred_width = aspose.words.tables.PreferredWidth.from_points(300)
         table.absolute_vertical_distance = 50
         table.absolute_horizontal_distance = 100
-        doc.save(file_name = ARTIFACTS_DIR + "Table.ChangeFloatingTableProperties.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Table.ChangeFloatingTableProperties.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Table.ChangeFloatingTableProperties.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Table.ChangeFloatingTableProperties.docx")
         table = doc.first_section.body.tables[0]
         self.assertEqual(aspose.words.drawing.VerticalAlignment.BOTTOM, table.relative_vertical_alignment)
         self.assertEqual(aspose.words.drawing.HorizontalAlignment.RIGHT, table.relative_horizontal_alignment)
@@ -383,8 +383,8 @@ class ExTable(ApiExampleBase):
         builder.end_table()
         table.preferred_width = aspose.words.tables.PreferredWidth.from_points(300)
         table.style = table_style
-        doc.save(file_name = ARTIFACTS_DIR + "Table.SetTableAlignment.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Table.SetTableAlignment.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Table.SetTableAlignment.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Table.SetTableAlignment.docx")
         table_style = doc.styles.get_by_name("MyTableStyle1").as_table_style()
         self.assertEqual(aspose.words.tables.TableAlignment.CENTER, table_style.alignment)
         self.assertEqual(table_style, doc.first_section.body.tables[0].style)

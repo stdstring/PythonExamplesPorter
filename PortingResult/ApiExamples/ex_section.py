@@ -16,10 +16,10 @@ class ExSection(ApiExampleBase):
         builder.writeln("Section 2. Hello again!")
         builder.write("Please enter text here: ")
         builder.insert_text_input("TextInput1", aspose.words.fields.TextFormFieldType.REGULAR, "", "Placeholder text", 0)
-        doc.protect(type = aspose.words.ProtectionType.ALLOW_ONLY_FORM_FIELDS)
+        doc.protect(type=aspose.words.ProtectionType.ALLOW_ONLY_FORM_FIELDS)
         doc.sections[0].protected_for_forms = False
-        doc.save(file_name = ARTIFACTS_DIR + "Section.Protect.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Section.Protect.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Section.Protect.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Section.Protect.docx")
         self.assertFalse(doc.sections[0].protected_for_forms)
         self.assertTrue(doc.sections[1].protected_for_forms)
 
@@ -50,8 +50,8 @@ class ExSection(ApiExampleBase):
         builder.writeln("Column 2.")
         self.assertEqual(1, doc.first_section.page_setup.text_columns.count)
         self.assertEqual(2, doc.last_section.page_setup.text_columns.count)
-        doc.save(file_name = ARTIFACTS_DIR + "Section.Create.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Section.Create.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Section.Create.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Section.Create.docx")
         self.assertEqual(1, doc.first_section.page_setup.text_columns.count)
         self.assertEqual(2, doc.last_section.page_setup.text_columns.count)
 
@@ -68,12 +68,12 @@ class ExSection(ApiExampleBase):
         para.paragraph_format.style_name = "Heading 1"
         para.paragraph_format.alignment = aspose.words.ParagraphAlignment.CENTER
         body.append_child(para)
-        run = aspose.words.Run(doc = doc)
+        run = aspose.words.Run(doc=doc)
         run.text = "Hello World!"
         run.font.color = aspose.pydrawing.Color.red
         para.append_child(run)
         self.assertEqual("Hello World!", doc.get_text().strip())
-        doc.save(file_name = ARTIFACTS_DIR + "Section.CreateManually.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Section.CreateManually.docx")
 
     def test_ensure_minimum(self):
         doc = aspose.words.Document()
@@ -85,7 +85,7 @@ class ExSection(ApiExampleBase):
         doc.last_section.ensure_minimum()
         self.assertEqual(aspose.words.NodeType.BODY, doc.sections[1].get_child(aspose.words.NodeType.ANY, 0, True).node_type)
         self.assertEqual(aspose.words.NodeType.PARAGRAPH, doc.sections[1].body.get_child(aspose.words.NodeType.ANY, 0, True).node_type)
-        doc.sections[0].body.first_paragraph.append_child(aspose.words.Run(doc = doc, text = "Hello world!"))
+        doc.sections[0].body.first_paragraph.append_child(aspose.words.Run(doc=doc, text="Hello world!"))
         self.assertEqual("Hello world!", doc.get_text().strip())
 
     def test_body_ensure_minimum(self):
@@ -97,14 +97,14 @@ class ExSection(ApiExampleBase):
         section.append_child(body)
         self.assertEqual(0, doc.first_section.body.get_child_nodes(aspose.words.NodeType.ANY, True).count)
         body.ensure_minimum()
-        body.first_paragraph.append_child(aspose.words.Run(doc = doc, text = "Hello world!"))
+        body.first_paragraph.append_child(aspose.words.Run(doc=doc, text="Hello world!"))
         self.assertEqual("Hello world!", doc.get_text().strip())
 
     def test_body_child_nodes(self):
         raise NotImplementedError("Unsupported break statement usage")
 
     def test_clear(self):
-        doc = aspose.words.Document(file_name = MY_DIR + "Document.docx")
+        doc = aspose.words.Document(file_name=MY_DIR + "Document.docx")
         self.assertEqual(1, doc.sections.count)
         self.assertEqual(17, doc.sections[0].get_child_nodes(aspose.words.NodeType.ANY, True).count)
         self.assertEqual("Hello World!\r\rHello Word!\r\r\rHello World!", doc.get_text().strip())
@@ -159,9 +159,9 @@ class ExSection(ApiExampleBase):
         doc = aspose.words.Document()
         builder = aspose.words.DocumentBuilder(doc)
         builder.move_to_header_footer(aspose.words.HeaderFooterType.HEADER_PRIMARY)
-        builder.insert_shape(shape_type = aspose.words.drawing.ShapeType.RECTANGLE, width = 100, height = 100)
+        builder.insert_shape(shape_type=aspose.words.drawing.ShapeType.RECTANGLE, width=100, height=100)
         builder.move_to_header_footer(aspose.words.HeaderFooterType.FOOTER_PRIMARY)
-        builder.insert_image(file_name = IMAGE_DIR + "Logo Icon.ico")
+        builder.insert_image(file_name=IMAGE_DIR + "Logo Icon.ico")
         self.assertEqual(1, doc.first_section.headers_footers.get_by_header_footer_type(aspose.words.HeaderFooterType.HEADER_PRIMARY).get_child_nodes(aspose.words.NodeType.SHAPE, True).count)
         self.assertEqual(1, doc.first_section.headers_footers.get_by_header_footer_type(aspose.words.HeaderFooterType.FOOTER_PRIMARY).get_child_nodes(aspose.words.NodeType.SHAPE, True).count)
         doc.first_section.delete_header_footer_shapes()
@@ -169,21 +169,21 @@ class ExSection(ApiExampleBase):
         self.assertEqual(0, doc.first_section.headers_footers.get_by_header_footer_type(aspose.words.HeaderFooterType.FOOTER_PRIMARY).get_child_nodes(aspose.words.NodeType.SHAPE, True).count)
 
     def test_sections_clone_section(self):
-        doc = aspose.words.Document(file_name = MY_DIR + "Document.docx")
+        doc = aspose.words.Document(file_name=MY_DIR + "Document.docx")
         clone_section = doc.sections[0].clone()
 
     def test_sections_import_section(self):
-        src_doc = aspose.words.Document(file_name = MY_DIR + "Document.docx")
+        src_doc = aspose.words.Document(file_name=MY_DIR + "Document.docx")
         dst_doc = aspose.words.Document()
         source_section = src_doc.sections[0]
-        new_section = dst_doc.import_node(src_node = source_section, is_import_children = True).as_section()
+        new_section = dst_doc.import_node(src_node=source_section, is_import_children=True).as_section()
         dst_doc.sections.add(new_section)
 
     def test_migrate_from_2x_import_section(self):
         src_doc = aspose.words.Document()
         dst_doc = aspose.words.Document()
         source_section = src_doc.sections[0]
-        new_section = dst_doc.import_node(src_node = source_section, is_import_children = True).as_section()
+        new_section = dst_doc.import_node(src_node=source_section, is_import_children=True).as_section()
         dst_doc.sections.add(new_section)
 
     def test_modify_page_setup_in_all_sections(self):
@@ -194,4 +194,4 @@ class ExSection(ApiExampleBase):
         builder.write("Section 2")
         for section in doc.of_type():
             section.page_setup.paper_size = aspose.words.PaperSize.LETTER
-        doc.save(file_name = ARTIFACTS_DIR + "Section.ModifyPageSetupInAllSections.doc")
+        doc.save(file_name=ARTIFACTS_DIR + "Section.ModifyPageSetupInAllSections.doc")

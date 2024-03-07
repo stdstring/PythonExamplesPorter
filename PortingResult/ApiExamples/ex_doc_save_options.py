@@ -13,10 +13,10 @@ class ExDocSaveOptions(ApiExampleBase):
         raise NotImplementedError("Unsupported target type System.IO.Directory")
 
     def test_picture_bullets(self):
-        doc = aspose.words.Document(file_name = MY_DIR + "Image bullet points.docx")
+        doc = aspose.words.Document(file_name=MY_DIR + "Image bullet points.docx")
         self.assertIsNotNone(doc.lists[0].list_levels[0].image_data)
         save_options = aspose.words.saving.DocSaveOptions(aspose.words.SaveFormat.DOC)
         save_options.save_picture_bullet = False
-        doc.save(file_name = ARTIFACTS_DIR + "DocSaveOptions.PictureBullets.doc", save_options = save_options)
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "DocSaveOptions.PictureBullets.doc")
+        doc.save(file_name=ARTIFACTS_DIR + "DocSaveOptions.PictureBullets.doc", save_options=save_options)
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "DocSaveOptions.PictureBullets.doc")
         self.assertIsNone(doc.lists[0].list_levels[0].image_data)

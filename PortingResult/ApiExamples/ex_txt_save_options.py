@@ -18,4 +18,4 @@ class ExTxtSaveOptions(ApiExampleBase):
         builder.write("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. " + "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.")
         save_options = aspose.words.saving.TxtSaveOptions()
         save_options.max_characters_per_line = 30
-        doc.save(file_name = ARTIFACTS_DIR + "TxtSaveOptions.MaxCharactersPerLine.txt", save_options = save_options)
+        doc.save(file_name=ARTIFACTS_DIR + "TxtSaveOptions.MaxCharactersPerLine.txt", save_options=save_options)

@@ -14,8 +14,8 @@ class ExBorder(ApiExampleBase):
         builder.font.border.line_width = 2.5
         builder.font.border.line_style = aspose.words.LineStyle.DASH_DOT_STROKER
         builder.write("Text surrounded by green border.")
-        doc.save(file_name = ARTIFACTS_DIR + "Border.FontBorder.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Border.FontBorder.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Border.FontBorder.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Border.FontBorder.docx")
         border = doc.first_section.body.first_paragraph.runs[0].font.border
         self.assertEqual(aspose.pydrawing.Color.green.to_argb(), border.color.to_argb())
         self.assertEqual(2.5, border.line_width)
@@ -30,8 +30,8 @@ class ExBorder(ApiExampleBase):
         top_border.theme_color = aspose.words.themes.ThemeColor.ACCENT1
         top_border.tint_and_shade = 0.25
         builder.writeln("Text with a top border.")
-        doc.save(file_name = ARTIFACTS_DIR + "Border.ParagraphTopBorder.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Border.ParagraphTopBorder.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Border.ParagraphTopBorder.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Border.ParagraphTopBorder.docx")
         border = doc.first_section.body.first_paragraph.paragraph_format.borders.top
         self.assertEqual(4, border.line_width)
         self.assertEqual(aspose.words.LineStyle.DASH_SMALL_GAP, border.line_style)
@@ -39,7 +39,7 @@ class ExBorder(ApiExampleBase):
         self.assertAlmostEqual(0.25, border.tint_and_shade, delta=0.01)
 
     def test_clear_formatting(self):
-        doc = aspose.words.Document(file_name = MY_DIR + "Borders.docx")
+        doc = aspose.words.Document(file_name=MY_DIR + "Borders.docx")
         borders = doc.first_section.body.first_paragraph.paragraph_format.borders
         self.assertEqual(aspose.pydrawing.Color.red.to_argb(), borders[0].color.to_argb())
         self.assertEqual(3, borders[0].line_width)
@@ -51,8 +51,8 @@ class ExBorder(ApiExampleBase):
         self.assertEqual(0, borders[0].line_width)
         self.assertEqual(aspose.words.LineStyle.NONE, borders[0].line_style)
         self.assertFalse(borders[0].is_visible)
-        doc.save(file_name = ARTIFACTS_DIR + "Border.ClearFormatting.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Border.ClearFormatting.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Border.ClearFormatting.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Border.ClearFormatting.docx")
         for test_border in doc.first_section.body.first_paragraph.paragraph_format.borders:
             self.assertEqual(aspose.pydrawing.Color.empty().to_argb(), test_border.color.to_argb())
             self.assertEqual(0, test_border.line_width)
@@ -68,7 +68,7 @@ class ExBorder(ApiExampleBase):
         self.assertEqual(6, first_paragraph_borders.count)
         i = 0
         while i < first_paragraph_borders.count:
-            self.assertTrue(first_paragraph_borders[i].equals(rhs = second_paragraph_borders[i]))
+            self.assertTrue(first_paragraph_borders[i].equals(rhs=second_paragraph_borders[i]))
             self.assertEqual(first_paragraph_borders[i].get_hash_code(), second_paragraph_borders[i].get_hash_code())
             self.assertFalse(first_paragraph_borders[i].is_visible)
             i += 1
@@ -76,12 +76,12 @@ class ExBorder(ApiExampleBase):
             border.line_style = aspose.words.LineStyle.DOT_DASH
         i = 0
         while i < first_paragraph_borders.count:
-            self.assertFalse(first_paragraph_borders[i].equals(rhs = second_paragraph_borders[i]))
+            self.assertFalse(first_paragraph_borders[i].equals(rhs=second_paragraph_borders[i]))
             self.assertNotEqual(first_paragraph_borders[i].get_hash_code(), second_paragraph_borders[i].get_hash_code())
             self.assertTrue(second_paragraph_borders[i].is_visible)
             i += 1
-        doc.save(file_name = ARTIFACTS_DIR + "Border.SharedElements.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Border.SharedElements.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Border.SharedElements.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Border.SharedElements.docx")
         paragraphs = doc.first_section.body.paragraphs
         for test_border in paragraphs[0].paragraph_format.borders:
             self.assertEqual(aspose.words.LineStyle.NONE, test_border.line_style)
@@ -98,8 +98,8 @@ class ExBorder(ApiExampleBase):
         builder.write("Paragraph above horizontal border.")
         builder.insert_paragraph()
         builder.write("Paragraph below horizontal border.")
-        doc.save(file_name = ARTIFACTS_DIR + "Border.HorizontalBorders.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Border.HorizontalBorders.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Border.HorizontalBorders.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Border.HorizontalBorders.docx")
         paragraphs = doc.first_section.body.paragraphs
         self.assertEqual(aspose.words.LineStyle.DASH_SMALL_GAP, paragraphs[0].paragraph_format.borders.get_by_border_type(aspose.words.BorderType.HORIZONTAL).line_style)
         self.assertEqual(aspose.words.LineStyle.DASH_SMALL_GAP, paragraphs[1].paragraph_format.borders.get_by_border_type(aspose.words.BorderType.HORIZONTAL).line_style)

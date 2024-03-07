@@ -7,7 +7,7 @@ from api_example_base import ApiExampleBase, ARTIFACTS_DIR, MY_DIR
 
 class ExThemes(ApiExampleBase):
     def test_custom_colors_and_fonts(self):
-        doc = aspose.words.Document(file_name = MY_DIR + "Theme colors.docx")
+        doc = aspose.words.Document(file_name=MY_DIR + "Theme colors.docx")
         theme = doc.theme
         theme.major_fonts.latin = "Courier New"
         theme.minor_fonts.latin = "Agency FB"
@@ -28,8 +28,8 @@ class ExThemes(ApiExampleBase):
         colors.accent6 = aspose.pydrawing.Color.dark_violet
         colors.hyperlink = aspose.pydrawing.Color.black
         colors.followed_hyperlink = aspose.pydrawing.Color.gray
-        doc.save(file_name = ARTIFACTS_DIR + "Themes.CustomColorsAndFonts.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Themes.CustomColorsAndFonts.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Themes.CustomColorsAndFonts.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Themes.CustomColorsAndFonts.docx")
         self.assertEqual(aspose.pydrawing.Color.orange_red.to_argb(), doc.theme.colors.accent1.to_argb())
         self.assertEqual(aspose.pydrawing.Color.midnight_blue.to_argb(), doc.theme.colors.dark1.to_argb())
         self.assertEqual(aspose.pydrawing.Color.gray.to_argb(), doc.theme.colors.followed_hyperlink.to_argb())

@@ -13,7 +13,7 @@ class ExLayout(ApiExampleBase):
         raise NotImplementedError("Unsupported expression: ParenthesizedLambdaExpression")
 
     def test_restart_page_numbering_in_continuous_section(self):
-        doc = aspose.words.Document(file_name = MY_DIR + "Continuous section page numbering.docx")
+        doc = aspose.words.Document(file_name=MY_DIR + "Continuous section page numbering.docx")
         doc.layout_options.continuous_section_page_numbering_restart = aspose.words.layout.ContinuousSectionRestart.FROM_NEW_PAGE_ONLY
         doc.update_page_layout()
-        doc.save(file_name = ARTIFACTS_DIR + "Layout.RestartPageNumberingInContinuousSection.pdf")
+        doc.save(file_name=ARTIFACTS_DIR + "Layout.RestartPageNumberingInContinuousSection.pdf")

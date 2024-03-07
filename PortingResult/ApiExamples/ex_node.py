@@ -10,7 +10,7 @@ class ExNode(ApiExampleBase):
     def test_clone_composite_node(self):
         doc = aspose.words.Document()
         para = doc.first_section.body.first_paragraph
-        para.append_child(aspose.words.Run(doc = doc, text = "Hello world!"))
+        para.append_child(aspose.words.Run(doc=doc, text="Hello world!"))
         clone_with_children = para.clone(True)
         self.assertTrue((clone_with_children.as_composite_node()).has_child_nodes)
         self.assertEqual("Hello world!", clone_with_children.get_text().strip())
@@ -21,7 +21,7 @@ class ExNode(ApiExampleBase):
     def test_get_parent_node(self):
         doc = aspose.words.Document()
         para = doc.first_section.body.first_paragraph
-        run = aspose.words.Run(doc = doc, text = "Hello world!")
+        run = aspose.words.Run(doc=doc, text="Hello world!")
         para.append_child(run)
         self.assertEqual(para, run.parent_node)
         self.assertEqual(doc.first_section.body, para.parent_node)
@@ -31,7 +31,7 @@ class ExNode(ApiExampleBase):
     def test_owner_document(self):
         doc = aspose.words.Document()
         para = aspose.words.Paragraph(doc)
-        para.append_child(aspose.words.Run(doc = doc, text = "Hello world!"))
+        para.append_child(aspose.words.Run(doc=doc, text="Hello world!"))
         self.assertIsNone(para.parent_node)
         self.assertEqual(para.document, doc)
         self.assertEqual("", doc.get_text().strip())
@@ -49,7 +49,7 @@ class ExNode(ApiExampleBase):
         raise NotImplementedError("Unsupported call of method named TraverseAllNodes")
 
     def test_remove_nodes(self):
-        doc = aspose.words.Document(file_name = MY_DIR + "Tables.docx")
+        doc = aspose.words.Document(file_name=MY_DIR + "Tables.docx")
         self.assertEqual(2, doc.get_child_nodes(aspose.words.NodeType.TABLE, True).count)
         cur_node = doc.first_section.body.first_child
         while cur_node != None:
@@ -90,23 +90,23 @@ class ExNode(ApiExampleBase):
         section.body.append_child(para)
 
     def test_remove_smart_tags_from_composite_node(self):
-        doc = aspose.words.Document(file_name = MY_DIR + "Smart tags.doc")
+        doc = aspose.words.Document(file_name=MY_DIR + "Smart tags.doc")
         self.assertEqual(8, doc.get_child_nodes(aspose.words.NodeType.SMART_TAG, True).count)
         doc.remove_smart_tags()
         self.assertEqual(0, doc.get_child_nodes(aspose.words.NodeType.SMART_TAG, True).count)
 
     def test_get_index_of_node(self):
-        doc = aspose.words.Document(file_name = MY_DIR + "Rendering.docx")
+        doc = aspose.words.Document(file_name=MY_DIR + "Rendering.docx")
         body = doc.first_section.body
         self.assertEqual(24, body.get_child_nodes(aspose.words.NodeType.ANY, False).index_of(body.last_paragraph))
 
     def test_convert_node_to_html_with_default_options(self):
-        doc = aspose.words.Document(file_name = MY_DIR + "Document.docx")
+        doc = aspose.words.Document(file_name=MY_DIR + "Document.docx")
         node = doc.last_section.body.last_paragraph
-        self.assertEqual("<p style=\"margin-top:0pt; margin-bottom:8pt; line-height:108%; font-size:12pt\">" + "<span style=\"font-family:'Times New Roman'\">Hello World!</span>" + "</p>", node.to_string(save_format = aspose.words.SaveFormat.HTML))
+        self.assertEqual("<p style=\"margin-top:0pt; margin-bottom:8pt; line-height:108%; font-size:12pt\">" + "<span style=\"font-family:'Times New Roman'\">Hello World!</span>" + "</p>", node.to_string(save_format=aspose.words.SaveFormat.HTML))
         save_options = aspose.words.saving.HtmlSaveOptions()
         save_options.export_relative_font_size = True
-        self.assertEqual("<p style=\"margin-top:0pt; margin-bottom:8pt; line-height:108%\">" + "<span style=\"font-family:'Times New Roman'\">Hello World!</span>" + "</p>", node.to_string(save_options = save_options))
+        self.assertEqual("<p style=\"margin-top:0pt; margin-bottom:8pt; line-height:108%\">" + "<span style=\"font-family:'Times New Roman'\">Hello World!</span>" + "</p>", node.to_string(save_options=save_options))
 
     def test_typed_node_collection_to_array(self):
         raise NotImplementedError("Unsupported member target type - Aspose.Words.Paragraph[] for expression: paras")
@@ -130,7 +130,7 @@ class ExNode(ApiExampleBase):
         builder.write("Run 2. ")
         runs = doc.first_section.body.first_paragraph.runs
         self.assertEqual(2, runs.count)
-        new_run = aspose.words.Run(doc = doc, text = "Run 3. ")
+        new_run = aspose.words.Run(doc=doc, text="Run 3. ")
         runs.insert(3, new_run)
         self.assertTrue(runs.contains(new_run))
         self.assertEqual("Run 1. Run 2. Run 3.", doc.get_text().strip())

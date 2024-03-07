@@ -31,7 +31,7 @@ class ExCompatibilityOptions(ApiExampleBase):
         self.assertEqual(False, compatibility_options.use_single_borderfor_contiguous_cells)
         self.assertEqual(True, compatibility_options.use_word2002_table_style_rules)
         self.assertEqual(False, compatibility_options.use_word2010_table_style_rules)
-        doc.save(file_name = ARTIFACTS_DIR + "CompatibilityOptions.Tables.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "CompatibilityOptions.Tables.docx")
 
     def test_breaks(self):
         doc = aspose.words.Document()
@@ -43,7 +43,7 @@ class ExCompatibilityOptions(ApiExampleBase):
         self.assertEqual(True, compatibility_options.split_pg_break_and_para_mark)
         self.assertEqual(True, compatibility_options.use_alt_kinsoku_line_break_rules)
         self.assertEqual(False, compatibility_options.use_word97_line_break_rules)
-        doc.save(file_name = ARTIFACTS_DIR + "CompatibilityOptions.Breaks.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "CompatibilityOptions.Breaks.docx")
 
     def test_spacing(self):
         doc = aspose.words.Document()
@@ -61,7 +61,7 @@ class ExCompatibilityOptions(ApiExampleBase):
         self.assertEqual(False, compatibility_options.suppress_spacing_at_top_of_page)
         self.assertEqual(False, compatibility_options.suppress_top_spacing)
         self.assertEqual(False, compatibility_options.ul_trail_space)
-        doc.save(file_name = ARTIFACTS_DIR + "CompatibilityOptions.Spacing.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "CompatibilityOptions.Spacing.docx")
 
     def test_word_perfect(self):
         doc = aspose.words.Document()
@@ -72,7 +72,7 @@ class ExCompatibilityOptions(ApiExampleBase):
         self.assertEqual(False, compatibility_options.wp_justification)
         self.assertEqual(False, compatibility_options.wp_space_width)
         self.assertEqual(False, compatibility_options.wrap_trail_spaces)
-        doc.save(file_name = ARTIFACTS_DIR + "CompatibilityOptions.WordPerfect.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "CompatibilityOptions.WordPerfect.docx")
 
     def test_alignment(self):
         doc = aspose.words.Document()
@@ -82,7 +82,7 @@ class ExCompatibilityOptions(ApiExampleBase):
         self.assertEqual(True, compatibility_options.do_not_vert_align_in_txbx)
         self.assertEqual(True, compatibility_options.do_not_wrap_text_with_punct)
         self.assertEqual(False, compatibility_options.no_tab_hang_ind)
-        doc.save(file_name = ARTIFACTS_DIR + "CompatibilityOptions.Alignment.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "CompatibilityOptions.Alignment.docx")
 
     def test_legacy(self):
         doc = aspose.words.Document()
@@ -93,7 +93,7 @@ class ExCompatibilityOptions(ApiExampleBase):
         self.assertEqual(False, compatibility_options.mw_small_caps)
         self.assertEqual(False, compatibility_options.shape_layout_like_ww8)
         self.assertEqual(False, compatibility_options.ui_compat_97_to_2003)
-        doc.save(file_name = ARTIFACTS_DIR + "CompatibilityOptions.Legacy.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "CompatibilityOptions.Legacy.docx")
 
     def test_list(self):
         doc = aspose.words.Document()
@@ -101,7 +101,7 @@ class ExCompatibilityOptions(ApiExampleBase):
         compatibility_options.optimize_for(aspose.words.settings.MsWordVersion.WORD2000)
         self.assertEqual(True, compatibility_options.underline_tab_in_num_list)
         self.assertEqual(True, compatibility_options.use_normal_style_for_list)
-        doc.save(file_name = ARTIFACTS_DIR + "CompatibilityOptions.List.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "CompatibilityOptions.List.docx")
 
     def test_misc(self):
         doc = aspose.words.Document()
@@ -122,4 +122,4 @@ class ExCompatibilityOptions(ApiExampleBase):
         self.assertEqual(True, compatibility_options.use_ansi_kerning_pairs)
         self.assertEqual(False, compatibility_options.use_fe_layout)
         self.assertEqual(False, compatibility_options.use_printer_metrics)
-        doc.save(file_name = ARTIFACTS_DIR + "CompatibilityOptions.Misc.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "CompatibilityOptions.Misc.docx")

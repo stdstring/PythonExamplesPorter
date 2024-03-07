@@ -25,17 +25,17 @@ class ExStyles(ApiExampleBase):
     def test_remove_styles_from_style_gallery(self):
         doc = aspose.words.Document()
         doc.styles.clear_quick_style_gallery()
-        doc.save(file_name = ARTIFACTS_DIR + "Styles.RemoveStylesFromStyleGallery.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Styles.RemoveStylesFromStyleGallery.docx")
 
     def test_change_tocs_tab_stops(self):
-        doc = aspose.words.Document(file_name = MY_DIR + "Table of contents.docx")
+        doc = aspose.words.Document(file_name=MY_DIR + "Table of contents.docx")
         for para in doc.get_child_nodes(aspose.words.NodeType.PARAGRAPH, True).of_type():
             if para.paragraph_format.style.style_identifier >= aspose.words.StyleIdentifier.TOC1 and para.paragraph_format.style.style_identifier <= aspose.words.StyleIdentifier.TOC9:
                 tab = para.paragraph_format.tab_stops[0]
                 para.paragraph_format.tab_stops.remove_by_position(tab.position)
-                para.paragraph_format.tab_stops.add(position = tab.position - 50, alignment = tab.alignment, leader = tab.leader)
-        doc.save(file_name = ARTIFACTS_DIR + "Styles.ChangeTocsTabStops.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Styles.ChangeTocsTabStops.docx")
+                para.paragraph_format.tab_stops.add(position=tab.position - 50, alignment=tab.alignment, leader=tab.leader)
+        doc.save(file_name=ARTIFACTS_DIR + "Styles.ChangeTocsTabStops.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Styles.ChangeTocsTabStops.docx")
         for para in doc.get_child_nodes(aspose.words.NodeType.PARAGRAPH, True).of_type():
             if para.paragraph_format.style.style_identifier >= aspose.words.StyleIdentifier.TOC1 and para.paragraph_format.style.style_identifier <= aspose.words.StyleIdentifier.TOC9:
                 tab_stop = para.get_effective_tab_stops()[0]
@@ -74,14 +74,14 @@ class ExStyles(ApiExampleBase):
         style.font.size = 24
         style.font.name = "Verdana"
         style.paragraph_format.space_after = 12
-        style.list_format.list = doc.lists.add(list_template = aspose.words.lists.ListTemplate.BULLET_DEFAULT)
+        style.list_format.list = doc.lists.add(list_template=aspose.words.lists.ListTemplate.BULLET_DEFAULT)
         style.list_format.list_level_number = 0
         builder.paragraph_format.style = style
         builder.writeln("Hello World: MyStyle1, bulleted list.")
         builder.paragraph_format.style = doc.styles.get_by_name("Normal")
         builder.writeln("Hello World: Normal.")
-        builder.document.save(file_name = ARTIFACTS_DIR + "Styles.ParagraphStyleBulletedList.docx")
-        doc = aspose.words.Document(file_name = ARTIFACTS_DIR + "Styles.ParagraphStyleBulletedList.docx")
+        builder.document.save(file_name=ARTIFACTS_DIR + "Styles.ParagraphStyleBulletedList.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Styles.ParagraphStyleBulletedList.docx")
         style = doc.styles.get_by_name("MyStyle1")
         self.assertEqual("MyStyle1", style.name)
         self.assertEqual(24, style.font.size)
@@ -89,7 +89,7 @@ class ExStyles(ApiExampleBase):
         self.assertEqual(12, style.paragraph_format.space_after)
 
     def test_style_aliases(self):
-        doc = aspose.words.Document(file_name = MY_DIR + "Style with alias.docx")
+        doc = aspose.words.Document(file_name=MY_DIR + "Style with alias.docx")
         style = doc.styles.get_by_name("MyStyle")
         self.assertSequenceEqual(["MyStyle Alias 1", "MyStyle Alias 2"], style.aliases)
         self.assertEqual("Title", style.base_style_name)
@@ -105,3 +105,23 @@ class ExStyles(ApiExampleBase):
 
     def test_latent_styles(self):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
+
+    def test_lock_style(self):
+        doc = aspose.words.Document()
+        style_heading1 = doc.styles.get_by_style_identifier(aspose.words.StyleIdentifier.HEADING1)
+        if not style_heading1.locked:
+            style_heading1.locked = True
+        doc.save(file_name=ARTIFACTS_DIR + "Styles.LockStyle.docx")
+        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Styles.LockStyle.docx")
+        self.assertTrue(doc.styles.get_by_style_identifier(aspose.words.StyleIdentifier.HEADING1).locked)
+
+    def test_style_priority(self):
+        doc = aspose.words.Document()
+        style_title = doc.styles.get_by_style_identifier(aspose.words.StyleIdentifier.SUBTITLE)
+        if style_title.priority == 9:
+            style_title.priority = 10
+        if not style_title.unhide_when_used:
+            style_title.unhide_when_used = True
+        if style_title.semi_hidden:
+            style_title.semi_hidden = True
+        doc.save(file_name=ARTIFACTS_DIR + "Styles.StylePriority.docx")
