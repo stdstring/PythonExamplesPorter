@@ -95,7 +95,7 @@ class ExShape(ApiExampleBase):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_bounds(self):
-        raise NotImplementedError("Forbidden object initializer")
+        raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_flip_shape_orientation(self):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")

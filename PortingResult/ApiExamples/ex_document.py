@@ -29,9 +29,6 @@ class ExDocument(ApiExampleBase):
     def test_load_from_stream(self):
         raise NotImplementedError("Unsupported statement type: UsingStatement")
 
-    def test_load_from_web_async(self):
-        raise NotImplementedError("Unsupported statement type: UsingStatement")
-
     def test_convert_to_pdf(self):
         doc = aspose.words.Document(file_name=MY_DIR + "Document.docx")
         doc.save(file_name=ARTIFACTS_DIR + "Document.ConvertToPdf.pdf")
@@ -65,9 +62,6 @@ class ExDocument(ApiExampleBase):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_open_from_stream_with_base_uri(self):
-        raise NotImplementedError("Unsupported statement type: UsingStatement")
-
-    def test_insert_html_from_web_page_async(self):
         raise NotImplementedError("Unsupported statement type: UsingStatement")
 
     def test_insert_html_from_web_page(self):
@@ -461,9 +455,6 @@ class ExDocument(ApiExampleBase):
 
     def test_show_comments(self):
         raise NotImplementedError("Unsupported target type System.DateTime")
-
-    def test_use_pdf_document_for_show_comments(self):
-        raise NotImplementedError("Unsupported call of method named ShowComments")
 
     def test_copy_template_styles_via_document(self):
         template = aspose.words.Document(file_name=MY_DIR + "Rendering.docx")

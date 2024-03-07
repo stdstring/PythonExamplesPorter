@@ -47,6 +47,3 @@ class ExDocumentBase(ApiExampleBase):
 
     def test_background_shape(self):
         raise NotImplementedError("Unsupported expression: ParenthesizedLambdaExpression")
-
-    def test_use_pdf_document_for_background_shape(self):
-        raise NotImplementedError("Unsupported call of method named BackgroundShape")

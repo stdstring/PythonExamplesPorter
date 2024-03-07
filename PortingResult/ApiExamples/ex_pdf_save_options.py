@@ -10,9 +10,6 @@ class ExPdfSaveOptions(ApiExampleBase):
     def test_one_page(self):
         raise NotImplementedError("Unsupported statement type: UsingStatement")
 
-    def test_use_pdf_document_for_one_page(self):
-        raise NotImplementedError("Unsupported call of method named OnePage")
-
     def test_headings_outline_levels(self):
         doc = aspose.words.Document()
         builder = aspose.words.DocumentBuilder(doc)
@@ -30,6 +27,7 @@ class ExPdfSaveOptions(ApiExampleBase):
         save_options.outline_options.headings_outline_levels = 2
         doc.save(file_name=ARTIFACTS_DIR + "PdfSaveOptions.HeadingsOutlineLevels.pdf", save_options=save_options)
 
+<<<<<<< HEAD
     def test_use_pdf_bookmark_editor_for_headings_outline_levels(self):
         raise NotImplementedError("Unsupported call of method named HeadingsOutlineLevels")
 
@@ -45,6 +43,8 @@ class ExPdfSaveOptions(ApiExampleBase):
     def test_use_pdf_document_for_table_heading_outlines(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
+=======
+>>>>>>> e9283f5 (updated porting result of APIExamples)
     def test_expanded_outline_levels(self):
         doc = aspose.words.Document()
         builder = aspose.words.DocumentBuilder(doc)
@@ -68,6 +68,7 @@ class ExPdfSaveOptions(ApiExampleBase):
         options.outline_options.expanded_outline_levels = 2
         doc.save(file_name=ARTIFACTS_DIR + "PdfSaveOptions.ExpandedOutlineLevels.pdf", save_options=options)
 
+<<<<<<< HEAD
     def test_use_pdf_document_for_expanded_outline_levels(self):
         raise NotImplementedError("Unsupported call of method named ExpandedOutlineLevels")
 
@@ -101,6 +102,8 @@ class ExPdfSaveOptions(ApiExampleBase):
     def test_use_pdf_document_for_image_color_space_export_mode(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
+=======
+>>>>>>> e9283f5 (updated porting result of APIExamples)
     def test_downsample_options(self):
         doc = aspose.words.Document(file_name=MY_DIR + "Images.docx")
         options = aspose.words.saving.PdfSaveOptions()
@@ -112,6 +115,7 @@ class ExPdfSaveOptions(ApiExampleBase):
         options.downsample_options.resolution_threshold = 128
         doc.save(file_name=ARTIFACTS_DIR + "PdfSaveOptions.DownsampleOptions.LowerResolution.pdf", save_options=options)
 
+<<<<<<< HEAD
     def test_use_pdf_document_for_downsample_options(self):
         raise NotImplementedError("Unsupported call of method named DownsampleOptions")
 
@@ -172,6 +176,8 @@ class ExPdfSaveOptions(ApiExampleBase):
     def test_use_pdf_document_for_save_as_pdf_book_fold(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
+=======
+>>>>>>> e9283f5 (updated porting result of APIExamples)
     def test_zoom_behaviour(self):
         doc = aspose.words.Document()
         builder = aspose.words.DocumentBuilder(doc)
@@ -181,6 +187,7 @@ class ExPdfSaveOptions(ApiExampleBase):
         options.zoom_factor = 25
         doc.save(file_name=ARTIFACTS_DIR + "PdfSaveOptions.ZoomBehaviour.pdf", save_options=options)
 
+<<<<<<< HEAD
     def test_use_pdf_document_for_zoom_behaviour(self):
         raise NotImplementedError("Unsupported call of method named ZoomBehaviour")
 
@@ -214,15 +221,15 @@ class ExPdfSaveOptions(ApiExampleBase):
     def test_export_document_structure(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
+=======
+>>>>>>> e9283f5 (updated porting result of APIExamples)
     def test_pdf_digital_signature(self):
         raise NotImplementedError("Unsupported ctor for type DateTime")
-
-    def test_use_pdf_document_for_pdf_digital_signature(self):
-        raise NotImplementedError("Unsupported call of method named PdfDigitalSignature")
 
     def test_pdf_digital_signature_timestamp(self):
         raise NotImplementedError("Unsupported target type System.DateTime")
 
+<<<<<<< HEAD
     def test_use_pdf_document_for_pdf_digital_signature_timestamp(self):
         raise NotImplementedError("Unsupported call of method named PdfDigitalSignatureTimestamp")
 
@@ -232,6 +239,8 @@ class ExPdfSaveOptions(ApiExampleBase):
     def test_use_pdf_document_for_render_metafile(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
+=======
+>>>>>>> e9283f5 (updated porting result of APIExamples)
     def test_encryption_permissions(self):
         doc = aspose.words.Document()
         builder = aspose.words.DocumentBuilder(doc)
@@ -241,6 +250,7 @@ class ExPdfSaveOptions(ApiExampleBase):
         save_options.encryption_details = encryption_details
         doc.save(file_name=ARTIFACTS_DIR + "PdfSaveOptions.EncryptionPermissions.pdf", save_options=save_options)
 
+<<<<<<< HEAD
     def test_use_pdf_document_for_encryption_permissions(self):
         raise NotImplementedError("Unsupported call of method named EncryptionPermissions")
 
@@ -250,11 +260,10 @@ class ExPdfSaveOptions(ApiExampleBase):
     def test_use_pdf_document_for_set_numeral_format(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
+=======
+>>>>>>> e9283f5 (updated porting result of APIExamples)
     def test_export_page_set(self):
         raise NotImplementedError("Unsupported expression: InterpolatedStringExpression")
-
-    def test_use_pdf_document_for_export_page_set(self):
-        raise NotImplementedError("Unsupported call of method named ExportPageSet")
 
     def test_export_language_to_span_tag(self):
         doc = aspose.words.Document()
@@ -284,9 +293,6 @@ class ExPdfSaveOptions(ApiExampleBase):
         save_options.export_paragraph_graphics_to_artifact = True
         save_options.text_compression = aspose.words.saving.PdfTextCompression.NONE
         doc.save(file_name=ARTIFACTS_DIR + "PdfSaveOptions.ExportParagraphGraphicsToArtifact.pdf", save_options=save_options)
-
-    def test_use_pdf_document_for_export_paragraph_graphics_to_artifact(self):
-        raise NotImplementedError("Unsupported call of method named ExportParagraphGraphicsToArtifact")
 
     def test_page_layout(self):
         doc = aspose.words.Document(file_name=MY_DIR + "Big document.docx")

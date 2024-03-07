@@ -11,7 +11,7 @@ class ExParagraph(ApiExampleBase):
         raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")
 
     def test_insert_field(self):
-        raise NotImplementedError("Forbidden object initializer")
+        raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_insert_field_before_text_in_paragraph(self):
         raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")

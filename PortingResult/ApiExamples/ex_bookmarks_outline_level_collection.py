@@ -35,6 +35,3 @@ class ExBookmarksOutlineLevelCollection(ApiExampleBase):
         outline_levels.add("Bookmark 3", 9)
         doc.save(file_name=ARTIFACTS_DIR + "BookmarksOutlineLevelCollection.BookmarkLevels.pdf", save_options=pdf_save_options)
         outline_levels.clear()
-
-    def test_use_pdf_bookmark_editor_for_bookmark_levels(self):
-        raise NotImplementedError("Unsupported call of method named BookmarkLevels")

@@ -162,9 +162,6 @@ class ExStructuredDocumentTag(ApiExampleBase):
         doc.first_section.body.append_child(tag)
         doc.save(file_name=ARTIFACTS_DIR + "StructuredDocumentTag.UpdateSdtContent.pdf")
 
-    def test_use_pdf_document_for_update_sdt_content(self):
-        raise NotImplementedError("Unsupported call of method named UpdateSdtContent")
-
     def test_fill_table_using_repeating_section_item(self):
         raise NotImplementedError("Unsupported target type System.Collections.Generic.IEnumerable")
 
