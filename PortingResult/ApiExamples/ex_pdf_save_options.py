@@ -33,6 +33,18 @@ class ExPdfSaveOptions(ApiExampleBase):
     def test_use_pdf_bookmark_editor_for_headings_outline_levels(self):
         raise NotImplementedError("Unsupported call of method named HeadingsOutlineLevels")
 
+    def test_create_missing_outline_levels(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_use_pdf_bookmark_editor_for_create_missing_outline_levels(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_table_heading_outlines(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_use_pdf_document_for_table_heading_outlines(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
     def test_expanded_outline_levels(self):
         doc = aspose.words.Document()
         builder = aspose.words.DocumentBuilder(doc)
@@ -59,6 +71,36 @@ class ExPdfSaveOptions(ApiExampleBase):
     def test_use_pdf_document_for_expanded_outline_levels(self):
         raise NotImplementedError("Unsupported call of method named ExpandedOutlineLevels")
 
+    def test_update_fields(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_use_pdf_document_for_update_fields(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_preserve_form_fields(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_use_pdf_document_for_preserve_form_fields(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_compliance(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_use_pdf_document_for_compliance(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_image_compression(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_use_pdf_document_for_image_compression(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_image_color_space_export_mode(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_use_pdf_document_for_image_color_space_export_mode(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
     def test_downsample_options(self):
         doc = aspose.words.Document(file_name=MY_DIR + "Images.docx")
         options = aspose.words.saving.PdfSaveOptions()
@@ -73,6 +115,63 @@ class ExPdfSaveOptions(ApiExampleBase):
     def test_use_pdf_document_for_downsample_options(self):
         raise NotImplementedError("Unsupported call of method named DownsampleOptions")
 
+    def test_color_rendering(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_use_pdf_document_for_color_rendering(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_doc_title(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_use_pdf_document_for_doc_title(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_memory_optimization(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_escape_uri(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_use_pdf_document_for_escape_uri(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_use_pdf_document_for_open_hyperlinks_in_new_window(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_header_footer_bookmarks_export_mode(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_use_pdf_document_for_header_footer_bookmarks_export_mode(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_emulate_rendering_to_size_on_page(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_use_pdf_document_for_emulate_rendering_to_size_on_page(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_use_pdf_document_for_embed_full_fonts(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_use_pdf_document_for_embed_windows_fonts(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_use_pdf_document_for_embed_core_fonts(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_additional_text_positioning(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_use_pdf_document_for_additional_text_positioning(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_save_as_pdf_book_fold(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_use_pdf_document_for_save_as_pdf_book_fold(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
     def test_zoom_behaviour(self):
         doc = aspose.words.Document()
         builder = aspose.words.DocumentBuilder(doc)
@@ -84,6 +183,36 @@ class ExPdfSaveOptions(ApiExampleBase):
 
     def test_use_pdf_document_for_zoom_behaviour(self):
         raise NotImplementedError("Unsupported call of method named ZoomBehaviour")
+
+    def test_use_pdf_document_for_page_mode(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_note_hyperlinks(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_use_pdf_document_for_note_hyperlinks(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_custom_properties_export(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_use_pdf_document_for_custom_properties_export(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_drawing_ml_effects(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_use_pdf_document_for_drawing_ml_effects(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_drawing_ml_fallback(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_use_pdf_document_for_drawing_ml_fallback(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_export_document_structure(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_pdf_digital_signature(self):
         raise NotImplementedError("Unsupported ctor for type DateTime")
@@ -97,6 +226,12 @@ class ExPdfSaveOptions(ApiExampleBase):
     def test_use_pdf_document_for_pdf_digital_signature_timestamp(self):
         raise NotImplementedError("Unsupported call of method named PdfDigitalSignatureTimestamp")
 
+    def test_render_metafile(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_use_pdf_document_for_render_metafile(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
     def test_encryption_permissions(self):
         doc = aspose.words.Document()
         builder = aspose.words.DocumentBuilder(doc)
@@ -108,6 +243,12 @@ class ExPdfSaveOptions(ApiExampleBase):
 
     def test_use_pdf_document_for_encryption_permissions(self):
         raise NotImplementedError("Unsupported call of method named EncryptionPermissions")
+
+    def test_set_numeral_format(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_use_pdf_document_for_set_numeral_format(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_export_page_set(self):
         raise NotImplementedError("Unsupported expression: InterpolatedStringExpression")

@@ -143,6 +143,9 @@ class ExCharts(ApiExampleBase):
         chart = (doc.get_child(aspose.words.NodeType.SHAPE, 0, True).as_shape()).chart
         self.assertEqual("#,##0", chart.axis_y.number_format.format_code)
 
+    def test_display_charts_with_conversion(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
     def test_surface_3d_chart(self):
         doc = aspose.words.Document()
         builder = aspose.words.DocumentBuilder(doc)
@@ -538,6 +541,9 @@ class ExCharts(ApiExampleBase):
         chart_axis_y_title.font.size = 12
         chart_axis_y_title.font.color = aspose.pydrawing.Color.blue
         doc.save(file_name=ARTIFACTS_DIR + "Charts.ChartAxisTitle.docx")
+
+    def test_data_arrays_wrong_size(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_copy_data_point_format(self):
         doc = aspose.words.Document(file_name=MY_DIR + "DataPoint format.docx")

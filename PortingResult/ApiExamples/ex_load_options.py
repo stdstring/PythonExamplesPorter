@@ -9,6 +9,9 @@ from api_example_base import ApiExampleBase, ARTIFACTS_DIR, FONTS_DIR, IMAGE_DIR
 
 
 class ExLoadOptions(ApiExampleBase):
+    def test_convert_shape_to_office_math(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
     def test_set_encoding(self):
         raise NotImplementedError("Unsupported target type System.Text.Encoding")
 

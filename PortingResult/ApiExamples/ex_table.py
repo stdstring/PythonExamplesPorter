@@ -224,6 +224,9 @@ class ExTable(ApiExampleBase):
         table.last_row.last_cell.range.replace(pattern="50", replacement="20", options=options)
         self.assertEqual("Eggs\a50\a\a" + "Potatoes\a20\a\a", table.get_text().strip())
 
+    def test_remove_paragraph_text_and_mark(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
     def test_print_table_range(self):
         raise NotImplementedError("Unsupported target type System.Console")
 
@@ -239,6 +242,12 @@ class ExTable(ApiExampleBase):
         for cell in table_clone.get_child_nodes(aspose.words.NodeType.CELL, True).of_type():
             cell.remove_all_children()
         self.assertEqual("", table_clone.to_string(save_format=aspose.words.SaveFormat.TEXT).strip())
+
+    def test_allow_break_across_pages(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_allow_auto_fit_on_table(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_keep_table_together(self):
         doc = aspose.words.Document(file_name=MY_DIR + "Table spanning two pages.docx")
@@ -273,6 +282,9 @@ class ExTable(ApiExampleBase):
         first_cell = table.first_row.first_cell
         self.assertEqual(aspose.words.tables.PreferredWidthType.PERCENT, first_cell.cell_format.preferred_width.type)
         self.assertEqual(11.16, first_cell.cell_format.preferred_width.value)
+
+    def test_allow_cell_spacing(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_create_nested_table(self):
         raise NotImplementedError("Unsupported call of method named CreateTable")

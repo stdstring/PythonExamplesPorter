@@ -9,6 +9,12 @@ from api_example_base import ApiExampleBase, ARTIFACTS_DIR, MY_DIR
 
 
 class ExInlineStory(ApiExampleBase):
+    def test_position_footnote(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_position_endnote(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
     def test_ref_mark_number_style(self):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 

@@ -54,6 +54,12 @@ class ExStructuredDocumentTag(ApiExampleBase):
         self.assertTrue(tag.multiline)
         self.assertEqual(aspose.words.markup.SdtAppearance.TAGS, tag.appearance)
 
+    def test_is_temporary(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_placeholder_building_block(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
     def test_lock(self):
         doc = aspose.words.Document()
         builder = aspose.words.DocumentBuilder(doc)

@@ -45,6 +45,9 @@ class ExField(ApiExampleBase):
     def test_insert_field_with_field_builder_exception(self):
         raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")
 
+    def test_preserve_include_picture(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
     def test_unlink(self):
         raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")
 

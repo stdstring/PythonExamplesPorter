@@ -115,6 +115,9 @@ class ExDocumentBuilder(ApiExampleBase):
         self.assertEqual("Heading 1", paragraphs[3].paragraph_format.style.name)
         doc.save(file_name=ARTIFACTS_DIR + "DocumentBuilder.InsertHtml.docx")
 
+    def test_insert_html_with_formatting(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
     def test_math_ml(self):
         raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")
 
@@ -838,6 +841,21 @@ class ExDocumentBuilder(ApiExampleBase):
         self.assertEqual(1, table.rows.count)
         self.assertEqual("Row 2, cell 1.\aRow 2, cell 2.\a\a", table.get_text().strip())
 
+    def test_append_document_and_resolve_styles(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_insert_document_and_resolve_styles(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_load_document_with_list_numbering(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_ignore_text_boxes(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_move_to_field(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
     def test_insert_ole_object_exception(self):
         raise NotImplementedError("Unsupported expression: ParenthesizedLambdaExpression")
 
@@ -855,6 +873,9 @@ class ExDocumentBuilder(ApiExampleBase):
         self.assertEqual(aspose.words.drawing.WrapType.SQUARE, chart_shape.wrap_type)
         self.assertEqual(aspose.words.drawing.RelativeHorizontalPosition.MARGIN, chart_shape.relative_horizontal_position)
         self.assertEqual(aspose.words.drawing.RelativeVerticalPosition.MARGIN, chart_shape.relative_vertical_position)
+
+    def test_insert_field_and_update(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_insert_underline(self):
         doc = aspose.words.Document()

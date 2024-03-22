@@ -19,3 +19,15 @@ class ExViewOptions(ApiExampleBase):
         self.assertEqual(aspose.words.settings.ViewType.PAGE_LAYOUT, doc.view_options.view_type)
         self.assertEqual(50, doc.view_options.zoom_percent)
         self.assertEqual(aspose.words.settings.ZoomType.NONE, doc.view_options.zoom_type)
+
+    def test_set_zoom_type(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_display_background_shape(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_display_page_boundaries(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_forms_design(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")

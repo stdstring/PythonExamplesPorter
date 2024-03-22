@@ -56,8 +56,14 @@ class ExReportingEngine(ApiExampleBase):
     def test_insert_image_dynamically_by_base64(self):
         raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")
 
+    def test_insert_html_dinamically(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
     def test_image_exif_orientation(self):
         raise NotImplementedError("Unsupported target type System.IO.File")
+
+    def test_insert_hyperlinks_dynamically(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_insert_bookmarks_dynamically(self):
         raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")
@@ -83,11 +89,17 @@ class ExReportingEngine(ApiExampleBase):
     def test_with_missing_members(self):
         raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")
 
+    def test_inline_error_messages(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
     def test_do_not_remove_empty_paragraphs(self):
         raise NotImplementedError("Unsupported call of method named BuildReport")
 
     def test_remove_empty_paragraphs(self):
         raise NotImplementedError("Unsupported call of method named BuildReport")
+
+    def test_merging_table_cells_dynamically(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_xml_data_with_nested_elements(self):
         raise NotImplementedError("Unsupported call of method named BuildReport")
@@ -100,6 +112,9 @@ class ExReportingEngine(ApiExampleBase):
 
     def test_json_data_preserve_spaces(self):
         raise NotImplementedError("Unsupported statement type: UsingStatement")
+
+    def test_insert_combobox_dropdown_list_items_dynamically(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_update_fields_syntax_aware(self):
         raise NotImplementedError("Unsupported call of method named BuildReport")

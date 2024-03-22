@@ -6,6 +6,12 @@ from api_example_base import ApiExampleBase, ARTIFACTS_DIR, MY_DIR
 
 
 class ExHtmlSaveOptions(ApiExampleBase):
+    def test_export_page_margins_epub(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_export_text_box_as_svg_epub(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
     def test_create_azw_3_toc(self):
         doc = aspose.words.Document(file_name=MY_DIR + "Big document.docx")
         options = aspose.words.saving.HtmlSaveOptions(aspose.words.SaveFormat.AZW3)
@@ -17,6 +23,12 @@ class ExHtmlSaveOptions(ApiExampleBase):
         options = aspose.words.saving.HtmlSaveOptions(aspose.words.SaveFormat.MOBI)
         options.navigation_map_level = 5
         doc.save(file_name=ARTIFACTS_DIR + "HtmlSaveOptions.CreateMobiToc.mobi", save_options=options)
+
+    def test_control_list_labels_export(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_export_url_for_linked_image(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_export_roundtrip_information(self):
         doc = aspose.words.Document(file_name=MY_DIR + "TextBoxes.docx")
@@ -40,6 +52,9 @@ class ExHtmlSaveOptions(ApiExampleBase):
         save_options.export_font_resources = True
         save_options.export_fonts_as_base64 = True
         doc.save(file_name=ARTIFACTS_DIR + "HtmlSaveOptions.ConvertFontsAsBase64.html", save_options=save_options)
+
+    def test_html_5_support(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_resource_folder_priority(self):
         raise NotImplementedError("Unsupported target type System.IO.SearchOption")
@@ -131,6 +146,9 @@ class ExHtmlSaveOptions(ApiExampleBase):
         doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "HtmlSaveOptions.HeadingLevels-03.html")
         self.assertEqual("Heading #5\r" + "Heading #6", doc.get_text().strip())
 
+    def test_negative_indent(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
     def test_folder_alias(self):
         doc = aspose.words.Document(file_name=MY_DIR + "Rendering.docx")
         options = aspose.words.saving.HtmlSaveOptions()
@@ -147,11 +165,23 @@ class ExHtmlSaveOptions(ApiExampleBase):
         options.export_original_url_for_linked_images = True
         doc.save(file_name=ARTIFACTS_DIR + "HtmlSaveOptions.FolderAlias.html", save_options=options)
 
+    def test_html_versions(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_export_xhtml_transitional(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
     def test_epub_headings(self):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_doc_2_epub_save_options(self):
         raise NotImplementedError("Unsupported target type System.Text.Encoding")
+
+    def test_drop_down_form_field(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_export_images_as_base64(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_export_fonts_as_base64(self):
         doc = aspose.words.Document(file_name=MY_DIR + "Rendering.docx")
@@ -161,5 +191,26 @@ class ExHtmlSaveOptions(ApiExampleBase):
         options.pretty_format = True
         doc.save(file_name=ARTIFACTS_DIR + "HtmlSaveOptions.ExportFontsAsBase64.html", save_options=options)
 
+    def test_export_language_information(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_list(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_relative_font_size(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_export_shape(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_round_trip_information(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_metafile_format(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
     def test_image_folder(self):
         raise NotImplementedError("Unsupported target type System.IO.Path")
+
+    def test_pretty_format(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")

@@ -27,6 +27,12 @@ class ExPageSetup(ApiExampleBase):
         self.assertEqual(aspose.words.Orientation.PORTRAIT, doc.sections[1].page_setup.orientation)
         self.assertEqual(aspose.words.PageVerticalAlignment.TOP, doc.sections[1].page_setup.vertical_alignment)
 
+    def test_different_first_page_header_footer(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_odd_and_even_pages_header_footer(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
     def test_characters_per_line(self):
         doc = aspose.words.Document()
         builder = aspose.words.DocumentBuilder(doc)
@@ -111,6 +117,9 @@ class ExPageSetup(ApiExampleBase):
         doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "PageSetup.ColumnsSameWidth.docx")
         self.assertEqual(100, doc.first_section.page_setup.text_columns.spacing)
         self.assertEqual(2, doc.first_section.page_setup.text_columns.count)
+
+    def test_vertical_line_between_columns(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_line_numbers(self):
         raise NotImplementedError("Unsupported expression: InterpolatedStringExpression")
@@ -224,6 +233,9 @@ class ExPageSetup(ApiExampleBase):
         self.assertEqual(aspose.words.notes.EndnotePosition.END_OF_DOCUMENT, endnote_options.position)
         self.assertEqual(aspose.words.notes.FootnoteNumberingRule.CONTINUOUS, endnote_options.restart_rule)
         self.assertEqual(1, endnote_options.start_number)
+
+    def test_bidi(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_page_border(self):
         doc = aspose.words.Document()

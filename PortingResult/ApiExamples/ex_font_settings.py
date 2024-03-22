@@ -39,6 +39,12 @@ class ExFontSettings(ApiExampleBase):
         self.assertEqual(aspose.words.fonts.FontSourceType.FONTS_FOLDER, folder_font_source.type)
         self.assertEqual(1, folder_font_source.priority)
 
+    def test_set_fonts_folder(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_set_fonts_folders(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
     def test_add_font_source(self):
         raise NotImplementedError("Unsupported member target type - Aspose.Words.Fonts.FontSourceBase[] for expression: originalFontSources")
 

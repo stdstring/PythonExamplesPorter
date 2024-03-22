@@ -15,6 +15,27 @@ class ExRange(ApiExampleBase):
         self.assertEqual(1, replacement_count)
         self.assertEqual("Greetings, John Doe!", doc.get_text().strip())
 
+    def test_replace_match_case(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_replace_find_whole_words_only(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_ignore_deleted(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_ignore_inserted(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_ignore_fields(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_ignore_field_codes(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_ignore_footnote(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
     def test_ignore_shapes(self):
         doc = aspose.words.Document()
         builder = aspose.words.DocumentBuilder(doc)
@@ -88,3 +109,6 @@ class ExRange(ApiExampleBase):
         builder = aspose.words.DocumentBuilder(doc)
         builder.write("Hello world!")
         self.assertEqual("Hello world!", doc.range.text.strip())
+
+    def test_use_substitutions(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")

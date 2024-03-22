@@ -61,6 +61,9 @@ class ExDocument(ApiExampleBase):
         load_options.load_format = aspose.words.LoadFormat.PDF
         doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Document.PdfDocumentEncrypted.pdf", load_options=load_options)
 
+    def test_pdf_renderer(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
     def test_open_from_stream_with_base_uri(self):
         raise NotImplementedError("Unsupported statement type: UsingStatement")
 
@@ -100,6 +103,9 @@ class ExDocument(ApiExampleBase):
 
     def test_append_document_from_automation(self):
         raise NotImplementedError("Unsupported expression: ParenthesizedLambdaExpression")
+
+    def test_import_list(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_keep_source_numbering_same_list_ids(self):
         src_doc = aspose.words.Document(file_name=MY_DIR + "List with the same definition identifier - source.docx")
@@ -274,6 +280,9 @@ class ExDocument(ApiExampleBase):
     def test_compare_options(self):
         raise NotImplementedError("Unsupported target type System.DateTime")
 
+    def test_ignore_dml_unique_id(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
     def test_remove_external_schema_references(self):
         doc = aspose.words.Document(file_name=MY_DIR + "External XML schema.docx")
         doc.remove_external_schema_references()
@@ -392,6 +401,18 @@ class ExDocument(ApiExampleBase):
     def test_layout_options_revisions(self):
         raise NotImplementedError("Unsupported target type System.DateTime")
 
+    def test_layout_options_hidden_text(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_use_pdf_document_for_layout_options_hidden_text(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_layout_options_paragraph_marks(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_use_pdf_document_for_layout_options_paragraph_marks(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
     def test_update_page_layout(self):
         doc = aspose.words.Document(file_name=MY_DIR + "Rendering.docx")
         doc.save(file_name=ARTIFACTS_DIR + "Document.UpdatePageLayout.1.pdf")
@@ -403,6 +424,9 @@ class ExDocument(ApiExampleBase):
 
     def test_doc_package_custom_parts(self):
         raise NotImplementedError("Unsupported call of method named TestDocPackageCustomParts")
+
+    def test_shade_form_data(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_versions_count(self):
         doc = aspose.words.Document(file_name=MY_DIR + "Versions.doc")
@@ -431,6 +455,9 @@ class ExDocument(ApiExampleBase):
         self.assertTrue(doc.write_protection.read_only_recommended)
         self.assertTrue(doc.write_protection.validate_password("MyPassword"))
         self.assertFalse(doc.write_protection.validate_password("wrongpassword"))
+
+    def test_remove_personal_information(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_show_comments(self):
         raise NotImplementedError("Unsupported target type System.DateTime")
@@ -514,6 +541,12 @@ class ExDocument(ApiExampleBase):
         doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Document.TextWatermark.docx")
         self.assertEqual(aspose.words.WatermarkType.TEXT, doc.watermark.type)
 
+    def test_spelling_and_grammar_errors(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_granularity_compare_option(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
     def test_ignore_printer_metrics(self):
         doc = aspose.words.Document(file_name=MY_DIR + "Rendering.docx")
         doc.layout_options.ignore_printer_metrics = False
@@ -525,6 +558,9 @@ class ExDocument(ApiExampleBase):
         doc.save(file_name=ARTIFACTS_DIR + "Document.ExtractPages.docx")
         doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Document.ExtractPages.docx")
         self.assertEqual(doc.page_count, 2)
+
+    def test_spelling_or_grammar(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_allow_embedding_post_script_fonts(self):
         raise NotImplementedError("Unsupported target type System.IO.File")

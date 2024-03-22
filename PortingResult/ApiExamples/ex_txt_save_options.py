@@ -6,8 +6,20 @@ from api_example_base import ApiExampleBase, ARTIFACTS_DIR
 
 
 class ExTxtSaveOptions(ApiExampleBase):
+    def test_page_breaks(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_add_bidi_marks(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_export_headers_footers(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
     def test_txt_list_indentation(self):
         raise NotImplementedError("Unsupported target type System.IO.File")
+
+    def test_simplify_list_labels(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_paragraph_break(self):
         raise NotImplementedError("Unsupported target type System.IO.File")
