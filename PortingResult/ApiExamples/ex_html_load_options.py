@@ -26,8 +26,5 @@ class ExHtmlLoadOptions(ApiExampleBase):
     def test_ignore_noscript_elements(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
-    def test_use_pdf_document_for_ignore_noscript_elements(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
-
     def test_block_import(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")

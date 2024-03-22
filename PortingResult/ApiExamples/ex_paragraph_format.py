@@ -101,9 +101,6 @@ class ExParagraphFormat(ApiExampleBase):
     def test_suppress_hyphens(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
-    def test_use_pdf_document_for_suppress_hyphens(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
-
     def test_paragraph_spacing_and_indents(self):
         raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")
 

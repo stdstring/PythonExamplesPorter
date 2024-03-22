@@ -58,9 +58,6 @@ class ExDocument(ApiExampleBase):
         load_options.load_format = aspose.words.LoadFormat.PDF
         doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Document.PdfDocumentEncrypted.pdf", load_options=load_options)
 
-    def test_pdf_renderer(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
-
     def test_open_from_stream_with_base_uri(self):
         raise NotImplementedError("Unsupported statement type: UsingStatement")
 
@@ -398,13 +395,7 @@ class ExDocument(ApiExampleBase):
     def test_layout_options_hidden_text(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
-    def test_use_pdf_document_for_layout_options_hidden_text(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
-
     def test_layout_options_paragraph_marks(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
-
-    def test_use_pdf_document_for_layout_options_paragraph_marks(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_update_page_layout(self):
