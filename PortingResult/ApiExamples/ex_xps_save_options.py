@@ -23,6 +23,9 @@ class ExXpsSaveOptions(ApiExampleBase):
         save_options.outline_options.headings_outline_levels = 2
         doc.save(file_name=ARTIFACTS_DIR + "XpsSaveOptions.OutlineLevels.xps", save_options=save_options)
 
+    def test_book_fold(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
     def test_export_exact_pages(self):
         doc = aspose.words.Document()
         builder = aspose.words.DocumentBuilder(doc)

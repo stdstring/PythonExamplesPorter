@@ -15,6 +15,9 @@ class ExShape(ApiExampleBase):
     def test_alt_text(self):
         raise NotImplementedError("Unsupported target type System.IO.File")
 
+    def test_font(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
     def test_coordinates(self):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
@@ -58,6 +61,9 @@ class ExShape(ApiExampleBase):
         self.assertEqual(aspose.pydrawing.RectangleF(100, 100, 500, 500), group.bounds)
         self.assertEqual(aspose.pydrawing.Size(500, 500), group.coord_size)
         self.assertEqual(aspose.pydrawing.Point(-250, -250), group.coord_origin)
+
+    def test_anchor_locked(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_delete_all_shapes(self):
         doc = aspose.words.Document()
@@ -280,12 +286,21 @@ class ExShape(ApiExampleBase):
         self.assertEqual(aspose.words.math.OfficeMathDisplayType.DISPLAY, office_math.display_type)
         self.assertEqual(aspose.words.math.OfficeMathJustification.CENTER, office_math.justification)
 
+    def test_work_with_math_object_type(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_aspect_ratio(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
     def test_markup_language_by_default(self):
         doc = aspose.words.Document()
         builder = aspose.words.DocumentBuilder(doc)
         shape = builder.insert_image(file_name=IMAGE_DIR + "Transparent background logo.png")
         self.assertEqual(aspose.words.drawing.ShapeMarkupLanguage.DML, shape.markup_language)
         self.assertEqual(aspose.pydrawing.SizeF(300, 300), shape.size_in_points)
+
+    def test_markup_language_for_different_ms_word_versions(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_stroke(self):
         doc = aspose.words.Document()
@@ -334,17 +349,26 @@ class ExShape(ApiExampleBase):
     def test_calendar(self):
         raise NotImplementedError("Unsupported target type System.String")
 
+    def test_is_layout_in_cell(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
     def test_shape_insertion(self):
         raise NotImplementedError("Unsupported target type System.Collections.Generic.IEnumerable")
 
     def test_signature_line(self):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
+    def test_text_box_layout_flow(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
     def test_text_box_fit_shape_to_text(self):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_text_box_margins(self):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
+
+    def test_text_box_contents_wrap_mode(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_text_box_shape_type(self):
         doc = aspose.words.Document()
@@ -358,6 +382,9 @@ class ExShape(ApiExampleBase):
 
     def test_create_link_between_text_boxes(self):
         raise NotImplementedError("Unsupported target type System.Console")
+
+    def test_vertical_anchor(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_insert_text_paths(self):
         raise NotImplementedError("Unsupported call of method named AppendWordArt")

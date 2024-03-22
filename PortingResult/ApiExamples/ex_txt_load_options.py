@@ -6,6 +6,12 @@ from api_example_base import ApiExampleBase, MY_DIR
 
 
 class ExTxtLoadOptions(ApiExampleBase):
+    def test_detect_numbering_with_whitespaces(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_trail_spaces(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
     def test_detect_document_direction(self):
         load_options = aspose.words.loading.TxtLoadOptions()
         load_options.document_direction = aspose.words.loading.DocumentDirection.AUTO

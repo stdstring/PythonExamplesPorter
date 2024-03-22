@@ -51,13 +51,6 @@ namespace PythonExamplesPorterApp.Converter
                 _appData.Logger.LogInfo($"{logHead} skipped for static method");
                 return;
             }
-            IReadOnlyList<AttributeListSyntax> attributes = node.AttributeLists;
-            // we don't process methods not marked by NUnit.Framework.TestAttribute attribute
-            if (!attributes.ContainAttribute(_model, "NUnit.Framework.TestAttribute"))
-            {
-                _appData.Logger.LogInfo($"{logHead} skipped for method non marked by NUnit.Framework.TestAttribute attribute");
-                return;
-            }
             String methodName = currentMethod.Name;
             String parentFullName = parent.ToDisplayString();
             // we don't process ignored method
@@ -66,20 +59,26 @@ namespace PythonExamplesPorterApp.Converter
                 _appData.Logger.LogInfo($"{logHead} skipped because ignored method");
                 return;
             }
-            _appData.Logger.LogInfo($"{logHead} processed");
-            GenerateMethodDeclaration(node, parentFullName);
-            base.VisitMethodDeclaration(node);
+            switch (node.AttributeLists)
+            {
+                case var attributes when attributes.ContainAttribute(_model, "NUnit.Framework.TestAttribute"):
+                    _appData.Logger.LogInfo($"{logHead} processed");
+                    GenerateTestMethodDeclaration(node, CreateTestMethodName(node, parentFullName));
+                    break;
+                case var attributes when attributes.ContainAttribute(_model, "NUnit.Framework.TestCaseAttribute"):
+                    _appData.Logger.LogInfo($"{logHead} processed");
+                    GenerateTestCaseMethodDeclaration(node, CreateTestMethodName(node, parentFullName));
+                    break;
+                default:
+                    _appData.Logger.LogInfo($"{logHead} skipped for method non marked by NUnit.Framework.TestAttribute/NUnit.Framework.TestCaseAttribute attributes");
+                    return;
+            }
         }
 
-        private void GenerateMethodDeclaration(MethodDeclarationSyntax node, String typeName)
+        private void GenerateTestMethodDeclaration(MethodDeclarationSyntax node, String testMethodName)
         {
             String methodName = node.Identifier.Text;
-            if (_currentClass == null)
-                throw new InvalidOperationException($"Unknown class for method {node.Identifier.Text}");
-            String destMethodName = _appData.NameTransformer.TransformMethodName(typeName, node.Identifier.Text);
-            if (!destMethodName.StartsWith("test_"))
-                destMethodName = "test_" + destMethodName;
-            MethodStorage currentMethod = _currentClass.CreateMethodStorage(destMethodName);
+            MethodStorage currentMethod = _currentClass.CreateMethodStorage(testMethodName);
             if (node.Body == null)
             {
                 _appData.Logger.LogError($"Bad {methodName} method: absence of body");
@@ -96,6 +95,34 @@ namespace PythonExamplesPorterApp.Converter
                 _appData.Logger.LogError(exc.Message);
                 currentMethod.SetError(exc.Message);
             }
+        }
+
+        private void GenerateTestCaseMethodDeclaration(MethodDeclarationSyntax node, String testMethodName)
+        {
+            String methodName = node.Identifier.Text;
+            MethodStorage currentMethod = _currentClass.CreateMethodStorage(testMethodName);
+            switch (node.Body)
+            {
+                case null:
+                    _appData.Logger.LogError($"Bad {methodName} method: absence of body");
+                    currentMethod.SetError("absence of method's body");
+                    break;
+                default:
+                    _appData.Logger.LogError($"Unsupported {methodName} method: NUnit.Framework.TestCaseAttribute attributes is not supported now");
+                    currentMethod.SetError("Unsupported NUnit.Framework.TestCaseAttribute attributes");
+                    break;
+            }
+        }
+
+        private String CreateTestMethodName(MethodDeclarationSyntax node, String typeName)
+        {
+            String methodName = node.Identifier.Text;
+            if (_currentClass == null)
+                throw new InvalidOperationException($"Unknown class for method {methodName}");
+            String destMethodName = _appData.NameTransformer.TransformMethodName(typeName, methodName);
+            if (!destMethodName.StartsWith("test_"))
+                destMethodName = "test_" + destMethodName;
+            return destMethodName;
         }
 
         private readonly SemanticModel _model;

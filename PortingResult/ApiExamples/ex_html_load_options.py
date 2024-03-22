@@ -22,3 +22,12 @@ class ExHtmlLoadOptions(ApiExampleBase):
 
     def test_get_input_as_form_field(self):
         raise NotImplementedError("Unsupported target type System.Text.Encoding")
+
+    def test_ignore_noscript_elements(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_use_pdf_document_for_ignore_noscript_elements(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_block_import(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")

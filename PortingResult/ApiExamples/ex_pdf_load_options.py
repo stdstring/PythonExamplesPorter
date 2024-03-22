@@ -3,4 +3,5 @@ from api_example_base import ApiExampleBase
 
 
 class ExPdfLoadOptions(ApiExampleBase):
-    pass
+    def test_skip_pdf_images(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")

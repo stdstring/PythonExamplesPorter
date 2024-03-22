@@ -18,6 +18,9 @@ class ExParagraphFormat(ApiExampleBase):
         self.assertFalse(format.word_wrap)
         self.assertTrue(format.hanging_punctuation)
 
+    def test_drop_cap(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
     def test_line_spacing(self):
         doc = aspose.words.Document()
         builder = aspose.words.DocumentBuilder(doc)
@@ -49,6 +52,12 @@ class ExParagraphFormat(ApiExampleBase):
         self.assertEqual(aspose.words.LineSpacingRule.MULTIPLE, paragraphs[5].paragraph_format.line_spacing_rule)
         self.assertEqual(18, paragraphs[5].paragraph_format.line_spacing)
 
+    def test_paragraph_spacing_auto(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_paragraph_spacing_same_style(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
     def test_paragraph_outline_level(self):
         doc = aspose.words.Document()
         builder = aspose.words.DocumentBuilder(doc)
@@ -70,6 +79,12 @@ class ExParagraphFormat(ApiExampleBase):
         self.assertEqual(aspose.words.OutlineLevel.LEVEL3, paragraphs[3].paragraph_format.outline_level)
         self.assertEqual(aspose.words.OutlineLevel.BODY_TEXT, paragraphs[4].paragraph_format.outline_level)
 
+    def test_page_break_before(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_widow_control(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
     def test_lines_to_drop(self):
         doc = aspose.words.Document()
         builder = aspose.words.DocumentBuilder(doc)
@@ -82,6 +97,12 @@ class ExParagraphFormat(ApiExampleBase):
         paragraphs = doc.first_section.body.paragraphs
         self.assertEqual(4, paragraphs[0].paragraph_format.lines_to_drop)
         self.assertEqual(0, paragraphs[1].paragraph_format.lines_to_drop)
+
+    def test_suppress_hyphens(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_use_pdf_document_for_suppress_hyphens(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_paragraph_spacing_and_indents(self):
         raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")

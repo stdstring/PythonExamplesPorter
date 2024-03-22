@@ -24,6 +24,15 @@ class ExOoxmlSaveOptions(ApiExampleBase):
         doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "OoxmlSaveOptions.Iso29500Strict.docx")
         self.assertEqual(aspose.words.drawing.ShapeMarkupLanguage.DML, (doc.get_child(aspose.words.NodeType.SHAPE, 0, True).as_shape()).markup_language)
 
+    def test_restarting_document_list(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_last_saved_time(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_document_compression(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
     def test_check_file_signatures(self):
         raise NotImplementedError("Unsupported member target type - System.String[] for expression: fileSignatures")
 

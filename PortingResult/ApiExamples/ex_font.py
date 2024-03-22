@@ -52,6 +52,12 @@ class ExFont(ApiExampleBase):
         self.assertFalse(doc.font_infos.embed_system_fonts)
         self.assertFalse(doc.font_infos.save_subset_fonts)
 
+    def test_font_info_collection(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_work_with_embedded_fonts(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
     def test_strike_through(self):
         doc = aspose.words.Document()
         para = doc.get_child(aspose.words.NodeType.PARAGRAPH, 0, True).as_paragraph()
@@ -424,6 +430,9 @@ class ExFont(ApiExampleBase):
         self.assertTrue(runs[2].font.has_dml_effect(aspose.words.TextDmlEffect.REFLECTION))
         self.assertTrue(runs[3].font.has_dml_effect(aspose.words.TextDmlEffect.EFFECT_3D))
         self.assertTrue(runs[4].font.has_dml_effect(aspose.words.TextDmlEffect.FILL))
+
+    def test_set_emphasis_mark(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_theme_fonts_colors(self):
         raise NotImplementedError("Unsupported target type System.Console")

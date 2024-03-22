@@ -3,4 +3,5 @@ from api_example_base import ApiExampleBase
 
 
 class ExRtfLoadOptions(ApiExampleBase):
-    pass
+    def test_recognize_utf_8_text(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")

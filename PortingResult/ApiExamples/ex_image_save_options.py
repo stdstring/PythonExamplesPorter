@@ -16,11 +16,20 @@ class ExImageSaveOptions(ApiExampleBase):
     def test_page_by_page(self):
         raise NotImplementedError("Unsupported expression: InterpolatedStringExpression")
 
+    def test_color_mode(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_pixel_format(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
     def test_floyd_steinberg_dithering(self):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_jpeg_quality(self):
         raise NotImplementedError("Unsupported ctor for type FileInfo")
+
+    def test_tiff_image_compression(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_resolution(self):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")

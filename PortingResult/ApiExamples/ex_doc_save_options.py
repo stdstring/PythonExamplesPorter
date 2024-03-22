@@ -20,3 +20,12 @@ class ExDocSaveOptions(ApiExampleBase):
         doc.save(file_name=ARTIFACTS_DIR + "DocSaveOptions.PictureBullets.doc", save_options=save_options)
         doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "DocSaveOptions.PictureBullets.doc")
         self.assertIsNone(doc.lists[0].list_levels[0].image_data)
+
+    def test_update_last_printed_property(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_update_created_time_property(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_always_compress_metafiles(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
