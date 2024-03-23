@@ -3,6 +3,7 @@ using NUnit.Framework;
 using PythonExamplesPorterApp.Config;
 using PythonExamplesPorterApp.Handmade;
 using PythonExamplesPorterApp.Ignored;
+using PythonExamplesPorterApp.Import;
 using PythonExamplesPorterApp.Names;
 
 namespace PythonExamplesPorterAppTests.Config
@@ -414,6 +415,46 @@ namespace PythonExamplesPorterAppTests.Config
         }
 
         [Test]
+        public void DeserializeWithImportAliases()
+        {
+            const String source = "<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n" +
+                                  "<ConfigData>\r\n" +
+                                  "  <BaseConfig>\r\n" +
+                                  "    <Source RelativePathBase=\"app\">..\\source\\someproj.csproj</Source>\r\n" +
+                                  "    <Dest RelativePathBase=\"app\">..\\dest\\examples</Dest>\r\n" +
+                                  "  </BaseConfig>\r\n" +
+                                  "  <ImportAliases>\r\n" +
+                                  "    <ImportAlias>\r\n" +
+                                  "      <Import>aspose.words</Import>\r\n" +
+                                  "      <Alias>aw</Alias>\r\n" +
+                                  "    </ImportAlias>\r\n" +
+                                  "    <ImportAlias>\r\n" +
+                                  "      <Import>aspose.pydrawing</Import>\r\n" +
+                                  "      <Alias>drawing</Alias>\r\n" +
+                                  "    </ImportAlias>\r\n" +
+                                  "  </ImportAliases>\r\n" +
+                                  "</ConfigData>";
+            ConfigData expected = new ConfigData
+            {
+                BaseConfig = new BaseConfig
+                {
+                    Source = new TargetPath(RelativePathBase.App, "..\\source\\someproj.csproj"),
+                    DestDirectory = new TargetPath(RelativePathBase.App, "..\\dest\\examples"),
+                    ForceDestDelete = false
+                },
+                ImportAliases = new ImportAliasEntries
+                {
+                    ImportAliases = new []
+                    {
+                        new ImportAliasEntry{Import = "aspose.words", Alias = "aw"},
+                        new ImportAliasEntry{Import = "aspose.pydrawing", Alias = "drawing"}
+                    }
+                }
+            };
+            CheckDeserialization(expected, source);
+        }
+
+        [Test]
         public void DeserializeWithHandmadeNameAliases()
         {
             const String source = "<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n" +
@@ -548,6 +589,16 @@ namespace PythonExamplesPorterAppTests.Config
                                   "      </Type>\r\n" +
                                   "    </Types>\r\n" +
                                   "  </HandmadeEntities>\r\n" +
+                                  "  <ImportAliases>\r\n" +
+                                  "    <ImportAlias>\r\n" +
+                                  "      <Import>aspose.words</Import>\r\n" +
+                                  "      <Alias>aw</Alias>\r\n" +
+                                  "    </ImportAlias>\r\n" +
+                                  "    <ImportAlias>\r\n" +
+                                  "      <Import>aspose.pydrawing</Import>\r\n" +
+                                  "      <Alias>drawing</Alias>\r\n" +
+                                  "    </ImportAlias>\r\n" +
+                                  "  </ImportAliases>\r\n" +
                                   "  <aliases>\r\n" +
                                   "    <namespace>\r\n" +
                                   "      <types>\r\n" +
@@ -624,6 +675,14 @@ namespace PythonExamplesPorterAppTests.Config
                         }
                     }
                 },
+                ImportAliases = new ImportAliasEntries
+                {
+                    ImportAliases = new[]
+                    {
+                        new ImportAliasEntry{Import = "aspose.words", Alias = "aw"},
+                        new ImportAliasEntry{Import = "aspose.pydrawing", Alias = "drawing"}
+                    }
+                },
                 HandmadeAliases = new HandmadeNameAliases
                 {
                     Namespaces = new[]
@@ -674,6 +733,7 @@ namespace PythonExamplesPorterAppTests.Config
             CheckBaseConfig(expected.BaseConfig!, actual.BaseConfig!);
             CheckIgnoredEntities(expected.IgnoredEntities, actual.IgnoredEntities);
             CheckHandmadeEntities(expected.HandmadeEntities, actual.HandmadeEntities);
+            CheckImportAliases(expected.ImportAliases, actual.ImportAliases);
             CheckHandmadeNameAliases(expected.HandmadeAliases, actual.HandmadeAliases);
         }
 
@@ -771,6 +831,36 @@ namespace PythonExamplesPorterAppTests.Config
                     Assert.AreEqual(expected[index].NeedImport, actual[index].NeedImport);
                 }
             }
+        }
+
+        private void CheckImportAliases(ImportAliasEntries? expected, ImportAliasEntries? actual)
+        {
+            if (expected == null)
+                Assert.IsNull(actual);
+            else
+            {
+                Assert.IsNotNull(actual);
+                CheckImportAliasEntries(expected.ImportAliases, actual!.ImportAliases);
+            }
+        }
+
+        private void CheckImportAliasEntries(ImportAliasEntry[]? expected, ImportAliasEntry[]? actual)
+        {
+            if (expected == null || expected.Length == 0)
+                Assert.That(actual == null || actual.Length == 0);
+            else
+            {
+                Assert.IsNotNull(actual);
+                Assert.AreEqual(expected.Length, actual!.Length);
+                for (Int32 index = 0; index < expected.Length; ++index)
+                    CheckImportAliasEntry(expected[index], actual[index]);
+            }
+        }
+
+        private void CheckImportAliasEntry(ImportAliasEntry expected, ImportAliasEntry actual)
+        {
+            Assert.AreEqual(expected.Import, actual.Import);
+            Assert.AreEqual(expected.Alias, actual.Alias);
         }
 
         private void CheckHandmadeNameAliases(HandmadeNameAliases? expected, HandmadeNameAliases? actual)

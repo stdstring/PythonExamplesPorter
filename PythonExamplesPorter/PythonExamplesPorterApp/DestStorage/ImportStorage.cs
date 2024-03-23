@@ -27,9 +27,7 @@ namespace PythonExamplesPorterApp.DestStorage
         {
             if (String.IsNullOrEmpty(module))
                 return;
-            if (_modulesImport.ContainsKey(module))
-                return;
-            _modulesImport.Add(module, alias);
+            _modulesImport.TryAdd(module, alias);
         }
 
         public void AddEntity(String module, String entity)
@@ -65,9 +63,7 @@ namespace PythonExamplesPorterApp.DestStorage
         {
             if (String.IsNullOrEmpty(module))
                 return;
-            if (ModulesImport.ContainsKey(module))
-                return;
-            ModulesImport.Add(module, alias);
+            ModulesImport.TryAdd(module, alias);
         }
 
         public void AddEntity(String module, String entity)

@@ -1,6 +1,7 @@
 ﻿using System.Xml.Serialization;
 using PythonExamplesPorterApp.Handmade;
 using PythonExamplesPorterApp.Ignored;
+using PythonExamplesPorterApp.Import;
 using PythonExamplesPorterApp.Names;
 
 namespace PythonExamplesPorterApp.Config
@@ -16,6 +17,9 @@ namespace PythonExamplesPorterApp.Config
 
         [XmlElement("HandmadeEntities")]
         public HandmadeEntities? HandmadeEntities { get; set; }
+
+        [XmlElement("ImportAliases")]
+        public ImportAliasEntries? ImportAliases { get; set; }
 
         [XmlElement("aliases")]
         public HandmadeNameAliases? HandmadeAliases { get; set; }
