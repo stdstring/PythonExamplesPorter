@@ -2,6 +2,7 @@
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using PythonExamplesPorterApp.Common;
 using PythonExamplesPorterApp.Converter;
+using PythonExamplesPorterApp.DestStorage;
 using PythonExamplesPorterApp.Expressions;
 
 namespace PythonExamplesPorterApp.ExternalEntities
@@ -12,12 +13,12 @@ namespace PythonExamplesPorterApp.ExternalEntities
         {
             _systemStringResolver = new SystemStringMemberResolver(model);
             _systemDrawingColorResolver = new SystemDrawingColorMemberResolver(model, appData);
-            _systemDrawingPointResolver = new SystemDrawingPointMemberResolver(model, "Point");
-            _systemDrawingPointFResolver = new SystemDrawingPointMemberResolver(model, "PointF");
-            _systemDrawingSizeResolver = new SystemDrawingSizeMemberResolver(model, "Size");
-            _systemDrawingSizeFResolver = new SystemDrawingSizeMemberResolver(model, "SizeF");
-            _systemDrawingRectangleResolver = new SystemDrawingRectangleMemberResolver(model, "Rectangle");
-            _systemDrawingRectangleFResolver = new SystemDrawingRectangleMemberResolver(model, "RectangleF");
+            _systemDrawingPointResolver = new SystemDrawingPointMemberResolver(model, appData, "Point");
+            _systemDrawingPointFResolver = new SystemDrawingPointMemberResolver(model, appData, "PointF");
+            _systemDrawingSizeResolver = new SystemDrawingSizeMemberResolver(model, appData, "Size");
+            _systemDrawingSizeFResolver = new SystemDrawingSizeMemberResolver(model, appData, "SizeF");
+            _systemDrawingRectangleResolver = new SystemDrawingRectangleMemberResolver(model, appData, "Rectangle");
+            _systemDrawingRectangleFResolver = new SystemDrawingRectangleMemberResolver(model, appData, "RectangleF");
         }
 
         public OperationResult<MemberResolveData> ResolveCtor(ITypeSymbol sourceType, IReadOnlyList<ArgumentSyntax> argumentsData, ConvertedArguments argumentsRepresentation)
@@ -220,20 +221,23 @@ namespace PythonExamplesPorterApp.ExternalEntities
         {
             // TODO (std_string) : probably some static properties may be not a colors. we need to check this
             String destColorName = _appData.NameTransformer.TransformPropertyName("System.Drawing.Color", sourceColorName);
-            MemberResolveData colorData = new MemberResolveData($"aspose.pydrawing.Color.{destColorName}", "aspose.pydrawing");
+            (String moduleName, ImportData importData) prepareResult = _appData.ImportAliasManager.PrepareImport("aspose.pydrawing");
+            MemberResolveData colorData = new MemberResolveData($"{prepareResult.moduleName}.Color.{destColorName}", prepareResult.importData);
             return new OperationResult<MemberResolveData>(true, "", colorData);
         }
 
         private OperationResult<MemberResolveData> ResolveEmptyField()
         {
-            MemberResolveData colorData = new MemberResolveData($"aspose.pydrawing.Color.empty()", "aspose.pydrawing");
+            (String moduleName, ImportData importData) prepareResult = _appData.ImportAliasManager.PrepareImport("aspose.pydrawing");
+            MemberResolveData colorData = new MemberResolveData($"{prepareResult.moduleName}.Color.empty()", prepareResult.importData);
             return new OperationResult<MemberResolveData>(true, "", colorData);
         }
 
         private OperationResult<MemberResolveData> ResolveFromArgbMethod(MemberRepresentation representation)
         {
+            (String moduleName, ImportData importData) prepareResult = _appData.ImportAliasManager.PrepareImport("aspose.pydrawing");
             String arguments = String.Join(", ", representation.Arguments.Values);
-            MemberResolveData colorData = new MemberResolveData($"aspose.pydrawing.Color.from_argb({arguments})", "aspose.pydrawing");
+            MemberResolveData colorData = new MemberResolveData($"{prepareResult.moduleName}.Color.from_argb({arguments})", prepareResult.importData);
             return new OperationResult<MemberResolveData>(true, "", colorData);
         }
 
@@ -251,9 +255,10 @@ namespace PythonExamplesPorterApp.ExternalEntities
     // resolver for System.Drawing.Point and System.Drawing.PointF
     internal class SystemDrawingPointMemberResolver
     {
-        public SystemDrawingPointMemberResolver(SemanticModel model, String typeName)
+        public SystemDrawingPointMemberResolver(SemanticModel model, AppData appData, String typeName)
         {
             _model = model;
+            _appData = appData;
             _typeName = typeName;
             String[] knownNames = {"Point", "PointF"};
             if (!knownNames.Contains(typeName))
@@ -267,7 +272,8 @@ namespace PythonExamplesPorterApp.ExternalEntities
             {
                 case [var x, var y]:
                 {
-                    MemberResolveData ctorData = new MemberResolveData($"aspose.pydrawing.{_typeName}({x}, {y})", "aspose.pydrawing");
+                    (String moduleName, ImportData importData) prepareResult = _appData.ImportAliasManager.PrepareImport("aspose.pydrawing");
+                    MemberResolveData ctorData = new MemberResolveData($"{prepareResult.moduleName}.{_typeName}({x}, {y})", prepareResult.importData);
                     return new OperationResult<MemberResolveData>(true, "", ctorData);
                 }
             }
@@ -293,15 +299,17 @@ namespace PythonExamplesPorterApp.ExternalEntities
         }
 
         private readonly SemanticModel _model;
+        private readonly AppData _appData;
         private readonly String _typeName;
     }
 
     // resolver for System.Drawing.Rectangle and System.Drawing.RectangleF
     internal class SystemDrawingRectangleMemberResolver
     {
-        public SystemDrawingRectangleMemberResolver(SemanticModel model, String typeName)
+        public SystemDrawingRectangleMemberResolver(SemanticModel model, AppData appData, String typeName)
         {
             _model = model;
+            _appData = appData;
             _typeName = typeName;
             String[] knownNames = {"Rectangle", "RectangleF"};
             if (!knownNames.Contains(typeName))
@@ -310,18 +318,19 @@ namespace PythonExamplesPorterApp.ExternalEntities
 
         public OperationResult<MemberResolveData> ResolveCtor(IReadOnlyList<ArgumentSyntax> argumentsData, ConvertedArguments argumentsRepresentation)
         {
+            (String moduleName, ImportData importData) prepareResult = _appData.ImportAliasManager.PrepareImport("aspose.pydrawing");
             // TODO (std_string) : add check of arg type
             switch (argumentsRepresentation.Values)
             {
                 case [var location, var size]:
                 {
-                    MemberResolveData ctorData = new MemberResolveData($"aspose.pydrawing{_typeName}({location}, {size})", "aspose.pydrawing");
+                    MemberResolveData ctorData = new MemberResolveData($"{prepareResult.moduleName}{_typeName}({location}, {size})", prepareResult.importData);
                     return new OperationResult<MemberResolveData>(true, "", ctorData);
                 }
                 case [var x, var y, var width, var height]:
                 {
-                    String member = $"aspose.pydrawing.{_typeName}({x}, {y}, {width}, {height})";
-                    MemberResolveData ctorData = new MemberResolveData(member, "aspose.pydrawing");
+                    String member = $"{prepareResult.moduleName}.{_typeName}({x}, {y}, {width}, {height})";
+                    MemberResolveData ctorData = new MemberResolveData(member, prepareResult.importData);
                     return new OperationResult<MemberResolveData>(true, "", ctorData);
                 }
             }
@@ -363,15 +372,17 @@ namespace PythonExamplesPorterApp.ExternalEntities
         }
 
         private readonly SemanticModel _model;
+        private readonly AppData _appData;
         private readonly String _typeName;
     }
 
     // resolver for System.Drawing.Size and System.Drawing.SizeF
     internal class SystemDrawingSizeMemberResolver
     {
-        public SystemDrawingSizeMemberResolver(SemanticModel model, String typeName)
+        public SystemDrawingSizeMemberResolver(SemanticModel model, AppData appData, String typeName)
         {
             _model = model;
+            _appData = appData;
             _typeName = typeName;
             String[] knownNames = {"Size", "SizeF"};
             if (!knownNames.Contains(typeName))
@@ -385,7 +396,8 @@ namespace PythonExamplesPorterApp.ExternalEntities
             {
                 case [var width, var height]:
                 {
-                    MemberResolveData ctorData = new MemberResolveData($"aspose.pydrawing.{_typeName}({width}, {height})", "aspose.pydrawing");
+                    (String moduleName, ImportData importData) prepareResult = _appData.ImportAliasManager.PrepareImport("aspose.pydrawing");
+                    MemberResolveData ctorData = new MemberResolveData($"{prepareResult.moduleName}.{_typeName}({width}, {height})", prepareResult.importData);
                     return new OperationResult<MemberResolveData>(true, "", ctorData);
                 }
             }
@@ -411,6 +423,7 @@ namespace PythonExamplesPorterApp.ExternalEntities
         }
 
         private readonly SemanticModel _model;
+        private readonly AppData _appData;
         private readonly String _typeName;
     }
 }

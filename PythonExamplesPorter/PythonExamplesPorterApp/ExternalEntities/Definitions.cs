@@ -1,27 +1,27 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using PythonExamplesPorterApp.Common;
+using PythonExamplesPorterApp.DestStorage;
 using PythonExamplesPorterApp.Expressions;
 
 namespace PythonExamplesPorterApp.ExternalEntities
 {
-    internal record TypeResolveData(String TypeName, String ModuleName);
+    internal record TypeResolveData(String TypeName, String ModuleName, ImportData ImportData);
 
     internal record MemberData(ExpressionSyntax Target, SimpleNameSyntax Name, IReadOnlyList<ArgumentSyntax> Arguments);
 
     internal record MemberRepresentation(String Target, ConvertedArguments Arguments);
 
-    // TODO (std_string) : think about using ImportData instead of single module name
-    internal record MemberResolveData(String Member, String ModuleName)
+    internal record MemberResolveData(String Member, ImportData ImportData)
     {
-        public MemberResolveData(String member) : this(member, "")
+        public MemberResolveData(String member) : this(member, new ImportData())
         {
         }
     }
 
-    internal record CastResolveData(String Cast, String ModuleName)
+    internal record CastResolveData(String Cast, ImportData ImportData)
     {
-        public CastResolveData(String cast) : this(cast, "")
+        public CastResolveData(String cast) : this(cast, new ImportData())
         {
         }
     }

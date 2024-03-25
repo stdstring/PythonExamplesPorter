@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import aspose.words
+import aspose.words as aw
 import aspose.words.digitalsignatures
 import aspose.words.loading
 import aspose.words.saving

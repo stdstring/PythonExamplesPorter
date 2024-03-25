@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import aspose.words
+import aspose.words as aw
 import aspose.words.digitalsignatures
 import aspose.words.saving
 import unittest
@@ -14,19 +14,19 @@ class ExPdfSaveOptions(ApiExampleBase):
         raise NotImplementedError("Unsupported call of method named OnePage")
 
     def test_headings_outline_levels(self):
-        doc = aspose.words.Document()
-        builder = aspose.words.DocumentBuilder(doc)
-        builder.paragraph_format.style_identifier = aspose.words.StyleIdentifier.HEADING1
+        doc = aw.Document()
+        builder = aw.DocumentBuilder(doc)
+        builder.paragraph_format.style_identifier = aw.StyleIdentifier.HEADING1
         self.assertTrue(builder.paragraph_format.is_heading)
         builder.writeln("Heading 1")
-        builder.paragraph_format.style_identifier = aspose.words.StyleIdentifier.HEADING2
+        builder.paragraph_format.style_identifier = aw.StyleIdentifier.HEADING2
         builder.writeln("Heading 1.1")
         builder.writeln("Heading 1.2")
-        builder.paragraph_format.style_identifier = aspose.words.StyleIdentifier.HEADING3
+        builder.paragraph_format.style_identifier = aw.StyleIdentifier.HEADING3
         builder.writeln("Heading 1.2.1")
         builder.writeln("Heading 1.2.2")
-        save_options = aspose.words.saving.PdfSaveOptions()
-        save_options.save_format = aspose.words.SaveFormat.PDF
+        save_options = aw.saving.PdfSaveOptions()
+        save_options.save_format = aw.SaveFormat.PDF
         save_options.outline_options.headings_outline_levels = 2
         doc.save(file_name=ARTIFACTS_DIR + "PdfSaveOptions.HeadingsOutlineLevels.pdf", save_options=save_options)
 
@@ -46,24 +46,24 @@ class ExPdfSaveOptions(ApiExampleBase):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_expanded_outline_levels(self):
-        doc = aspose.words.Document()
-        builder = aspose.words.DocumentBuilder(doc)
-        builder.paragraph_format.style_identifier = aspose.words.StyleIdentifier.HEADING1
+        doc = aw.Document()
+        builder = aw.DocumentBuilder(doc)
+        builder.paragraph_format.style_identifier = aw.StyleIdentifier.HEADING1
         self.assertTrue(builder.paragraph_format.is_heading)
         builder.writeln("Heading 1")
-        builder.paragraph_format.style_identifier = aspose.words.StyleIdentifier.HEADING2
+        builder.paragraph_format.style_identifier = aw.StyleIdentifier.HEADING2
         builder.writeln("Heading 1.1")
         builder.writeln("Heading 1.2")
-        builder.paragraph_format.style_identifier = aspose.words.StyleIdentifier.HEADING3
+        builder.paragraph_format.style_identifier = aw.StyleIdentifier.HEADING3
         builder.writeln("Heading 1.2.1")
         builder.writeln("Heading 1.2.2")
-        builder.paragraph_format.style_identifier = aspose.words.StyleIdentifier.HEADING4
+        builder.paragraph_format.style_identifier = aw.StyleIdentifier.HEADING4
         builder.writeln("Heading 1.2.2.1")
         builder.writeln("Heading 1.2.2.2")
-        builder.paragraph_format.style_identifier = aspose.words.StyleIdentifier.HEADING5
+        builder.paragraph_format.style_identifier = aw.StyleIdentifier.HEADING5
         builder.writeln("Heading 1.2.2.2.1")
         builder.writeln("Heading 1.2.2.2.2")
-        options = aspose.words.saving.PdfSaveOptions()
+        options = aw.saving.PdfSaveOptions()
         options.outline_options.headings_outline_levels = 4
         options.outline_options.expanded_outline_levels = 2
         doc.save(file_name=ARTIFACTS_DIR + "PdfSaveOptions.ExpandedOutlineLevels.pdf", save_options=options)
@@ -102,8 +102,8 @@ class ExPdfSaveOptions(ApiExampleBase):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_downsample_options(self):
-        doc = aspose.words.Document(file_name=MY_DIR + "Images.docx")
-        options = aspose.words.saving.PdfSaveOptions()
+        doc = aw.Document(file_name=MY_DIR + "Images.docx")
+        options = aw.saving.PdfSaveOptions()
         self.assertTrue(options.downsample_options.downsample_images)
         self.assertEqual(220, options.downsample_options.resolution)
         self.assertEqual(0, options.downsample_options.resolution_threshold)
@@ -173,11 +173,11 @@ class ExPdfSaveOptions(ApiExampleBase):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_zoom_behaviour(self):
-        doc = aspose.words.Document()
-        builder = aspose.words.DocumentBuilder(doc)
+        doc = aw.Document()
+        builder = aw.DocumentBuilder(doc)
         builder.writeln("Hello world!")
-        options = aspose.words.saving.PdfSaveOptions()
-        options.zoom_behavior = aspose.words.saving.PdfZoomBehavior.ZOOM_FACTOR
+        options = aw.saving.PdfSaveOptions()
+        options.zoom_behavior = aw.saving.PdfZoomBehavior.ZOOM_FACTOR
         options.zoom_factor = 25
         doc.save(file_name=ARTIFACTS_DIR + "PdfSaveOptions.ZoomBehaviour.pdf", save_options=options)
 
@@ -233,11 +233,11 @@ class ExPdfSaveOptions(ApiExampleBase):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_encryption_permissions(self):
-        doc = aspose.words.Document()
-        builder = aspose.words.DocumentBuilder(doc)
+        doc = aw.Document()
+        builder = aw.DocumentBuilder(doc)
         builder.writeln("Hello world!")
-        encryption_details = aspose.words.saving.PdfEncryptionDetails(user_password="password", owner_password="", permissions=aspose.words.saving.PdfPermissions.MODIFY_ANNOTATIONS | aspose.words.saving.PdfPermissions.DOCUMENT_ASSEMBLY)
-        save_options = aspose.words.saving.PdfSaveOptions()
+        encryption_details = aw.saving.PdfEncryptionDetails(user_password="password", owner_password="", permissions=aw.saving.PdfPermissions.MODIFY_ANNOTATIONS | aw.saving.PdfPermissions.DOCUMENT_ASSEMBLY)
+        save_options = aw.saving.PdfSaveOptions()
         save_options.encryption_details = encryption_details
         doc.save(file_name=ARTIFACTS_DIR + "PdfSaveOptions.EncryptionPermissions.pdf", save_options=save_options)
 
@@ -257,20 +257,20 @@ class ExPdfSaveOptions(ApiExampleBase):
         raise NotImplementedError("Unsupported call of method named ExportPageSet")
 
     def test_export_language_to_span_tag(self):
-        doc = aspose.words.Document()
-        builder = aspose.words.DocumentBuilder(doc)
+        doc = aw.Document()
+        builder = aw.DocumentBuilder(doc)
         builder.writeln("Hello world!")
         builder.writeln("Hola mundo!")
-        save_options = aspose.words.saving.PdfSaveOptions()
+        save_options = aw.saving.PdfSaveOptions()
         save_options.export_document_structure = True
         save_options.export_language_to_span_tag = True
         doc.save(file_name=ARTIFACTS_DIR + "PdfSaveOptions.ExportLanguageToSpanTag.pdf", save_options=save_options)
 
     def test_pdf_embed_attachments(self):
-        doc = aspose.words.Document()
-        builder = aspose.words.DocumentBuilder(doc)
+        doc = aw.Document()
+        builder = aw.DocumentBuilder(doc)
         builder.insert_ole_object(file_name=MY_DIR + "Spreadsheet.xlsx", prog_id="Excel.Sheet", is_linked=False, as_icon=True, presentation=None)
-        options = aspose.words.saving.PdfSaveOptions()
+        options = aw.saving.PdfSaveOptions()
         options.embed_attachments = True
         doc.save(file_name=ARTIFACTS_DIR + "PdfSaveOptions.PdfEmbedAttachments.pdf", save_options=options)
 
@@ -278,18 +278,18 @@ class ExPdfSaveOptions(ApiExampleBase):
         raise NotImplementedError("Unsupported ctor for type FileInfo")
 
     def test_export_paragraph_graphics_to_artifact(self):
-        doc = aspose.words.Document(file_name=MY_DIR + "PDF artifacts.docx")
-        save_options = aspose.words.saving.PdfSaveOptions()
+        doc = aw.Document(file_name=MY_DIR + "PDF artifacts.docx")
+        save_options = aw.saving.PdfSaveOptions()
         save_options.export_document_structure = True
         save_options.export_paragraph_graphics_to_artifact = True
-        save_options.text_compression = aspose.words.saving.PdfTextCompression.NONE
+        save_options.text_compression = aw.saving.PdfTextCompression.NONE
         doc.save(file_name=ARTIFACTS_DIR + "PdfSaveOptions.ExportParagraphGraphicsToArtifact.pdf", save_options=save_options)
 
     def test_use_pdf_document_for_export_paragraph_graphics_to_artifact(self):
         raise NotImplementedError("Unsupported call of method named ExportParagraphGraphicsToArtifact")
 
     def test_page_layout(self):
-        doc = aspose.words.Document(file_name=MY_DIR + "Big document.docx")
-        save_options = aspose.words.saving.PdfSaveOptions()
-        save_options.page_layout = aspose.words.saving.PdfPageLayout.TWO_PAGE_LEFT
+        doc = aw.Document(file_name=MY_DIR + "Big document.docx")
+        save_options = aw.saving.PdfSaveOptions()
+        save_options.page_layout = aw.saving.PdfPageLayout.TWO_PAGE_LEFT
         doc.save(file_name=ARTIFACTS_DIR + "PdfSaveOptions.PageLayout.pdf", save_options=save_options)

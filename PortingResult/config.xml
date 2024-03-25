@@ -282,6 +282,12 @@
             </Type>
         </Types>
     </HandmadeEntities>
+    <ImportAliases>
+        <ImportAlias>
+            <Import>aspose.words</Import>
+            <Alias>aw</Alias>
+        </ImportAlias>
+    </ImportAliases>
     <aliases>
         <namespace>
             <types>

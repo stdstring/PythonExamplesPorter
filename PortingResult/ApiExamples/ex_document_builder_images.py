@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import aspose.words
+import aspose.words as aw
 import aspose.words.drawing
 import aspose.words.settings
 import unittest
@@ -14,12 +14,12 @@ class ExDocumentBuilderImages(ApiExampleBase):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_insert_svg_image(self):
-        doc = aspose.words.Document()
-        builder = aspose.words.DocumentBuilder(doc)
+        doc = aw.Document()
+        builder = aw.DocumentBuilder(doc)
         builder.insert_image(file_name=IMAGE_DIR + "Scalable Vector Graphics.svg")
         doc.save(file_name=ARTIFACTS_DIR + "DocumentBuilderImages.InsertSvgImage.SvgWithSvgBlip.docx")
         doc.save(file_name=ARTIFACTS_DIR + "DocumentBuilderImages.InsertSvgImage.Svg.doc")
-        doc.compatibility_options.optimize_for(aspose.words.settings.MsWordVersion.WORD2003)
+        doc.compatibility_options.optimize_for(aw.settings.MsWordVersion.WORD2003)
         doc.save(file_name=ARTIFACTS_DIR + "DocumentBuilderImages.InsertSvgImage.Emf.docx")
 
     def test_insert_image_from_byte_array(self):

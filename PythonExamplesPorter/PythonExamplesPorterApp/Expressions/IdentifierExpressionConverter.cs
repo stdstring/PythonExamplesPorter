@@ -10,11 +10,10 @@ namespace PythonExamplesPorterApp.Expressions
 {
     internal class IdentifierExpressionConverter
     {
-        public IdentifierExpressionConverter(SemanticModel model, AppData appData, ExpressionConverterSettings settings)
+        public IdentifierExpressionConverter(SemanticModel model, AppData appData)
         {
             _model = model;
             _appData = appData;
-            _expressionConverter = new ExpressionConverter(model, appData, settings);
             _externalEntityResolver = new ExternalEntityResolver(model, appData);
         }
 
@@ -60,13 +59,12 @@ namespace PythonExamplesPorterApp.Expressions
 
         private ConvertResult ProcessTypeResolveData(TypeResolveData resolveData, ImportData importData)
         {
-            importData.AddImport(resolveData.ModuleName);
+            importData.Append(resolveData.ImportData);
             return new ConvertResult($"{resolveData.ModuleName}.{resolveData.TypeName}", importData);
         }
 
         private readonly SemanticModel _model;
         private readonly AppData _appData;
-        private readonly ExpressionConverter _expressionConverter;
         private readonly ExternalEntityResolver _externalEntityResolver;
     }
 }

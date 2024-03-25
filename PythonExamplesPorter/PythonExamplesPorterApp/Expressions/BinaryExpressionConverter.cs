@@ -67,7 +67,7 @@ namespace PythonExamplesPorterApp.Expressions
                                 case {Success: false, Reason: var reason}:
                                     throw new UnsupportedSyntaxException($"Bad binary as expression due to: {reason}");
                                 case {Success: true, Data: var resolveData}:
-                                    importData.AddImport(resolveData!.ModuleName);
+                                    importData.Append(resolveData!.ImportData);
                                     return new ConvertResult(resolveData.Cast, importData);
                                 default:
                                     throw new UnsupportedSyntaxException($"Unexpected control flow at binary as expression: {expression}");

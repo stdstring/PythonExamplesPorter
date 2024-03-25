@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import aspose.words
+import aspose.words as aw
 import aspose.words.digitalsignatures
 import aspose.words.loading
 import unittest
@@ -11,8 +11,8 @@ class ExDigitalSignatureUtil(ApiExampleBase):
         raise NotImplementedError("Unsupported statement type: UsingStatement")
 
     def test_remove_signatures(self):
-        aspose.words.digitalsignatures.DigitalSignatureUtil.remove_all_signatures(src_file_name=MY_DIR + "Digitally signed.odt", dst_file_name=ARTIFACTS_DIR + "DigitalSignatureUtil.RemoveSignatures.odt")
-        self.assertEqual(0, aspose.words.digitalsignatures.DigitalSignatureUtil.load_signatures(file_name=ARTIFACTS_DIR + "DigitalSignatureUtil.RemoveSignatures.odt").count)
+        aw.digitalsignatures.DigitalSignatureUtil.remove_all_signatures(src_file_name=MY_DIR + "Digitally signed.odt", dst_file_name=ARTIFACTS_DIR + "DigitalSignatureUtil.RemoveSignatures.odt")
+        self.assertEqual(0, aw.digitalsignatures.DigitalSignatureUtil.load_signatures(file_name=ARTIFACTS_DIR + "DigitalSignatureUtil.RemoveSignatures.odt").count)
 
     def test_decryption_password(self):
         raise NotImplementedError("Unsupported target type System.DateTime")

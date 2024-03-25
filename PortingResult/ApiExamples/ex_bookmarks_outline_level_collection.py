@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import aspose.words
+import aspose.words as aw
 import aspose.words.saving
 import unittest
 from api_example_base import ApiExampleBase, ARTIFACTS_DIR
@@ -7,8 +7,8 @@ from api_example_base import ApiExampleBase, ARTIFACTS_DIR
 
 class ExBookmarksOutlineLevelCollection(ApiExampleBase):
     def test_bookmark_levels(self):
-        doc = aspose.words.Document()
-        builder = aspose.words.DocumentBuilder(doc)
+        doc = aw.Document()
+        builder = aw.DocumentBuilder(doc)
         builder.start_bookmark("Bookmark 1")
         builder.writeln("Text inside Bookmark 1.")
         builder.start_bookmark("Bookmark 2")
@@ -19,7 +19,7 @@ class ExBookmarksOutlineLevelCollection(ApiExampleBase):
         builder.start_bookmark("Bookmark 3")
         builder.writeln("Text inside Bookmark 3.")
         builder.end_bookmark("Bookmark 3")
-        pdf_save_options = aspose.words.saving.PdfSaveOptions()
+        pdf_save_options = aw.saving.PdfSaveOptions()
         outline_levels = pdf_save_options.outline_options.bookmarks_outline_levels
         outline_levels.add("Bookmark 1", 1)
         outline_levels.add("Bookmark 2", 2)

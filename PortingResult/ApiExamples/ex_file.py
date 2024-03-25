@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import aspose.words
+import aspose.words as aw
 import aspose.words.digitalsignatures
 import aspose.words.saving
 import unittest
@@ -14,12 +14,12 @@ class ExFile(ApiExampleBase):
         raise NotImplementedError("Unsupported expression: ParenthesizedLambdaExpression")
 
     def test_detect_document_encryption(self):
-        doc = aspose.words.Document()
-        save_options = aspose.words.saving.OdtSaveOptions(save_format=aspose.words.SaveFormat.ODT)
+        doc = aw.Document()
+        save_options = aw.saving.OdtSaveOptions(save_format=aw.SaveFormat.ODT)
         save_options.password = "MyPassword"
         doc.save(file_name=ARTIFACTS_DIR + "File.DetectDocumentEncryption.odt", save_options=save_options)
-        info = aspose.words.FileFormatUtil.detect_file_format(file_name=ARTIFACTS_DIR + "File.DetectDocumentEncryption.odt")
-        self.assertEqual(".odt", aspose.words.FileFormatUtil.load_format_to_extension(info.load_format))
+        info = aw.FileFormatUtil.detect_file_format(file_name=ARTIFACTS_DIR + "File.DetectDocumentEncryption.odt")
+        self.assertEqual(".odt", aw.FileFormatUtil.load_format_to_extension(info.load_format))
         self.assertTrue(info.is_encrypted)
 
     def test_detect_digital_signatures(self):

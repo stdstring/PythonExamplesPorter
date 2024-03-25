@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import aspose.pydrawing
-import aspose.words
+import aspose.words as aw
 import aspose.words.buildingblocks
 import aspose.words.drawing
 import aspose.words.fields
@@ -16,16 +16,16 @@ class ExField(ApiExampleBase):
         raise NotImplementedError("Unsupported expression: InterpolatedStringExpression")
 
     def test_display_result(self):
-        doc = aspose.words.Document()
-        builder = aspose.words.DocumentBuilder(doc)
+        doc = aw.Document()
+        builder = aw.DocumentBuilder(doc)
         builder.write("This document was written by ")
-        field_author = builder.insert_field(field_type=aspose.words.fields.FieldType.FIELD_AUTHOR, update_field=True).as_field_author()
+        field_author = builder.insert_field(field_type=aw.fields.FieldType.FIELD_AUTHOR, update_field=True).as_field_author()
         field_author.author_name = "John Doe"
         self.assertEqual("", field_author.display_result)
         field_author.update()
         self.assertEqual("John Doe", field_author.display_result)
         doc.save(file_name=ARTIFACTS_DIR + "Field.DisplayResult.docx")
-        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Field.DisplayResult.docx")
+        doc = aw.Document(file_name=ARTIFACTS_DIR + "Field.DisplayResult.docx")
         self.assertEqual("John Doe", doc.range.fields[0].display_result)
 
     def test_create_with_field_builder(self):
@@ -38,8 +38,8 @@ class ExField(ApiExampleBase):
         raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")
 
     def test_insert_tc_field(self):
-        doc = aspose.words.Document()
-        builder = aspose.words.DocumentBuilder(doc)
+        doc = aw.Document()
+        builder = aw.DocumentBuilder(doc)
         builder.insert_field(field_code="TC \"Entry Text\" \\f t")
 
     def test_insert_field_with_field_builder_exception(self):
@@ -67,8 +67,8 @@ class ExField(ApiExampleBase):
         raise NotImplementedError("Unsupported ctor for type CultureInfo")
 
     def test_remove_fields(self):
-        doc = aspose.words.Document()
-        builder = aspose.words.DocumentBuilder(doc)
+        doc = aw.Document()
+        builder = aw.DocumentBuilder(doc)
         builder.insert_field(field_code=" DATE \\@ \"dddd, d MMMM yyyy\" ")
         builder.insert_field(field_code=" TIME ")
         builder.insert_field(field_code=" REVNUM ")
@@ -188,7 +188,7 @@ class ExField(ApiExampleBase):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_field_print_date(self):
-        doc = aspose.words.Document(file_name=MY_DIR + "Field sample - PRINTDATE.docx")
+        doc = aw.Document(file_name=MY_DIR + "Field sample - PRINTDATE.docx")
         field = doc.range.fields[0].as_field_print_date()
         self.assertEqual("3/25/2020 12:00:00 AM", field.result)
         self.assertEqual(" PRINTDATE ", field.get_field_code())
@@ -209,18 +209,18 @@ class ExField(ApiExampleBase):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_field_template(self):
-        doc = aspose.words.Document()
-        builder = aspose.words.DocumentBuilder(doc)
+        doc = aw.Document()
+        builder = aw.DocumentBuilder(doc)
         doc.field_options.template_name = ""
-        field = builder.insert_field(field_type=aspose.words.fields.FieldType.FIELD_TEMPLATE, update_field=False).as_field_template()
+        field = builder.insert_field(field_type=aw.fields.FieldType.FIELD_TEMPLATE, update_field=False).as_field_template()
         self.assertEqual(" TEMPLATE ", field.get_field_code())
         builder.writeln()
-        field = builder.insert_field(field_type=aspose.words.fields.FieldType.FIELD_TEMPLATE, update_field=False).as_field_template()
+        field = builder.insert_field(field_type=aw.fields.FieldType.FIELD_TEMPLATE, update_field=False).as_field_template()
         field.include_full_path = True
         self.assertEqual(" TEMPLATE  \\p", field.get_field_code())
         doc.update_fields()
         doc.save(file_name=ARTIFACTS_DIR + "Field.TEMPLATE.docx")
-        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Field.TEMPLATE.docx")
+        doc = aw.Document(file_name=ARTIFACTS_DIR + "Field.TEMPLATE.docx")
         field = doc.range.fields[0].as_field_template()
         self.assertEqual(" TEMPLATE ", field.get_field_code())
         self.assertEqual("Normal.dotm", field.result)
@@ -247,7 +247,7 @@ class ExField(ApiExampleBase):
         raise NotImplementedError("Unsupported call of method named InsertFieldEQ")
 
     def test_field_forms(self):
-        doc = aspose.words.Document(file_name=MY_DIR + "Form fields.docx")
+        doc = aw.Document(file_name=MY_DIR + "Form fields.docx")
         field_form_check_box = doc.range.fields[1].as_field_form_check_box()
         self.assertEqual(" FORMCHECKBOX \u0001", field_form_check_box.get_field_code())
         field_form_drop_down = doc.range.fields[2].as_field_form_drop_down()
@@ -271,26 +271,26 @@ class ExField(ApiExampleBase):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_legacy(self):
-        doc = aspose.words.Document(file_name=MY_DIR + "Legacy fields.doc")
+        doc = aw.Document(file_name=MY_DIR + "Legacy fields.doc")
         self.assertEqual(0, doc.range.fields.count)
-        shapes = doc.get_child_nodes(aspose.words.NodeType.SHAPE, True)
+        shapes = doc.get_child_nodes(aw.NodeType.SHAPE, True)
         self.assertEqual(3, shapes.count)
         shape = shapes[0].as_shape()
-        self.assertEqual(aspose.words.drawing.ShapeType.IMAGE, shape.shape_type)
+        self.assertEqual(aw.drawing.ShapeType.IMAGE, shape.shape_type)
         shape = shapes[1].as_shape()
-        self.assertEqual(aspose.words.drawing.ShapeType.CAN, shape.shape_type)
+        self.assertEqual(aw.drawing.ShapeType.CAN, shape.shape_type)
         shape = shapes[2].as_shape()
-        self.assertEqual(aspose.words.drawing.ShapeType.OLE_OBJECT, shape.shape_type)
+        self.assertEqual(aw.drawing.ShapeType.OLE_OBJECT, shape.shape_type)
 
     def test_set_field_index_format(self):
-        doc = aspose.words.Document()
-        builder = aspose.words.DocumentBuilder(doc)
+        doc = aw.Document()
+        builder = aw.DocumentBuilder(doc)
         builder.write("A")
-        builder.insert_break(aspose.words.BreakType.LINE_BREAK)
+        builder.insert_break(aw.BreakType.LINE_BREAK)
         builder.insert_field(field_code="XE \"A\"")
         builder.write("B")
         builder.insert_field(field_code=" INDEX \\e \" · \" \\h \"A\" \\c \"2\" \\z \"1033\"", field_value=None)
-        doc.field_options.field_index_format = aspose.words.fields.FieldIndexFormat.FANCY
+        doc.field_options.field_index_format = aw.fields.FieldIndexFormat.FANCY
         doc.update_fields()
         doc.save(file_name=ARTIFACTS_DIR + "Field.SetFieldIndexFormat.docx")
 

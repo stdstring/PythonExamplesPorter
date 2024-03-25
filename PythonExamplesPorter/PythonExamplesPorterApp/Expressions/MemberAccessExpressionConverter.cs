@@ -43,7 +43,7 @@ namespace PythonExamplesPorterApp.Expressions
                     if (!typeResolveResult.Success)
                         throw new UnsupportedSyntaxException(typeResolveResult.Reason);
                     TypeResolveData typeResolveData = typeResolveResult.Data!;
-                    importData.AddImport(typeResolveData.ModuleName);
+                    importData.Append(typeResolveData.ImportData);
                     String typeName = $"{typeResolveData.ModuleName}.{typeResolveData.TypeName}";
                     return ConvertImpl(expression, target, arguments, importData: importData, typeName, convertedArguments.Result);
                 }
@@ -70,7 +70,7 @@ namespace PythonExamplesPorterApp.Expressions
             if (!resolveResult.Success)
                 throw new UnsupportedSyntaxException(resolveResult.Reason);
             MemberResolveData memberResolveData = resolveResult.Data!;
-            importData.AddImport(memberResolveData.ModuleName);
+            importData.Append(memberResolveData.ImportData);
             return new ConvertResult(memberResolveData.Member, importData);
         }
 

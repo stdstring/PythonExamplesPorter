@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import aspose.words as aw
 import aspose.words.digitalsignatures
 from api_example_base import ApiExampleBase, MY_DIR
 

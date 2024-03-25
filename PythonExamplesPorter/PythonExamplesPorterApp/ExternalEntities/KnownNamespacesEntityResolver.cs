@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis;
 using PythonExamplesPorterApp.Common;
 using PythonExamplesPorterApp.Config;
 using PythonExamplesPorterApp.Converter;
+using PythonExamplesPorterApp.DestStorage;
 using PythonExamplesPorterApp.Expressions;
 
 namespace PythonExamplesPorterApp.ExternalEntities
@@ -25,8 +26,9 @@ namespace PythonExamplesPorterApp.ExternalEntities
                 return new OperationResult<MemberResolveData>(false, $"Unsupported type: {sourceTypeFullName}");
             String moduleName = _appData.NameTransformer.TransformNamespaceName(sourceType.ContainingNamespace.ToDisplayString());
             String typeName = _appData.NameTransformer.TransformTypeName(sourceType.Name);
-            String ctorCall = $"{moduleName}.{typeName}({String.Join(", ", argumentsRepresentation.GetArguments(true))})";
-            MemberResolveData resolveData = new MemberResolveData(ctorCall, moduleName);
+            (String moduleName, ImportData importData) prepareResult = _appData.ImportAliasManager.PrepareImport(moduleName);
+            String ctorCall = $"{prepareResult.moduleName}.{typeName}({String.Join(", ", argumentsRepresentation.GetArguments(true))})";
+            MemberResolveData resolveData = new MemberResolveData(ctorCall, prepareResult.importData);
             return new OperationResult<MemberResolveData>(true, "", resolveData);
         }
 

@@ -2,6 +2,7 @@
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using PythonExamplesPorterApp.Common;
 using PythonExamplesPorterApp.Converter;
+using PythonExamplesPorterApp.DestStorage;
 using PythonExamplesPorterApp.Expressions;
 
 namespace PythonExamplesPorterApp.ExternalEntities
@@ -239,7 +240,7 @@ namespace PythonExamplesPorterApp.ExternalEntities
             String argsPart = String.Join(", ", args);
             String namedArgsPart = String.Join("", namedArgs.Select(arg => $", {arg.name}={arg.value}"));
             String methodCall = $"self.{methodName}({argsPart}{namedArgsPart})";
-            MemberResolveData resolveData = new MemberResolveData(methodCall, "unittest");
+            MemberResolveData resolveData = new MemberResolveData(methodCall, new ImportData().AddImport("unittest"));
             return new OperationResult<MemberResolveData>(true, "", resolveData);
         }
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import aspose.pydrawing
-import aspose.words
+import aspose.words as aw
 import aspose.words.fields
 import unittest
 from api_example_base import ApiExampleBase, ARTIFACTS_DIR, MY_DIR
@@ -44,14 +44,14 @@ class ExParagraph(ApiExampleBase):
         raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")
 
     def test_composite_node_children(self):
-        doc = aspose.words.Document()
+        doc = aw.Document()
         self.assertEqual(1, doc.first_section.body.paragraphs.count)
         paragraph = doc.first_section.body.first_paragraph
-        paragraph_text = aspose.words.Run(doc=doc, text="Initial text. ")
+        paragraph_text = aw.Run(doc=doc, text="Initial text. ")
         paragraph.append_child(paragraph_text)
-        run1 = aspose.words.Run(doc=doc, text="Run 1. ")
-        run2 = aspose.words.Run(doc=doc, text="Run 2. ")
-        run3 = aspose.words.Run(doc=doc, text="Run 3. ")
+        run1 = aw.Run(doc=doc, text="Run 1. ")
+        run2 = aw.Run(doc=doc, text="Run 2. ")
+        run3 = aw.Run(doc=doc, text="Run 3. ")
         self.assertEqual("Initial text.", paragraph.get_text().strip())
         paragraph.insert_before(run2, paragraph_text)
         self.assertEqual("Run 2. Initial text.", paragraph.get_text().strip())
@@ -59,25 +59,25 @@ class ExParagraph(ApiExampleBase):
         self.assertEqual("Run 2. Initial text. Run 3.", paragraph.get_text().strip())
         paragraph.prepend_child(run1)
         self.assertEqual("Run 1. Run 2. Initial text. Run 3.", paragraph.get_text().strip())
-        self.assertEqual(4, paragraph.get_child_nodes(aspose.words.NodeType.ANY, True).count)
-        (paragraph.get_child_nodes(aspose.words.NodeType.RUN, True)[1].as_run()).text = "Updated run 2. "
-        paragraph.get_child_nodes(aspose.words.NodeType.RUN, True).remove(paragraph_text)
+        self.assertEqual(4, paragraph.get_child_nodes(aw.NodeType.ANY, True).count)
+        (paragraph.get_child_nodes(aw.NodeType.RUN, True)[1].as_run()).text = "Updated run 2. "
+        paragraph.get_child_nodes(aw.NodeType.RUN, True).remove(paragraph_text)
         self.assertEqual("Run 1. Updated run 2. Run 3.", paragraph.get_text().strip())
-        self.assertEqual(3, paragraph.get_child_nodes(aspose.words.NodeType.ANY, True).count)
+        self.assertEqual(3, paragraph.get_child_nodes(aw.NodeType.ANY, True).count)
 
     def test_move_revisions(self):
         raise NotImplementedError("Unsupported expression: SimpleLambdaExpression")
 
     def test_range_revisions(self):
-        doc = aspose.words.Document(file_name=MY_DIR + "Revisions.docx")
+        doc = aw.Document(file_name=MY_DIR + "Revisions.docx")
         paragraph = doc.first_section.body.first_paragraph
         for revision in paragraph.range.revisions:
-            if revision.revision_type == aspose.words.RevisionType.DELETION:
+            if revision.revision_type == aw.RevisionType.DELETION:
                 revision.accept()
         doc.first_section.range.revisions.reject_all()
 
     def test_get_format_revision(self):
-        doc = aspose.words.Document(file_name=MY_DIR + "Format revision.docx")
+        doc = aw.Document(file_name=MY_DIR + "Format revision.docx")
         self.assertTrue(doc.first_section.body.first_paragraph.is_format_revision)
 
     def test_get_frame_properties(self):
@@ -93,15 +93,15 @@ class ExParagraph(ApiExampleBase):
         raise NotImplementedError("Unsupported member target type - Aspose.Words.TabStop[] for expression: doc.FirstSection.Body.FirstParagraph.GetEffectiveTabStops()")
 
     def test_join_runs(self):
-        doc = aspose.words.Document()
-        builder = aspose.words.DocumentBuilder(doc)
+        doc = aw.Document()
+        builder = aw.DocumentBuilder(doc)
         builder.write("Run 1. ")
         builder.write("Run 2. ")
         builder.write("Run 3. ")
         builder.write("Run 4. ")
         para = builder.current_paragraph
         self.assertEqual(4, para.runs.count)
-        para.runs[3].font.style_identifier = aspose.words.StyleIdentifier.EMPHASIS
+        para.runs[3].font.style_identifier = aw.StyleIdentifier.EMPHASIS
         self.assertEqual(2, para.join_runs_with_same_formatting())
         self.assertEqual(2, para.runs.count)
         self.assertEqual("Run 1. Run 2. Run 3. ", para.runs[0].text)

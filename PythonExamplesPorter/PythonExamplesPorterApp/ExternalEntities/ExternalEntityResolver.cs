@@ -4,6 +4,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using PythonExamplesPorterApp.Common;
 using PythonExamplesPorterApp.Config;
 using PythonExamplesPorterApp.Converter;
+using PythonExamplesPorterApp.DestStorage;
 using PythonExamplesPorterApp.Expressions;
 
 namespace PythonExamplesPorterApp.ExternalEntities
@@ -42,9 +43,9 @@ namespace PythonExamplesPorterApp.ExternalEntities
             String sourceTypeName = typeSymbol.Name;
             String[] systemNamespaces = {"System", "NUnit.Framework"};
             Boolean isSystemType = systemNamespaces.Any(sourceNamespaceName.StartsWith);
+            // TODO (std_string) : I return empty type for system type because we need in additional analysis - think about approach
             if (isSystemType)
-                // TODO (std_string) : i return empty type for system type because we need in additional analysis - think about approach
-                return new OperationResult<TypeResolveData>(true, "", new TypeResolveData("", ""));
+                return new OperationResult<TypeResolveData>(true, "", new TypeResolveData("", "", new ImportData()));
             // TODO (std_string) : think about check containing assemblies
             String[] knownNamespaces = _appData.AppConfig.GetSourceDetails().KnownNamespaces ?? Array.Empty<String>();
             Boolean isSupportedType = knownNamespaces.Any(sourceNamespaceName.StartsWith);
@@ -52,7 +53,8 @@ namespace PythonExamplesPorterApp.ExternalEntities
                 return new OperationResult<TypeResolveData>(false, $"Unsupported type: {sourceNamespaceName}.{sourceTypeName}");
             String destModuleName = _appData.NameTransformer.TransformNamespaceName(sourceNamespaceName);
             String destTypeName = _appData.NameTransformer.TransformTypeName(sourceTypeName);
-            return new OperationResult<TypeResolveData>(true, "", new TypeResolveData(destTypeName, destModuleName));
+            (String moduleName, ImportData importData) prepareResult = _appData.ImportAliasManager.PrepareImport(destModuleName);
+            return new OperationResult<TypeResolveData>(true, "", new TypeResolveData(destTypeName, prepareResult.moduleName, prepareResult.importData));
         }
 
         public OperationResult<MemberResolveData> ResolveCtor(TypeSyntax type, IReadOnlyList<ArgumentSyntax> argumentsData, ConvertedArguments argumentsRepresentation)
