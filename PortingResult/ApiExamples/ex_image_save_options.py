@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import aspose.pydrawing
-import aspose.words
+import aspose.words as aw
 import aspose.words.saving
 import unittest
 from api_example_base import ApiExampleBase, ARTIFACTS_DIR, IMAGE_DIR, MY_DIR
@@ -35,14 +35,14 @@ class ExImageSaveOptions(ApiExampleBase):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_export_various_page_ranges(self):
-        doc = aspose.words.Document(file_name=MY_DIR + "Images.docx")
-        image_options = aspose.words.saving.ImageSaveOptions(aspose.words.SaveFormat.TIFF)
-        page_set = aspose.words.saving.PageSet(ranges=[aspose.words.saving.PageRange(1, 1), aspose.words.saving.PageRange(2, 3), aspose.words.saving.PageRange(1, 3), aspose.words.saving.PageRange(2, 4), aspose.words.saving.PageRange(1, 1)])
+        doc = aw.Document(file_name=MY_DIR + "Images.docx")
+        image_options = aw.saving.ImageSaveOptions(aw.SaveFormat.TIFF)
+        page_set = aw.saving.PageSet(ranges=[aw.saving.PageRange(1, 1), aw.saving.PageRange(2, 3), aw.saving.PageRange(1, 3), aw.saving.PageRange(2, 4), aw.saving.PageRange(1, 1)])
         image_options.page_set = page_set
         doc.save(file_name=ARTIFACTS_DIR + "ImageSaveOptions.ExportVariousPageRanges.tiff", save_options=image_options)
 
     def test_render_ink_object(self):
-        doc = aspose.words.Document(file_name=MY_DIR + "Ink object.docx")
-        save_options = aspose.words.saving.ImageSaveOptions(aspose.words.SaveFormat.JPEG)
-        save_options.iml_rendering_mode = aspose.words.saving.ImlRenderingMode.INK_ML
+        doc = aw.Document(file_name=MY_DIR + "Ink object.docx")
+        save_options = aw.saving.ImageSaveOptions(aw.SaveFormat.JPEG)
+        save_options.iml_rendering_mode = aw.saving.ImlRenderingMode.INK_ML
         doc.save(file_name=ARTIFACTS_DIR + "ImageSaveOptions.RenderInkObject.jpeg", save_options=save_options)

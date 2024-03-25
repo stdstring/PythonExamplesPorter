@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import aspose.pydrawing
-import aspose.words
+import aspose.words as aw
 import aspose.words.drawing
 import aspose.words.fields
 import aspose.words.loading
@@ -15,15 +15,15 @@ from api_example_base import ApiExampleBase, ARTIFACTS_DIR, IMAGE_DIR, MY_DIR
 
 class ExDocument(ApiExampleBase):
     def test_create_simple_document(self):
-        doc = aspose.words.Document()
-        doc.append_child(aspose.words.Section(doc)).append_child(aspose.words.Body(doc)).append_child(aspose.words.Paragraph(doc)).append_child(aspose.words.Run(doc=doc, text="Hello world!"))
+        doc = aw.Document()
+        doc.append_child(aw.Section(doc)).append_child(aw.Body(doc)).append_child(aw.Paragraph(doc)).append_child(aw.Run(doc=doc, text="Hello world!"))
 
     def test_constructor(self):
-        doc = aspose.words.Document()
-        doc.first_section.body.first_paragraph.append_child(aspose.words.Run(doc=doc, text="Hello world!"))
-        doc = aspose.words.Document(file_name=MY_DIR + "Document.docx")
+        doc = aw.Document()
+        doc.first_section.body.first_paragraph.append_child(aw.Run(doc=doc, text="Hello world!"))
+        doc = aw.Document(file_name=MY_DIR + "Document.docx")
         self.assertEqual("Hello World!", doc.first_section.body.first_paragraph.get_text().strip())
-        doc = aspose.words.Document(file_name=MY_DIR + "Encrypted.docx", load_options=aspose.words.loading.LoadOptions(password="docPassword"))
+        doc = aw.Document(file_name=MY_DIR + "Encrypted.docx", load_options=aw.loading.LoadOptions(password="docPassword"))
         self.assertEqual("Test encrypted document.", doc.first_section.body.first_paragraph.get_text().strip())
 
     def test_load_from_stream(self):
@@ -33,33 +33,33 @@ class ExDocument(ApiExampleBase):
         raise NotImplementedError("Unsupported statement type: UsingStatement")
 
     def test_convert_to_pdf(self):
-        doc = aspose.words.Document(file_name=MY_DIR + "Document.docx")
+        doc = aw.Document(file_name=MY_DIR + "Document.docx")
         doc.save(file_name=ARTIFACTS_DIR + "Document.ConvertToPdf.pdf")
 
     def test_save_to_image_stream(self):
         raise NotImplementedError("Unsupported statement type: UsingStatement")
 
     def test_detect_mobi_document_format(self):
-        info = aspose.words.FileFormatUtil.detect_file_format(file_name=MY_DIR + "Document.mobi")
-        self.assertEqual(info.load_format, aspose.words.LoadFormat.MOBI)
+        info = aw.FileFormatUtil.detect_file_format(file_name=MY_DIR + "Document.mobi")
+        self.assertEqual(info.load_format, aw.LoadFormat.MOBI)
 
     def test_detect_pdf_document_format(self):
-        info = aspose.words.FileFormatUtil.detect_file_format(file_name=MY_DIR + "Pdf Document.pdf")
-        self.assertEqual(info.load_format, aspose.words.LoadFormat.PDF)
+        info = aw.FileFormatUtil.detect_file_format(file_name=MY_DIR + "Pdf Document.pdf")
+        self.assertEqual(info.load_format, aw.LoadFormat.PDF)
 
     def test_open_pdf_document(self):
-        doc = aspose.words.Document(file_name=MY_DIR + "Pdf Document.pdf")
+        doc = aw.Document(file_name=MY_DIR + "Pdf Document.pdf")
         self.assertEqual("Heading 1\rHeading 1.1.1.1 Heading 1.1.1.2\rHeading 1.1.1.1.1.1.1.1.1 Heading 1.1.1.1.1.1.1.1.2\u000c", doc.range.text)
 
     def test_open_protected_pdf_document(self):
-        doc = aspose.words.Document(file_name=MY_DIR + "Pdf Document.pdf")
-        save_options = aspose.words.saving.PdfSaveOptions()
-        save_options.encryption_details = aspose.words.saving.PdfEncryptionDetails(user_password="Aspose", owner_password=None)
+        doc = aw.Document(file_name=MY_DIR + "Pdf Document.pdf")
+        save_options = aw.saving.PdfSaveOptions()
+        save_options.encryption_details = aw.saving.PdfEncryptionDetails(user_password="Aspose", owner_password=None)
         doc.save(file_name=ARTIFACTS_DIR + "Document.PdfDocumentEncrypted.pdf", save_options=save_options)
-        load_options = aspose.words.loading.PdfLoadOptions()
+        load_options = aw.loading.PdfLoadOptions()
         load_options.password = "Aspose"
-        load_options.load_format = aspose.words.LoadFormat.PDF
-        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Document.PdfDocumentEncrypted.pdf", load_options=load_options)
+        load_options.load_format = aw.LoadFormat.PDF
+        doc = aw.Document(file_name=ARTIFACTS_DIR + "Document.PdfDocumentEncrypted.pdf", load_options=load_options)
 
     def test_pdf_renderer(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
@@ -80,19 +80,19 @@ class ExDocument(ApiExampleBase):
         raise NotImplementedError("Unsupported target type System.IO.Directory")
 
     def test_convert_to_html(self):
-        doc = aspose.words.Document(file_name=MY_DIR + "Document.docx")
-        doc.save(file_name=ARTIFACTS_DIR + "Document.ConvertToHtml.html", save_format=aspose.words.SaveFormat.HTML)
+        doc = aw.Document(file_name=MY_DIR + "Document.docx")
+        doc.save(file_name=ARTIFACTS_DIR + "Document.ConvertToHtml.html", save_format=aw.SaveFormat.HTML)
 
     def test_convert_to_mhtml(self):
-        doc = aspose.words.Document(file_name=MY_DIR + "Document.docx")
+        doc = aw.Document(file_name=MY_DIR + "Document.docx")
         doc.save(file_name=ARTIFACTS_DIR + "Document.ConvertToMhtml.mht")
 
     def test_convert_to_txt(self):
-        doc = aspose.words.Document(file_name=MY_DIR + "Document.docx")
+        doc = aw.Document(file_name=MY_DIR + "Document.docx")
         doc.save(file_name=ARTIFACTS_DIR + "Document.ConvertToTxt.txt")
 
     def test_convert_to_epub(self):
-        doc = aspose.words.Document(file_name=MY_DIR + "Rendering.docx")
+        doc = aw.Document(file_name=MY_DIR + "Rendering.docx")
         doc.save(file_name=ARTIFACTS_DIR + "Document.ConvertToEpub.epub")
 
     def test_save_to_stream(self):
@@ -108,45 +108,45 @@ class ExDocument(ApiExampleBase):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_keep_source_numbering_same_list_ids(self):
-        src_doc = aspose.words.Document(file_name=MY_DIR + "List with the same definition identifier - source.docx")
-        dst_doc = aspose.words.Document(file_name=MY_DIR + "List with the same definition identifier - destination.docx")
-        import_format_options = aspose.words.ImportFormatOptions()
+        src_doc = aw.Document(file_name=MY_DIR + "List with the same definition identifier - source.docx")
+        dst_doc = aw.Document(file_name=MY_DIR + "List with the same definition identifier - destination.docx")
+        import_format_options = aw.ImportFormatOptions()
         import_format_options.keep_source_numbering = True
-        dst_doc.append_document(src_doc=src_doc, import_format_mode=aspose.words.ImportFormatMode.USE_DESTINATION_STYLES, import_format_options=import_format_options)
+        dst_doc.append_document(src_doc=src_doc, import_format_mode=aw.ImportFormatMode.USE_DESTINATION_STYLES, import_format_options=import_format_options)
         dst_doc.update_list_labels()
         para_text = dst_doc.sections[1].body.last_paragraph.get_text()
         self.assertTrue(para_text.startswith("13->13"), msg=para_text)
         self.assertEqual("1.", dst_doc.sections[1].body.last_paragraph.list_label.label_string)
 
     def test_merge_pasted_lists(self):
-        src_doc = aspose.words.Document(file_name=MY_DIR + "List item.docx")
-        dst_doc = aspose.words.Document(file_name=MY_DIR + "List destination.docx")
-        options = aspose.words.ImportFormatOptions()
+        src_doc = aw.Document(file_name=MY_DIR + "List item.docx")
+        dst_doc = aw.Document(file_name=MY_DIR + "List destination.docx")
+        options = aw.ImportFormatOptions()
         options.merge_pasted_lists = True
-        dst_doc.append_document(src_doc=src_doc, import_format_mode=aspose.words.ImportFormatMode.USE_DESTINATION_STYLES, import_format_options=options)
+        dst_doc.append_document(src_doc=src_doc, import_format_mode=aw.ImportFormatMode.USE_DESTINATION_STYLES, import_format_options=options)
         dst_doc.save(file_name=ARTIFACTS_DIR + "Document.MergePastedLists.docx")
 
     def test_force_copy_styles(self):
-        src_doc = aspose.words.Document(file_name=MY_DIR + "Styles source.docx")
-        dst_doc = aspose.words.Document(file_name=MY_DIR + "Styles destination.docx")
-        options = aspose.words.ImportFormatOptions()
+        src_doc = aw.Document(file_name=MY_DIR + "Styles source.docx")
+        dst_doc = aw.Document(file_name=MY_DIR + "Styles destination.docx")
+        options = aw.ImportFormatOptions()
         options.force_copy_styles = True
-        dst_doc.append_document(src_doc=src_doc, import_format_mode=aspose.words.ImportFormatMode.KEEP_SOURCE_FORMATTING, import_format_options=options)
+        dst_doc.append_document(src_doc=src_doc, import_format_mode=aw.ImportFormatMode.KEEP_SOURCE_FORMATTING, import_format_options=options)
         paras = dst_doc.sections[1].body.paragraphs
         self.assertEqual(paras[0].paragraph_format.style.name, "MyStyle1_0")
         self.assertEqual(paras[1].paragraph_format.style.name, "MyStyle2_0")
         self.assertEqual(paras[2].paragraph_format.style.name, "MyStyle3")
 
     def test_adjust_sentence_and_word_spacing(self):
-        src_doc = aspose.words.Document()
-        dst_doc = aspose.words.Document()
-        builder = aspose.words.DocumentBuilder(src_doc)
+        src_doc = aw.Document()
+        dst_doc = aw.Document()
+        builder = aw.DocumentBuilder(src_doc)
         builder.write("Dolor sit amet.")
-        builder = aspose.words.DocumentBuilder(dst_doc)
+        builder = aw.DocumentBuilder(dst_doc)
         builder.write("Lorem ipsum.")
-        options = aspose.words.ImportFormatOptions()
+        options = aw.ImportFormatOptions()
         options.adjust_sentence_and_word_spacing = True
-        builder.insert_document(src_doc=src_doc, import_format_mode=aspose.words.ImportFormatMode.USE_DESTINATION_STYLES, import_format_options=options)
+        builder.insert_document(src_doc=src_doc, import_format_mode=aw.ImportFormatMode.USE_DESTINATION_STYLES, import_format_options=options)
         self.assertEqual("Lorem ipsum. Dolor sit amet.", dst_doc.first_section.body.first_paragraph.get_text().strip())
 
     def test_validate_individual_document_signatures(self):
@@ -159,68 +159,68 @@ class ExDocument(ApiExampleBase):
         raise NotImplementedError("Unsupported expression: SimpleLambdaExpression")
 
     def test_join_runs_with_same_formatting(self):
-        doc = aspose.words.Document(file_name=MY_DIR + "Rendering.docx")
-        self.assertEqual(317, doc.get_child_nodes(aspose.words.NodeType.RUN, True).count)
+        doc = aw.Document(file_name=MY_DIR + "Rendering.docx")
+        self.assertEqual(317, doc.get_child_nodes(aw.NodeType.RUN, True).count)
         self.assertEqual(121, doc.join_runs_with_same_formatting())
-        self.assertEqual(196, doc.get_child_nodes(aspose.words.NodeType.RUN, True).count)
+        self.assertEqual(196, doc.get_child_nodes(aw.NodeType.RUN, True).count)
 
     def test_default_tab_stop(self):
         raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")
 
     def test_clone_document(self):
-        doc = aspose.words.Document()
-        builder = aspose.words.DocumentBuilder(doc)
+        doc = aw.Document()
+        builder = aw.DocumentBuilder(doc)
         builder.write("Hello world!")
         clone = doc.clone()
         self.assertEqual(doc.first_section.body.first_paragraph.runs[0].get_text(), clone.first_section.body.first_paragraph.runs[0].text)
         self.assertNotEqual(doc.first_section.body.first_paragraph.runs[0].get_hash_code(), clone.first_section.body.first_paragraph.runs[0].get_hash_code())
 
     def test_document_get_text_to_string(self):
-        doc = aspose.words.Document()
-        builder = aspose.words.DocumentBuilder(doc)
+        doc = aw.Document()
+        builder = aw.DocumentBuilder(doc)
         builder.insert_field(field_code="MERGEFIELD Field")
         self.assertEqual("\u0013MERGEFIELD Field\u0014«Field»\u0015", doc.get_text().strip())
-        self.assertEqual("«Field»", doc.to_string(save_format=aspose.words.SaveFormat.TEXT).strip())
+        self.assertEqual("«Field»", doc.to_string(save_format=aw.SaveFormat.TEXT).strip())
 
     def test_protect_unprotect(self):
-        doc = aspose.words.Document()
-        doc.protect(type=aspose.words.ProtectionType.READ_ONLY, password="password")
-        self.assertEqual(aspose.words.ProtectionType.READ_ONLY, doc.protection_type)
+        doc = aw.Document()
+        doc.protect(type=aw.ProtectionType.READ_ONLY, password="password")
+        self.assertEqual(aw.ProtectionType.READ_ONLY, doc.protection_type)
         doc.save(file_name=ARTIFACTS_DIR + "Document.Protect.docx")
-        protected_doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Document.Protect.docx")
-        self.assertEqual(aspose.words.ProtectionType.READ_ONLY, protected_doc.protection_type)
-        builder = aspose.words.DocumentBuilder(protected_doc)
+        protected_doc = aw.Document(file_name=ARTIFACTS_DIR + "Document.Protect.docx")
+        self.assertEqual(aw.ProtectionType.READ_ONLY, protected_doc.protection_type)
+        builder = aw.DocumentBuilder(protected_doc)
         builder.writeln("Text added to a protected document.")
         self.assertEqual("Text added to a protected document.", protected_doc.range.text.strip())
         doc.unprotect()
-        self.assertEqual(aspose.words.ProtectionType.NO_PROTECTION, doc.protection_type)
-        doc.protect(type=aspose.words.ProtectionType.READ_ONLY, password="NewPassword")
-        self.assertEqual(aspose.words.ProtectionType.READ_ONLY, doc.protection_type)
+        self.assertEqual(aw.ProtectionType.NO_PROTECTION, doc.protection_type)
+        doc.protect(type=aw.ProtectionType.READ_ONLY, password="NewPassword")
+        self.assertEqual(aw.ProtectionType.READ_ONLY, doc.protection_type)
         doc.unprotect("WrongPassword")
-        self.assertEqual(aspose.words.ProtectionType.READ_ONLY, doc.protection_type)
+        self.assertEqual(aw.ProtectionType.READ_ONLY, doc.protection_type)
         doc.unprotect("NewPassword")
-        self.assertEqual(aspose.words.ProtectionType.NO_PROTECTION, doc.protection_type)
+        self.assertEqual(aw.ProtectionType.NO_PROTECTION, doc.protection_type)
 
     def test_document_ensure_minimum(self):
-        doc = aspose.words.Document()
-        nodes = doc.get_child_nodes(aspose.words.NodeType.ANY, True)
-        self.assertEqual(aspose.words.NodeType.SECTION, nodes[0].node_type)
+        doc = aw.Document()
+        nodes = doc.get_child_nodes(aw.NodeType.ANY, True)
+        self.assertEqual(aw.NodeType.SECTION, nodes[0].node_type)
         self.assertEqual(doc, nodes[0].parent_node)
-        self.assertEqual(aspose.words.NodeType.BODY, nodes[1].node_type)
+        self.assertEqual(aw.NodeType.BODY, nodes[1].node_type)
         self.assertEqual(nodes[0], nodes[1].parent_node)
-        self.assertEqual(aspose.words.NodeType.PARAGRAPH, nodes[2].node_type)
+        self.assertEqual(aw.NodeType.PARAGRAPH, nodes[2].node_type)
         self.assertEqual(nodes[1], nodes[2].parent_node)
         doc.remove_all_children()
-        self.assertEqual(0, doc.get_child_nodes(aspose.words.NodeType.ANY, True).count)
+        self.assertEqual(0, doc.get_child_nodes(aw.NodeType.ANY, True).count)
         doc.ensure_minimum()
-        self.assertEqual(aspose.words.NodeType.SECTION, nodes[0].node_type)
-        self.assertEqual(aspose.words.NodeType.BODY, nodes[1].node_type)
-        self.assertEqual(aspose.words.NodeType.PARAGRAPH, nodes[2].node_type)
-        (nodes[2].as_paragraph()).runs.add(aspose.words.Run(doc=doc, text="Hello world!"))
+        self.assertEqual(aw.NodeType.SECTION, nodes[0].node_type)
+        self.assertEqual(aw.NodeType.BODY, nodes[1].node_type)
+        self.assertEqual(aw.NodeType.PARAGRAPH, nodes[2].node_type)
+        (nodes[2].as_paragraph()).runs.add(aw.Run(doc=doc, text="Hello world!"))
         self.assertEqual("Hello world!", doc.get_text().strip())
 
     def test_remove_macros_from_document(self):
-        doc = aspose.words.Document(file_name=MY_DIR + "Macro.docm")
+        doc = aw.Document(file_name=MY_DIR + "Macro.docm")
         self.assertTrue(doc.has_macros)
         self.assertEqual("Project", doc.vba_project.name)
         doc.remove_macros()
@@ -228,19 +228,19 @@ class ExDocument(ApiExampleBase):
         self.assertIsNone(doc.vba_project)
 
     def test_get_page_count(self):
-        doc = aspose.words.Document()
-        builder = aspose.words.DocumentBuilder(doc)
+        doc = aw.Document()
+        builder = aw.DocumentBuilder(doc)
         builder.write("Page 1")
-        builder.insert_break(aspose.words.BreakType.PAGE_BREAK)
+        builder.insert_break(aw.BreakType.PAGE_BREAK)
         builder.write("Page 2")
-        builder.insert_break(aspose.words.BreakType.PAGE_BREAK)
+        builder.insert_break(aw.BreakType.PAGE_BREAK)
         builder.write("Page 3")
         self.assertEqual(3, doc.page_count)
         doc.save(file_name=ARTIFACTS_DIR + "Document.GetPageCount.pdf")
 
     def test_get_updated_page_properties(self):
-        doc = aspose.words.Document()
-        builder = aspose.words.DocumentBuilder(doc)
+        doc = aw.Document()
+        builder = aw.DocumentBuilder(doc)
         builder.writeln("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " + "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.")
         builder.write("Ut enim ad minim veniam, " + "quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.")
         self.assertEqual(0, doc.built_in_document_properties.characters)
@@ -259,16 +259,16 @@ class ExDocument(ApiExampleBase):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_get_original_file_info(self):
-        doc = aspose.words.Document(file_name=MY_DIR + "Document.docx")
+        doc = aw.Document(file_name=MY_DIR + "Document.docx")
         self.assertEqual(MY_DIR + "Document.docx", doc.original_file_name)
-        self.assertEqual(aspose.words.LoadFormat.DOCX, doc.original_load_format)
+        self.assertEqual(aw.LoadFormat.DOCX, doc.original_load_format)
 
     def test_footnote_columns(self):
-        doc = aspose.words.Document(file_name=MY_DIR + "Footnotes and endnotes.docx")
+        doc = aw.Document(file_name=MY_DIR + "Footnotes and endnotes.docx")
         self.assertEqual(0, doc.footnote_options.columns)
         doc.footnote_options.columns = 2
         doc.save(file_name=ARTIFACTS_DIR + "Document.FootnoteColumns.docx")
-        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Document.FootnoteColumns.docx")
+        doc = aw.Document(file_name=ARTIFACTS_DIR + "Document.FootnoteColumns.docx")
         self.assertEqual(2, doc.first_section.page_setup.footnote_options.columns)
 
     def test_compare(self):
@@ -284,15 +284,15 @@ class ExDocument(ApiExampleBase):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_remove_external_schema_references(self):
-        doc = aspose.words.Document(file_name=MY_DIR + "External XML schema.docx")
+        doc = aw.Document(file_name=MY_DIR + "External XML schema.docx")
         doc.remove_external_schema_references()
 
     def test_track_revisions(self):
         raise NotImplementedError("Unsupported target type System.DateTime")
 
     def test_accept_all_revisions(self):
-        doc = aspose.words.Document()
-        builder = aspose.words.DocumentBuilder(doc)
+        doc = aw.Document()
+        builder = aw.DocumentBuilder(doc)
         doc.start_track_revisions(author="John Doe")
         builder.write("Hello world! ")
         builder.write("Hello again! ")
@@ -304,30 +304,30 @@ class ExDocument(ApiExampleBase):
         self.assertEqual("Hello world! Hello again! This is another revision.", doc.get_text().strip())
 
     def test_get_revised_properties_of_list(self):
-        doc = aspose.words.Document(file_name=MY_DIR + "Revisions at list levels.docx")
+        doc = aw.Document(file_name=MY_DIR + "Revisions at list levels.docx")
         doc.update_list_labels()
         paragraphs = doc.first_section.body.paragraphs
         self.assertEqual("1.", paragraphs[0].list_label.label_string)
         self.assertEqual("a.", paragraphs[1].list_label.label_string)
         self.assertEqual("", paragraphs[2].list_label.label_string)
-        doc.revisions_view = aspose.words.RevisionsView.FINAL
+        doc.revisions_view = aw.RevisionsView.FINAL
         self.assertEqual("", paragraphs[0].list_label.label_string)
         self.assertEqual("1.", paragraphs[1].list_label.label_string)
         self.assertEqual("a.", paragraphs[2].list_label.label_string)
-        doc.revisions_view = aspose.words.RevisionsView.ORIGINAL
+        doc.revisions_view = aw.RevisionsView.ORIGINAL
         doc.accept_all_revisions()
         self.assertEqual("a.", paragraphs[0].list_label.label_string)
         self.assertEqual("", paragraphs[1].list_label.label_string)
         self.assertEqual("b.", paragraphs[2].list_label.label_string)
 
     def test_update_thumbnail(self):
-        doc = aspose.words.Document()
-        builder = aspose.words.DocumentBuilder(doc)
+        doc = aw.Document()
+        builder = aw.DocumentBuilder(doc)
         builder.writeln("Hello world!")
         builder.insert_image(file_name=IMAGE_DIR + "Logo.jpg")
         doc.update_thumbnail()
         doc.save(file_name=ARTIFACTS_DIR + "Document.UpdateThumbnail.FirstPage.epub")
-        options = aspose.words.rendering.ThumbnailGeneratingOptions()
+        options = aw.rendering.ThumbnailGeneratingOptions()
         self.assertEqual(aspose.pydrawing.Size(600, 900), options.thumbnail_size)
         self.assertTrue(options.generate_from_first_page)
         options.thumbnail_size = aspose.pydrawing.Size(400, 400)
@@ -345,19 +345,19 @@ class ExDocument(ApiExampleBase):
         raise NotImplementedError("Unsupported expression: ParenthesizedLambdaExpression")
 
     def test_ooxml_compliance_version(self):
-        doc = aspose.words.Document(file_name=MY_DIR + "Document.doc")
-        self.assertEqual(doc.compliance, aspose.words.saving.OoxmlCompliance.ECMA376_2006)
-        doc = aspose.words.Document(file_name=MY_DIR + "Document.docx")
-        self.assertEqual(doc.compliance, aspose.words.saving.OoxmlCompliance.ISO29500_2008_TRANSITIONAL)
+        doc = aw.Document(file_name=MY_DIR + "Document.doc")
+        self.assertEqual(doc.compliance, aw.saving.OoxmlCompliance.ECMA376_2006)
+        doc = aw.Document(file_name=MY_DIR + "Document.docx")
+        self.assertEqual(doc.compliance, aw.saving.OoxmlCompliance.ISO29500_2008_TRANSITIONAL)
 
     def test_cleanup(self):
-        doc = aspose.words.Document()
-        doc.styles.add(aspose.words.StyleType.LIST, "MyListStyle1")
-        doc.styles.add(aspose.words.StyleType.LIST, "MyListStyle2")
-        doc.styles.add(aspose.words.StyleType.CHARACTER, "MyParagraphStyle1")
-        doc.styles.add(aspose.words.StyleType.CHARACTER, "MyParagraphStyle2")
+        doc = aw.Document()
+        doc.styles.add(aw.StyleType.LIST, "MyListStyle1")
+        doc.styles.add(aw.StyleType.LIST, "MyListStyle2")
+        doc.styles.add(aw.StyleType.CHARACTER, "MyParagraphStyle1")
+        doc.styles.add(aw.StyleType.CHARACTER, "MyParagraphStyle2")
         self.assertEqual(8, doc.styles.count)
-        builder = aspose.words.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc)
         builder.font.style = doc.styles.get_by_name("MyParagraphStyle1")
         builder.writeln("Hello world!")
         list = doc.lists.add(list_style=doc.styles.get_by_name("MyListStyle1"))
@@ -380,23 +380,23 @@ class ExDocument(ApiExampleBase):
         raise NotImplementedError("Unsupported ctor for type Regex")
 
     def test_set_invalidate_field_types(self):
-        doc = aspose.words.Document()
-        builder = aspose.words.DocumentBuilder(doc)
+        doc = aw.Document()
+        builder = aw.DocumentBuilder(doc)
         field = builder.insert_field(field_code="DATE", field_value=None)
-        self.assertEqual(aspose.words.fields.FieldType.FIELD_DATE, field.type)
-        field_text = doc.first_section.body.first_paragraph.get_child_nodes(aspose.words.NodeType.RUN, True)[0].as_run()
+        self.assertEqual(aw.fields.FieldType.FIELD_DATE, field.type)
+        field_text = doc.first_section.body.first_paragraph.get_child_nodes(aw.NodeType.RUN, True)[0].as_run()
         self.assertEqual("DATE", field_text.text)
         field_text.text = "PAGE"
         self.assertEqual("PAGE", field.get_field_code())
-        self.assertEqual(aspose.words.fields.FieldType.FIELD_DATE, field.type)
-        self.assertEqual(aspose.words.fields.FieldType.FIELD_DATE, field.start.field_type)
-        self.assertEqual(aspose.words.fields.FieldType.FIELD_DATE, field.separator.field_type)
-        self.assertEqual(aspose.words.fields.FieldType.FIELD_DATE, field.end.field_type)
+        self.assertEqual(aw.fields.FieldType.FIELD_DATE, field.type)
+        self.assertEqual(aw.fields.FieldType.FIELD_DATE, field.start.field_type)
+        self.assertEqual(aw.fields.FieldType.FIELD_DATE, field.separator.field_type)
+        self.assertEqual(aw.fields.FieldType.FIELD_DATE, field.end.field_type)
         doc.normalize_field_types()
-        self.assertEqual(aspose.words.fields.FieldType.FIELD_PAGE, field.type)
-        self.assertEqual(aspose.words.fields.FieldType.FIELD_PAGE, field.start.field_type)
-        self.assertEqual(aspose.words.fields.FieldType.FIELD_PAGE, field.separator.field_type)
-        self.assertEqual(aspose.words.fields.FieldType.FIELD_PAGE, field.end.field_type)
+        self.assertEqual(aw.fields.FieldType.FIELD_PAGE, field.type)
+        self.assertEqual(aw.fields.FieldType.FIELD_PAGE, field.start.field_type)
+        self.assertEqual(aw.fields.FieldType.FIELD_PAGE, field.separator.field_type)
+        self.assertEqual(aw.fields.FieldType.FIELD_PAGE, field.end.field_type)
 
     def test_layout_options_revisions(self):
         raise NotImplementedError("Unsupported target type System.DateTime")
@@ -414,11 +414,11 @@ class ExDocument(ApiExampleBase):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_update_page_layout(self):
-        doc = aspose.words.Document(file_name=MY_DIR + "Rendering.docx")
+        doc = aw.Document(file_name=MY_DIR + "Rendering.docx")
         doc.save(file_name=ARTIFACTS_DIR + "Document.UpdatePageLayout.1.pdf")
         doc.styles.get_by_name("Normal").font.size = 6
-        doc.sections[0].page_setup.orientation = aspose.words.Orientation.LANDSCAPE
-        doc.sections[0].page_setup.margins = aspose.words.Margins.MIRRORED
+        doc.sections[0].page_setup.orientation = aw.Orientation.LANDSCAPE
+        doc.sections[0].page_setup.margins = aw.Margins.MIRRORED
         doc.update_page_layout()
         doc.save(file_name=ARTIFACTS_DIR + "Document.UpdatePageLayout.2.pdf")
 
@@ -429,15 +429,15 @@ class ExDocument(ApiExampleBase):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_versions_count(self):
-        doc = aspose.words.Document(file_name=MY_DIR + "Versions.doc")
+        doc = aw.Document(file_name=MY_DIR + "Versions.doc")
         self.assertEqual(4, doc.versions_count)
         doc.save(file_name=ARTIFACTS_DIR + "Document.VersionsCount.doc")
-        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Document.VersionsCount.doc")
+        doc = aw.Document(file_name=ARTIFACTS_DIR + "Document.VersionsCount.doc")
         self.assertEqual(0, doc.versions_count)
 
     def test_write_protection(self):
-        doc = aspose.words.Document()
-        builder = aspose.words.DocumentBuilder(doc)
+        doc = aw.Document()
+        builder = aw.DocumentBuilder(doc)
         builder.writeln("Hello world! This document is protected.")
         self.assertFalse(doc.write_protection.is_write_protected)
         self.assertFalse(doc.write_protection.read_only_recommended)
@@ -446,9 +446,9 @@ class ExDocument(ApiExampleBase):
         self.assertTrue(doc.write_protection.is_write_protected)
         self.assertTrue(doc.write_protection.validate_password("MyPassword"))
         doc.save(file_name=ARTIFACTS_DIR + "Document.WriteProtection.docx")
-        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Document.WriteProtection.docx")
+        doc = aw.Document(file_name=ARTIFACTS_DIR + "Document.WriteProtection.docx")
         self.assertTrue(doc.write_protection.is_write_protected)
-        builder = aspose.words.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc)
         builder.move_to_document_end()
         builder.writeln("Writing text in a protected document.")
         self.assertEqual("Hello world! This document is protected." + "\rWriting text in a protected document.", doc.get_text().strip())
@@ -466,27 +466,27 @@ class ExDocument(ApiExampleBase):
         raise NotImplementedError("Unsupported call of method named ShowComments")
 
     def test_copy_template_styles_via_document(self):
-        template = aspose.words.Document(file_name=MY_DIR + "Rendering.docx")
-        target = aspose.words.Document(file_name=MY_DIR + "Document.docx")
+        template = aw.Document(file_name=MY_DIR + "Rendering.docx")
+        target = aw.Document(file_name=MY_DIR + "Document.docx")
         self.assertEqual(18, template.styles.count)
         self.assertEqual(12, target.styles.count)
         target.copy_styles_from_template(template=template)
         self.assertEqual(22, target.styles.count)
 
     def test_copy_template_styles_via_document_new(self):
-        template = aspose.words.Document()
-        style = template.styles.add(aspose.words.StyleType.PARAGRAPH, "TemplateStyle1")
+        template = aw.Document()
+        style = template.styles.add(aw.StyleType.PARAGRAPH, "TemplateStyle1")
         style.font.name = "Times New Roman"
         style.font.color = aspose.pydrawing.Color.navy
-        style = template.styles.add(aspose.words.StyleType.PARAGRAPH, "TemplateStyle2")
+        style = template.styles.add(aw.StyleType.PARAGRAPH, "TemplateStyle2")
         style.font.name = "Arial"
         style.font.color = aspose.pydrawing.Color.deep_sky_blue
-        style = template.styles.add(aspose.words.StyleType.PARAGRAPH, "TemplateStyle3")
+        style = template.styles.add(aw.StyleType.PARAGRAPH, "TemplateStyle3")
         style.font.name = "Courier New"
         style.font.color = aspose.pydrawing.Color.royal_blue
         self.assertEqual(7, template.styles.count)
-        target = aspose.words.Document()
-        style = target.styles.add(aspose.words.StyleType.PARAGRAPH, "TemplateStyle3")
+        target = aw.Document()
+        style = target.styles.add(aw.StyleType.PARAGRAPH, "TemplateStyle3")
         style.font.name = "Calibri"
         style.font.color = aspose.pydrawing.Color.orange
         self.assertEqual(5, target.styles.count)
@@ -501,8 +501,8 @@ class ExDocument(ApiExampleBase):
         raise NotImplementedError("Unsupported expression: ConditionalExpression")
 
     def test_save_output_parameters(self):
-        doc = aspose.words.Document()
-        builder = aspose.words.DocumentBuilder(doc)
+        doc = aw.Document()
+        builder = aw.DocumentBuilder(doc)
         builder.writeln("Hello world!")
         parameters = doc.save(file_name=ARTIFACTS_DIR + "Document.SaveOutputParameters.doc")
         self.assertEqual("application/msword", parameters.content_type)
@@ -510,8 +510,8 @@ class ExDocument(ApiExampleBase):
         self.assertEqual("application/pdf", parameters.content_type)
 
     def test_sub_document(self):
-        doc = aspose.words.Document(file_name=MY_DIR + "Master document.docx")
-        sub_documents = doc.get_child_nodes(aspose.words.NodeType.SUB_DOCUMENT, True)
+        doc = aw.Document(file_name=MY_DIR + "Master document.docx")
+        sub_documents = doc.get_child_nodes(aw.NodeType.SUB_DOCUMENT, True)
         self.assertEqual(1, sub_documents.count)
         sub_document = sub_documents[0].as_sub_document()
         self.assertFalse(sub_document.is_composite)
@@ -526,20 +526,20 @@ class ExDocument(ApiExampleBase):
         raise NotImplementedError("Unsupported target type System.IO.File")
 
     def test_text_watermark(self):
-        doc = aspose.words.Document()
+        doc = aw.Document()
         doc.watermark.set_text(text="Aspose Watermark")
-        text_watermark_options = aspose.words.TextWatermarkOptions()
+        text_watermark_options = aw.TextWatermarkOptions()
         text_watermark_options.font_family = "Arial"
         text_watermark_options.font_size = 36
         text_watermark_options.color = aspose.pydrawing.Color.black
-        text_watermark_options.layout = aspose.words.WatermarkLayout.DIAGONAL
+        text_watermark_options.layout = aw.WatermarkLayout.DIAGONAL
         text_watermark_options.is_semitrasparent = False
         doc.watermark.set_text(text="Aspose Watermark", options=text_watermark_options)
         doc.save(file_name=ARTIFACTS_DIR + "Document.TextWatermark.docx")
-        if doc.watermark.type == aspose.words.WatermarkType.TEXT:
+        if doc.watermark.type == aw.WatermarkType.TEXT:
             doc.watermark.remove()
-        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Document.TextWatermark.docx")
-        self.assertEqual(aspose.words.WatermarkType.TEXT, doc.watermark.type)
+        doc = aw.Document(file_name=ARTIFACTS_DIR + "Document.TextWatermark.docx")
+        self.assertEqual(aw.WatermarkType.TEXT, doc.watermark.type)
 
     def test_spelling_and_grammar_errors(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
@@ -548,15 +548,15 @@ class ExDocument(ApiExampleBase):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_ignore_printer_metrics(self):
-        doc = aspose.words.Document(file_name=MY_DIR + "Rendering.docx")
+        doc = aw.Document(file_name=MY_DIR + "Rendering.docx")
         doc.layout_options.ignore_printer_metrics = False
         doc.save(file_name=ARTIFACTS_DIR + "Document.IgnorePrinterMetrics.docx")
 
     def test_extract_pages(self):
-        doc = aspose.words.Document(file_name=MY_DIR + "Layout entities.docx")
+        doc = aw.Document(file_name=MY_DIR + "Layout entities.docx")
         doc = doc.extract_pages(0, 2)
         doc.save(file_name=ARTIFACTS_DIR + "Document.ExtractPages.docx")
-        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "Document.ExtractPages.docx")
+        doc = aw.Document(file_name=ARTIFACTS_DIR + "Document.ExtractPages.docx")
         self.assertEqual(doc.page_count, 2)
 
     def test_spelling_or_grammar(self):
@@ -569,28 +569,28 @@ class ExDocument(ApiExampleBase):
         raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")
 
     def test_open_azw(self):
-        info = aspose.words.FileFormatUtil.detect_file_format(file_name=MY_DIR + "Azw3 document.azw3")
-        self.assertEqual(info.load_format, aspose.words.LoadFormat.AZW3)
-        doc = aspose.words.Document(file_name=MY_DIR + "Azw3 document.azw3")
+        info = aw.FileFormatUtil.detect_file_format(file_name=MY_DIR + "Azw3 document.azw3")
+        self.assertEqual(info.load_format, aw.LoadFormat.AZW3)
+        doc = aw.Document(file_name=MY_DIR + "Azw3 document.azw3")
         self.assertTrue(("Hachette Book Group USA" in doc.get_text()))
 
     def test_open_epub(self):
-        info = aspose.words.FileFormatUtil.detect_file_format(file_name=MY_DIR + "Epub document.epub")
-        self.assertEqual(info.load_format, aspose.words.LoadFormat.EPUB)
-        doc = aspose.words.Document(file_name=MY_DIR + "Epub document.epub")
+        info = aw.FileFormatUtil.detect_file_format(file_name=MY_DIR + "Epub document.epub")
+        self.assertEqual(info.load_format, aw.LoadFormat.EPUB)
+        doc = aw.Document(file_name=MY_DIR + "Epub document.epub")
         self.assertTrue(("Down the Rabbit-Hole" in doc.get_text()))
 
     def test_open_xml(self):
-        info = aspose.words.FileFormatUtil.detect_file_format(file_name=MY_DIR + "Mail merge data - Customers.xml")
-        self.assertEqual(info.load_format, aspose.words.LoadFormat.XML)
-        doc = aspose.words.Document(file_name=MY_DIR + "Mail merge data - Purchase order.xml")
+        info = aw.FileFormatUtil.detect_file_format(file_name=MY_DIR + "Mail merge data - Customers.xml")
+        self.assertEqual(info.load_format, aw.LoadFormat.XML)
+        doc = aw.Document(file_name=MY_DIR + "Mail merge data - Purchase order.xml")
         self.assertTrue(("Ellen Adams\r123 Maple Street" in doc.get_text()))
 
     def test_move_to_structured_document_tag(self):
-        doc = aspose.words.Document(file_name=MY_DIR + "Structured document tags.docx")
-        builder = aspose.words.DocumentBuilder(doc)
+        doc = aw.Document(file_name=MY_DIR + "Structured document tags.docx")
+        builder = aw.DocumentBuilder(doc)
         builder.move_to_structured_document_tag(structured_document_tag_index=1, character_index=1)
-        tag = doc.get_child(aspose.words.NodeType.STRUCTURED_DOCUMENT_TAG, 2, True).as_structured_document_tag()
+        tag = doc.get_child(aw.NodeType.STRUCTURED_DOCUMENT_TAG, 2, True).as_structured_document_tag()
         builder.move_to_structured_document_tag(structured_document_tag=tag, character_index=1)
         builder.write(" New text.")
         self.assertEqual("R New text.ichText", tag.get_text().strip())
@@ -600,10 +600,10 @@ class ExDocument(ApiExampleBase):
         doc.save(file_name=ARTIFACTS_DIR + "Document.MoveToStructuredDocumentTag.docx")
 
     def test_include_textboxes_footnotes_endnotes_in_stat(self):
-        doc = aspose.words.Document()
-        builder = aspose.words.DocumentBuilder(doc)
+        doc = aw.Document()
+        builder = aw.DocumentBuilder(doc)
         builder.writeln("Lorem ipsum")
-        builder.insert_footnote(footnote_type=aspose.words.notes.FootnoteType.FOOTNOTE, footnote_text="sit amet")
+        builder.insert_footnote(footnote_type=aw.notes.FootnoteType.FOOTNOTE, footnote_text="sit amet")
         doc.update_word_count()
         self.assertEqual(2, doc.built_in_document_properties.words)
         doc.include_textboxes_footnotes_endnotes_in_stat = True
@@ -611,14 +611,14 @@ class ExDocument(ApiExampleBase):
         self.assertEqual(4, doc.built_in_document_properties.words)
 
     def test_set_justification_mode(self):
-        doc = aspose.words.Document(file_name=MY_DIR + "Document.docx")
+        doc = aw.Document(file_name=MY_DIR + "Document.docx")
         justification_mode = doc.justification_mode
-        if justification_mode == aspose.words.settings.JustificationMode.EXPAND:
-            doc.justification_mode = aspose.words.settings.JustificationMode.COMPRESS
+        if justification_mode == aw.settings.JustificationMode.EXPAND:
+            doc.justification_mode = aw.settings.JustificationMode.COMPRESS
         doc.save(file_name=ARTIFACTS_DIR + "Document.SetJustificationMode.docx")
 
     def test_page_is_in_color(self):
-        doc = aspose.words.Document(file_name=MY_DIR + "Document.docx")
+        doc = aw.Document(file_name=MY_DIR + "Document.docx")
         self.assertFalse(doc.get_page_info(0).colored)
 
     def test_insert_document_inline(self):

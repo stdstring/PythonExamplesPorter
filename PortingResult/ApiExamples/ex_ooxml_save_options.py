@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import aspose.words
+import aspose.words as aw
 import aspose.words.drawing
 import aspose.words.saving
 import aspose.words.settings
@@ -12,17 +12,17 @@ class ExOoxmlSaveOptions(ApiExampleBase):
         raise NotImplementedError("Unsupported expression: ParenthesizedLambdaExpression")
 
     def test_iso_29500_strict(self):
-        doc = aspose.words.Document()
-        builder = aspose.words.DocumentBuilder(doc)
-        doc.compatibility_options.optimize_for(aspose.words.settings.MsWordVersion.WORD2003)
+        doc = aw.Document()
+        builder = aw.DocumentBuilder(doc)
+        doc.compatibility_options.optimize_for(aw.settings.MsWordVersion.WORD2003)
         builder.insert_image(file_name=IMAGE_DIR + "Transparent background logo.png")
-        self.assertEqual(aspose.words.drawing.ShapeMarkupLanguage.VML, (doc.get_child(aspose.words.NodeType.SHAPE, 0, True).as_shape()).markup_language)
-        save_options = aspose.words.saving.OoxmlSaveOptions()
-        save_options.compliance = aspose.words.saving.OoxmlCompliance.ISO29500_2008_STRICT
-        save_options.save_format = aspose.words.SaveFormat.DOCX
+        self.assertEqual(aw.drawing.ShapeMarkupLanguage.VML, (doc.get_child(aw.NodeType.SHAPE, 0, True).as_shape()).markup_language)
+        save_options = aw.saving.OoxmlSaveOptions()
+        save_options.compliance = aw.saving.OoxmlCompliance.ISO29500_2008_STRICT
+        save_options.save_format = aw.SaveFormat.DOCX
         doc.save(file_name=ARTIFACTS_DIR + "OoxmlSaveOptions.Iso29500Strict.docx", save_options=save_options)
-        doc = aspose.words.Document(file_name=ARTIFACTS_DIR + "OoxmlSaveOptions.Iso29500Strict.docx")
-        self.assertEqual(aspose.words.drawing.ShapeMarkupLanguage.DML, (doc.get_child(aspose.words.NodeType.SHAPE, 0, True).as_shape()).markup_language)
+        doc = aw.Document(file_name=ARTIFACTS_DIR + "OoxmlSaveOptions.Iso29500Strict.docx")
+        self.assertEqual(aw.drawing.ShapeMarkupLanguage.DML, (doc.get_child(aw.NodeType.SHAPE, 0, True).as_shape()).markup_language)
 
     def test_restarting_document_list(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
@@ -37,8 +37,8 @@ class ExOoxmlSaveOptions(ApiExampleBase):
         raise NotImplementedError("Unsupported member target type - System.String[] for expression: fileSignatures")
 
     def test_export_generator_name(self):
-        doc = aspose.words.Document()
-        save_options = aspose.words.saving.OoxmlSaveOptions()
+        doc = aw.Document()
+        save_options = aw.saving.OoxmlSaveOptions()
         save_options.export_generator_name = False
         doc.save(file_name=ARTIFACTS_DIR + "OoxmlSaveOptions.ExportGeneratorName.docx", save_options=save_options)
 

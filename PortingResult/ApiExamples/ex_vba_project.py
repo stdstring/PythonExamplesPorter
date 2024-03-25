@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import aspose.words
+import aspose.words as aw
 import aspose.words.vba
 import unittest
 from api_example_base import ApiExampleBase, ARTIFACTS_DIR, MY_DIR
@@ -7,30 +7,30 @@ from api_example_base import ApiExampleBase, ARTIFACTS_DIR, MY_DIR
 
 class ExVbaProject(ApiExampleBase):
     def test_create_new_vba_project(self):
-        doc = aspose.words.Document()
-        project = aspose.words.vba.VbaProject()
+        doc = aw.Document()
+        project = aw.vba.VbaProject()
         project.name = "Aspose.Project"
         doc.vba_project = project
-        module = aspose.words.vba.VbaModule()
+        module = aw.vba.VbaModule()
         module.name = "Aspose.Module"
-        module.type = aspose.words.vba.VbaModuleType.PROCEDURAL_MODULE
+        module.type = aw.vba.VbaModuleType.PROCEDURAL_MODULE
         module.source_code = "New source code"
         doc.vba_project.modules.add(module)
         doc.save(file_name=ARTIFACTS_DIR + "VbaProject.CreateVBAMacros.docm")
-        project = aspose.words.Document(file_name=ARTIFACTS_DIR + "VbaProject.CreateVBAMacros.docm").vba_project
+        project = aw.Document(file_name=ARTIFACTS_DIR + "VbaProject.CreateVBAMacros.docm").vba_project
         self.assertEqual("Aspose.Project", project.name)
         modules = doc.vba_project.modules
         self.assertEqual(2, modules.count)
         self.assertEqual("ThisDocument", modules[0].name)
-        self.assertEqual(aspose.words.vba.VbaModuleType.DOCUMENT_MODULE, modules[0].type)
+        self.assertEqual(aw.vba.VbaModuleType.DOCUMENT_MODULE, modules[0].type)
         self.assertIsNone(modules[0].source_code)
         self.assertEqual("Aspose.Module", modules[1].name)
-        self.assertEqual(aspose.words.vba.VbaModuleType.PROCEDURAL_MODULE, modules[1].type)
+        self.assertEqual(aw.vba.VbaModuleType.PROCEDURAL_MODULE, modules[1].type)
         self.assertEqual("New source code", modules[1].source_code)
 
     def test_clone_vba_project(self):
-        doc = aspose.words.Document(file_name=MY_DIR + "VBA project.docm")
-        dest_doc = aspose.words.Document()
+        doc = aw.Document(file_name=MY_DIR + "VBA project.docm")
+        dest_doc = aw.Document()
         copy_vba_project = doc.vba_project.clone()
         dest_doc.vba_project = copy_vba_project
         old_vba_module = dest_doc.vba_project.modules.get_by_name("Module1")
@@ -38,7 +38,7 @@ class ExVbaProject(ApiExampleBase):
         dest_doc.vba_project.modules.remove(old_vba_module)
         dest_doc.vba_project.modules.add(copy_vba_module)
         dest_doc.save(file_name=ARTIFACTS_DIR + "VbaProject.CloneVbaProject.docm")
-        original_vba_project = aspose.words.Document(file_name=ARTIFACTS_DIR + "VbaProject.CloneVbaProject.docm").vba_project
+        original_vba_project = aw.Document(file_name=ARTIFACTS_DIR + "VbaProject.CloneVbaProject.docm").vba_project
         self.assertEqual(copy_vba_project.name, original_vba_project.name)
         self.assertEqual(copy_vba_project.code_page, original_vba_project.code_page)
         self.assertEqual(copy_vba_project.is_signed, original_vba_project.is_signed)

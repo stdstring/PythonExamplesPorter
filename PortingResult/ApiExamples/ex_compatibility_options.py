@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import aspose.words
+import aspose.words as aw
 import aspose.words.settings
 import unittest
 from api_example_base import ApiExampleBase, ARTIFACTS_DIR
@@ -10,9 +10,9 @@ class ExCompatibilityOptions(ApiExampleBase):
         raise NotImplementedError("Unsupported target type System.Console")
 
     def test_tables(self):
-        doc = aspose.words.Document()
+        doc = aw.Document()
         compatibility_options = doc.compatibility_options
-        compatibility_options.optimize_for(aspose.words.settings.MsWordVersion.WORD2002)
+        compatibility_options.optimize_for(aw.settings.MsWordVersion.WORD2002)
         self.assertEqual(False, compatibility_options.adjust_line_height_in_table)
         self.assertEqual(False, compatibility_options.align_tables_row_by_row)
         self.assertEqual(True, compatibility_options.allow_space_of_same_style_in_table)
@@ -34,9 +34,9 @@ class ExCompatibilityOptions(ApiExampleBase):
         doc.save(file_name=ARTIFACTS_DIR + "CompatibilityOptions.Tables.docx")
 
     def test_breaks(self):
-        doc = aspose.words.Document()
+        doc = aw.Document()
         compatibility_options = doc.compatibility_options
-        compatibility_options.optimize_for(aspose.words.settings.MsWordVersion.WORD2000)
+        compatibility_options.optimize_for(aw.settings.MsWordVersion.WORD2000)
         self.assertEqual(False, compatibility_options.apply_breaking_rules)
         self.assertEqual(True, compatibility_options.do_not_use_east_asian_break_rules)
         self.assertEqual(False, compatibility_options.show_breaks_in_frames)
@@ -46,9 +46,9 @@ class ExCompatibilityOptions(ApiExampleBase):
         doc.save(file_name=ARTIFACTS_DIR + "CompatibilityOptions.Breaks.docx")
 
     def test_spacing(self):
-        doc = aspose.words.Document()
+        doc = aw.Document()
         compatibility_options = doc.compatibility_options
-        compatibility_options.optimize_for(aspose.words.settings.MsWordVersion.WORD2000)
+        compatibility_options.optimize_for(aw.settings.MsWordVersion.WORD2000)
         self.assertEqual(False, compatibility_options.auto_space_like_word95)
         self.assertEqual(True, compatibility_options.display_hangul_fixed_width)
         self.assertEqual(False, compatibility_options.no_extra_line_spacing)
@@ -64,9 +64,9 @@ class ExCompatibilityOptions(ApiExampleBase):
         doc.save(file_name=ARTIFACTS_DIR + "CompatibilityOptions.Spacing.docx")
 
     def test_word_perfect(self):
-        doc = aspose.words.Document()
+        doc = aw.Document()
         compatibility_options = doc.compatibility_options
-        compatibility_options.optimize_for(aspose.words.settings.MsWordVersion.WORD2000)
+        compatibility_options.optimize_for(aw.settings.MsWordVersion.WORD2000)
         self.assertEqual(False, compatibility_options.suppress_top_spacing_wp)
         self.assertEqual(False, compatibility_options.truncate_font_heights_like_wp6)
         self.assertEqual(False, compatibility_options.wp_justification)
@@ -75,9 +75,9 @@ class ExCompatibilityOptions(ApiExampleBase):
         doc.save(file_name=ARTIFACTS_DIR + "CompatibilityOptions.WordPerfect.docx")
 
     def test_alignment(self):
-        doc = aspose.words.Document()
+        doc = aw.Document()
         compatibility_options = doc.compatibility_options
-        compatibility_options.optimize_for(aspose.words.settings.MsWordVersion.WORD2000)
+        compatibility_options.optimize_for(aw.settings.MsWordVersion.WORD2000)
         self.assertEqual(True, compatibility_options.cached_col_balance)
         self.assertEqual(True, compatibility_options.do_not_vert_align_in_txbx)
         self.assertEqual(True, compatibility_options.do_not_wrap_text_with_punct)
@@ -85,9 +85,9 @@ class ExCompatibilityOptions(ApiExampleBase):
         doc.save(file_name=ARTIFACTS_DIR + "CompatibilityOptions.Alignment.docx")
 
     def test_legacy(self):
-        doc = aspose.words.Document()
+        doc = aw.Document()
         compatibility_options = doc.compatibility_options
-        compatibility_options.optimize_for(aspose.words.settings.MsWordVersion.WORD2000)
+        compatibility_options.optimize_for(aw.settings.MsWordVersion.WORD2000)
         self.assertEqual(False, compatibility_options.footnote_layout_like_ww8)
         self.assertEqual(False, compatibility_options.line_wrap_like_word6)
         self.assertEqual(False, compatibility_options.mw_small_caps)
@@ -96,17 +96,17 @@ class ExCompatibilityOptions(ApiExampleBase):
         doc.save(file_name=ARTIFACTS_DIR + "CompatibilityOptions.Legacy.docx")
 
     def test_list(self):
-        doc = aspose.words.Document()
+        doc = aw.Document()
         compatibility_options = doc.compatibility_options
-        compatibility_options.optimize_for(aspose.words.settings.MsWordVersion.WORD2000)
+        compatibility_options.optimize_for(aw.settings.MsWordVersion.WORD2000)
         self.assertEqual(True, compatibility_options.underline_tab_in_num_list)
         self.assertEqual(True, compatibility_options.use_normal_style_for_list)
         doc.save(file_name=ARTIFACTS_DIR + "CompatibilityOptions.List.docx")
 
     def test_misc(self):
-        doc = aspose.words.Document()
+        doc = aw.Document()
         compatibility_options = doc.compatibility_options
-        compatibility_options.optimize_for(aspose.words.settings.MsWordVersion.WORD2000)
+        compatibility_options.optimize_for(aw.settings.MsWordVersion.WORD2000)
         self.assertEqual(False, compatibility_options.balance_single_byte_double_byte_width)
         self.assertEqual(False, compatibility_options.conv_mail_merge_esc)
         self.assertEqual(False, compatibility_options.do_not_expand_shift_return)
