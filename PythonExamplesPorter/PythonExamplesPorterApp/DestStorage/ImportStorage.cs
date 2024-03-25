@@ -59,21 +59,22 @@ namespace PythonExamplesPorterApp.DestStorage
 
         public IDictionary<String, ISet<String>> EntityImport = new Dictionary<String, ISet<String>>();
 
-        public void AddImport(String module, String alias = "")
+        public ImportData AddImport(String module, String alias = "")
         {
-            if (String.IsNullOrEmpty(module))
-                return;
-            ModulesImport.TryAdd(module, alias);
+            if (!String.IsNullOrEmpty(module))
+                ModulesImport.TryAdd(module, alias);
+            return this;
         }
 
-        public void AddEntity(String module, String entity)
+        public ImportData AddEntity(String module, String entity)
         {
             if (!EntityImport.ContainsKey(module))
                 EntityImport.Add(module, new SortedSet<String>());
             EntityImport[module].Add(entity);
+            return this;
         }
 
-        public void Append(ImportData other)
+        public ImportData Append(ImportData other)
         {
             foreach (KeyValuePair<String, String> entry in other.ModulesImport)
                 AddImport(entry.Key, entry.Value);
@@ -83,6 +84,7 @@ namespace PythonExamplesPorterApp.DestStorage
                     EntityImport.Add(entry.Key, new SortedSet<String>());
                 EntityImport[entry.Key].AddRange(entry.Value);
             }
+            return this;
         }
     }
 }

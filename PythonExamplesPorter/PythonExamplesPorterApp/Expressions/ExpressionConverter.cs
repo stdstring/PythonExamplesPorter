@@ -125,7 +125,7 @@ namespace PythonExamplesPorterApp.Expressions
 
         public override void VisitIdentifierName(IdentifierNameSyntax node)
         {
-            IdentifierExpressionConverter converter = new IdentifierExpressionConverter(_model, _appData, _settings.CreateChild());
+            IdentifierExpressionConverter converter = new IdentifierExpressionConverter(_model, _appData);
             AppendResult(converter.Convert(node));
         }
 

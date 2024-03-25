@@ -59,7 +59,7 @@ namespace PythonExamplesPorterApp.Converter
                     OperationResult<CastResolveData> castResult = resolver.ResolveCast(loopVariableInfo.Type, node.Type, enumerationVariable);
                     if (!castResult.Success)
                         throw new UnsupportedSyntaxException(castResult.Reason);
-                    _currentMethod.ImportStorage.AddImport(castResult.Data!.ModuleName);
+                    _currentMethod.ImportStorage.Append(castResult.Data!.ImportData);
                     _indentation += StorageDef.IndentationDelta;
                     _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}{enumerationVariable} = {castResult.Data!.Cast}");
                     _indentation -= StorageDef.IndentationDelta;

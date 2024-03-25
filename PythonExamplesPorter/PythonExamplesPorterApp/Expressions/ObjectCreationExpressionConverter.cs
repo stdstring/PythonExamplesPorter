@@ -38,7 +38,7 @@ namespace PythonExamplesPorterApp.Expressions
             if (!resolveResult.Success)
                 throw new UnsupportedSyntaxException(resolveResult.Reason);
             MemberResolveData resolveData = resolveResult.Data!;
-            importData.AddImport(resolveData.ModuleName);
+            importData.Append(resolveData.ImportData);
             IList<String> afterResults = new List<String>();
             if (expression.Initializer is {Expressions.Count: > 0})
                 afterResults.AddRange(ConvertObjectInitializerExpressions(expression.Initializer.Expressions, importData));

@@ -26,7 +26,7 @@ namespace PythonExamplesPorterApp.Expressions
             if (!resolveResult.Success)
                 throw new UnsupportedSyntaxException(resolveResult.Reason);
             CastResolveData castResolveData = resolveResult.Data!;
-            importData.AddImport(castResolveData.ModuleName);
+            importData.Append(castResolveData.ImportData);
             return new ConvertResult(castResolveData.Cast, importData);
         }
 

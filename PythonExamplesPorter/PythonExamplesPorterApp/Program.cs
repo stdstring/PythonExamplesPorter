@@ -2,6 +2,7 @@
 using PythonExamplesPorterApp.Config;
 using PythonExamplesPorterApp.Handmade;
 using PythonExamplesPorterApp.Ignored;
+using PythonExamplesPorterApp.Import;
 using PythonExamplesPorterApp.Logger;
 using PythonExamplesPorterApp.Names;
 using PythonExamplesPorterApp.Processor;
@@ -66,7 +67,8 @@ namespace PythonExamplesPorterApp
             NameTransformer nameTransformer = new NameTransformer(nameTransformStrategy, handmadeNameManager);
             IgnoredEntitiesManager ignoredManager = new IgnoredEntitiesManager(appConfig.ConfigData.IgnoredEntities);
             HandmadeEntitiesManager handmadeManager = new HandmadeEntitiesManager(appConfig.ConfigData.HandmadeEntities, nameTransformer);
-            return new AppData(appConfig, ignoredManager, handmadeManager, nameTransformer, logger);
+            ImportAliasManager importAliasManager = new ImportAliasManager(appConfig.ConfigData.ImportAliases);
+            return new AppData(appConfig, ignoredManager, handmadeManager, importAliasManager, nameTransformer, logger);
         }
 
         private static void RunPorter(AppConfig appConfig, TextWriter outputWriter, TextWriter errorWriter)

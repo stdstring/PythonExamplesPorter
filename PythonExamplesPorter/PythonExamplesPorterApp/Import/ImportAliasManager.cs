@@ -4,19 +4,21 @@ namespace PythonExamplesPorterApp.Import
 {
     internal class ImportAliasManager
     {
-        public ImportAliasManager(ImportAliasEntries data)
+        public ImportAliasManager(ImportAliasEntries? data)
         {
             _importAliases = new Dictionary<String, String>();
-            foreach (ImportAliasEntry entry in data.ImportAliases ?? Array.Empty<ImportAliasEntry>())
+            foreach (ImportAliasEntry entry in data?.ImportAliases ?? Array.Empty<ImportAliasEntry>())
                 _importAliases.Add(entry.Import, entry.Alias);
         }
 
         public (String ModuleName, ImportData ImportData) PrepareImport(String moduleName)
         {
-            return PrepareImport(moduleName, new ImportData());
+            ImportData importData = new ImportData();
+            String destModuleName = PrepareImport(moduleName, importData);
+            return (ModuleName: destModuleName, ImportData: importData);
         }
 
-        public (String ModuleName, ImportData ImportData) PrepareImport(String moduleName, ImportData sourceData)
+        public String PrepareImport(String moduleName, ImportData sourceData)
         {
             const char delimiter = '.';
             String leftPart = moduleName;
@@ -45,8 +47,7 @@ namespace PythonExamplesPorterApp.Import
                 sourceData.AddImport(leftPart, alias);
             }
             sourceData.AddImport(moduleName);
-            String destName = $"{alias}{((alias.Length > 0) && (rightPart.Length > 0) ? delimiter : "")}{rightPart}";
-            return (ModuleName: destName, ImportData: sourceData);
+            return $"{alias}{((alias.Length > 0) && (rightPart.Length > 0) ? delimiter : "")}{rightPart}";
         }
 
         private readonly IDictionary<String, String> _importAliases;
