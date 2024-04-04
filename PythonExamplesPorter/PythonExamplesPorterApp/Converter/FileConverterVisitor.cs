@@ -1,6 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using PythonExamplesPorterApp.Comments;
 using PythonExamplesPorterApp.Common;
 using PythonExamplesPorterApp.DestStorage;
 
@@ -19,24 +20,39 @@ namespace PythonExamplesPorterApp.Converter
         {
             String logHead = $"    We try to process {node.Identifier.Text} class ...";
             INamedTypeSymbol? currentType = _model.GetDeclaredSymbol(node);
+            if (!CheckVisitClassDeclaration(node, currentType, logHead))
+                return;
+            _appData.Logger.LogInfo($"{logHead} processed");
+            String destClassName = _appData.NameTransformer.TransformTypeName(node.Identifier.Text);
+            _currentClass = _currentFile.CreateClassStorage(destClassName);
+            CommentsProcessor commentsProcessor = new CommentsProcessor();
+            _currentClass.AppendHeaderData(commentsProcessor.Process(CommentsExtractor.ExtractHeaderComments(node)));
+            _currentClass.AppendFooterData(commentsProcessor.Process(CommentsExtractor.ExtractFooterComments(node)));
+            _currentClass.SetTrailingData(commentsProcessor.Process(CommentsExtractor.ExtractTrailingComment(node)));
+            GenerateClassDeclaration(currentType!);
+            base.VisitClassDeclaration(node);
+        }
+
+        private Boolean CheckVisitClassDeclaration(ClassDeclarationSyntax node, INamedTypeSymbol? currentType, String logHead)
+        {
             // we don't process class without semantic info
             if (currentType == null)
             {
                 _appData.Logger.LogInfo($"{logHead} skipped due to absence semantic info");
-                return;
+                return false;
             }
             SyntaxNode? parentDecl = node.Parent;
             // we don't process class which aren't nested into namespaces
             if (parentDecl == null)
             {
                 _appData.Logger.LogInfo($"{logHead} skipped due to absence parent namespace");
-                return;
+                return false;
             }
             // we don't process nested class
             if (!parentDecl.IsKind(SyntaxKind.NamespaceDeclaration))
             {
                 _appData.Logger.LogInfo($"{logHead} skipped for nested class");
-                return;
+                return false;
             }
             // TODO (std_string) : think about using SymbolDisplayFormat
             String currentTypeFullName = currentType.ToDisplayString();
@@ -44,42 +60,39 @@ namespace PythonExamplesPorterApp.Converter
             if (_appData.IgnoredManager.IsIgnoredType(currentTypeFullName))
             {
                 _appData.Logger.LogInfo($"{logHead} skipped because ignored class");
-                return;
+                return false;
             }
             // we don't process handmade class
             if (_appData.HandmadeManager.IsHandmadeType(currentTypeFullName))
             {
                 _appData.Logger.LogInfo($"{logHead} skipped because handmade class");
-                return;
+                return false;
             }
             IReadOnlyList<AttributeListSyntax> attributes = node.AttributeLists;
             // we don't process classes not marked by NUnit.Framework.TestFixtureAttribute attribute
             if (!attributes.ContainAttribute(_model, "NUnit.Framework.TestFixtureAttribute"))
             {
                 _appData.Logger.LogInfo($"{logHead} skipped for class non marked by NUnit.Framework.TestFixtureAttribute attribute");
-                return;
+                return false;
             }
-            _appData.Logger.LogInfo($"{logHead} processed");
-            GenerateClassDeclaration(node, currentType);
-            base.VisitClassDeclaration(node);
+
+            return true;
         }
 
-        private void GenerateClassDeclaration(ClassDeclarationSyntax node, INamedTypeSymbol currentType)
+        private void GenerateClassDeclaration(INamedTypeSymbol currentType)
         {
             String? baseClassFullName = GetBaseClassFullName(currentType);
-            String destClassName = _appData.NameTransformer.TransformTypeName(node.Identifier.Text);
-            _currentClass = _currentFile.CreateClassStorage(destClassName);
             if (baseClassFullName == null)
             {
                 _currentFile.ImportStorage.AddImport("unittest");
-                _currentClass.AddBaseClass("unittest.TestCase");
+                _currentClass!.AddBaseClass("unittest.TestCase");
             }
             else
             {
                 Int32 lastDotIndex = baseClassFullName.LastIndexOf('.');
                 String sourceBaseClassName = lastDotIndex == -1 ? baseClassFullName : baseClassFullName.Substring(lastDotIndex + 1);
                 String baseClassName = _appData.NameTransformer.TransformTypeName(sourceBaseClassName);
-                _currentClass.AddBaseClass(baseClassName);
+                _currentClass!.AddBaseClass(baseClassName);
                 _appData.HandmadeManager.UseHandmadeType(baseClassFullName);
                 String moduleName = _appData.HandmadeManager.CalcHandmadeTypeModuleName(baseClassFullName);
                 _currentFile.ImportStorage.AddEntity(moduleName, baseClassName);
