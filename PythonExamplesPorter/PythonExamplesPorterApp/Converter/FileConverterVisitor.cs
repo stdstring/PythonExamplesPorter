@@ -25,7 +25,7 @@ namespace PythonExamplesPorterApp.Converter
             _appData.Logger.LogInfo($"{logHead} processed");
             String destClassName = _appData.NameTransformer.TransformTypeName(node.Identifier.Text);
             _currentClass = _currentFile.CreateClassStorage(destClassName);
-            CommentsProcessor commentsProcessor = new CommentsProcessor();
+            CommentsProcessor commentsProcessor = new CommentsProcessor(_appData.NameTransformer);
             _currentClass.AppendHeaderData(commentsProcessor.Process(CommentsExtractor.ExtractHeaderComments(node)));
             _currentClass.AppendFooterData(commentsProcessor.Process(CommentsExtractor.ExtractFooterComments(node)));
             _currentClass.SetTrailingData(commentsProcessor.Process(CommentsExtractor.ExtractTrailingComment(node)));

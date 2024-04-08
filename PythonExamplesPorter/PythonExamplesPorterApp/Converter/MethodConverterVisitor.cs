@@ -26,7 +26,7 @@ namespace PythonExamplesPorterApp.Converter
             String parentFullName = parent.ToDisplayString();
             String testMethodName = CreateTestMethodName(node, parentFullName);
             MethodStorage methodStorage = _currentClass.CreateMethodStorage(testMethodName);
-            CommentsProcessor commentsProcessor = new CommentsProcessor();
+            CommentsProcessor commentsProcessor = new CommentsProcessor(_appData.NameTransformer);
             methodStorage.AppendHeaderData(commentsProcessor.Process(CommentsExtractor.ExtractHeaderComments(node)));
             methodStorage.AppendFooterData(commentsProcessor.Process(CommentsExtractor.ExtractFooterComments(node)));
             methodStorage.SetTrailingData(commentsProcessor.Process(CommentsExtractor.ExtractTrailingComment(node)));

@@ -21,7 +21,7 @@ namespace PythonExamplesPorterApp.Converter
             FileStorage currentFile = new FileStorage(destPath);
             FileConverterVisitor converter = new FileConverterVisitor(model, currentFile, _appData);
             SyntaxNode root = tree.GetRoot();
-            CommentsProcessor commentsProcessor = new CommentsProcessor();
+            CommentsProcessor commentsProcessor = new CommentsProcessor(_appData.NameTransformer);
             currentFile.AppendHeaderData(commentsProcessor.Process(CommentsExtractor.ExtractComments(root)));
             converter.Visit(root);
             if (currentFile.IsEmpty())

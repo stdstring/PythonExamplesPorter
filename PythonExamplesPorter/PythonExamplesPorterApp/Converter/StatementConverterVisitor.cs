@@ -192,7 +192,7 @@ namespace PythonExamplesPorterApp.Converter
             };
             if (!knownStatements.Contains(statement.Kind()))
                 throw new UnsupportedSyntaxException($"Unsupported statement type: {statement.Kind()}");
-            CommentsProcessor commentsProcessor = new CommentsProcessor();
+            CommentsProcessor commentsProcessor = new CommentsProcessor(_appData.NameTransformer);
             _currentMethod.AddBodyLines(commentsProcessor.Process(CommentsExtractor.ExtractComments(statement)));
             Visit(statement);
             // TODO (std_string) : think about case when one line of C# code translates into more than one line in python code
