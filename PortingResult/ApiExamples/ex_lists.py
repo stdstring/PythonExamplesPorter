@@ -1,4 +1,13 @@
 # -*- coding: utf-8 -*-
+
+# Copyright (c) 2001-2024 Aspose Pty Ltd. All Rights Reserved.
+#
+# This file is part of Aspose.Words. The source code in this file
+# is only intended as a supplement to the documentation, and is provided
+# "as is", without warranty of any kind, either expressed or implied.
+#####################################
+
+
 import aspose.pydrawing
 import aspose.words as aw
 import aspose.words.lists
@@ -53,8 +62,15 @@ class ExLists(ApiExampleBase):
         raise NotImplementedError("Unsupported expression: SimpleLambdaExpression")
 
     def test_create_picture_bullet(self):
+        #ExStart
+        #ExFor:ListLevel.create_picture_bullet
+        #ExFor:ListLevel.delete_picture_bullet
+        #ExSummary:Shows how to set a custom image icon for list item labels.
         doc = aw.Document()
         list = doc.lists.add(list_template=aw.lists.ListTemplate.BULLET_CIRCLE)
+
+        # Create a picture bullet for the current list level, and set an image from a local file system
+        # as the icon that the bullets for this list level will display.
         list.list_levels[0].create_picture_bullet()
         list.list_levels[0].image_data.set_image(file_name=IMAGE_DIR + "Logo icon.ico")
         self.assertTrue(list.list_levels[0].image_data.has_image)
@@ -65,6 +81,8 @@ class ExLists(ApiExampleBase):
         doc.save(file_name=ARTIFACTS_DIR + "Lists.CreatePictureBullet.docx")
         list.list_levels[0].delete_picture_bullet()
         self.assertIsNone(list.list_levels[0].image_data)
+        #ExEnd
+
         doc = aw.Document(file_name=ARTIFACTS_DIR + "Lists.CreatePictureBullet.docx")
         self.assertTrue(doc.lists[0].list_levels[0].image_data.has_image)
 
@@ -72,6 +90,10 @@ class ExLists(ApiExampleBase):
         raise NotImplementedError("Unsupported expression: ParenthesizedLambdaExpression")
 
     def test_has_same_template(self):
+        #ExStart
+        #ExFor:List.has_same_template(List)
+        #ExSummary:Shows how to define lists with the same ListDefId.
         doc = aw.Document(file_name=MY_DIR + "Different lists.docx")
         self.assertTrue(doc.lists[0].has_same_template(doc.lists[1]))
         self.assertFalse(doc.lists[1].has_same_template(doc.lists[2]))
+        #ExEnd
