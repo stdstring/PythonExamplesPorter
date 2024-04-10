@@ -11,11 +11,18 @@ namespace PythonExamplesPorterApp.DestStorage
             ImportStorage = new ImportStorage();
         }
 
+        public void AppendHeaderData(String[] dataPortion)
+        {
+            _headerData.AddRange(dataPortion);
+        }
+
         public void Save()
         {
             using (StreamWriter writer = new StreamWriter(_filePath, false))
             {
                 writer.WriteLine("# -*- coding: utf-8 -*-");
+                writer.WriteLine();
+                SaveBorderData(writer, _headerData);
                 ImportStorage.Save(writer);
                 for (Int32 index = 0; index < _classes.Count; ++index)
                 {
@@ -38,8 +45,18 @@ namespace PythonExamplesPorterApp.DestStorage
 
         public ImportStorage ImportStorage { get; }
 
+        private void SaveBorderData(TextWriter writer, IList<String> data)
+        {
+            if (data.IsEmpty())
+                return;
+            foreach (String line in data)
+                writer.WriteLine(line);
+            writer.WriteLine();
+        }
+
         private readonly String _filePath;
         private readonly Int32 _indentation;
+        private readonly IList<String> _headerData = new List<String>();
         private readonly IList<ClassStorage> _classes = new List<ClassStorage>();
     }
 }

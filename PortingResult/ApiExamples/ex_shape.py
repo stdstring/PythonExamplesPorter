@@ -1,4 +1,13 @@
 # -*- coding: utf-8 -*-
+
+# Copyright (c) 2001-2024 Aspose Pty Ltd. All Rights Reserved.
+#
+# This file is part of Aspose.Words. The source code in this file
+# is only intended as a supplement to the documentation, and is provided
+# "as is", without warranty of any kind, either expressed or implied.
+#####################################
+
+
 import aspose.pydrawing
 import aspose.words as aw
 import aspose.words.drawing
@@ -25,28 +34,60 @@ class ExShape(ApiExampleBase):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_is_top_level(self):
+        #ExStart
+        #ExFor:ShapeBase.is_top_level
+        #ExSummary:Shows how to tell whether a shape is a part of a group shape.
         doc = aw.Document()
         shape = aw.drawing.Shape(doc, aw.drawing.ShapeType.RECTANGLE)
         shape.width = 200
         shape.height = 200
         shape.wrap_type = aw.drawing.WrapType.NONE
+
+        # A shape by default is not part of any group shape, and therefore has the "IsTopLevel" property set to "true".
         self.assertTrue(shape.is_top_level)
         group = aw.drawing.GroupShape(doc)
         group.append_child(shape)
+
+        # Once we assimilate a shape into a group shape, the "IsTopLevel" property changes to "false".
         self.assertFalse(shape.is_top_level)
+        #ExEnd
 
     def test_local_to_parent(self):
+        #ExStart
+        #ExFor:ShapeBase.coord_origin
+        #ExFor:ShapeBase.coord_size
+        #ExFor:ShapeBase.local_to_parent(PointF)
+        #ExSummary:Shows how to translate the x and y coordinate location on a shape's coordinate plane to a location on the parent shape's coordinate plane.
         doc = aw.Document()
+
+        # Insert a group shape, and place it 100 points below and to the right of
+        # the document's x and Y coordinate origin point.
         group = aw.drawing.GroupShape(doc)
         group.bounds = aspose.pydrawing.RectangleF(100, 100, 500, 500)
+
+        # Use the "LocalToParent" method to determine that (0, 0) on the group's internal x and y coordinates
+        # lies on (100, 100) of its parent shape's coordinate system. The group shape's parent is the document itself.
         self.assertEqual(aspose.pydrawing.PointF(100, 100), group.local_to_parent(aspose.pydrawing.PointF(0, 0)))
+
+        # By default, a shape's internal coordinate plane has the top left corner at (0, 0),
+        # and the bottom right corner at (1000, 1000). Due to its size, our group shape covers an area of 500pt x 500pt
+        # in the document's plane. This means that a movement of 1pt on the document's coordinate plane will translate
+        # to a movement of 2pts on the group shape's coordinate plane.
         self.assertEqual(aspose.pydrawing.PointF(150, 150), group.local_to_parent(aspose.pydrawing.PointF(100, 100)))
         self.assertEqual(aspose.pydrawing.PointF(200, 200), group.local_to_parent(aspose.pydrawing.PointF(200, 200)))
         self.assertEqual(aspose.pydrawing.PointF(250, 250), group.local_to_parent(aspose.pydrawing.PointF(300, 300)))
+
+        # Move the group shape's x and y axis origin from the top left corner to the center.
+        # This will offset the group's internal coordinates relative to the document's coordinates even further.
         group.coord_origin = aspose.pydrawing.Point(-250, -250)
         self.assertEqual(aspose.pydrawing.PointF(375, 375), group.local_to_parent(aspose.pydrawing.PointF(300, 300)))
+
+        # Changing the scale of the coordinate plane will also affect relative locations.
         group.coord_size = aspose.pydrawing.Size(500, 500)
         self.assertEqual(aspose.pydrawing.PointF(650, 650), group.local_to_parent(aspose.pydrawing.PointF(300, 300)))
+
+        # If we wish to add a shape to this group while defining its location based on a location in the document,
+        # we will need to first confirm a location in the group shape that will match the document's location.
         self.assertEqual(aspose.pydrawing.PointF(700, 700), group.local_to_parent(aspose.pydrawing.PointF(350, 350)))
         shape = aw.drawing.Shape(doc, aw.drawing.ShapeType.RECTANGLE)
         shape.width = 100
@@ -56,6 +97,8 @@ class ExShape(ApiExampleBase):
         group.append_child(shape)
         doc.first_section.body.first_paragraph.append_child(group)
         doc.save(file_name=ARTIFACTS_DIR + "Shape.LocalToParent.docx")
+        #ExEnd
+
         doc = aw.Document(file_name=ARTIFACTS_DIR + "Shape.LocalToParent.docx")
         group = doc.get_child(aw.NodeType.GROUP_SHAPE, 0, True).as_group_shape()
         self.assertEqual(aspose.pydrawing.RectangleF(100, 100, 500, 500), group.bounds)
@@ -66,8 +109,13 @@ class ExShape(ApiExampleBase):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_delete_all_shapes(self):
+        #ExStart
+        #ExFor:Shape
+        #ExSummary:Shows how to delete all shapes from a document.
         doc = aw.Document()
         builder = aw.DocumentBuilder(doc)
+
+        # Insert two shapes along with a group shape with another shape inside it.
         builder.insert_shape(shape_type=aw.drawing.ShapeType.RECTANGLE, width=400, height=200)
         builder.insert_shape(shape_type=aw.drawing.ShapeType.STAR, width=300, height=300)
         group = aw.drawing.GroupShape(doc)
@@ -82,14 +130,21 @@ class ExShape(ApiExampleBase):
         builder.insert_node(group)
         self.assertEqual(3, doc.get_child_nodes(aw.NodeType.SHAPE, True).count)
         self.assertEqual(1, doc.get_child_nodes(aw.NodeType.GROUP_SHAPE, True).count)
+
+        # Remove all Shape nodes from the document.
         shapes = doc.get_child_nodes(aw.NodeType.SHAPE, True)
         shapes.clear()
+
+        # All shapes are gone, but the group shape is still in the document.
         self.assertEqual(1, doc.get_child_nodes(aw.NodeType.GROUP_SHAPE, True).count)
         self.assertEqual(0, doc.get_child_nodes(aw.NodeType.SHAPE, True).count)
+
+        # Remove all group shapes separately.
         group_shapes = doc.get_child_nodes(aw.NodeType.GROUP_SHAPE, True)
         group_shapes.clear()
         self.assertEqual(0, doc.get_child_nodes(aw.NodeType.GROUP_SHAPE, True).count)
         self.assertEqual(0, doc.get_child_nodes(aw.NodeType.SHAPE, True).count)
+        #ExEnd
 
     def test_is_inline(self):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
@@ -104,38 +159,70 @@ class ExShape(ApiExampleBase):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_texture_fill(self):
+        #ExStart
+        #ExFor:Fill.texture_alignment
+        #ExFor:TextureAlignment
+        #ExSummary:Shows how to fill and tiling the texture inside the shape.
         doc = aw.Document()
         builder = aw.DocumentBuilder(doc)
         shape = builder.insert_shape(shape_type=aw.drawing.ShapeType.RECTANGLE, width=80, height=80)
+
+        # Apply texture alignment to the shape fill.
         shape.fill.preset_textured(aw.drawing.PresetTexture.CANVAS)
         shape.fill.texture_alignment = aw.drawing.TextureAlignment.TOP_RIGHT
+
+        # Use the compliance option to define the shape using DML if you want to get "TextureAlignment"
+        # property after the document saves.
         save_options = aw.saving.OoxmlSaveOptions()
         save_options.compliance = aw.saving.OoxmlCompliance.ISO29500_2008_STRICT
         doc.save(file_name=ARTIFACTS_DIR + "Shape.TextureFill.docx", save_options=save_options)
+        #ExEnd
+
         doc = aw.Document(file_name=ARTIFACTS_DIR + "Shape.TextureFill.docx")
         shape = doc.get_child(aw.NodeType.SHAPE, 0, True).as_shape()
         self.assertEqual(aw.drawing.TextureAlignment.TOP_RIGHT, shape.fill.texture_alignment)
 
     def test_gradient_fill(self):
+        #ExStart
+        #ExFor:Fill.one_color_gradient(Color,GradientStyle,GradientVariant,float)
+        #ExFor:Fill.one_color_gradient(GradientStyle,GradientVariant,float)
+        #ExFor:Fill.two_color_gradient(Color,Color,GradientStyle,GradientVariant)
+        #ExFor:Fill.two_color_gradient(GradientStyle,GradientVariant)
+        #ExFor:Fill.gradient_style
+        #ExFor:Fill.gradient_variant
+        #ExFor:Fill.gradient_angle
+        #ExFor:GradientStyle
+        #ExFor:GradientVariant
+        #ExSummary:Shows how to fill a shape with a gradients.
         doc = aw.Document()
         builder = aw.DocumentBuilder(doc)
         shape = builder.insert_shape(shape_type=aw.drawing.ShapeType.RECTANGLE, width=80, height=80)
+        # Apply One-color gradient fill to the shape with ForeColor of gradient fill.
         shape.fill.one_color_gradient(color=aspose.pydrawing.Color.red, style=aw.drawing.GradientStyle.HORIZONTAL, variant=aw.drawing.GradientVariant.VARIANT2, degree=0.1)
         self.assertEqual(aspose.pydrawing.Color.red.to_argb(), shape.fill.fore_color.to_argb())
         self.assertEqual(aw.drawing.GradientStyle.HORIZONTAL, shape.fill.gradient_style)
         self.assertEqual(aw.drawing.GradientVariant.VARIANT2, shape.fill.gradient_variant)
         self.assertEqual(270, shape.fill.gradient_angle)
         shape = builder.insert_shape(shape_type=aw.drawing.ShapeType.RECTANGLE, width=80, height=80)
+        # Apply Two-color gradient fill to the shape.
         shape.fill.two_color_gradient(style=aw.drawing.GradientStyle.FROM_CORNER, variant=aw.drawing.GradientVariant.VARIANT4)
+        # Change BackColor of gradient fill.
         shape.fill.back_color = aspose.pydrawing.Color.yellow
+        # Note that changes "GradientAngle" for "GradientStyle.FromCorner/GradientStyle.FromCenter"
+        # gradient fill don't get any effect, it will work only for linear gradient.
         shape.fill.gradient_angle = 15
         self.assertEqual(aspose.pydrawing.Color.yellow.to_argb(), shape.fill.back_color.to_argb())
         self.assertEqual(aw.drawing.GradientStyle.FROM_CORNER, shape.fill.gradient_style)
         self.assertEqual(aw.drawing.GradientVariant.VARIANT4, shape.fill.gradient_variant)
         self.assertEqual(0, shape.fill.gradient_angle)
+
+        # Use the compliance option to define the shape using DML if you want to get "GradientStyle",
+        # "GradientVariant" and "GradientAngle" properties after the document saves.
         save_options = aw.saving.OoxmlSaveOptions()
         save_options.compliance = aw.saving.OoxmlCompliance.ISO29500_2008_STRICT
         doc.save(file_name=ARTIFACTS_DIR + "Shape.GradientFill.docx", save_options=save_options)
+        #ExEnd
+
         doc = aw.Document(file_name=ARTIFACTS_DIR + "Shape.GradientFill.docx")
         first_shape = doc.get_child(aw.NodeType.SHAPE, 0, True).as_shape()
         self.assertEqual(aspose.pydrawing.Color.red.to_argb(), first_shape.fill.fore_color.to_argb())
@@ -149,18 +236,46 @@ class ExShape(ApiExampleBase):
         self.assertEqual(0, second_shape.fill.gradient_angle)
 
     def test_gradient_stops(self):
+        #ExStart
+        #ExFor:Fill.gradient_stops
+        #ExFor:GradientStopCollection
+        #ExFor:GradientStopCollection.insert(int,GradientStop)
+        #ExFor:GradientStopCollection.add(GradientStop)
+        #ExFor:GradientStopCollection.remove_at(int)
+        #ExFor:GradientStopCollection.remove(GradientStop)
+        #ExFor:GradientStopCollection.__getitem__(int)
+        #ExFor:GradientStopCollection.count
+        #ExFor:GradientStop.__init__(Color,float)
+        #ExFor:GradientStop.__init__(Color,float,float)
+        #ExFor:GradientStop.base_color
+        #ExFor:GradientStop.color
+        #ExFor:GradientStop.position
+        #ExFor:GradientStop.transparency
+        #ExFor:GradientStop.remove
+        #ExSummary:Shows how to add gradient stops to the gradient fill.
         doc = aw.Document()
         builder = aw.DocumentBuilder(doc)
         shape = builder.insert_shape(shape_type=aw.drawing.ShapeType.RECTANGLE, width=80, height=80)
         shape.fill.two_color_gradient(color1=aspose.pydrawing.Color.green, color2=aspose.pydrawing.Color.red, style=aw.drawing.GradientStyle.HORIZONTAL, variant=aw.drawing.GradientVariant.VARIANT2)
+
+        # Get gradient stops collection.
         gradient_stops = shape.fill.gradient_stops
+
+        # Change first gradient stop.
         gradient_stops[0].color = aspose.pydrawing.Color.aqua
         gradient_stops[0].position = 0.1
         gradient_stops[0].transparency = 0.25
+
+        # Add new gradient stop to the end of collection.
         gradient_stop = aw.drawing.GradientStop(color=aspose.pydrawing.Color.brown, position=0.5)
         gradient_stops.add(gradient_stop)
+
+        # Remove gradient stop at index 1.
         gradient_stops.remove_at(1)
+        # And insert new gradient stop at the same index 1.
         gradient_stops.insert(1, aw.drawing.GradientStop(color=aspose.pydrawing.Color.chocolate, position=0.75, transparency=0.3))
+
+        # Remove last gradient stop in the collection.
         gradient_stop = gradient_stops[2]
         gradient_stops.remove(gradient_stop)
         self.assertEqual(2, gradient_stops.count)
@@ -171,9 +286,14 @@ class ExShape(ApiExampleBase):
         self.assertEqual(aspose.pydrawing.Color.chocolate.to_argb(), gradient_stops[1].color.to_argb())
         self.assertAlmostEqual(0.75, gradient_stops[1].position, delta=0.01)
         self.assertAlmostEqual(0.3, gradient_stops[1].transparency, delta=0.01)
+
+        # Use the compliance option to define the shape using DML
+        # if you want to get "GradientStops" property after the document saves.
         save_options = aw.saving.OoxmlSaveOptions()
         save_options.compliance = aw.saving.OoxmlCompliance.ISO29500_2008_STRICT
         doc.save(file_name=ARTIFACTS_DIR + "Shape.GradientStops.docx", save_options=save_options)
+        #ExEnd
+
         doc = aw.Document(file_name=ARTIFACTS_DIR + "Shape.GradientStops.docx")
         shape = doc.get_child(aw.NodeType.SHAPE, 0, True).as_shape()
         gradient_stops = shape.fill.gradient_stops
@@ -189,23 +309,35 @@ class ExShape(ApiExampleBase):
         raise NotImplementedError("Unsupported target type System.Console")
 
     def test_fill_theme_color(self):
+        #ExStart
+        #ExFor:Fill.fore_theme_color
+        #ExFor:Fill.back_theme_color
+        #ExFor:Fill.back_tint_and_shade
+        #ExSummary:Shows how to set theme color for foreground/background shape color.
         doc = aw.Document()
         builder = aw.DocumentBuilder(doc)
         shape = builder.insert_shape(shape_type=aw.drawing.ShapeType.ROUND_RECTANGLE, width=80, height=80)
         fill = shape.fill
         fill.fore_theme_color = aw.themes.ThemeColor.DARK1
         fill.back_theme_color = aw.themes.ThemeColor.BACKGROUND2
+
+        # Note: do not use "BackThemeColor" and "BackTintAndShade" for font fill.
         if fill.back_tint_and_shade == 0:
             fill.back_tint_and_shade = 0.2
         doc.save(file_name=ARTIFACTS_DIR + "Shape.FillThemeColor.docx")
+        #ExEnd
 
     def test_fill_tint_and_shade(self):
+        #ExStart
+        #ExFor:Fill.fore_tint_and_shade
+        #ExSummary:Shows how to manage lightening and darkening foreground font color.
         doc = aw.Document(file_name=MY_DIR + "Big document.docx")
         text_fill = doc.first_section.body.first_paragraph.runs[0].font.fill
         text_fill.fore_theme_color = aw.themes.ThemeColor.ACCENT1
         if text_fill.fore_tint_and_shade == 0:
             text_fill.fore_tint_and_shade = 0.5
         doc.save(file_name=ARTIFACTS_DIR + "Shape.FillTintAndShade.docx")
+        #ExEnd
 
     def test_title(self):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
@@ -220,6 +352,19 @@ class ExShape(ApiExampleBase):
         raise NotImplementedError("Unsupported target type System.Collections.Generic.IEnumerable")
 
     def test_get_active_x_control_properties(self):
+        #ExStart
+        #ExFor:OleControl
+        #ExFor:OleControl.is_forms2_ole_control
+        #ExFor:OleControl.name
+        #ExFor:OleFormat.ole_control
+        #ExFor:Forms2OleControl
+        #ExFor:Forms2OleControl.caption
+        #ExFor:Forms2OleControl.value
+        #ExFor:Forms2OleControl.enabled
+        #ExFor:Forms2OleControl.type
+        #ExFor:Forms2OleControl.child_nodes
+        #ExFor:Forms2OleControl.group_name
+        #ExSummary:Shows how to verify the properties of an ActiveX control.
         doc = aw.Document(file_name=MY_DIR + "ActiveX controls.docx")
         shape = doc.get_child(aw.NodeType.SHAPE, 0, True).as_shape()
         ole_control = shape.ole_format.ole_control
@@ -232,7 +377,11 @@ class ExShape(ApiExampleBase):
             self.assertEqual(aw.drawing.ole.Forms2OleControlType.CHECK_BOX, check_box.type)
             self.assertEqual(None, check_box.child_nodes)
             self.assertEqual("", check_box.group_name)
+
+        # Note, that you can't set GroupName for a Frame.
             check_box.group_name = "Aspose group name"
+        #ExEnd
+
         doc.save(file_name=ARTIFACTS_DIR + "Shape.GetActiveXControlProperties.docx")
         doc = aw.Document(file_name=ARTIFACTS_DIR + "Shape.GetActiveXControlProperties.docx")
         shape = doc.get_child(aw.NodeType.SHAPE, 0, True).as_shape()
@@ -293,20 +442,40 @@ class ExShape(ApiExampleBase):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_markup_language_by_default(self):
+        #ExStart
+        #ExFor:ShapeBase.markup_language
+        #ExFor:ShapeBase.size_in_points
+        #ExSummary:Shows how to verify a shape's size and markup language.
         doc = aw.Document()
         builder = aw.DocumentBuilder(doc)
         shape = builder.insert_image(file_name=IMAGE_DIR + "Transparent background logo.png")
         self.assertEqual(aw.drawing.ShapeMarkupLanguage.DML, shape.markup_language)
         self.assertEqual(aspose.pydrawing.SizeF(300, 300), shape.size_in_points)
+        #ExEnd
 
     def test_markup_language_for_different_ms_word_versions(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_stroke(self):
+        #ExStart
+        #ExFor:Stroke
+        #ExFor:Stroke.on
+        #ExFor:Stroke.weight
+        #ExFor:Stroke.join_style
+        #ExFor:Stroke.line_style
+        #ExFor:Stroke.fill
+        #ExFor:ShapeLineStyle
+        #ExSummary:Shows how change stroke properties.
         doc = aw.Document()
         builder = aw.DocumentBuilder(doc)
         shape = builder.insert_shape(shape_type=aw.drawing.ShapeType.RECTANGLE, horz_pos=aw.drawing.RelativeHorizontalPosition.LEFT_MARGIN, left=100, vert_pos=aw.drawing.RelativeVerticalPosition.TOP_MARGIN, top=100, width=200, height=200, wrap_type=aw.drawing.WrapType.NONE)
+
+        # Basic shapes, such as the rectangle, have two visible parts.
+        # 1 -  The fill, which applies to the area within the outline of the shape:
         shape.fill.fore_color = aspose.pydrawing.Color.white
+
+        # 2 -  The stroke, which marks the outline of the shape:
+        # Modify various properties of this shape's stroke.
         stroke = shape.stroke
         stroke.on = True
         stroke.weight = 5
@@ -317,6 +486,8 @@ class ExShape(ApiExampleBase):
         stroke.line_style = aw.drawing.ShapeLineStyle.TRIPLE
         stroke.fill.two_color_gradient(color1=aspose.pydrawing.Color.red, color2=aspose.pydrawing.Color.blue, style=aw.drawing.GradientStyle.VERTICAL, variant=aw.drawing.GradientVariant.VARIANT1)
         doc.save(file_name=ARTIFACTS_DIR + "Shape.Stroke.docx")
+        #ExEnd
+
         doc = aw.Document(file_name=ARTIFACTS_DIR + "Shape.Stroke.docx")
         shape = doc.get_child(aw.NodeType.SHAPE, 0, True).as_shape()
         stroke = shape.stroke
@@ -373,8 +544,12 @@ class ExShape(ApiExampleBase):
     def test_text_box_shape_type(self):
         doc = aw.Document()
         builder = aw.DocumentBuilder(doc)
+
+        # Set compatibility options to correctly using of VerticalAnchor property.
         doc.compatibility_options.optimize_for(aw.settings.MsWordVersion.WORD2016)
         text_box_shape = builder.insert_shape(shape_type=aw.drawing.ShapeType.TEXT_BOX, width=100, height=100)
+        # Not all formats are compatible with this one.
+        # For most of the incompatible formats, AW generated warnings on save, so use doc.WarningCallback to check it.
         text_box_shape.text_box.vertical_anchor = aw.drawing.TextBoxAnchor.BOTTOM
         builder.move_to(text_box_shape.last_paragraph)
         builder.write("Text placed bottom")
@@ -408,58 +583,113 @@ class ExShape(ApiExampleBase):
         raise NotImplementedError("Unsupported target type System.Collections.Generic.IEnumerable")
 
     def test_is_decorative(self):
+        #ExStart
+        #ExFor:ShapeBase.is_decorative
+        #ExSummary:Shows how to set that the shape is decorative.
         doc = aw.Document(file_name=MY_DIR + "Decorative shapes.docx")
         shape = doc.get_child_nodes(aw.NodeType.SHAPE, True)[0].as_shape()
         self.assertTrue(shape.is_decorative)
+
+        # If "AlternativeText" is not empty, the shape cannot be decorative.
+        # That's why our value has changed to 'false'.
         shape.alternative_text = "Alternative text."
         self.assertFalse(shape.is_decorative)
         builder = aw.DocumentBuilder(doc)
         builder.move_to_document_end()
+        # Create a new shape as decorative.
         shape = builder.insert_shape(shape_type=aw.drawing.ShapeType.RECTANGLE, width=100, height=100)
         shape.is_decorative = True
         doc.save(file_name=ARTIFACTS_DIR + "Shape.IsDecorative.docx")
+        #ExEnd
 
     def test_fill_image(self):
         raise NotImplementedError("Unsupported target type System.IO.File")
 
     def test_shadow_format(self):
+        #ExStart
+        #ExFor:ShadowFormat.visible
+        #ExFor:ShadowFormat.clear()
+        #ExFor:ShadowType
+        #ExSummary:Shows how to work with a shadow formatting for the shape.
         doc = aw.Document(file_name=MY_DIR + "Shape stroke pattern border.docx")
         shape = doc.get_child_nodes(aw.NodeType.SHAPE, True)[0].as_shape()
         if shape.shadow_format.visible and shape.shadow_format.type == aw.drawing.ShadowType.SHADOW2:
             shape.shadow_format.type = aw.drawing.ShadowType.SHADOW7
         if shape.shadow_format.type == aw.drawing.ShadowType.SHADOW_MIXED:
             shape.shadow_format.clear()
+        #ExEnd
+        #ExEnd
 
     def test_no_text_rotation(self):
+        #ExStart
+        #ExFor:TextBox.no_text_rotation
+        #ExSummary:Shows how to disable text rotation when the shape is rotate.
         doc = aw.Document()
         builder = aw.DocumentBuilder(doc)
         shape = builder.insert_shape(shape_type=aw.drawing.ShapeType.ELLIPSE, width=20, height=20)
         shape.text_box.no_text_rotation = True
         doc.save(file_name=ARTIFACTS_DIR + "Shape.NoTextRotation.docx")
+        #ExEnd
+
         doc = aw.Document(file_name=ARTIFACTS_DIR + "Shape.NoTextRotation.docx")
         shape = doc.get_child_nodes(aw.NodeType.SHAPE, True)[0].as_shape()
         self.assertEqual(True, shape.text_box.no_text_rotation)
 
     def test_relative_size_and_position(self):
+        #ExStart
+        #ExFor:ShapeBase.relative_horizontal_size
+        #ExFor:ShapeBase.relative_vertical_size
+        #ExFor:ShapeBase.width_relative
+        #ExFor:ShapeBase.height_relative
+        #ExFor:ShapeBase.top_relative
+        #ExFor:ShapeBase.left_relative
+        #ExFor:RelativeHorizontalSize
+        #ExFor:RelativeVerticalSize
+        #ExSummary:Shows how to set relative size and position.
         doc = aw.Document()
         builder = aw.DocumentBuilder(doc)
+
+        # Adding a simple shape with absolute size and position.
         shape = builder.insert_shape(shape_type=aw.drawing.ShapeType.RECTANGLE, width=100, height=40)
+        # Set WrapType to WrapType.None since Inline shapes are automatically converted to absolute units.
         shape.wrap_type = aw.drawing.WrapType.NONE
+
+        # Checking and setting the relative horizontal size.
         if shape.relative_horizontal_size == aw.drawing.RelativeHorizontalSize.DEFAULT:
+        # Setting the horizontal size binding to Margin.
             shape.relative_horizontal_size = aw.drawing.RelativeHorizontalSize.MARGIN
+        # Setting the width to 50% of Margin width.
             shape.width_relative = 50
+
+        # Checking and setting the relative vertical size.
         if shape.relative_vertical_size == aw.drawing.RelativeVerticalSize.DEFAULT:
+        # Setting the vertical size binding to Margin.
             shape.relative_vertical_size = aw.drawing.RelativeVerticalSize.MARGIN
+        # Setting the heigh to 30% of Margin height.
             shape.height_relative = 30
+
+        # Checking and setting the relative vertical position.
         if shape.relative_vertical_position == aw.drawing.RelativeVerticalPosition.PARAGRAPH:
+        # etting the position binding to TopMargin.
             shape.relative_vertical_position = aw.drawing.RelativeVerticalPosition.TOP_MARGIN
+        # Setting relative Top to 30% of TopMargin position.
             shape.top_relative = 30
+
+        # Checking and setting the relative horizontal position.
         if shape.relative_horizontal_position == aw.drawing.RelativeHorizontalPosition.DEFAULT:
+        # Setting the position binding to RightMargin.
             shape.relative_horizontal_position = aw.drawing.RelativeHorizontalPosition.RIGHT_MARGIN
+        # The position relative value can be negative.
             shape.left_relative = -260
         doc.save(file_name=ARTIFACTS_DIR + "Shape.RelativeSizeAndPosition.docx")
+        #ExEnd
 
     def test_fill_base_color(self):
+        #ExStart:FillBaseColor
+        #GistId:3428e84add5beb0d46a8face6e5fc858
+        #ExFor:Fill.base_fore_color
+        #ExFor:Stroke.base_fore_color
+        #ExSummary:Shows how to get foreground color without modifiers.
         doc = aw.Document()
         builder = aw.DocumentBuilder()
         shape = builder.insert_shape(shape_type=aw.drawing.ShapeType.RECTANGLE, width=100, height=40)
@@ -473,16 +703,29 @@ class ExShape(ApiExampleBase):
         self.assertEqual(aspose.pydrawing.Color.green.to_argb(), shape.stroke.base_fore_color.to_argb())
         self.assertEqual(aspose.pydrawing.Color.green.to_argb(), shape.stroke.fill.fore_color.to_argb())
         self.assertEqual(aspose.pydrawing.Color.green.to_argb(), shape.stroke.fill.base_fore_color.to_argb())
+        #ExEnd:FillBaseColor
 
     def test_fit_image_to_shape(self):
+        #ExStart:FitImageToShape
+        #GistId:3428e84add5beb0d46a8face6e5fc858
+        #ExFor:ImageData.fit_image_to_shape
+        #ExSummary:Shows hot to fit the image data to Shape frame.
         doc = aw.Document()
         builder = aw.DocumentBuilder(doc)
+
+        # Insert an image shape and leave its orientation in its default state.
         shape = builder.insert_shape(shape_type=aw.drawing.ShapeType.RECTANGLE, width=300, height=450)
         shape.image_data.set_image(file_name=IMAGE_DIR + "Barcode.png")
         shape.image_data.fit_image_to_shape()
         doc.save(file_name=ARTIFACTS_DIR + "Shape.FitImageToShape.docx")
+        #ExEnd:FitImageToShape
 
     def test_stroke_fore_theme_colors(self):
+        #ExStart:StrokeForeThemeColors
+        #GistId:eeeec1fbf118e95e7df3f346c91ed726
+        #ExFor:Stroke.fore_theme_color
+        #ExFor:Stroke.fore_tint_and_shade
+        #ExSummary:Shows how to set fore theme color and tint and shade.
         doc = aw.Document()
         builder = aw.DocumentBuilder(doc)
         shape = builder.insert_shape(shape_type=aw.drawing.ShapeType.TEXT_BOX, width=100, height=40)
@@ -490,18 +733,27 @@ class ExShape(ApiExampleBase):
         stroke.fore_theme_color = aw.themes.ThemeColor.DARK1
         stroke.fore_tint_and_shade = 0.5
         doc.save(file_name=ARTIFACTS_DIR + "Shape.StrokeForeThemeColors.docx")
+        #ExEnd:StrokeForeThemeColors
+
         doc = aw.Document(file_name=ARTIFACTS_DIR + "Shape.StrokeForeThemeColors.docx")
         shape = doc.get_child(aw.NodeType.SHAPE, 0, True).as_shape()
         self.assertEqual(aw.themes.ThemeColor.DARK1, shape.stroke.fore_theme_color)
         self.assertEqual(0.5, shape.stroke.fore_tint_and_shade)
 
     def test_stroke_back_theme_colors(self):
+        #ExStart:StrokeBackThemeColors
+        #GistId:eeeec1fbf118e95e7df3f346c91ed726
+        #ExFor:Stroke.back_theme_color
+        #ExFor:Stroke.back_tint_and_shade
+        #ExSummary:Shows how to set back theme color and tint and shade.
         doc = aw.Document(file_name=MY_DIR + "Stroke gradient outline.docx")
         shape = doc.get_child(aw.NodeType.SHAPE, 0, True).as_shape()
         stroke = shape.stroke
         stroke.back_theme_color = aw.themes.ThemeColor.DARK2
         stroke.back_tint_and_shade = 0.2
         doc.save(file_name=ARTIFACTS_DIR + "Shape.StrokeBackThemeColors.docx")
+        #ExEnd:StrokeBackThemeColors
+
         doc = aw.Document(file_name=ARTIFACTS_DIR + "Shape.StrokeBackThemeColors.docx")
         shape = doc.get_child(aw.NodeType.SHAPE, 0, True).as_shape()
         self.assertEqual(aw.themes.ThemeColor.DARK2, shape.stroke.back_theme_color)
@@ -509,9 +761,71 @@ class ExShape(ApiExampleBase):
         self.assertAlmostEqual(0.2, shape.stroke.back_tint_and_shade, delta=precision)
 
     def test_text_box_ole_control(self):
+        #ExStart:TextBoxOleControl
+        #GistId:eeeec1fbf118e95e7df3f346c91ed726
+        #ExFor:TextBoxControl
+        #ExFor:TextBoxControl.text
+        #ExSummary:Shows how to change text of the TextBox OLE control.
         doc = aw.Document(file_name=MY_DIR + "Textbox control.docm")
         shape = doc.get_child(aw.NodeType.SHAPE, 0, True).as_shape()
         text_box_control = shape.ole_format.ole_control.as_text_box_control()
         self.assertEqual("Aspose.Words test", text_box_control.text)
         text_box_control.text = "Updated text"
         self.assertEqual("Updated text", text_box_control.text)
+        #ExEnd:TextBoxOleControl
+
+    def test_glow(self):
+        #ExStart:Glow
+        #GistId:5f20ac02cb42c6b08481aa1c5b0cd3db
+        #ExFor:ShapeBase.glow
+        #ExFor:GlowFormat.color
+        #ExFor:GlowFormat.radius
+        #ExFor:GlowFormat.transparency
+        #ExFor:GlowFormat.remove()
+        #ExSummary:Shows how to interact with glow shape effect.
+        doc = aw.Document(file_name=MY_DIR + "Various shapes.docx")
+        shape = doc.get_child(aw.NodeType.SHAPE, 0, True).as_shape()
+        shape.glow.color = aspose.pydrawing.Color.salmon
+        shape.glow.radius = 30
+        shape.glow.transparency = 0.15
+        doc.save(file_name=ARTIFACTS_DIR + "Shape.Glow.docx")
+        doc = aw.Document(file_name=ARTIFACTS_DIR + "Shape.Glow.docx")
+        shape = doc.get_child(aw.NodeType.SHAPE, 0, True).as_shape()
+        self.assertEqual(aspose.pydrawing.Color.from_argb(217, 250, 128, 114).to_argb(), shape.glow.color.to_argb())
+        self.assertEqual(30, shape.glow.radius)
+        self.assertAlmostEqual(0.15, shape.glow.transparency, delta=0.01)
+        shape.glow.remove()
+        self.assertEqual(aspose.pydrawing.Color.black.to_argb(), shape.glow.color.to_argb())
+        self.assertEqual(0, shape.glow.radius)
+        self.assertEqual(0, shape.glow.transparency)
+        #ExEnd:Glow
+
+    def test_reflection(self):
+        #ExStart:Reflection
+        #GistId:5f20ac02cb42c6b08481aa1c5b0cd3db
+        #ExFor:ShapeBase.reflection
+        #ExFor:ReflectionFormat.size
+        #ExFor:ReflectionFormat.blur
+        #ExFor:ReflectionFormat.transparency
+        #ExFor:ReflectionFormat.distance
+        #ExFor:ReflectionFormat.remove()
+        #ExSummary:Shows how to interact with reflection shape effect.
+        doc = aw.Document(file_name=MY_DIR + "Various shapes.docx")
+        shape = doc.get_child(aw.NodeType.SHAPE, 0, True).as_shape()
+        shape.reflection.transparency = 0.37
+        shape.reflection.size = 0.48
+        shape.reflection.blur = 17.5
+        shape.reflection.distance = 9.2
+        doc.save(file_name=ARTIFACTS_DIR + "Shape.Reflection.docx")
+        doc = aw.Document(file_name=ARTIFACTS_DIR + "Shape.Reflection.docx")
+        shape = doc.get_child(aw.NodeType.SHAPE, 0, True).as_shape()
+        self.assertAlmostEqual(0.37, shape.reflection.transparency, delta=0.01)
+        self.assertAlmostEqual(0.48, shape.reflection.size, delta=0.01)
+        self.assertAlmostEqual(17.5, shape.reflection.blur, delta=0.01)
+        self.assertAlmostEqual(9.2, shape.reflection.distance, delta=0.01)
+        shape.reflection.remove()
+        self.assertEqual(0, shape.reflection.transparency)
+        self.assertEqual(0, shape.reflection.size)
+        self.assertEqual(0, shape.reflection.blur)
+        self.assertEqual(0, shape.reflection.distance)
+        #ExEnd:Reflection

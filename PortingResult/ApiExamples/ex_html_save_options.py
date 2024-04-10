@@ -1,4 +1,13 @@
 # -*- coding: utf-8 -*-
+
+# Copyright (c) 2001-2024 Aspose Pty Ltd. All Rights Reserved.
+#
+# This file is part of Aspose.Words. The source code in this file
+# is only intended as a supplement to the documentation, and is provided
+# "as is", without warranty of any kind, either expressed or implied.
+#####################################
+
+
 import aspose.words as aw
 import aspose.words.saving
 import unittest
@@ -13,16 +22,24 @@ class ExHtmlSaveOptions(ApiExampleBase):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_create_azw_3_toc(self):
+        #ExStart
+        #ExFor:HtmlSaveOptions.navigation_map_level
+        #ExSummary:Shows how to generate table of contents for Azw3 documents.
         doc = aw.Document(file_name=MY_DIR + "Big document.docx")
         options = aw.saving.HtmlSaveOptions(aw.SaveFormat.AZW3)
         options.navigation_map_level = 2
         doc.save(file_name=ARTIFACTS_DIR + "HtmlSaveOptions.CreateAZW3Toc.azw3", save_options=options)
+        #ExEnd
 
     def test_create_mobi_toc(self):
+        #ExStart
+        #ExFor:HtmlSaveOptions.navigation_map_level
+        #ExSummary:Shows how to generate table of contents for Mobi documents.
         doc = aw.Document(file_name=MY_DIR + "Big document.docx")
         options = aw.saving.HtmlSaveOptions(aw.SaveFormat.MOBI)
         options.navigation_map_level = 5
         doc.save(file_name=ARTIFACTS_DIR + "HtmlSaveOptions.CreateMobiToc.mobi", save_options=options)
+        #ExEnd
 
     def test_control_list_labels_export(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
@@ -119,8 +136,15 @@ class ExHtmlSaveOptions(ApiExampleBase):
         doc.save(file_name=ARTIFACTS_DIR + "HtmlSaveOptions.ContentIdScheme.mhtml", save_options=save_options)
 
     def test_heading_levels(self):
+        #ExStart
+        #ExFor:HtmlSaveOptions.document_split_heading_level
+        #ExSummary:Shows how to split an output HTML document by headings into several parts.
         doc = aw.Document()
         builder = aw.DocumentBuilder(doc)
+
+        # Every paragraph that we format using a "Heading" style can serve as a heading.
+        # Each heading may also have a heading level, determined by the number of its heading style.
+        # The headings below are of levels 1-3.
         builder.paragraph_format.style = builder.document.styles.get_by_name("Heading 1")
         builder.writeln("Heading #1")
         builder.paragraph_format.style = builder.document.styles.get_by_name("Heading 2")
@@ -133,9 +157,19 @@ class ExHtmlSaveOptions(ApiExampleBase):
         builder.writeln("Heading #5")
         builder.paragraph_format.style = builder.document.styles.get_by_name("Heading 3")
         builder.writeln("Heading #6")
+
+        # Create a HtmlSaveOptions object and set the split criteria to "HeadingParagraph".
+        # These criteria will split the document at paragraphs with "Heading" styles into several smaller documents,
+        # and save each document in a separate HTML file in the local file system.
+        # We will also set the maximum heading level, which splits the document to 2.
+        # Saving the document will split it at headings of levels 1 and 2, but not at 3 to 9.
         options = aw.saving.HtmlSaveOptions()
         options.document_split_criteria = aw.saving.DocumentSplitCriteria.HEADING_PARAGRAPH
         options.document_split_heading_level = 2
+
+        # Our document has four headings of levels 1 - 2. One of those headings will not be
+        # a split point since it is at the beginning of the document.
+        # The saving operation will split our document at three places, into four smaller documents.
         doc.save(file_name=ARTIFACTS_DIR + "HtmlSaveOptions.HeadingLevels.html", save_options=options)
         doc = aw.Document(file_name=ARTIFACTS_DIR + "HtmlSaveOptions.HeadingLevels.html")
         self.assertEqual("Heading #1", doc.get_text().strip())
@@ -145,11 +179,21 @@ class ExHtmlSaveOptions(ApiExampleBase):
         self.assertEqual("Heading #4", doc.get_text().strip())
         doc = aw.Document(file_name=ARTIFACTS_DIR + "HtmlSaveOptions.HeadingLevels-03.html")
         self.assertEqual("Heading #5\r" + "Heading #6", doc.get_text().strip())
+        #ExEnd
 
     def test_negative_indent(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_folder_alias(self):
+        #ExStart
+        #ExFor:HtmlSaveOptions.export_original_url_for_linked_images
+        #ExFor:HtmlSaveOptions.fonts_folder
+        #ExFor:HtmlSaveOptions.fonts_folder_alias
+        #ExFor:HtmlSaveOptions.image_resolution
+        #ExFor:HtmlSaveOptions.images_folder_alias
+        #ExFor:HtmlSaveOptions.resource_folder
+        #ExFor:HtmlSaveOptions.resource_folder_alias
+        #ExSummary:Shows how to set folders and folder aliases for externally saved resources that Aspose.Words will create when saving a document to HTML.
         doc = aw.Document(file_name=MY_DIR + "Rendering.docx")
         options = aw.saving.HtmlSaveOptions()
         options.css_style_sheet_type = aw.saving.CssStyleSheetType.EXTERNAL
@@ -164,6 +208,7 @@ class ExHtmlSaveOptions(ApiExampleBase):
         options.resource_folder_alias = "http://example.com/resources"
         options.export_original_url_for_linked_images = True
         doc.save(file_name=ARTIFACTS_DIR + "HtmlSaveOptions.FolderAlias.html", save_options=options)
+        #ExEnd
 
     def test_html_versions(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
@@ -184,12 +229,17 @@ class ExHtmlSaveOptions(ApiExampleBase):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_export_fonts_as_base64(self):
+        #ExStart
+        #ExFor:HtmlSaveOptions.export_fonts_as_base64
+        #ExFor:HtmlSaveOptions.export_images_as_base64
+        #ExSummary:Shows how to embed fonts inside a saved HTML document.
         doc = aw.Document(file_name=MY_DIR + "Rendering.docx")
         options = aw.saving.HtmlSaveOptions()
         options.export_fonts_as_base64 = True
         options.css_style_sheet_type = aw.saving.CssStyleSheetType.EMBEDDED
         options.pretty_format = True
         doc.save(file_name=ARTIFACTS_DIR + "HtmlSaveOptions.ExportFontsAsBase64.html", save_options=options)
+        #ExEnd
 
     def test_export_language_information(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
@@ -213,4 +263,7 @@ class ExHtmlSaveOptions(ApiExampleBase):
         raise NotImplementedError("Unsupported target type System.IO.Path")
 
     def test_pretty_format(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_mobi_azw_3_default_encoding(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")

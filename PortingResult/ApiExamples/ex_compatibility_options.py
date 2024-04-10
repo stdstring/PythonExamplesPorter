@@ -1,4 +1,13 @@
 # -*- coding: utf-8 -*-
+
+# Copyright (c) 2001-2024 Aspose Pty Ltd. All Rights Reserved.
+#
+# This file is part of Aspose.Words. The source code in this file
+# is only intended as a supplement to the documentation, and is provided
+# "as is", without warranty of any kind, either expressed or implied.
+#####################################
+
+
 import aspose.words as aw
 import aspose.words.settings
 import unittest
@@ -31,6 +40,9 @@ class ExCompatibilityOptions(ApiExampleBase):
         self.assertEqual(False, compatibility_options.use_single_borderfor_contiguous_cells)
         self.assertEqual(True, compatibility_options.use_word2002_table_style_rules)
         self.assertEqual(False, compatibility_options.use_word2010_table_style_rules)
+
+        # In the output document, these settings can be accessed in Microsoft Word via
+        # File -> Options -> Advanced -> Compatibility options for...
         doc.save(file_name=ARTIFACTS_DIR + "CompatibilityOptions.Tables.docx")
 
     def test_breaks(self):
@@ -43,6 +55,9 @@ class ExCompatibilityOptions(ApiExampleBase):
         self.assertEqual(True, compatibility_options.split_pg_break_and_para_mark)
         self.assertEqual(True, compatibility_options.use_alt_kinsoku_line_break_rules)
         self.assertEqual(False, compatibility_options.use_word97_line_break_rules)
+
+        # In the output document, these settings can be accessed in Microsoft Word via
+        # File -> Options -> Advanced -> Compatibility options for...
         doc.save(file_name=ARTIFACTS_DIR + "CompatibilityOptions.Breaks.docx")
 
     def test_spacing(self):
@@ -61,6 +76,9 @@ class ExCompatibilityOptions(ApiExampleBase):
         self.assertEqual(False, compatibility_options.suppress_spacing_at_top_of_page)
         self.assertEqual(False, compatibility_options.suppress_top_spacing)
         self.assertEqual(False, compatibility_options.ul_trail_space)
+
+        # In the output document, these settings can be accessed in Microsoft Word via
+        # File -> Options -> Advanced -> Compatibility options for...
         doc.save(file_name=ARTIFACTS_DIR + "CompatibilityOptions.Spacing.docx")
 
     def test_word_perfect(self):
@@ -72,6 +90,9 @@ class ExCompatibilityOptions(ApiExampleBase):
         self.assertEqual(False, compatibility_options.wp_justification)
         self.assertEqual(False, compatibility_options.wp_space_width)
         self.assertEqual(False, compatibility_options.wrap_trail_spaces)
+
+        # In the output document, these settings can be accessed in Microsoft Word via
+        # File -> Options -> Advanced -> Compatibility options for...
         doc.save(file_name=ARTIFACTS_DIR + "CompatibilityOptions.WordPerfect.docx")
 
     def test_alignment(self):
@@ -82,6 +103,9 @@ class ExCompatibilityOptions(ApiExampleBase):
         self.assertEqual(True, compatibility_options.do_not_vert_align_in_txbx)
         self.assertEqual(True, compatibility_options.do_not_wrap_text_with_punct)
         self.assertEqual(False, compatibility_options.no_tab_hang_ind)
+
+        # In the output document, these settings can be accessed in Microsoft Word via
+        # File -> Options -> Advanced -> Compatibility options for...
         doc.save(file_name=ARTIFACTS_DIR + "CompatibilityOptions.Alignment.docx")
 
     def test_legacy(self):
@@ -93,6 +117,9 @@ class ExCompatibilityOptions(ApiExampleBase):
         self.assertEqual(False, compatibility_options.mw_small_caps)
         self.assertEqual(False, compatibility_options.shape_layout_like_ww8)
         self.assertEqual(False, compatibility_options.ui_compat_97_to_2003)
+
+        # In the output document, these settings can be accessed in Microsoft Word via
+        # File -> Options -> Advanced -> Compatibility options for...
         doc.save(file_name=ARTIFACTS_DIR + "CompatibilityOptions.Legacy.docx")
 
     def test_list(self):
@@ -101,6 +128,9 @@ class ExCompatibilityOptions(ApiExampleBase):
         compatibility_options.optimize_for(aw.settings.MsWordVersion.WORD2000)
         self.assertEqual(True, compatibility_options.underline_tab_in_num_list)
         self.assertEqual(True, compatibility_options.use_normal_style_for_list)
+
+        # In the output document, these settings can be accessed in Microsoft Word via
+        # File -> Options -> Advanced -> Compatibility options for...
         doc.save(file_name=ARTIFACTS_DIR + "CompatibilityOptions.List.docx")
 
     def test_misc(self):
@@ -122,4 +152,7 @@ class ExCompatibilityOptions(ApiExampleBase):
         self.assertEqual(True, compatibility_options.use_ansi_kerning_pairs)
         self.assertEqual(False, compatibility_options.use_fe_layout)
         self.assertEqual(False, compatibility_options.use_printer_metrics)
+
+        # In the output document, these settings can be accessed in Microsoft Word via
+        # File -> Options -> Advanced -> Compatibility options for...
         doc.save(file_name=ARTIFACTS_DIR + "CompatibilityOptions.Misc.docx")

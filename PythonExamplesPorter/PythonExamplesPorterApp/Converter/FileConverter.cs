@@ -1,4 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
+using PythonExamplesPorterApp.Comments;
 using PythonExamplesPorterApp.Common;
 using PythonExamplesPorterApp.Config;
 using PythonExamplesPorterApp.DestStorage;
@@ -19,7 +20,10 @@ namespace PythonExamplesPorterApp.Converter
             String destPath = Path.Combine(destDirectory, destRelativePath);
             FileStorage currentFile = new FileStorage(destPath);
             FileConverterVisitor converter = new FileConverterVisitor(model, currentFile, _appData);
-            converter.Visit(tree.GetRoot());
+            SyntaxNode root = tree.GetRoot();
+            CommentsProcessor commentsProcessor = new CommentsProcessor(_appData.NameTransformer);
+            currentFile.AppendHeaderData(commentsProcessor.Process(CommentsExtractor.ExtractComments(root)));
+            converter.Visit(root);
             if (currentFile.IsEmpty())
                 return;
             currentFile.Save();

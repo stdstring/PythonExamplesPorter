@@ -7,7 +7,7 @@
             return !source.Any();
         }
 
-        public static Boolean IsEmpty<TElement>(this IList<TElement> source)
+        public static Boolean IsEmpty<TElement>(this ICollection<TElement> source)
         {
             return source.Count == 0;
         }

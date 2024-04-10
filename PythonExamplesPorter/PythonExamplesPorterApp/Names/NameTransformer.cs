@@ -38,7 +38,7 @@ namespace PythonExamplesPorterApp.Names
         {
             OperationResult<String> handmadeResult = _manager.Search(typeName, propertyName);
             return handmadeResult.Success
-            ? handmadeResult.Data!
+                ? handmadeResult.Data!
                 : _transformStrategy.ConvertPascalCaseIntoSnakeCase(propertyName);
         }
 

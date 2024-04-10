@@ -15,6 +15,8 @@
             <Directory>obj</Directory>
         </Directories>
         <Files>
+            <!-- handmade -->
+            <File>ApiExampleBase.cs</File>
             <!-- ignored (not ported) -->
             <File>ExDocumentVisitor.cs</File>
             <File>ExMailMerge.cs</File>

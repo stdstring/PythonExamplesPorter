@@ -1,4 +1,13 @@
 # -*- coding: utf-8 -*-
+
+# Copyright (c) 2001-2024 Aspose Pty Ltd. All Rights Reserved.
+#
+# This file is part of Aspose.Words. The source code in this file
+# is only intended as a supplement to the documentation, and is provided
+# "as is", without warranty of any kind, either expressed or implied.
+#####################################
+
+
 import aspose.words as aw
 import aspose.words.digitalsignatures
 import aspose.words.loading
@@ -31,3 +40,14 @@ class ExHtmlLoadOptions(ApiExampleBase):
 
     def test_block_import(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_font_face_rules(self):
+        #ExStart:FontFaceRules
+        #GistId:5f20ac02cb42c6b08481aa1c5b0cd3db
+        #ExFor:HtmlLoadOptions.support_font_face_rules
+        #ExSummary:Shows how to load declared "@font-face" rules.
+        load_options = aw.loading.HtmlLoadOptions()
+        load_options.support_font_face_rules = True
+        doc = aw.Document(file_name=MY_DIR + "Html with FontFace.html", load_options=load_options)
+        self.assertEqual("Squarish Sans CT Regular", doc.font_infos[0].name)
+        #ExEnd:FontFaceRules

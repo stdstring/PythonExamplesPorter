@@ -2,6 +2,7 @@
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using PythonExamplesPorterApp.Checker;
+using PythonExamplesPorterApp.Comments;
 using PythonExamplesPorterApp.Common;
 using PythonExamplesPorterApp.DestStorage;
 using PythonExamplesPorterApp.Expressions;
@@ -191,7 +192,15 @@ namespace PythonExamplesPorterApp.Converter
             };
             if (!knownStatements.Contains(statement.Kind()))
                 throw new UnsupportedSyntaxException($"Unsupported statement type: {statement.Kind()}");
+            CommentsProcessor commentsProcessor = new CommentsProcessor(_appData.NameTransformer);
+            _currentMethod.AddBodyLines(commentsProcessor.Process(CommentsExtractor.ExtractComments(statement)));
             Visit(statement);
+            // TODO (std_string) : think about case when one line of C# code translates into more than one line in python code
+            // TODO (std_string) : think about case of complex - etc. comment after 'if' clause
+            _currentMethod.SetLineTrailingData(commentsProcessor.Process(CommentsExtractor.ExtractTrailingComment(statement)));
+            SyntaxToken nextToken = statement.GetLastToken().GetNextToken();
+            if (nextToken.IsKind(SyntaxKind.CloseBraceToken))
+                _currentMethod.AddBodyLines(commentsProcessor.Process(CommentsExtractor.ExtractComments(nextToken)));
             if (indent)
                 _indentation -= StorageDef.IndentationDelta;
         }
