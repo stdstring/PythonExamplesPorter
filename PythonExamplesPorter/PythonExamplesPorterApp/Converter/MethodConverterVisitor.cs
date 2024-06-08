@@ -34,11 +34,11 @@ namespace PythonExamplesPorterApp.Converter
             {
                 case var attributes when attributes.ContainAttribute(_model, "NUnit.Framework.TestAttribute"):
                     _appData.Logger.LogInfo($"{logHead} processed");
-                    GenerateTestMethodDeclaration(node, methodStorage);
+                    GenerateTestMethodDeclaration(node, parent, methodStorage);
                     break;
                 case var attributes when attributes.ContainAttribute(_model, "NUnit.Framework.TestCaseAttribute"):
                     _appData.Logger.LogInfo($"{logHead} processed");
-                    GenerateTestCaseMethodDeclaration(node, methodStorage);
+                    GenerateTestCaseMethodDeclaration(node, parent, methodStorage);
                     break;
                 default:
                     throw new InvalidOperationException("Unexpected control flow of processing test methods");
@@ -95,9 +95,16 @@ namespace PythonExamplesPorterApp.Converter
             return true;
         }
 
-        private void GenerateTestMethodDeclaration(MethodDeclarationSyntax node, MethodStorage methodStorage)
+        private void GenerateTestMethodDeclaration(MethodDeclarationSyntax node, ISymbol parent, MethodStorage methodStorage)
         {
+            String parentFullName = parent.ToDisplayString();
             String methodName = node.Identifier.Text;
+            if (_appData.IgnoredManager.IsIgnoredMethodBody($"{parentFullName}.{methodName}"))
+            {
+                _appData.Logger.LogInfo($"Ignored {methodName} method body");
+                methodStorage.SetError("ignored method body");
+                return;
+            }
             if (node.Body == null)
             {
                 _appData.Logger.LogError($"Bad {methodName} method: absence of body");
@@ -116,9 +123,16 @@ namespace PythonExamplesPorterApp.Converter
             }
         }
 
-        private void GenerateTestCaseMethodDeclaration(MethodDeclarationSyntax node, MethodStorage methodStorage)
+        private void GenerateTestCaseMethodDeclaration(MethodDeclarationSyntax node, ISymbol parent, MethodStorage methodStorage)
         {
+            String parentFullName = parent.ToDisplayString();
             String methodName = node.Identifier.Text;
+            if (_appData.IgnoredManager.IsIgnoredMethodBody($"{parentFullName}.{methodName}"))
+            {
+                _appData.Logger.LogInfo($"Ignored {methodName} method body");
+                methodStorage.SetError("ignored method body");
+                return;
+            }
             switch (node.Body)
             {
                 case null:

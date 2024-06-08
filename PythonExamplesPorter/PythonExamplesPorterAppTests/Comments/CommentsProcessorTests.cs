@@ -14,7 +14,7 @@ namespace PythonExamplesPorterAppTests.Comments
             _nameTransformer = new NameTransformer(transformStrategy, manager);
         }
 
-        [TestCase("", "")]
+        [TestCase("", null)]
         [TestCase("//", "#")]
         [TestCase("////////", "####")]
         [TestCase("// Some simple comment", "# Some simple comment")]
@@ -41,9 +41,9 @@ namespace PythonExamplesPorterAppTests.Comments
         [TestCase("//ExFor:OtherType.HRef", "#ExFor:OtherType.href")]
         [TestCase("//ExFor:OtherType.CreateDocument", "#ExFor:OtherType.create_document")]
         [TestCase("//ExFor:OtherType.CreateDocument(int)", "#ExFor:OtherType.create_document(int)")]
-        [TestCase("//ExFor:OtherType.CreateDocument(int,string)", "#ExFor:OtherType.create_document(int,string)")]
-        [TestCase("//ExFor:OtherType.CreateDocument(int,string,char)", "#ExFor:OtherType.create_document(int,string,string)")]
-        [TestCase("//ExFor:OtherType.CreateDocument(int,string,char,Document)", "#ExFor:OtherType.create_document(int,string,string,Document)")]
+        [TestCase("//ExFor:OtherType.CreateDocument(int,string)", "#ExFor:OtherType.create_document(int,str)")]
+        [TestCase("//ExFor:OtherType.CreateDocument(int,string,char)", "#ExFor:OtherType.create_document(int,str,str)")]
+        [TestCase("//ExFor:OtherType.CreateDocument(int,string,char,Document)", "#ExFor:OtherType.create_document(int,str,str,Document)")]
         [TestCase("//ExFor:OtherType.SomeMethod()", "#ExFor:OtherType.some_method()")]
         [TestCase("//ExFor:OtherType.SomeMethod(bool,Boolean,System.Boolean)", "#ExFor:OtherType.some_method(bool,bool,bool)")]
         [TestCase("//ExFor:OtherType.SomeMethod(long,Int64,System.Int64)", "#ExFor:OtherType.some_method(int,int,int)")]
@@ -59,24 +59,24 @@ namespace PythonExamplesPorterAppTests.Comments
         [TestCase("//ExFor:OtherType.SomeMethod(float,Single,System.Single)", "#ExFor:OtherType.some_method(float,float,float)")]
         [TestCase("//ExFor:OtherType.SomeMethod(double,Double,System.Double)", "#ExFor:OtherType.some_method(float,float,float)")]
         [TestCase("//ExFor:OtherType.SomeMethod(decimal,Decimal,System.Decimal)", "#ExFor:OtherType.some_method(float,float,float)")]
-        [TestCase("//ExFor:OtherType.SomeMethod(char,Char,System.Char)", "#ExFor:OtherType.some_method(string,string,string)")]
-        [TestCase("//ExFor:OtherType.SomeMethod(string,String,System.String)", "#ExFor:OtherType.some_method(string,string,string)")]
+        [TestCase("//ExFor:OtherType.SomeMethod(char,Char,System.Char)", "#ExFor:OtherType.some_method(str,str,str)")]
+        [TestCase("//ExFor:OtherType.SomeMethod(string,String,System.String)", "#ExFor:OtherType.some_method(str,str,str)")]
         [TestCase("//ExFor:OtherType.SomeMethod(DateTime,System.DateTime)", "#ExFor:OtherType.some_method(datetime,datetime)")]
         [TestCase("//ExFor:OtherType.SomeMethod(object,Object,System.Object)", "#ExFor:OtherType.some_method(object,object,object)")]
-        [TestCase("//ExFor:OtherType.SomeMethod(byte[],int[],double[],string[],Document[])", "#ExFor:OtherType.some_method(bytes,List[int],List[float],List[string],List[Document])")]
+        [TestCase("//ExFor:OtherType.SomeMethod(byte[],int[],double[],string[],Document[])", "#ExFor:OtherType.some_method(bytes,List[int],List[float],List[str],List[Document])")]
         [TestCase("//ExFor:CompositeNode.RemoveChild``1(``0)", "#ExFor:CompositeNode.remove_child")]
         [TestCase("//ExFor:CompositeNode.InsertAfter``1(``0, Node)", "#ExFor:CompositeNode.insert_after")]
         [TestCase("//ExFor:CompositeNode.InsertAfter``1(Node, ``0)", "#ExFor:CompositeNode.insert_after")]
         [TestCase("//ExFor:BaseWebExtensionCollection`1.Remove(Int32)", "#ExFor:BaseWebExtensionCollection.remove")]
         [TestCase("//ExFor:OtherType.#ctor", "#ExFor:OtherType.__init__")]
         [TestCase("//ExFor:OtherType.#ctor()", "#ExFor:OtherType.__init__()")]
-        [TestCase("//ExFor:OtherType.#ctor(int,string)", "#ExFor:OtherType.__init__(int,string)")]
+        [TestCase("//ExFor:OtherType.#ctor(int,string)", "#ExFor:OtherType.__init__(int,str)")]
         [TestCase("//ExFor:OtherType.Item", "#ExFor:OtherType.__getitem__")]
         [TestCase("//ExFor:OtherType.Item(int)", "#ExFor:OtherType.__getitem__(int)")]
         [TestCase("//ExFor:OtherType.GetEnumerator", "#ExFor:OtherType.__iter__")]
         [TestCase("//ExFor:OtherType.Equals", "#ExFor:OtherType.__eq__")]
         [TestCase("//ExFor:OtherType.Equals(Int32)", "#ExFor:OtherType.__eq__(int)")]
-        [TestCase("//ExFor:OtherType.GetHashCode", "#ExFor:OtherType.get_hash_code")]
+        [TestCase("//ExFor:OtherType.GetHashCode", "#ExFor:OtherType.__hash__")]
         [TestCase("//ExFor:OtherType.ToString", "#ExFor:OtherType.__str__")]
         [TestCase("//ExFor:SomeType.SomeProperty", "#ExFor:SomeType.prop666")]
         [TestCase("//ExFor:SomeType.SomeMethod()", "#ExFor:SomeType.do_it999()")]
@@ -85,7 +85,7 @@ namespace PythonExamplesPorterAppTests.Comments
         [TestCase("//ExFor:SomeType.SomeGenericMethod``1(``0)", "#ExFor:SomeType.make_work")]
         [TestCase("//ExFor:SomeType.SomeGenericMethod``1(``0,int)", "#ExFor:SomeType.make_work")]
         [TestCase("//ExFor: OtherType", "#ExFor:OtherType")]
-        public void ProcessComment(String source, String expected)
+        public void ProcessComment(String source, String? expected)
         {
             CommentsProcessor commentsProcessor = new CommentsProcessor(_nameTransformer);
             Assert.AreEqual(expected, commentsProcessor.Process(source));

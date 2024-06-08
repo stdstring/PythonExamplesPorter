@@ -47,32 +47,30 @@ namespace PythonExamplesPorterApp.ExternalEntities
                 case null:
                     return new OperationResult<MemberResolveData>(false, $"Unrecognizable member {name.Identifier} for type {sourceTypeFullName}");
                 case IMethodSymbol methodSymbol:
-                    {
-                        String methodName = _appData.NameTransformer.TransformMethodName(sourceTypeFullName, methodSymbol.Name);
-                        String args = String.Join(", ", representation.Arguments.GetArguments(true));
-                        String methodCall = String.Concat(representation.Target, ".", methodName, "(", args, ")");
-                        MemberResolveData resolveData = new MemberResolveData(methodCall);
-                        return new OperationResult<MemberResolveData>(true, "", resolveData);
-                    }
+                {
+                    String methodCall = this.GetMethodCall(sourceTypeFullName, representation, methodSymbol);
+                    MemberResolveData resolveData = new MemberResolveData(methodCall);
+                    return new OperationResult<MemberResolveData>(true, "", resolveData);
+                }
                 case IPropertySymbol propertySymbol:
-                    {
-                        String propertyName = _appData.NameTransformer.TransformPropertyName(sourceTypeFullName, propertySymbol.Name);
-                        String propertyCall = $"{representation.Target}.{propertyName}";
-                        MemberResolveData resolveData = new MemberResolveData(propertyCall);
-                        return new OperationResult<MemberResolveData>(true, "", resolveData);
-                    }
+                {
+                    String propertyName = _appData.NameTransformer.TransformPropertyName(sourceTypeFullName, propertySymbol.Name);
+                    String propertyCall = $"{representation.Target}.{propertyName}";
+                    MemberResolveData resolveData = new MemberResolveData(propertyCall);
+                    return new OperationResult<MemberResolveData>(true, "", resolveData);
+                }
                 case IFieldSymbol {IsStatic: var isStatic, IsReadOnly: var isReadOnly, Type.TypeKind: var typeKind} fieldSymbol:
+                {
+                    String fieldName = typeKind switch
                     {
-                        String fieldName = typeKind switch
-                        {
-                            TypeKind.Enum => _appData.NameTransformer.TransformEnumValueName(sourceTypeFullName, fieldSymbol.Name),
-                            _ when isStatic && isReadOnly => _appData.NameTransformer.TransformStaticReadonlyFieldName(sourceTypeFullName, fieldSymbol.Name),
-                            _ => _appData.NameTransformer.TransformFieldName(sourceTypeFullName, fieldSymbol.Name)
-                        };
-                        String fieldCall = $"{representation.Target}.{fieldName}";
-                        MemberResolveData resolveData = new MemberResolveData(fieldCall);
-                        return new OperationResult<MemberResolveData>(true, "", resolveData);
-                    }
+                        TypeKind.Enum => _appData.NameTransformer.TransformEnumValueName(sourceTypeFullName, fieldSymbol.Name),
+                        _ when isStatic && isReadOnly => _appData.NameTransformer.TransformStaticReadonlyFieldName(sourceTypeFullName, fieldSymbol.Name),
+                        _ => _appData.NameTransformer.TransformFieldName(sourceTypeFullName, fieldSymbol.Name)
+                    };
+                    String fieldCall = $"{representation.Target}.{fieldName}";
+                    MemberResolveData resolveData = new MemberResolveData(fieldCall);
+                    return new OperationResult<MemberResolveData>(true, "", resolveData);
+                }
             }
             return new OperationResult<MemberResolveData>(false, $"Unsupported member {name.Identifier} for type {sourceTypeFullName}");
         }
@@ -89,6 +87,21 @@ namespace PythonExamplesPorterApp.ExternalEntities
             String castMethod = _appData.NameTransformer.TransformMethodName(sourceTypeFullName, $"As{castTypeSymbol.Name}");
             CastResolveData castResolveData = new CastResolveData($"{sourceRepresentation}.{castMethod}()");
             return new OperationResult<CastResolveData>(true, String.Empty, castResolveData);
+        }
+
+        private String GetMethodCall(String sourceTypeFullName, MemberRepresentation representation, IMethodSymbol methodSymbol)
+        {
+            switch (methodSymbol)
+            {
+                case IMethodSymbol {Name: "GetHashCode"}:
+                    return String.Concat("hash(", representation.Target, ")");
+                case IMethodSymbol {Name: "ToArray"}:
+                    return String.Concat("list(", representation.Target, ")");
+                default:
+                    String methodName = _appData.NameTransformer.TransformMethodName(sourceTypeFullName, methodSymbol.Name);
+                    String args = String.Join(", ", representation.Arguments.GetArguments(true));
+                    return String.Concat(representation.Target, ".", methodName, "(", args, ")");
+            }
         }
 
         private readonly SemanticModel _model;

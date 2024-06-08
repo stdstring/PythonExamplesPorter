@@ -20,5 +20,9 @@ namespace PythonExamplesPorterApp.Ignored
         [XmlArray("Methods")]
         [XmlArrayItem("Method")]
         public String[]? Methods { get; set; }
+
+        [XmlArray("MethodsBody")]
+        [XmlArrayItem("MethodBody")]
+        public String[]? MethodsBody { get; set; }
     }
 }
