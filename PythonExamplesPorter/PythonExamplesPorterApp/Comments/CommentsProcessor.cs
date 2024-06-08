@@ -12,12 +12,15 @@ namespace PythonExamplesPorterApp.Comments
 
         public String[] Process(String[] source)
         {
-            return source.Select(ProcessImpl).ToArray();
+            return source.Select(ProcessImpl).Where(comment => !String.IsNullOrEmpty(comment)).ToArray();
         }
 
         public String? Process(String? source)
         {
-            return source == null ? null : ProcessImpl(source);
+            if (source == null)
+                return null;
+            String comment = ProcessImpl(source);
+            return String.IsNullOrEmpty(comment) ? null : comment;
         }
 
         private String ProcessImpl(String comment)
@@ -30,7 +33,8 @@ namespace PythonExamplesPorterApp.Comments
             {
                 case var _ when convertedComment.StartsWith("#ExFor:"):
                     return ProcessExForComment(convertedComment);
-                case var _ when convertedComment.StartsWith("#Gist:"):
+                case var _ when convertedComment.StartsWith("#GistId:"):
+                    return String.Empty;
                 default:
                     return convertedComment;
             }
@@ -85,6 +89,7 @@ namespace PythonExamplesPorterApp.Comments
                 "GetEnumerator" => "__iter__",
                 "Equals" => "__eq__",
                 "ToString" => "__str__",
+                "GetHashCode" => "__hash__",
                 _ when genericSpecStart != -1 =>
                     _nameTransformer.TransformMethodName(typeName, memberName.Substring(0, genericSpecStart)),
                 _ when hasArguments => _nameTransformer.TransformMethodName(typeName, memberName),
@@ -166,12 +171,12 @@ namespace PythonExamplesPorterApp.Comments
             {"Decimal", "float"},
             {"System.Decimal", "float"},
             // char, string types
-            {"char", "string"},
-            {"Char", "string"},
-            {"System.Char", "string"},
-            {"string", "string"},
-            {"String", "string"},
-            {"System.String", "string"},
+            {"char", "str"},
+            {"Char", "str"},
+            {"System.Char", "str"},
+            {"string", "str"},
+            {"String", "str"},
+            {"System.String", "str"},
             // DateTime type
             {"DateTime", "datetime"},
             {"System.DateTime", "datetime"},

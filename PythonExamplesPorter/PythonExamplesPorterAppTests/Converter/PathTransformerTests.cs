@@ -25,7 +25,7 @@ namespace PythonExamplesPorterAppTests.Converter
         [TestCase("CurrentOuter\\SomeTests\\ExBorder.cs", "current_outer\\some_tests\\ex_border.py")]
         public void TransformPath(String source, String expectedResult)
         {
-            Assert.AreEqual(expectedResult, PathTransformer.TransformPath(source, _nameTransformer));
+            Assert.That(PathTransformer.TransformPath(source, _nameTransformer), Is.EqualTo(expectedResult));
         }
 
         private readonly NameTransformer _nameTransformer;

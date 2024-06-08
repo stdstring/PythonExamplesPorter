@@ -113,7 +113,7 @@ namespace PythonExamplesPorterAppTests.Comments
             MethodDeclarationSyntax[] methods = descendantNodes.OfType<MethodDeclarationSyntax>().ToArray();
             MethodDeclarationSyntax method1 = methods.First(method => method.Identifier.ToString().Equals("Method1"));
             StatementSyntax[] method1Statements = method1.Body!.Statements.ToArray();
-            Assert.AreEqual(5, method1Statements.Length);
+            Assert.That(method1Statements.Length, Is.EqualTo(5));
             CheckComments(method1Statements[0], new []{"// Comment 1"}, null);
             CheckComments(method1Statements[1], new []{"// Comment 2"}, null);
             CheckComments(method1Statements[2], new []{"// Comment 3", ""}, null);
@@ -122,19 +122,19 @@ namespace PythonExamplesPorterAppTests.Comments
             CheckComments(method1Statements[4].GetLastToken().GetNextToken(), new []{"// Comment 6"});
             MethodDeclarationSyntax method2 = methods.First(method => method.Identifier.ToString().Equals("Method2"));
             StatementSyntax[] method2Statements = method2.Body!.Statements.ToArray();
-            Assert.AreEqual(2, method2Statements.Length);
+            Assert.That(method2Statements.Length, Is.EqualTo(2));
             CheckComments(method2Statements[0], new []{"", "// Comment 1"}, null);
             CheckComments(method2Statements[1], Array.Empty<String>(), null);
             CheckComments(method2Statements[1].GetLastToken().GetNextToken(), new[] {"// Comment 2", ""});
             MethodDeclarationSyntax method3 = methods.First(method => method.Identifier.ToString().Equals("Method3"));
             StatementSyntax[] method3Statements = method3.Body!.Statements.ToArray();
-            Assert.AreEqual(2, method3Statements.Length);
+            Assert.That(method3Statements.Length, Is.EqualTo(2));
             CheckComments(method3Statements[0], new[] {"// Comment 1", ""}, null);
             CheckComments(method3Statements[1], Array.Empty<String>(), null);
             CheckComments(method3Statements[1].GetLastToken().GetNextToken(), new[] {"", "// Comment 2"});
             MethodDeclarationSyntax method4 = methods.First(method => method.Identifier.ToString().Equals("Method4"));
             StatementSyntax[] method4Statements = method4.Body!.Statements.ToArray();
-            Assert.AreEqual(2, method4Statements.Length);
+            Assert.That(method4Statements.Length, Is.EqualTo(2));
             CheckComments(method4Statements[0], new[] {"", "// Comment 1", ""}, null);
             CheckComments(method4Statements[1], Array.Empty<String>(), null);
             CheckComments(method4Statements[1].GetLastToken().GetNextToken(), new[] {"", "// Comment 2", ""});
@@ -166,7 +166,7 @@ namespace PythonExamplesPorterAppTests.Comments
             StatementSyntax[] method1Statements = method1.Body!.DescendantNodes().OfType<StatementSyntax>().ToArray();
             // (std_string) : we will never retrieve comments "// Comment 2 (missed)" and "// Comment 4 (missed)",
             // if we will work only with StatementSyntax nodes
-            Assert.AreEqual(6, method1Statements.Length);
+            Assert.That(method1Statements.Length, Is.EqualTo(6));
             CheckComments(method1Statements[0], Array.Empty<String>(), "// Comment 1");
             CheckComments(method1Statements[1], Array.Empty<String>(), "// Comment 3");
             CheckComments(method1Statements[2], Array.Empty<String>(), "// Comment 3");
@@ -177,19 +177,20 @@ namespace PythonExamplesPorterAppTests.Comments
 
         private void CheckComments(MethodDeclarationSyntax method, String[] expectedHeader, String? expectedTrailing, String[] expectedFooter)
         {
-            CollectionAssert.AreEquivalent(expectedHeader, CommentsExtractor.ExtractHeaderComments(method));
-            Assert.AreEqual(expectedTrailing, CommentsExtractor.ExtractTrailingComment(method));
-            CollectionAssert.AreEquivalent(expectedFooter, CommentsExtractor.ExtractFooterComments(method));
+            Assert.That(CommentsExtractor.ExtractHeaderComments(method), Is.EquivalentTo(expectedHeader));
+            Assert.That(CommentsExtractor.ExtractTrailingComment(method), Is.EqualTo(expectedTrailing));
+            Assert.That(CommentsExtractor.ExtractFooterComments(method), Is.EquivalentTo(expectedFooter));
         }
 
         private void CheckComments(StatementSyntax statement, String[] expectedHeader, String? expectedTrailing)
         {
-            CollectionAssert.AreEquivalent(expectedHeader, CommentsExtractor.ExtractComments(statement));
-            Assert.AreEqual(expectedTrailing, CommentsExtractor.ExtractTrailingComment(statement));
+            Assert.That(CommentsExtractor.ExtractComments(statement), Is.EquivalentTo(expectedHeader));
+            Assert.That(CommentsExtractor.ExtractTrailingComment(statement), Is.EqualTo(expectedTrailing));
         }
+
         private void CheckComments(SyntaxToken token, String[] expectedHeader)
         {
-            CollectionAssert.AreEquivalent(expectedHeader, CommentsExtractor.ExtractComments(token));
+            Assert.That(CommentsExtractor.ExtractComments(token), Is.EquivalentTo(expectedHeader));
         }
     }
 }

@@ -134,7 +134,8 @@ namespace PythonExamplesPorterAppTests.Config
                     Directories = Array.Empty<String>(),
                     Files = Array.Empty<String>(),
                     Types = Array.Empty<String>(),
-                    Methods = Array.Empty<String>()
+                    Methods = Array.Empty<String>(),
+                    MethodsBody = Array.Empty<String>()
                 }
             };
             CheckDeserialization(expected, source);
@@ -169,7 +170,8 @@ namespace PythonExamplesPorterAppTests.Config
                     Directories = new[]{"SomeFolder1", "SomeFolder2\\OtherFolder"},
                     Files = Array.Empty<String>(),
                     Types = Array.Empty<String>(),
-                    Methods = Array.Empty<String>()
+                    Methods = Array.Empty<String>(),
+                    MethodsBody = Array.Empty<String>()
                 }
             };
             CheckDeserialization(expected, source);
@@ -205,7 +207,8 @@ namespace PythonExamplesPorterAppTests.Config
                     Directories = Array.Empty<String>(),
                     Files = new[]{"aa1.cs", "ab1.cs", "some_folder\\aa1.cs"},
                     Types = Array.Empty<String>(),
-                    Methods = Array.Empty<String>()
+                    Methods = Array.Empty<String>(),
+                    MethodsBody = Array.Empty<String>()
                 }
             };
             CheckDeserialization(expected, source);
@@ -240,7 +243,8 @@ namespace PythonExamplesPorterAppTests.Config
                     Directories = Array.Empty<String>(),
                     Files = Array.Empty<String>(),
                     Types = new[]{"SomeNamespace.SomeType", "OtherNamespace.OtherType"},
-                    Methods = Array.Empty<String>()
+                    Methods = Array.Empty<String>(),
+                    MethodsBody = Array.Empty<String>()
                 }
             };
             CheckDeserialization(expected, source);
@@ -275,7 +279,44 @@ namespace PythonExamplesPorterAppTests.Config
                     Directories = Array.Empty<String>(),
                     Files = Array.Empty<String>(),
                     Types = Array.Empty<String>(),
-                    Methods = new[]{"SomeNamespace.SomeType.CheckAAA", "OtherNamespace.OtherType.CheckBBB"}
+                    Methods = new[]{"SomeNamespace.SomeType.CheckAAA", "OtherNamespace.OtherType.CheckBBB"},
+                    MethodsBody = Array.Empty<String>()
+                }
+            };
+            CheckDeserialization(expected, source);
+        }
+
+        [Test]
+        public void DeserializeWithIgnoredMethodsBody()
+        {
+            const String source = "<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n" +
+                                  "<ConfigData>\r\n" +
+                                  "  <BaseConfig>\r\n" +
+                                  "    <Source RelativePathBase=\"app\">..\\source\\someproj.csproj</Source>\r\n" +
+                                  "    <Dest RelativePathBase=\"app\">..\\dest\\examples</Dest>\r\n" +
+                                  "  </BaseConfig>\r\n" +
+                                  "  <IgnoredEntities>\r\n" +
+                                  "    <MethodsBody>\r\n" +
+                                  "      <MethodBody>SomeNamespace.SomeType.CheckABB</MethodBody>\r\n" +
+                                  "      <MethodBody>OtherNamespace.OtherType.CheckBAA</MethodBody>\r\n" +
+                                  "    </MethodsBody>\r\n" +
+                                  "  </IgnoredEntities>\r\n" +
+                                  "</ConfigData>";
+            ConfigData expected = new ConfigData
+            {
+                BaseConfig = new BaseConfig
+                {
+                    Source = new TargetPath(RelativePathBase.App, "..\\source\\someproj.csproj"),
+                    DestDirectory = new TargetPath(RelativePathBase.App, "..\\dest\\examples"),
+                    ForceDestDelete = false
+                },
+                IgnoredEntities = new IgnoredEntities
+                {
+                    Directories = Array.Empty<String>(),
+                    Files = Array.Empty<String>(),
+                    Types = Array.Empty<String>(),
+                    Methods = Array.Empty<String>(),
+                    MethodsBody = new[]{"SomeNamespace.SomeType.CheckABB", "OtherNamespace.OtherType.CheckBAA"}
                 }
             };
             CheckDeserialization(expected, source);
@@ -308,6 +349,10 @@ namespace PythonExamplesPorterAppTests.Config
                                   "      <Method>SomeNamespace.SomeType.CheckAAA</Method>\r\n" +
                                   "      <Method>OtherNamespace.OtherType.CheckBBB</Method>\r\n" +
                                   "    </Methods>\r\n" +
+                                  "    <MethodsBody>\r\n" +
+                                  "      <MethodBody>SomeNamespace.SomeType.CheckABB</MethodBody>\r\n" +
+                                  "      <MethodBody>OtherNamespace.OtherType.CheckBAA</MethodBody>\r\n" +
+                                  "    </MethodsBody>\r\n" +
                                   "  </IgnoredEntities>\r\n" +
                                   "</ConfigData>";
             ConfigData expected = new ConfigData
@@ -323,7 +368,8 @@ namespace PythonExamplesPorterAppTests.Config
                     Directories = new[]{"SomeFolder1", "SomeFolder2\\OtherFolder"},
                     Files = new[]{"aa1.cs", "ab1.cs", "some_folder\\aa1.cs"},
                     Types = new[]{"SomeNamespace.SomeType", "OtherNamespace.OtherType"},
-                    Methods = new[]{"SomeNamespace.SomeType.CheckAAA", "OtherNamespace.OtherType.CheckBBB"}
+                    Methods = new[]{"SomeNamespace.SomeType.CheckAAA", "OtherNamespace.OtherType.CheckBBB"},
+                    MethodsBody = new[]{"SomeNamespace.SomeType.CheckABB", "OtherNamespace.OtherType.CheckBAA"}
                 }
             };
             CheckDeserialization(expected, source);
@@ -572,6 +618,10 @@ namespace PythonExamplesPorterAppTests.Config
                                   "      <Method>SomeNamespace.SomeType.CheckAAA</Method>\r\n" +
                                   "      <Method>OtherNamespace.OtherType.CheckBBB</Method>\r\n" +
                                   "    </Methods>\r\n" +
+                                  "    <MethodsBody>\r\n" +
+                                  "      <MethodBody>SomeNamespace.SomeType.CheckABB</MethodBody>\r\n" +
+                                  "      <MethodBody>OtherNamespace.OtherType.CheckBAA</MethodBody>\r\n" +
+                                  "    </MethodsBody>\r\n" +
                                   "  </IgnoredEntities>\r\n" +
                                   "  <HandmadeEntities>\r\n" +
                                   "    <Types>\r\n" +
@@ -650,7 +700,8 @@ namespace PythonExamplesPorterAppTests.Config
                     Directories = new[]{"SomeFolder1", "SomeFolder2\\OtherFolder"},
                     Files = new[]{"aa1.cs", "ab1.cs", "some_folder\\aa1.cs"},
                     Types = new[]{"SomeNamespace.SomeType", "OtherNamespace.OtherType"},
-                    Methods = new[]{"SomeNamespace.SomeType.CheckAAA", "OtherNamespace.OtherType.CheckBBB"}
+                    Methods = new[]{"SomeNamespace.SomeType.CheckAAA", "OtherNamespace.OtherType.CheckBBB"},
+                    MethodsBody = new[]{"SomeNamespace.SomeType.CheckABB", "OtherNamespace.OtherType.CheckBAA"}
                 },
                 HandmadeEntities = new HandmadeEntities
                 {
@@ -722,14 +773,14 @@ namespace PythonExamplesPorterAppTests.Config
             using (StringReader reader = new StringReader(actualSource))
             {
                 ConfigData? actual = serializer.Deserialize(reader) as ConfigData;
-                Assert.IsNotNull(actual);
+                Assert.That(actual, Is.Not.Null);
                 CheckConfigData(expected, actual!);
             }
         }
 
         private void CheckConfigData(ConfigData expected, ConfigData actual)
         {
-            Assert.IsNotNull(actual.BaseConfig);
+            Assert.That(actual.BaseConfig, Is.Not.Null);
             CheckBaseConfig(expected.BaseConfig!, actual.BaseConfig!);
             CheckIgnoredEntities(expected.IgnoredEntities, actual.IgnoredEntities);
             CheckHandmadeEntities(expected.HandmadeEntities, actual.HandmadeEntities);
@@ -739,38 +790,39 @@ namespace PythonExamplesPorterAppTests.Config
 
         private void CheckTargetPath(TargetPath expected, TargetPath actual)
         {
-            Assert.AreEqual(expected.RelativePathBase, actual.RelativePathBase);
-            Assert.AreEqual(expected.Path, actual.Path);
+            Assert.That(actual.RelativePathBase, Is.EqualTo(expected.RelativePathBase));
+            Assert.That(actual.Path, Is.EqualTo(expected.Path));
         }
 
         private void CheckSourceDetails(SourceDetails? expected, SourceDetails? actual)
         {
             if (expected == null)
-                Assert.IsNull(actual);
+                Assert.That(actual, Is.Null);
             else
                 CheckCollections(expected.KnownNamespaces!, actual!.KnownNamespaces);
         }
 
         private void CheckBaseConfig(BaseConfig expected, BaseConfig actual)
         {
-            Assert.IsNotNull(actual.Source);
+            Assert.That(actual.Source, Is.Not.Null);
             CheckTargetPath(expected.Source!, actual.Source!);
-            Assert.IsNotNull(actual.DestDirectory);
+            Assert.That(actual.DestDirectory, Is.Not.Null);
             CheckTargetPath(expected.DestDirectory!, actual.DestDirectory!);
             CheckSourceDetails(expected.SourceDetails, actual.SourceDetails);
-            Assert.AreEqual(expected.ForceDestDelete, actual.ForceDestDelete);
+            Assert.That(actual.ForceDestDelete, Is.EqualTo(expected.ForceDestDelete));
         }
 
         private void CheckIgnoredEntities(IgnoredEntities? expected, IgnoredEntities? actual)
         {
             if (expected ==  null)
-                Assert.IsNull(actual);
+                Assert.That(actual, Is.Null);
             else
             {
                 CheckCollections(expected.Directories!, actual!.Directories);
                 CheckCollections(expected.Files!, actual.Files);
                 CheckCollections(expected.Types!, actual.Types);
                 CheckCollections(expected.Methods!, actual.Methods);
+                CheckCollections(expected.MethodsBody!, actual.MethodsBody);
             }
         }
 
@@ -780,17 +832,17 @@ namespace PythonExamplesPorterAppTests.Config
                 Assert.That(actual == null || actual.Length == 0);
             else
             {
-                Assert.IsNotNull(actual);
-                Assert.AreEqual(expected.Length, actual!.Length);
+                Assert.That(actual, Is.Not.Null);
+                Assert.That(actual!.Length, Is.EqualTo(expected.Length));
                 for (Int32 index = 0; index < expected.Length; ++index)
-                    Assert.AreEqual(expected[index], actual[index]);
+                    Assert.That(actual[index], Is.EqualTo(expected[index]));
             }
         }
 
         private void CheckHandmadeEntities(HandmadeEntities? expected, HandmadeEntities? actual)
         {
             if (expected == null)
-                Assert.IsNull(actual);
+                Assert.That(actual, Is.Null);
             else
                 CheckHandmadeTypes(expected.HandmadeTypes, actual!.HandmadeTypes);
         }
@@ -801,8 +853,8 @@ namespace PythonExamplesPorterAppTests.Config
                 Assert.That(actual == null || actual.Length == 0);
             else
             {
-                Assert.IsNotNull(actual);
-                Assert.AreEqual(expected.Length, actual!.Length);
+                Assert.That(actual, Is.Not.Null);
+                Assert.That(actual!.Length, Is.EqualTo(expected.Length));
                 for (Int32 index = 0; index < expected.Length; ++index)
                     CheckHandmadeType(expected[index], actual[index]);
             }
@@ -810,9 +862,9 @@ namespace PythonExamplesPorterAppTests.Config
 
         private void CheckHandmadeType(HandmadeType expected, HandmadeType actual)
         {
-            Assert.AreEqual(expected.FullName, actual.FullName);
-            Assert.AreEqual(expected.Source, actual.Source);
-            Assert.AreEqual(expected.Dest, actual.Dest);
+            Assert.That(actual.FullName, Is.EqualTo(expected.FullName));
+            Assert.That(actual.Source, Is.EqualTo(expected.Source));
+            Assert.That(actual.Dest, Is.EqualTo(expected.Dest));
             CheckHandmadeMemberMapping(expected.MemberMappings, actual.MemberMappings);
         }
 
@@ -822,13 +874,13 @@ namespace PythonExamplesPorterAppTests.Config
                 Assert.That(actual == null || actual.Length == 0);
             else
             {
-                Assert.IsNotNull(actual);
-                Assert.AreEqual(expected.Length, actual!.Length);
+                Assert.That(actual, Is.Not.Null);
+                Assert.That(actual!.Length, Is.EqualTo(expected.Length));
                 for (Int32 index = 0; index < expected.Length; ++index)
                 {
-                    Assert.AreEqual(expected[index].SourceName, actual[index].SourceName);
-                    Assert.AreEqual(expected[index].DestName, actual[index].DestName);
-                    Assert.AreEqual(expected[index].NeedImport, actual[index].NeedImport);
+                    Assert.That(actual[index].SourceName, Is.EqualTo(expected[index].SourceName));
+                    Assert.That(actual[index].DestName, Is.EqualTo(expected[index].DestName));
+                    Assert.That(actual[index].NeedImport, Is.EqualTo(expected[index].NeedImport));
                 }
             }
         }
@@ -836,10 +888,10 @@ namespace PythonExamplesPorterAppTests.Config
         private void CheckImportAliases(ImportAliasEntries? expected, ImportAliasEntries? actual)
         {
             if (expected == null)
-                Assert.IsNull(actual);
+                Assert.That(actual, Is.Null);
             else
             {
-                Assert.IsNotNull(actual);
+                Assert.That(actual, Is.Not.Null);
                 CheckImportAliasEntries(expected.ImportAliases, actual!.ImportAliases);
             }
         }
@@ -850,8 +902,8 @@ namespace PythonExamplesPorterAppTests.Config
                 Assert.That(actual == null || actual.Length == 0);
             else
             {
-                Assert.IsNotNull(actual);
-                Assert.AreEqual(expected.Length, actual!.Length);
+                Assert.That(actual, Is.Not.Null);
+                Assert.That(actual!.Length, Is.EqualTo(expected.Length));
                 for (Int32 index = 0; index < expected.Length; ++index)
                     CheckImportAliasEntry(expected[index], actual[index]);
             }
@@ -859,17 +911,17 @@ namespace PythonExamplesPorterAppTests.Config
 
         private void CheckImportAliasEntry(ImportAliasEntry expected, ImportAliasEntry actual)
         {
-            Assert.AreEqual(expected.Import, actual.Import);
-            Assert.AreEqual(expected.Alias, actual.Alias);
+            Assert.That(actual.Import, Is.EqualTo(expected.Import));
+            Assert.That(actual.Alias, Is.EqualTo(expected.Alias));
         }
 
         private void CheckHandmadeNameAliases(HandmadeNameAliases? expected, HandmadeNameAliases? actual)
         {
             if (expected == null)
-                Assert.IsNull(actual);
+                Assert.That(actual, Is.Null);
             else
             {
-                Assert.IsNotNull(actual);
+                Assert.That(actual, Is.Not.Null);
                 CheckNamespaceNameEntries(expected.Namespaces, actual!.Namespaces);
             }
         }
@@ -877,14 +929,14 @@ namespace PythonExamplesPorterAppTests.Config
         private void CheckNameConditions(NameConditions? expected, NameConditions? actual)
         {
             if (expected == null)
-                Assert.IsNull(actual);
+                Assert.That(actual, Is.Null);
             else
             {
-                Assert.IsNotNull(actual);
+                Assert.That(actual, Is.Not.Null);
                 if (expected.EqualCondition == null)
-                    Assert.IsNull(actual);
+                    Assert.That(actual, Is.Null);
                 else
-                    Assert.AreEqual(expected.EqualCondition, actual!.EqualCondition);
+                    Assert.That(actual!.EqualCondition, Is.EqualTo(expected.EqualCondition));
             }
         }
 
@@ -894,8 +946,8 @@ namespace PythonExamplesPorterAppTests.Config
                 Assert.That(actual == null || actual.Length == 0);
             else
             {
-                Assert.IsNotNull(actual);
-                Assert.AreEqual(expected.Length, actual!.Length);
+                Assert.That(actual, Is.Not.Null);
+                Assert.That(actual!.Length, Is.EqualTo(expected.Length));
                 for (Int32 index = 0; index < expected.Length; ++index)
                     CheckNamespaceNameEntry(expected[index], actual[index]);
             }
@@ -913,8 +965,8 @@ namespace PythonExamplesPorterAppTests.Config
                 Assert.That(actual == null || actual.Length == 0);
             else
             {
-                Assert.IsNotNull(actual);
-                Assert.AreEqual(expected.Length, actual!.Length);
+                Assert.That(actual, Is.Not.Null);
+                Assert.That(actual!.Length, Is.EqualTo(expected.Length));
                 for (Int32 index = 0; index < expected.Length; ++index)
                     CheckTypeNameEntry(expected[index], actual[index]);
             }
@@ -932,12 +984,12 @@ namespace PythonExamplesPorterAppTests.Config
                 Assert.That(actual == null || actual.Length == 0);
             else
             {
-                Assert.IsNotNull(actual);
-                Assert.AreEqual(expected.Length, actual!.Length);
+                Assert.That(actual, Is.Not.Null);
+                Assert.That(actual!.Length, Is.EqualTo(expected.Length));
                 for (Int32 index = 0; index < expected.Length; ++index)
                 {
-                    Assert.AreEqual(expected[index].Name, actual[index].Name);
-                    Assert.AreEqual(expected[index].Alias, actual[index].Alias);
+                    Assert.That(actual[index].Name, Is.EqualTo(expected[index].Name));
+                    Assert.That(actual[index].Alias, Is.EqualTo(expected[index].Alias));
                 }
             }
         }

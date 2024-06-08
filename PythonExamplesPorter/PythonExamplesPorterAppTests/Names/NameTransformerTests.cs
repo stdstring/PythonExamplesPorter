@@ -25,7 +25,7 @@ namespace PythonExamplesPorterAppTests.Names
         [TestCase("ExWordML2003SaveOptions", "ex_word_ml2003_save_options")]
         public void TransformFileObjectName(String source, String expectedResult)
         {
-            Assert.AreEqual(expectedResult, _nameTransformer.TransformFileObjectName(source));
+            Assert.That(_nameTransformer.TransformFileObjectName(source), Is.EqualTo(expectedResult));
         }
 
         [TestCase("SomeNamespace", "somenamespace")]
@@ -35,7 +35,7 @@ namespace PythonExamplesPorterAppTests.Names
         [TestCase("Namespace1.Namespace2", "namespace1.namespace2")]
         public void TransformNamespaceName(String source, String expectedResult)
         {
-            Assert.AreEqual(expectedResult, _nameTransformer.TransformNamespaceName(source));
+            Assert.That(_nameTransformer.TransformNamespaceName(source), Is.EqualTo(expectedResult));
         }
 
         [TestCase("Border", "Border")]
@@ -46,7 +46,7 @@ namespace PythonExamplesPorterAppTests.Names
         [TestCase("ExABC23Border", "ExABC23Border")]
         public void TransformTypeName(String source, String expectedResult)
         {
-            Assert.AreEqual(expectedResult, _nameTransformer.TransformTypeName(source));
+            Assert.That(_nameTransformer.TransformTypeName(source), Is.EqualTo(expectedResult));
         }
 
         [TestCase("SomeType", "Calculate", "calculate")]
@@ -63,7 +63,7 @@ namespace PythonExamplesPorterAppTests.Names
         [TestCase("SomeLibrary.SomeType", "CalculateABC23Border", "calculate_abc_23_border")]
         public void TransformMethodName(String typeName, String source, String expectedResult)
         {
-            Assert.AreEqual(expectedResult, _nameTransformer.TransformMethodName(typeName, source));
+            Assert.That(_nameTransformer.TransformMethodName(typeName, source), Is.EqualTo(expectedResult));
         }
 
         [TestCase("SomeType", "Border", "border")]
@@ -96,7 +96,7 @@ namespace PythonExamplesPorterAppTests.Names
         [TestCase("SomeLibrary.SomeType", "IsForms2OleControl", "is_forms2_ole_control")]
         public void TransformPropertyName(String typeName, String source, String expectedResult)
         {
-            Assert.AreEqual(expectedResult, _nameTransformer.TransformPropertyName(typeName, source));
+            Assert.That(_nameTransformer.TransformPropertyName(typeName, source), Is.EqualTo(expectedResult));
         }
 
         [TestCase("SomeType", "Field", "field")]
@@ -113,7 +113,7 @@ namespace PythonExamplesPorterAppTests.Names
         [TestCase("SomeLibrary.SomeType", "ExABC23Border", "ex_abc_23_border")]
         public void TransformFieldName(String typeName, String source, String expectedResult)
         {
-            Assert.AreEqual(expectedResult, _nameTransformer.TransformFieldName(typeName, source));
+            Assert.That(_nameTransformer.TransformFieldName(typeName, source), Is.EqualTo(expectedResult));
         }
 
         [TestCase("ControlChar", "SectionBreak", "SECTION_BREAK")]
@@ -123,7 +123,7 @@ namespace PythonExamplesPorterAppTests.Names
         [TestCase("ControlChar", "Cr", "CR")]
         public void TransformStaticReadonlyFieldName(String typeName, String source, String expectedResult)
         {
-            Assert.AreEqual(expectedResult, _nameTransformer.TransformStaticReadonlyFieldName(typeName, source));
+            Assert.That(_nameTransformer.TransformStaticReadonlyFieldName(typeName, source), Is.EqualTo(expectedResult));
         }
 
         [TestCase("SomeEnum", "Item", "ITEM")]
@@ -148,7 +148,7 @@ namespace PythonExamplesPorterAppTests.Names
         [TestCase("SomeLibrary.OoxmlCompliance", "Iso29500_2008_Transitional", "ISO29500_2008_TRANSITIONAL")]
         public void TransformEnumValueName(String typeName, String source, String expectedResult)
         {
-            Assert.AreEqual(expectedResult, _nameTransformer.TransformEnumValueName(typeName, source));
+            Assert.That(_nameTransformer.TransformEnumValueName(typeName, source), Is.EqualTo(expectedResult));
         }
 
         [TestCase("data", "data")]
@@ -158,7 +158,7 @@ namespace PythonExamplesPorterAppTests.Names
         [TestCase("someABC23Data", "some_abc_23_data")]
         public void TransformLocalVariableName(String source, String expectedResult)
         {
-            Assert.AreEqual(expectedResult, _nameTransformer.TransformLocalVariableName(source));
+            Assert.That(_nameTransformer.TransformLocalVariableName(source), Is.EqualTo(expectedResult));
         }
 
         private readonly NameTransformer _nameTransformer;
