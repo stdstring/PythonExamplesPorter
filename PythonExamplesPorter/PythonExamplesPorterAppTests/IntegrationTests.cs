@@ -27,7 +27,7 @@ namespace PythonExamplesPorterAppTests
             {
                 String configArg = $"--config={ConfigPath}";
                 Int32 returnCode = Program.MainImpl(new[] {configArg}, outputWriter, errorWriter);
-                Assert.AreEqual(0, returnCode);
+                Assert.That(returnCode, Is.EqualTo(0));
             }
         }
 
@@ -36,14 +36,14 @@ namespace PythonExamplesPorterAppTests
         public void CheckPortingExpectedData()
         {
             String? configRoot = Path.GetDirectoryName(ExpectedDataConfigPath);
-            Assert.IsNotNull(configRoot);
+            Assert.That(configRoot, Is.Not.Null);
             String destDirectory = Path.Combine(configRoot!, ExpectedDestDirectory);
             if (Directory.Exists(destDirectory))
                 Directory.Delete(destDirectory, true);
             String configArg = $"--config=\"{ExpectedDataConfigPath}\"";
             ExecutionResult result = ExecutionHelper.Execute(new[] {configArg});
-            Assert.AreEqual(0, result.ExitCode);
-            Assert.IsTrue(String.IsNullOrEmpty(result.Error));
+            Assert.That(result.ExitCode, Is.EqualTo(0));
+            Assert.That(String.IsNullOrEmpty(result.Error), Is.True);
         }
 
         [Test]
@@ -51,10 +51,10 @@ namespace PythonExamplesPorterAppTests
         {
             String configArg = $"--config=\"{ConfigPath}\"";
             ExecutionResult result = ExecutionHelper.Execute(new[]{configArg});
-            Assert.AreEqual(0, result.ExitCode);
-            Assert.IsTrue(String.IsNullOrEmpty(result.Error));
+            Assert.That(result.ExitCode, Is.EqualTo(0));
+            Assert.That(String.IsNullOrEmpty(result.Error), Is.True);
             String? configRoot = Path.GetDirectoryName(ExpectedDataConfigPath);
-            Assert.IsNotNull(configRoot);
+            Assert.That(configRoot, Is.Not.Null);
             String expectedDestDirectory = Path.Combine(configRoot!, ExpectedDestDirectory);
             CheckDirectoryTree(expectedDestDirectory, ActualDestDirectory);
         }
@@ -93,39 +93,39 @@ namespace PythonExamplesPorterAppTests
 
         private void CheckResult(ExecutionResult result, Int32 exitCode, String output, String error)
         {
-            Assert.AreEqual(exitCode, result.ExitCode);
-            Assert.AreEqual(output, result.Output);
-            Assert.IsTrue(result.Error.StartsWith(error));
+            Assert.That(result.ExitCode, Is.EqualTo(exitCode));
+            Assert.That(result.Output, Is.EqualTo(output));
+            Assert.That(result.Error.StartsWith(error), Is.True);
         }
 
         private void CheckDirectoryTree(String expectedDirectory, String actualDirectory)
         {
             String[] expectedFiles = Directory.GetFiles(expectedDirectory);
             String[] actualFiles = Directory.GetFiles(actualDirectory);
-            Assert.AreEqual(expectedFiles.Length,
-                            actualFiles.Length,
-                            $"Directories {expectedDirectory} and {actualDirectory} has different count of files");
+            Assert.That(actualFiles.Length,
+                        Is.EqualTo(expectedFiles.Length),
+                        $"Directories {expectedDirectory} and {actualDirectory} has different count of files");
             for (Int32 index = 0; index < expectedFiles.Length; ++index)
             {
                 String expectedName = new FileInfo(expectedFiles[index]).Name;
                 String actualName = new FileInfo(actualFiles[index]).Name;
-                Assert.AreEqual(expectedName,
-                                actualName,
-                                $"Expects file with name {expectedName}, but actual are {actualName}");
+                Assert.That(actualName,
+                            Is.EqualTo(expectedName),
+                            $"Expects file with name {expectedName}, but actual are {actualName}");
                 CheckFileContent(expectedFiles[index], actualFiles[index]);
             }
             String[] expectedSubdirs = Directory.GetDirectories(expectedDirectory);
             String[] actualSubdirs = Directory.GetDirectories(actualDirectory);
-            Assert.AreEqual(expectedSubdirs.Length,
-                            actualSubdirs.Length,
-                            $"Directories {expectedDirectory} and {actualDirectory} has different count of subdirectories");
+            Assert.That(actualSubdirs.Length,
+                        Is.EqualTo(expectedSubdirs.Length),
+                        $"Directories {expectedDirectory} and {actualDirectory} has different count of subdirectories");
             for (Int32 index = 0; index < expectedSubdirs.Length; ++index)
             {
                 String expectedName = new DirectoryInfo(expectedSubdirs[index]).Name;
                 String actualName = new DirectoryInfo(actualSubdirs[index]).Name;
-                Assert.AreEqual(expectedName,
-                                actualName,
-                                $"Expects subdirectory with name {expectedName}, but actual are {actualName}");
+                Assert.That(actualName,
+                            Is.EqualTo(expectedName),
+                            $"Expects subdirectory with name {expectedName}, but actual are {actualName}");
                 CheckFileContent(expectedSubdirs[index], actualSubdirs[index]);
             }
         }
@@ -134,12 +134,14 @@ namespace PythonExamplesPorterAppTests
         {
             String[] expectedLines = File.ReadAllLines(expectedFilepath);
             String[] actualLines = File.ReadAllLines(actualFilepath);
-            Assert.AreEqual(expectedLines.Length, actualLines.Length, $"Files {expectedFilepath} and {actualFilepath} are differ by line count");
+            Assert.That(actualLines.Length,
+                        Is.EqualTo(expectedLines.Length),
+                        $"Files {expectedFilepath} and {actualFilepath} are differ by line count");
             for (Int32 index = 0; index < expectedLines.Length; ++index)
             {
-                Assert.AreEqual(expectedLines[index],
-                                actualLines[index],
-                                $"Files {expectedFilepath} and {actualFilepath} have different lines with index {index}");
+                Assert.That(actualLines[index],
+                            Is.EqualTo(expectedLines[index]),
+                            $"Files {expectedFilepath} and {actualFilepath} have different lines with index {index}");
             }
         }
 

@@ -29,7 +29,7 @@ namespace PythonExamplesPorterAppTests.Names
         public void ConvertPascalCaseIntoSnakeCase(String source, String expectedResult)
         {
             INameTransformStrategy transformStrategy = new SeparatedDigitsExceptSinglesNameConverter();
-            Assert.AreEqual(expectedResult, transformStrategy.ConvertPascalCaseIntoSnakeCase(source));
+            Assert.That(transformStrategy.ConvertPascalCaseIntoSnakeCase(source), Is.EqualTo(expectedResult));
         }
     }
 }

@@ -12,9 +12,9 @@ namespace PythonExamplesPorterAppTests.Import
         {
             ImportAliasManager manager = new ImportAliasManager(_importAliases);
             (String actualModule, ImportData actualImport) = manager.PrepareImport(sourceModule);
-            Assert.AreEqual(expectedModule, actualModule);
+            Assert.That(actualModule, Is.EqualTo(expectedModule));
             Assert.That(actualImport.ModulesImport, Is.EquivalentTo(expectedImport));
-            Assert.IsEmpty(actualImport.EntityImport);
+            Assert.That(actualImport.EntityImport, Is.Empty);
         }
 
         private static readonly Object[] PrepareImportTestCases = new Object[]

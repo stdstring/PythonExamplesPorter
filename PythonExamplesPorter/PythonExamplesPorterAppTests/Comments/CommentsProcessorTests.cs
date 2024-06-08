@@ -88,7 +88,7 @@ namespace PythonExamplesPorterAppTests.Comments
         public void ProcessComment(String source, String? expected)
         {
             CommentsProcessor commentsProcessor = new CommentsProcessor(_nameTransformer);
-            Assert.AreEqual(expected, commentsProcessor.Process(source));
+            Assert.That(commentsProcessor.Process(source), Is.EqualTo(expected));
         }
 
         private readonly NameTransformer _nameTransformer;

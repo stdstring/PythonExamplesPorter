@@ -33,7 +33,7 @@ namespace PythonExamplesPorterAppTests.Names
             HandmadeNameManager manager = new HandmadeNameManager(_handmadeAliases);
             OperationResult<String> actualResult = manager.Search(typeName, memberName);
             OperationResult<String> expectedResult = new OperationResult<String>(success, Data: success ? expectedData : "");
-            Assert.AreEqual(expectedResult, actualResult);
+            Assert.That(actualResult, Is.EqualTo(expectedResult));
         }
 
         private readonly HandmadeNameAliases _handmadeAliases = new HandmadeNameAliases

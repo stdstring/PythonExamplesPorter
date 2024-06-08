@@ -13,7 +13,7 @@ namespace PythonExamplesPorterAppTests.Ignored
         public void IsIgnoredFile(String filename, Boolean expectedResult)
         {
             IgnoredEntitiesManager manager = new IgnoredEntitiesManager(_ignoredEntities);
-            Assert.AreEqual(expectedResult, manager.IsIgnoredFile(filename));
+            Assert.That(manager.IsIgnoredFile(filename), Is.EqualTo(expectedResult));
         }
 
         [TestCase("aa1.cs")]
@@ -24,8 +24,8 @@ namespace PythonExamplesPorterAppTests.Ignored
         {
             IgnoredEntitiesManager managerForNull = new IgnoredEntitiesManager(null);
             IgnoredEntitiesManager managerForEmpty = new IgnoredEntitiesManager(new IgnoredEntities());
-            Assert.AreEqual(false, managerForNull.IsIgnoredFile(filename));
-            Assert.AreEqual(false, managerForEmpty.IsIgnoredFile(filename));
+            Assert.That(managerForNull.IsIgnoredFile(filename), Is.False);
+            Assert.That(managerForEmpty.IsIgnoredFile(filename), Is.False);
         }
 
         [TestCase("ba1.cs", false)]
@@ -36,7 +36,7 @@ namespace PythonExamplesPorterAppTests.Ignored
         public void IsIgnoredFileViaDirectory(String filename, Boolean expectedResult)
         {
             IgnoredEntitiesManager manager = new IgnoredEntitiesManager(_ignoredEntities);
-            Assert.AreEqual(expectedResult, manager.IsIgnoredFile(filename));
+            Assert.That(manager.IsIgnoredFile(filename), Is.EqualTo(expectedResult));
         }
 
         [TestCase("ba1.cs")]
@@ -48,8 +48,8 @@ namespace PythonExamplesPorterAppTests.Ignored
         {
             IgnoredEntitiesManager managerForNull = new IgnoredEntitiesManager(null);
             IgnoredEntitiesManager managerForEmpty = new IgnoredEntitiesManager(new IgnoredEntities());
-            Assert.AreEqual(false, managerForNull.IsIgnoredFile(filename));
-            Assert.AreEqual(false, managerForEmpty.IsIgnoredFile(filename));
+            Assert.That(managerForNull.IsIgnoredFile(filename), Is.False);
+            Assert.That(managerForEmpty.IsIgnoredFile(filename), Is.False);
         }
 
         [TestCase("SomeNamespace.SomeType", true)]
@@ -61,7 +61,7 @@ namespace PythonExamplesPorterAppTests.Ignored
         public void IsIgnoredType(String fullName, Boolean expectedResult)
         {
             IgnoredEntitiesManager manager = new IgnoredEntitiesManager(_ignoredEntities);
-            Assert.AreEqual(expectedResult, manager.IsIgnoredType(fullName));
+            Assert.That(manager.IsIgnoredType(fullName), Is.EqualTo(expectedResult));
         }
 
         [TestCase("SomeNamespace.SomeType")]
@@ -74,8 +74,8 @@ namespace PythonExamplesPorterAppTests.Ignored
         {
             IgnoredEntitiesManager managerForNull = new IgnoredEntitiesManager(null);
             IgnoredEntitiesManager managerForEmpty = new IgnoredEntitiesManager(new IgnoredEntities());
-            Assert.AreEqual(false, managerForNull.IsIgnoredType(fullName));
-            Assert.AreEqual(false, managerForEmpty.IsIgnoredType(fullName));
+            Assert.That(managerForNull.IsIgnoredType(fullName), Is.False);
+            Assert.That(managerForEmpty.IsIgnoredType(fullName), Is.False);
         }
 
         [TestCase("SomeNamespace.SomeType.CheckAAA", true)]
@@ -88,7 +88,7 @@ namespace PythonExamplesPorterAppTests.Ignored
         public void IsIgnoredMethod(String fullName, Boolean expectedResult)
         {
             IgnoredEntitiesManager manager = new IgnoredEntitiesManager(_ignoredEntities);
-            Assert.AreEqual(expectedResult, manager.IsIgnoredMethod(fullName));
+            Assert.That(manager.IsIgnoredMethod(fullName), Is.EqualTo(expectedResult));
         }
 
         [TestCase("SomeNamespace.SomeType.CheckAAA")]
@@ -102,8 +102,8 @@ namespace PythonExamplesPorterAppTests.Ignored
         {
             IgnoredEntitiesManager managerForNull = new IgnoredEntitiesManager(null);
             IgnoredEntitiesManager managerForEmpty = new IgnoredEntitiesManager(new IgnoredEntities());
-            Assert.AreEqual(false, managerForNull.IsIgnoredMethod(fullName));
-            Assert.AreEqual(false, managerForEmpty.IsIgnoredMethod(fullName));
+            Assert.That(managerForNull.IsIgnoredMethod(fullName), Is.False);
+            Assert.That(managerForEmpty.IsIgnoredMethod(fullName), Is.False);
         }
 
         private readonly IgnoredEntities _ignoredEntities = new IgnoredEntities

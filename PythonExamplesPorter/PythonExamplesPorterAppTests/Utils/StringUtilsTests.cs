@@ -13,7 +13,7 @@ namespace PythonExamplesPorterAppTests.Utils
         [TestCase("\"abcd\"\t\r\n \"efgh\" - \\", "\\\"abcd\\\"\\\\t\\\\r\\\\n \\\"efgh\\\" - \\\\")]
         public void Escape(String source, String expected)
         {
-            Assert.AreEqual(expected, StringUtils.Escape(source));
+            Assert.That(StringUtils.Escape(source), Is.EqualTo(expected));
         }
 
         [TestCase("", "")]
@@ -29,16 +29,16 @@ namespace PythonExamplesPorterAppTests.Utils
         [TestCase("z\\x7AbCcc", "z\\u7abccc")]
         public void ConvertEscapeSequences(String source, String expected)
         {
-            Assert.AreEqual(expected, StringUtils.ConvertEscapeSequences(source));
+            Assert.That(StringUtils.ConvertEscapeSequences(source), Is.EqualTo(expected));
         }
 
-        [TestCase(@"", "")]
-        [TestCase(@"abcd", "abcd")]
-        [TestCase(@"abcd efgh", "abcd efgh")]
+        [TestCase("", "")]
+        [TestCase("abcd", "abcd")]
+        [TestCase("abcd efgh", "abcd efgh")]
         [TestCase(@"\a\b\c\d\", "\\\\a\\\\b\\\\c\\\\d\\\\")]
         public void PrepareVerbatimString(String source, String expected)
         {
-            Assert.AreEqual(expected, StringUtils.PrepareVerbatimString(source));
+            Assert.That(StringUtils.PrepareVerbatimString(source), Is.EqualTo(expected));
         }
     }
 }

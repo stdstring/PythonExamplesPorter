@@ -23,7 +23,7 @@ namespace PythonExamplesPorterAppTests.Handmade
         public void IsHandmadeType(String fullName, Boolean expectedResult)
         {
             HandmadeEntitiesManager manager = new HandmadeEntitiesManager(_handmadeEntities, _nameTransformer);
-            Assert.AreEqual(expectedResult, manager.IsHandmadeType(fullName));
+            Assert.That(manager.IsHandmadeType(fullName), Is.EqualTo(expectedResult));
         }
 
         [TestCase("SomeNamespace.SomeTypeA")]
@@ -36,8 +36,8 @@ namespace PythonExamplesPorterAppTests.Handmade
         {
             HandmadeEntitiesManager managerForNull = new HandmadeEntitiesManager(null, _nameTransformer);
             HandmadeEntitiesManager managerForEmpty = new HandmadeEntitiesManager(new HandmadeEntities(), _nameTransformer);
-            Assert.AreEqual(false, managerForNull.IsHandmadeType(fullName));
-            Assert.AreEqual(false, managerForEmpty.IsHandmadeType(fullName));
+            Assert.That(managerForNull.IsHandmadeType(fullName), Is.False);
+            Assert.That(managerForEmpty.IsHandmadeType(fullName), Is.False);
         }
 
         [Test]
@@ -48,12 +48,12 @@ namespace PythonExamplesPorterAppTests.Handmade
                 Assert.DoesNotThrow(() => manager.UseHandmadeType(typename));
             HandmadeType[] expectedUsedHandmadeTypes = _handmadeEntities.HandmadeTypes!.Where(type => type.FullName == "SomeNamespace.SomeTypeA").ToArray();
             HandmadeType[] actualUsedHandmadeTypes = manager.GetUsedHandmadeTypes();
-            Assert.AreEqual(expectedUsedHandmadeTypes.Length, actualUsedHandmadeTypes.Length);
+            Assert.That(actualUsedHandmadeTypes.Length, Is.EqualTo(expectedUsedHandmadeTypes.Length));
             for (Int32 index = 0; index < expectedUsedHandmadeTypes.Length; ++index)
             {
-                Assert.AreEqual(expectedUsedHandmadeTypes[index].FullName, actualUsedHandmadeTypes[index].FullName);
-                Assert.AreEqual(expectedUsedHandmadeTypes[index].Source, actualUsedHandmadeTypes[index].Source);
-                Assert.AreEqual(expectedUsedHandmadeTypes[index].Dest, actualUsedHandmadeTypes[index].Dest);
+                Assert.That(actualUsedHandmadeTypes[index].FullName, Is.EqualTo(expectedUsedHandmadeTypes[index].FullName));
+                Assert.That(actualUsedHandmadeTypes[index].Source, Is.EqualTo(expectedUsedHandmadeTypes[index].Source));
+                Assert.That(actualUsedHandmadeTypes[index].Dest, Is.EqualTo(expectedUsedHandmadeTypes[index].Dest));
             }
         }
 
@@ -67,8 +67,8 @@ namespace PythonExamplesPorterAppTests.Handmade
                 Assert.DoesNotThrow(() => managerForNull.UseHandmadeType(typename));
                 Assert.DoesNotThrow(() => managerForEmpty.UseHandmadeType(typename));
             }
-            Assert.IsEmpty(managerForNull.GetUsedHandmadeTypes());
-            Assert.IsEmpty(managerForEmpty.GetUsedHandmadeTypes());
+            Assert.That(managerForNull.GetUsedHandmadeTypes(), Is.Empty);
+            Assert.That(managerForEmpty.GetUsedHandmadeTypes(), Is.Empty);
         }
 
         [TestCase("SomeNamespace.SomeTypeA")]
@@ -97,18 +97,18 @@ namespace PythonExamplesPorterAppTests.Handmade
         {
             HandmadeEntitiesManager managerForNull = new HandmadeEntitiesManager(null, _nameTransformer);
             HandmadeEntitiesManager managerForEmpty = new HandmadeEntitiesManager(new HandmadeEntities(), _nameTransformer);
-            Assert.IsEmpty(managerForNull.GetHandmadeTypeMapping(fullName));
-            Assert.IsEmpty(managerForEmpty.GetHandmadeTypeMapping(fullName));
+            Assert.That(managerForNull.GetHandmadeTypeMapping(fullName), Is.Empty);
+            Assert.That(managerForEmpty.GetHandmadeTypeMapping(fullName), Is.Empty);
         }
 
         private void CheckMemberMappings(HandmadeMemberMapping[] expected, IDictionary<String, MappingData> actual)
         {
             IDictionary<String, MappingData> expectedMap = expected.ToDictionary(mapping => mapping.SourceName, mapping => new MappingData(mapping.DestName, mapping.NeedImport));
-            Assert.AreEqual(expectedMap.Count, actual.Count);
+            Assert.That(actual.Count, Is.EqualTo(expectedMap.Count));
             foreach (KeyValuePair<String, MappingData> expectedMapping in expectedMap)
             {
-                Assert.IsTrue(actual.ContainsKey(expectedMapping.Key));
-                Assert.AreEqual(expectedMapping.Value, actual[expectedMapping.Key]);
+                Assert.That(actual.ContainsKey(expectedMapping.Key), Is.True);
+                Assert.That(actual[expectedMapping.Key], Is.EqualTo(expectedMapping.Value));
             }
         }
 
