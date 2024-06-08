@@ -134,7 +134,8 @@ namespace PythonExamplesPorterAppTests.Config
                     Directories = Array.Empty<String>(),
                     Files = Array.Empty<String>(),
                     Types = Array.Empty<String>(),
-                    Methods = Array.Empty<String>()
+                    Methods = Array.Empty<String>(),
+                    MethodsBody = Array.Empty<String>()
                 }
             };
             CheckDeserialization(expected, source);
@@ -169,7 +170,8 @@ namespace PythonExamplesPorterAppTests.Config
                     Directories = new[]{"SomeFolder1", "SomeFolder2\\OtherFolder"},
                     Files = Array.Empty<String>(),
                     Types = Array.Empty<String>(),
-                    Methods = Array.Empty<String>()
+                    Methods = Array.Empty<String>(),
+                    MethodsBody = Array.Empty<String>()
                 }
             };
             CheckDeserialization(expected, source);
@@ -205,7 +207,8 @@ namespace PythonExamplesPorterAppTests.Config
                     Directories = Array.Empty<String>(),
                     Files = new[]{"aa1.cs", "ab1.cs", "some_folder\\aa1.cs"},
                     Types = Array.Empty<String>(),
-                    Methods = Array.Empty<String>()
+                    Methods = Array.Empty<String>(),
+                    MethodsBody = Array.Empty<String>()
                 }
             };
             CheckDeserialization(expected, source);
@@ -240,7 +243,8 @@ namespace PythonExamplesPorterAppTests.Config
                     Directories = Array.Empty<String>(),
                     Files = Array.Empty<String>(),
                     Types = new[]{"SomeNamespace.SomeType", "OtherNamespace.OtherType"},
-                    Methods = Array.Empty<String>()
+                    Methods = Array.Empty<String>(),
+                    MethodsBody = Array.Empty<String>()
                 }
             };
             CheckDeserialization(expected, source);
@@ -275,7 +279,44 @@ namespace PythonExamplesPorterAppTests.Config
                     Directories = Array.Empty<String>(),
                     Files = Array.Empty<String>(),
                     Types = Array.Empty<String>(),
-                    Methods = new[]{"SomeNamespace.SomeType.CheckAAA", "OtherNamespace.OtherType.CheckBBB"}
+                    Methods = new[]{"SomeNamespace.SomeType.CheckAAA", "OtherNamespace.OtherType.CheckBBB"},
+                    MethodsBody = Array.Empty<String>()
+                }
+            };
+            CheckDeserialization(expected, source);
+        }
+
+        [Test]
+        public void DeserializeWithIgnoredMethodsBody()
+        {
+            const String source = "<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n" +
+                                  "<ConfigData>\r\n" +
+                                  "  <BaseConfig>\r\n" +
+                                  "    <Source RelativePathBase=\"app\">..\\source\\someproj.csproj</Source>\r\n" +
+                                  "    <Dest RelativePathBase=\"app\">..\\dest\\examples</Dest>\r\n" +
+                                  "  </BaseConfig>\r\n" +
+                                  "  <IgnoredEntities>\r\n" +
+                                  "    <MethodsBody>\r\n" +
+                                  "      <MethodBody>SomeNamespace.SomeType.CheckABB</MethodBody>\r\n" +
+                                  "      <MethodBody>OtherNamespace.OtherType.CheckBAA</MethodBody>\r\n" +
+                                  "    </MethodsBody>\r\n" +
+                                  "  </IgnoredEntities>\r\n" +
+                                  "</ConfigData>";
+            ConfigData expected = new ConfigData
+            {
+                BaseConfig = new BaseConfig
+                {
+                    Source = new TargetPath(RelativePathBase.App, "..\\source\\someproj.csproj"),
+                    DestDirectory = new TargetPath(RelativePathBase.App, "..\\dest\\examples"),
+                    ForceDestDelete = false
+                },
+                IgnoredEntities = new IgnoredEntities
+                {
+                    Directories = Array.Empty<String>(),
+                    Files = Array.Empty<String>(),
+                    Types = Array.Empty<String>(),
+                    Methods = Array.Empty<String>(),
+                    MethodsBody = new[]{"SomeNamespace.SomeType.CheckABB", "OtherNamespace.OtherType.CheckBAA"}
                 }
             };
             CheckDeserialization(expected, source);
@@ -308,6 +349,10 @@ namespace PythonExamplesPorterAppTests.Config
                                   "      <Method>SomeNamespace.SomeType.CheckAAA</Method>\r\n" +
                                   "      <Method>OtherNamespace.OtherType.CheckBBB</Method>\r\n" +
                                   "    </Methods>\r\n" +
+                                  "    <MethodsBody>\r\n" +
+                                  "      <MethodBody>SomeNamespace.SomeType.CheckABB</MethodBody>\r\n" +
+                                  "      <MethodBody>OtherNamespace.OtherType.CheckBAA</MethodBody>\r\n" +
+                                  "    </MethodsBody>\r\n" +
                                   "  </IgnoredEntities>\r\n" +
                                   "</ConfigData>";
             ConfigData expected = new ConfigData
@@ -323,7 +368,8 @@ namespace PythonExamplesPorterAppTests.Config
                     Directories = new[]{"SomeFolder1", "SomeFolder2\\OtherFolder"},
                     Files = new[]{"aa1.cs", "ab1.cs", "some_folder\\aa1.cs"},
                     Types = new[]{"SomeNamespace.SomeType", "OtherNamespace.OtherType"},
-                    Methods = new[]{"SomeNamespace.SomeType.CheckAAA", "OtherNamespace.OtherType.CheckBBB"}
+                    Methods = new[]{"SomeNamespace.SomeType.CheckAAA", "OtherNamespace.OtherType.CheckBBB"},
+                    MethodsBody = new[]{"SomeNamespace.SomeType.CheckABB", "OtherNamespace.OtherType.CheckBAA"}
                 }
             };
             CheckDeserialization(expected, source);
@@ -572,6 +618,10 @@ namespace PythonExamplesPorterAppTests.Config
                                   "      <Method>SomeNamespace.SomeType.CheckAAA</Method>\r\n" +
                                   "      <Method>OtherNamespace.OtherType.CheckBBB</Method>\r\n" +
                                   "    </Methods>\r\n" +
+                                  "    <MethodsBody>\r\n" +
+                                  "      <MethodBody>SomeNamespace.SomeType.CheckABB</MethodBody>\r\n" +
+                                  "      <MethodBody>OtherNamespace.OtherType.CheckBAA</MethodBody>\r\n" +
+                                  "    </MethodsBody>\r\n" +
                                   "  </IgnoredEntities>\r\n" +
                                   "  <HandmadeEntities>\r\n" +
                                   "    <Types>\r\n" +
@@ -650,7 +700,8 @@ namespace PythonExamplesPorterAppTests.Config
                     Directories = new[]{"SomeFolder1", "SomeFolder2\\OtherFolder"},
                     Files = new[]{"aa1.cs", "ab1.cs", "some_folder\\aa1.cs"},
                     Types = new[]{"SomeNamespace.SomeType", "OtherNamespace.OtherType"},
-                    Methods = new[]{"SomeNamespace.SomeType.CheckAAA", "OtherNamespace.OtherType.CheckBBB"}
+                    Methods = new[]{"SomeNamespace.SomeType.CheckAAA", "OtherNamespace.OtherType.CheckBBB"},
+                    MethodsBody = new[]{"SomeNamespace.SomeType.CheckABB", "OtherNamespace.OtherType.CheckBAA"}
                 },
                 HandmadeEntities = new HandmadeEntities
                 {
@@ -771,6 +822,7 @@ namespace PythonExamplesPorterAppTests.Config
                 CheckCollections(expected.Files!, actual.Files);
                 CheckCollections(expected.Types!, actual.Types);
                 CheckCollections(expected.Methods!, actual.Methods);
+                CheckCollections(expected.MethodsBody!, actual.MethodsBody);
             }
         }
 
