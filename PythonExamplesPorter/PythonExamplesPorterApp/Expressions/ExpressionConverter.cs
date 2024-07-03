@@ -106,6 +106,9 @@ namespace PythonExamplesPorterApp.Expressions
                 case PredefinedTypeSyntax node:
                     VisitPredefinedType(node);
                     break;
+                case InterpolatedStringExpressionSyntax node:
+                    VisitInterpolatedStringExpression(node);
+                    break;
                 default:
                     throw new UnsupportedSyntaxException($"Unsupported expression: {expression.Kind()}");
             }
@@ -131,7 +134,7 @@ namespace PythonExamplesPorterApp.Expressions
 
         public override void VisitLiteralExpression(LiteralExpressionSyntax node)
         {
-            LiteralExpressionConverter converter = new LiteralExpressionConverter();
+            LiteralExpressionConverter converter = new LiteralExpressionConverter(_settings.CreateChild());
             AppendResult(converter.Convert(node));
         }
 
@@ -204,6 +207,12 @@ namespace PythonExamplesPorterApp.Expressions
         public override void VisitPredefinedType(PredefinedTypeSyntax node)
         {
             throw new UnsupportedSyntaxException($"Usage of predefined type {node.Keyword} is unsupported");
+        }
+
+        public override void VisitInterpolatedStringExpression(InterpolatedStringExpressionSyntax node)
+        {
+            InterpolatedStringExpressionConverter converter = new InterpolatedStringExpressionConverter(_model, _appData, _settings.CreateChild());
+            AppendResult(converter.Convert(node));
         }
 
         private void AppendResult(ConvertResult result)
