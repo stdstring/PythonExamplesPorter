@@ -7,7 +7,6 @@
 # "as is", without warranty of any kind, either expressed or implied.
 #####################################
 
-
 import aspose.pydrawing
 import aspose.words as aw
 import aspose.words.drawing
@@ -30,7 +29,6 @@ class ExDocumentBase(ApiExampleBase):
         doc.page_color = aspose.pydrawing.Color.light_gray
         doc.save(file_name=ARTIFACTS_DIR + "DocumentBase.SetPageColor.docx")
         #ExEnd
-
         doc = aw.Document(file_name=ARTIFACTS_DIR + "DocumentBase.SetPageColor.docx")
         self.assertEqual(aspose.pydrawing.Color.light_gray.to_argb(), doc.page_color.to_argb())
 
@@ -55,7 +53,6 @@ class ExDocumentBase(ApiExampleBase):
         dst_builder = aw.DocumentBuilder(dst_doc)
         dst_builder.font.style = dst_style
         dst_builder.writeln("Destination document text.")
-
         # Import the Section from the destination document into the source document, causing a style name collision.
         # If we use destination styles, then the imported source text with the same style name
         # as destination text will adopt the destination style.
@@ -64,7 +61,6 @@ class ExDocumentBase(ApiExampleBase):
         self.assertIsNone(dst_doc.styles.get_by_name("My style_0")) #ExSkip
         self.assertEqual(dst_style.font.name, imported_section.body.first_paragraph.runs[0].font.name)
         self.assertEqual(dst_style.name, imported_section.body.first_paragraph.runs[0].font.style_name)
-
         # If we use ImportFormatMode.KeepDifferentStyles, the source style is preserved,
         # and the naming clash resolves by adding a suffix.
         dst_doc.import_node(src_node=src_doc.first_section, is_import_children=True, import_format_mode=aw.ImportFormatMode.KEEP_DIFFERENT_STYLES)
@@ -74,6 +70,3 @@ class ExDocumentBase(ApiExampleBase):
 
     def test_background_shape(self):
         raise NotImplementedError("Unsupported expression: ParenthesizedLambdaExpression")
-
-    def test_use_pdf_document_for_background_shape(self):
-        raise NotImplementedError("Unsupported call of method named BackgroundShape")

@@ -7,7 +7,6 @@
 # "as is", without warranty of any kind, either expressed or implied.
 #####################################
 
-
 import aspose.words as aw
 import aspose.words.saving
 from api_example_base import ApiExampleBase, ARTIFACTS_DIR, MY_DIR

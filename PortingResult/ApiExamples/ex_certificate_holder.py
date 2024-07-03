@@ -7,9 +7,9 @@
 # "as is", without warranty of any kind, either expressed or implied.
 #####################################
 
-
 from api_example_base import ApiExampleBase
 
 
 class ExCertificateHolder(ApiExampleBase):
-    pass
+    def test_create(self):
+        raise NotImplementedError("Unsupported target type System.IO.File")

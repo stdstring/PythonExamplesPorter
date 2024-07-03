@@ -7,7 +7,6 @@
 # "as is", without warranty of any kind, either expressed or implied.
 #####################################
 
-
 import aspose.pydrawing
 import aspose.words as aw
 import aspose.words.drawing
@@ -30,18 +29,14 @@ class ExSection(ApiExampleBase):
         builder.writeln("Section 2. Hello again!")
         builder.write("Please enter text here: ")
         builder.insert_text_input("TextInput1", aw.fields.TextFormFieldType.REGULAR, "", "Placeholder text", 0)
-
         # Apply write protection to every section in the document.
         doc.protect(type=aw.ProtectionType.ALLOW_ONLY_FORM_FIELDS)
-
         # Turn off write protection for the first section.
         doc.sections[0].protected_for_forms = False
-
         # In this output document, we will be able to edit the first section freely,
         # and we will only be able to edit the contents of the form field in the second section.
         doc.save(file_name=ARTIFACTS_DIR + "Section.Protect.docx")
         #ExEnd
-
         doc = aw.Document(file_name=ARTIFACTS_DIR + "Section.Protect.docx")
         self.assertFalse(doc.sections[0].protected_for_forms)
         self.assertTrue(doc.sections[1].protected_for_forms)
@@ -59,11 +54,9 @@ class ExSection(ApiExampleBase):
         builder.insert_break(aw.BreakType.SECTION_BREAK_NEW_PAGE)
         builder.write("Section 2")
         self.assertEqual("Section 1\u000cSection 2", doc.get_text().strip())
-
         # Delete the first section from the document.
         doc.sections.remove_at(0)
         self.assertEqual("Section 2", doc.get_text().strip())
-
         # Append a copy of what is now the first section to the end of the document.
         last_section_idx = doc.sections.count - 1
         new_section = doc.sections[last_section_idx].clone()
@@ -77,19 +70,15 @@ class ExSection(ApiExampleBase):
         #ExFor:Document.last_section
         #ExSummary:Shows how to create a new section with a document builder.
         doc = aw.Document()
-
         # A blank document contains one section by default,
         # which contains child nodes that we can edit.
         self.assertEqual(1, doc.sections.count)
-
         # Use a document builder to add text to the first section.
         builder = aw.DocumentBuilder(doc)
         builder.writeln("Hello world!")
-
         # Create a second section by inserting a section break.
         builder.insert_break(aw.BreakType.SECTION_BREAK_NEW_PAGE)
         self.assertEqual(2, doc.sections.count)
-
         # Each section has its own page setup settings.
         # We can split the text in the second section into two columns.
         # This will not affect the text in the first section.
@@ -101,7 +90,6 @@ class ExSection(ApiExampleBase):
         self.assertEqual(2, doc.last_section.page_setup.text_columns.count)
         doc.save(file_name=ARTIFACTS_DIR + "Section.Create.docx")
         #ExEnd
-
         doc = aw.Document(file_name=ARTIFACTS_DIR + "Section.Create.docx")
         self.assertEqual(1, doc.first_section.page_setup.text_columns.count)
         self.assertEqual(2, doc.last_section.page_setup.text_columns.count)
@@ -133,33 +121,27 @@ class ExSection(ApiExampleBase):
         #ExFor:Inline.font
         #ExSummary:Shows how to construct an Aspose.Words document by hand.
         doc = aw.Document()
-
         # A blank document contains one section, one body and one paragraph.
         # Call the "RemoveAllChildren" method to remove all those nodes,
         # and end up with a document node with no children.
         doc.remove_all_children()
-
         # This document now has no composite child nodes that we can add content to.
         # If we wish to edit it, we will need to repopulate its node collection.
         # First, create a new section, and then append it as a child to the root document node.
         section = aw.Section(doc)
         doc.append_child(section)
-
         # Set some page setup properties for the section.
         section.page_setup.section_start = aw.SectionStart.NEW_PAGE
         section.page_setup.paper_size = aw.PaperSize.LETTER
-
         # A section needs a body, which will contain and display all its contents
         # on the page between the section's header and footer.
         body = aw.Body(doc)
         section.append_child(body)
-
         # Create a paragraph, set some formatting properties, and then append it as a child to the body.
         para = aw.Paragraph(doc)
         para.paragraph_format.style_name = "Heading 1"
         para.paragraph_format.alignment = aw.ParagraphAlignment.CENTER
         body.append_child(para)
-
         # Finally, add some content to do the document. Create a run,
         # set its appearance and contents, and then append it as a child to the paragraph.
         run = aw.Run(doc=doc)
@@ -177,17 +159,14 @@ class ExSection(ApiExampleBase):
         #ExFor:SectionCollection.__getitem__(int)
         #ExSummary:Shows how to prepare a new section node for editing.
         doc = aw.Document()
-
         # A blank document comes with a section, which has a body, which in turn has a paragraph.
         # We can add contents to this document by adding elements such as text runs, shapes, or tables to that paragraph.
         self.assertEqual(aw.NodeType.SECTION, doc.get_child(aw.NodeType.ANY, 0, True).node_type)
         self.assertEqual(aw.NodeType.BODY, doc.sections[0].get_child(aw.NodeType.ANY, 0, True).node_type)
         self.assertEqual(aw.NodeType.PARAGRAPH, doc.sections[0].body.get_child(aw.NodeType.ANY, 0, True).node_type)
-
         # If we add a new section like this, it will not have a body, or any other child nodes.
         doc.sections.add(aw.Section(doc))
         self.assertEqual(0, doc.sections[1].get_child_nodes(aw.NodeType.ANY, True).count)
-
         # Run the "EnsureMinimum" method to add a body and a paragraph to this section to begin editing it.
         doc.last_section.ensure_minimum()
         self.assertEqual(aw.NodeType.BODY, doc.sections[1].get_child(aw.NodeType.ANY, 0, True).node_type)
@@ -202,29 +181,23 @@ class ExSection(ApiExampleBase):
         #ExFor:Body.ensure_minimum
         #ExSummary:Clears main text from all sections from the document leaving the sections themselves.
         doc = aw.Document()
-
         # A blank document contains one section, one body and one paragraph.
         # Call the "RemoveAllChildren" method to remove all those nodes,
         # and end up with a document node with no children.
         doc.remove_all_children()
-
         # This document now has no composite child nodes that we can add content to.
         # If we wish to edit it, we will need to repopulate its node collection.
         # First, create a new section, and then append it as a child to the root document node.
         section = aw.Section(doc)
         doc.append_child(section)
-
         # A section needs a body, which will contain and display all its contents
         # on the page between the section's header and footer.
         body = aw.Body(doc)
         section.append_child(body)
-
         # This body has no children, so we cannot add runs to it yet.
         self.assertEqual(0, doc.first_section.body.get_child_nodes(aw.NodeType.ANY, True).count)
-
         # Call the "EnsureMinimum" to make sure that this body contains at least one empty paragraph.
         body.ensure_minimum()
-
         # Now, we can add runs to the body, and get the document to display them.
         body.first_paragraph.append_child(aw.Run(doc=doc, text="Hello world!"))
         self.assertEqual("Hello world!", doc.get_text().strip())
@@ -238,12 +211,10 @@ class ExSection(ApiExampleBase):
         #ExFor:NodeCollection.clear
         #ExSummary:Shows how to remove all sections from a document.
         doc = aw.Document(file_name=MY_DIR + "Document.docx")
-
         # This document has one section with a few child nodes containing and displaying all the document's contents.
         self.assertEqual(1, doc.sections.count)
         self.assertEqual(17, doc.sections[0].get_child_nodes(aw.NodeType.ANY, True).count)
         self.assertEqual("Hello World!\r\rHello Word!\r\r\rHello World!", doc.get_text().strip())
-
         # Clear the collection of sections, which will remove all of the document's children.
         doc.sections.clear()
         self.assertEqual(0, doc.get_child_nodes(aw.NodeType.ANY, True).count)
@@ -264,15 +235,12 @@ class ExSection(ApiExampleBase):
         builder.write("Section 3")
         section = doc.sections[2]
         self.assertEqual("Section 3" + aw.ControlChar.SECTION_BREAK, section.get_text())
-
         # Insert the contents of the first section to the beginning of the third section.
         section_to_prepend = doc.sections[0]
         section.prepend_content(section_to_prepend)
-
         # Insert the contents of the second section to the end of the third section.
         section_to_append = doc.sections[1]
         section.append_content(section_to_append)
-
         # The "PrependContent" and "AppendContent" methods did not create any new sections.
         self.assertEqual(3, doc.sections.count)
         self.assertEqual("Section 1" + aw.ControlChar.PARAGRAPH_BREAK + "Section 3" + aw.ControlChar.PARAGRAPH_BREAK + "Section 2" + aw.ControlChar.SECTION_BREAK, section.get_text())
@@ -287,7 +255,6 @@ class ExSection(ApiExampleBase):
         builder.write("Hello world!")
         self.assertEqual("Hello world!", doc.get_text().strip())
         self.assertEqual(1, doc.first_section.body.paragraphs.count)
-
         # Running the "ClearContent" method will remove all the section contents
         # but leave a blank paragraph to add content again.
         doc.first_section.clear_content()
@@ -309,7 +276,6 @@ class ExSection(ApiExampleBase):
         self.assertEqual(2, doc.first_section.headers_footers.count)
         self.assertEqual("This is the primary header.", doc.first_section.headers_footers.get_by_header_footer_type(aw.HeaderFooterType.HEADER_PRIMARY).get_text().strip())
         self.assertEqual("This is the primary footer.", doc.first_section.headers_footers.get_by_header_footer_type(aw.HeaderFooterType.FOOTER_PRIMARY).get_text().strip())
-
         # Empty all the headers and footers in this section of all their contents.
         # The headers and footers themselves will still be present but will have nothing to display.
         doc.first_section.clear_headers_footers()
@@ -324,17 +290,14 @@ class ExSection(ApiExampleBase):
         #ExSummary:Shows how to remove all shapes from all headers footers in a section.
         doc = aw.Document()
         builder = aw.DocumentBuilder(doc)
-
         # Create a primary header with a shape.
         builder.move_to_header_footer(aw.HeaderFooterType.HEADER_PRIMARY)
         builder.insert_shape(shape_type=aw.drawing.ShapeType.RECTANGLE, width=100, height=100)
-
         # Create a primary footer with an image.
         builder.move_to_header_footer(aw.HeaderFooterType.FOOTER_PRIMARY)
         builder.insert_image(file_name=IMAGE_DIR + "Logo Icon.ico")
         self.assertEqual(1, doc.first_section.headers_footers.get_by_header_footer_type(aw.HeaderFooterType.HEADER_PRIMARY).get_child_nodes(aw.NodeType.SHAPE, True).count)
         self.assertEqual(1, doc.first_section.headers_footers.get_by_header_footer_type(aw.HeaderFooterType.FOOTER_PRIMARY).get_child_nodes(aw.NodeType.SHAPE, True).count)
-
         # Remove all shapes from the headers and footers in the first section.
         doc.first_section.delete_header_footer_shapes()
         self.assertEqual(0, doc.first_section.headers_footers.get_by_header_footer_type(aw.HeaderFooterType.HEADER_PRIMARY).get_child_nodes(aw.NodeType.SHAPE, True).count)
@@ -365,9 +328,12 @@ class ExSection(ApiExampleBase):
         builder.write("Section 1")
         builder.insert_break(aw.BreakType.SECTION_BREAK_NEW_PAGE)
         builder.write("Section 2")
-
         # It is important to understand that a document can contain many sections,
         # and each section has its page setup. In this case, we want to modify them all.
-        for section in doc.of_type():
+        for section in doc.get_child_nodes(aw.NodeType.SECTION, True):
+            section = section.as_section()
             section.page_setup.paper_size = aw.PaperSize.LETTER
         doc.save(file_name=ARTIFACTS_DIR + "Section.ModifyPageSetupInAllSections.doc")
+
+    def test_culture_info_page_setup_defaults(self):
+        raise NotImplementedError("Unsupported target type System.Threading.Thread")

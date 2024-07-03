@@ -7,9 +7,13 @@
 # "as is", without warranty of any kind, either expressed or implied.
 #####################################
 
-
-from api_example_base import ApiExampleBase
+import aspose.words as aw
+from api_example_base import ApiExampleBase, MY_DIR
 
 
 class ExRendering(ApiExampleBase):
-    pass
+    def test_render_to_size(self):
+        raise NotImplementedError("Unsupported statement type: UsingStatement")
+
+    def test_thumbnails(self):
+        raise NotImplementedError("Unsupported statement type: UsingStatement")

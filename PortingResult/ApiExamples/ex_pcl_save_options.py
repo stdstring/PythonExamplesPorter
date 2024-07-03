@@ -7,7 +7,6 @@
 # "as is", without warranty of any kind, either expressed or implied.
 #####################################
 
-
 import aspose.words as aw
 import aspose.words.saving
 from api_example_base import ApiExampleBase, ARTIFACTS_DIR, MY_DIR
@@ -37,7 +36,6 @@ class ExPclSaveOptions(ApiExampleBase):
         builder.write("Hello world!")
         save_options = aw.saving.PclSaveOptions()
         save_options.fallback_font_name = "Times New Roman"
-
         # This document will instruct the printer to apply "Times New Roman" to the text with the missing font.
         # Should "Times New Roman" also be unavailable, the printer will default to the "Arial" font.
         doc.save(file_name=ARTIFACTS_DIR + "PclSaveOptions.SetPrinterFont.pcl", save_options=save_options)
@@ -45,7 +43,7 @@ class ExPclSaveOptions(ApiExampleBase):
 
     def test_add_printer_font(self):
         #ExStart
-        #ExFor:PclSaveOptions.add_printer_font(string,string)
+        #ExFor:PclSaveOptions.add_printer_font(str,str)
         #ExSummary:Shows how to get a printer to substitute all instances of a specific font with a different font.
         doc = aw.Document()
         builder = aw.DocumentBuilder(doc)
@@ -53,7 +51,6 @@ class ExPclSaveOptions(ApiExampleBase):
         builder.write("Hello world!")
         save_options = aw.saving.PclSaveOptions()
         save_options.add_printer_font("Courier New", "Courier")
-
         # When printing this document, the printer will use the "Courier New" font
         # to access places where our document used the "Courier" font.
         doc.save(file_name=ARTIFACTS_DIR + "PclSaveOptions.AddPrinterFont.pcl", save_options=save_options)
@@ -61,10 +58,10 @@ class ExPclSaveOptions(ApiExampleBase):
 
     def test_get_preserved_paper_tray_information(self):
         doc = aw.Document(file_name=MY_DIR + "Rendering.docx")
-
         # Paper tray information is now preserved when saving document to PCL format.
         # Following information is transferred from document's model to PCL file.
-        for section in doc.sections.of_type():
+        for section in doc.sections:
+            section = section.as_section()
             section.page_setup.first_page_tray = 15
             section.page_setup.other_pages_tray = 12
         doc.save(file_name=ARTIFACTS_DIR + "PclSaveOptions.GetPreservedPaperTrayInformation.pcl")

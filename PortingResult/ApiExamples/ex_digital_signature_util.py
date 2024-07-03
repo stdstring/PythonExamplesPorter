@@ -7,7 +7,6 @@
 # "as is", without warranty of any kind, either expressed or implied.
 #####################################
 
-
 import aspose.words as aw
 import aspose.words.digitalsignatures
 import aspose.words.loading
@@ -19,9 +18,15 @@ class ExDigitalSignatureUtil(ApiExampleBase):
     def test_load(self):
         raise NotImplementedError("Unsupported statement type: UsingStatement")
 
+    def test_remove(self):
+        raise NotImplementedError("Unsupported statement type: UsingStatement")
+
     def test_remove_signatures(self):
         aw.digitalsignatures.DigitalSignatureUtil.remove_all_signatures(src_file_name=MY_DIR + "Digitally signed.odt", dst_file_name=ARTIFACTS_DIR + "DigitalSignatureUtil.RemoveSignatures.odt")
         self.assertEqual(0, aw.digitalsignatures.DigitalSignatureUtil.load_signatures(file_name=ARTIFACTS_DIR + "DigitalSignatureUtil.RemoveSignatures.odt").count)
+
+    def test_sign_document(self):
+        raise NotImplementedError("Unsupported target type System.DateTime")
 
     def test_decryption_password(self):
         raise NotImplementedError("Unsupported target type System.DateTime")

@@ -7,7 +7,6 @@
 # "as is", without warranty of any kind, either expressed or implied.
 #####################################
 
-
 import aspose.words as aw
 import aspose.words.layout
 import unittest
@@ -19,10 +18,10 @@ class ExRevision(ApiExampleBase):
         raise NotImplementedError("Unsupported target type System.DateTime")
 
     def test_revision_collection(self):
-        raise NotImplementedError("Unsupported expression: InterpolatedStringExpression")
+        raise NotImplementedError("Unsupported target type System.Console")
 
     def test_get_info_about_revisions_in_revision_groups(self):
-        raise NotImplementedError("Unsupported expression: InterpolatedStringExpression")
+        raise NotImplementedError("Unsupported target type System.Console")
 
     def test_get_specific_revision_group(self):
         #ExStart
@@ -32,7 +31,6 @@ class ExRevision(ApiExampleBase):
         doc = aw.Document(file_name=MY_DIR + "Revisions.docx")
         revision_group = doc.revisions.groups[0]
         #ExEnd
-
         self.assertEqual(aw.RevisionType.DELETION, revision_group.revision_type)
         self.assertEqual("Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. ", revision_group.text)
 
@@ -41,7 +39,6 @@ class ExRevision(ApiExampleBase):
         #ExFor:RevisionOptions.show_in_balloons
         #ExSummary:Shows how to display revisions in balloons.
         doc = aw.Document(file_name=MY_DIR + "Revisions.docx")
-
         # By default, text that is a revision has a different color to differentiate it from the other non-revision text.
         # Set a revision option to show more details about each revision in a balloon on the page's right margin.
         doc.layout_options.revision_options.show_in_balloons = aw.layout.ShowInBalloons.FORMAT_AND_DELETE
@@ -69,18 +66,14 @@ class ExRevision(ApiExampleBase):
         #ExFor:RevisionTextEffect
         #ExSummary:Shows how to modify the appearance of revisions.
         doc = aw.Document(file_name=MY_DIR + "Revisions.docx")
-
         # Get the RevisionOptions object that controls the appearance of revisions.
         revision_options = doc.layout_options.revision_options
-
         # Render insertion revisions in green and italic.
         revision_options.inserted_text_color = aw.layout.RevisionColor.GREEN
         revision_options.inserted_text_effect = aw.layout.RevisionTextEffect.ITALIC
-
         # Render deletion revisions in red and bold.
         revision_options.deleted_text_color = aw.layout.RevisionColor.RED
         revision_options.deleted_text_effect = aw.layout.RevisionTextEffect.BOLD
-
         # The same text will appear twice in a movement revision:
         # once at the departure point and once at the arrival destination.
         # Render the text at the moved-from revision yellow with a double strike through
@@ -89,27 +82,19 @@ class ExRevision(ApiExampleBase):
         revision_options.moved_from_text_effect = aw.layout.RevisionTextEffect.DOUBLE_STRIKE_THROUGH
         revision_options.moved_to_text_color = aw.layout.RevisionColor.CLASSIC_BLUE
         revision_options.moved_from_text_effect = aw.layout.RevisionTextEffect.DOUBLE_UNDERLINE
-
         # Render format revisions in dark red and bold.
         revision_options.revised_properties_color = aw.layout.RevisionColor.DARK_RED
         revision_options.revised_properties_effect = aw.layout.RevisionTextEffect.BOLD
-
         # Place a thick dark blue bar on the left side of the page next to lines affected by revisions.
         revision_options.revision_bars_color = aw.layout.RevisionColor.DARK_BLUE
         revision_options.revision_bars_width = 15
-
         # Show revision marks and original text.
         revision_options.show_original_revision = True
         revision_options.show_revision_marks = True
-
         # Get movement, deletion, formatting revisions, and comments to show up in green balloons
         # on the right side of the page.
         revision_options.show_in_balloons = aw.layout.ShowInBalloons.FORMAT
         revision_options.comment_color = aw.layout.RevisionColor.BRIGHT_GREEN
-
         # These features are only applicable to formats such as .pdf or .jpg.
         doc.save(file_name=ARTIFACTS_DIR + "Revision.RevisionOptions.pdf")
         #ExEnd
-
-    def test_revision_specified_criteria(self):
-        raise NotImplementedError("Unsupported target type System.DateTime")

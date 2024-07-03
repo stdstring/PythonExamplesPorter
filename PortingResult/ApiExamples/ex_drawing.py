@@ -7,7 +7,6 @@
 # "as is", without warranty of any kind, either expressed or implied.
 #####################################
 
-
 import aspose.pydrawing
 import aspose.words as aw
 import aspose.words.drawing
@@ -16,8 +15,27 @@ from api_example_base import ApiExampleBase, ARTIFACTS_DIR, IMAGE_DIR, MY_DIR
 
 
 class ExDrawing(ApiExampleBase):
+    def test_various_shapes(self):
+        raise NotImplementedError("Unsupported target type System.IO.File")
+
+    def test_import_image(self):
+        raise NotImplementedError("Unsupported statement type: UsingStatement")
+
+    def test_type_of_image(self):
+        #ExStart
+        #ExFor:ImageType
+        #ExSummary:Shows how to add an image to a shape and check its type.
+        doc = aw.Document()
+        builder = aw.DocumentBuilder(doc)
+        img_shape = builder.insert_image(file_name=IMAGE_DIR + "Logo.jpg")
+        self.assertEqual(aw.drawing.ImageType.JPEG, img_shape.image_data.image_type)
+        #ExEnd
+
     def test_fill_solid(self):
         raise NotImplementedError("Unsupported target type System.Console")
+
+    def test_save_all_images(self):
+        raise NotImplementedError("Unsupported expression: SimpleLambdaExpression")
 
     def test_stroke_pattern(self):
         raise NotImplementedError("Unsupported target type System.IO.File")
@@ -38,7 +56,6 @@ class ExDrawing(ApiExampleBase):
         builder.write("This text is flipped 90 degrees to the left.")
         doc.save(file_name=ARTIFACTS_DIR + "Drawing.TextBox.docx")
         #ExEnd
-
         doc = aw.Document(file_name=ARTIFACTS_DIR + "Drawing.TextBox.docx")
         textbox = doc.get_child(aw.NodeType.SHAPE, 0, True).as_shape()
         self.assertEqual(aw.drawing.ShapeType.TEXT_BOX, textbox.shape_type)

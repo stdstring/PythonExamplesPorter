@@ -7,9 +7,9 @@
 # "as is", without warranty of any kind, either expressed or implied.
 #####################################
 
-
 from api_example_base import ApiExampleBase
 
 
 class ExPdf2Word(ApiExampleBase):
-    pass
+    def test_load_pdf(self):
+        raise NotImplementedError("ignored method body")

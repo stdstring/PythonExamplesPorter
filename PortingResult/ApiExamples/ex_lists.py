@@ -7,7 +7,6 @@
 # "as is", without warranty of any kind, either expressed or implied.
 #####################################
 
-
 import aspose.pydrawing
 import aspose.words as aw
 import aspose.words.lists
@@ -47,10 +46,10 @@ class ExLists(ApiExampleBase):
         raise NotImplementedError("Unsupported expression: SimpleLambdaExpression")
 
     def test_outline_heading_templates(self):
-        raise NotImplementedError("Unsupported call of method named AddOutlineHeadingParagraphs")
+        raise NotImplementedError("ignored method body")
 
     def test_print_out_all_lists(self):
-        raise NotImplementedError("Unsupported call of method named AddListSample")
+        raise NotImplementedError("ignored method body")
 
     def test_list_document(self):
         raise NotImplementedError("Unsupported target type System.Console")
@@ -68,7 +67,6 @@ class ExLists(ApiExampleBase):
         #ExSummary:Shows how to set a custom image icon for list item labels.
         doc = aw.Document()
         list = doc.lists.add(list_template=aw.lists.ListTemplate.BULLET_CIRCLE)
-
         # Create a picture bullet for the current list level, and set an image from a local file system
         # as the icon that the bullets for this list level will display.
         list.list_levels[0].create_picture_bullet()
@@ -82,7 +80,6 @@ class ExLists(ApiExampleBase):
         list.list_levels[0].delete_picture_bullet()
         self.assertIsNone(list.list_levels[0].image_data)
         #ExEnd
-
         doc = aw.Document(file_name=ARTIFACTS_DIR + "Lists.CreatePictureBullet.docx")
         self.assertTrue(doc.lists[0].list_levels[0].image_data.has_image)
 

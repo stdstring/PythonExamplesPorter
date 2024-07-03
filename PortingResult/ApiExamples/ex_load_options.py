@@ -7,7 +7,6 @@
 # "as is", without warranty of any kind, either expressed or implied.
 #####################################
 
-
 import aspose.words as aw
 import aspose.words.drawing
 import aspose.words.fonts
@@ -33,11 +32,9 @@ class ExLoadOptions(ApiExampleBase):
         font_settings = aw.fonts.FontSettings()
         font_settings.set_fonts_folder(FONTS_DIR, False)
         font_settings.substitution_settings.table_substitution.add_substitutes("Times New Roman", ["Arvo"])
-
         # Set that FontSettings object as a property of a newly created LoadOptions object.
         load_options = aw.loading.LoadOptions()
         load_options.font_settings = font_settings
-
         # Load the document, then render it as a PDF with the font substitution.
         doc = aw.Document(file_name=MY_DIR + "Document.docx", load_options=load_options)
         doc.save(file_name=ARTIFACTS_DIR + "LoadOptions.FontSettings.pdf")
@@ -50,12 +47,10 @@ class ExLoadOptions(ApiExampleBase):
         # By default, Aspose.Words load documents according to Microsoft Word 2019 specification.
         load_options = aw.loading.LoadOptions()
         self.assertEqual(aw.settings.MsWordVersion.WORD2019, load_options.msw_version)
-
         # This document is missing the default paragraph formatting style.
         # This default style will be regenerated when we load the document either with Microsoft Word or Aspose.Words.
         load_options.msw_version = aw.settings.MsWordVersion.WORD2007
         doc = aw.Document(file_name=MY_DIR + "Document.docx", load_options=load_options)
-
         # The style's line spacing will have this value when loaded by Microsoft Word 2007 specification.
         self.assertAlmostEqual(12.95, doc.styles.default_paragraph_format.line_spacing, delta=0.01)
         #ExEnd

@@ -7,22 +7,39 @@
 # "as is", without warranty of any kind, either expressed or implied.
 #####################################
 
-
-import aspose.pydrawing
 import aspose.words as aw
 import aspose.words.buildingblocks
 import aspose.words.drawing
 import aspose.words.fields
+import aspose.words.lists
+import aspose.words.notes
 import unittest
 from api_example_base import ApiExampleBase, ARTIFACTS_DIR, IMAGE_DIR, MY_DIR
 
 
 class ExField(ApiExampleBase):
+    def test_get_field_from_document(self):
+        raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")
+
     def test_get_field_data(self):
         raise NotImplementedError("Unsupported target type System.Text.Encoding")
 
     def test_get_field_code(self):
-        raise NotImplementedError("Unsupported expression: InterpolatedStringExpression")
+        #ExStart
+        #ExFor:Field.get_field_code
+        #ExFor:Field.get_field_code(bool)
+        #ExSummary:Shows how to get a field's field code.
+        # Open a document which contains a MERGEFIELD inside an IF field.
+        doc = aw.Document(file_name=MY_DIR + "Nested fields.docx")
+        field_if = doc.range.fields[0].as_field_if()
+        # There are two ways of getting a field's field code:
+        # 1 -  Omit its inner fields:
+        self.assertEqual(" IF  > 0 \" (surplus of ) \" \"\" ", field_if.get_field_code(False))
+        # 2 -  Include its inner fields:
+        self.assertEqual(f" IF \u0013 MERGEFIELD NetIncome \u0014\u0015 > 0 \" (surplus of \u0013 MERGEFIELD  NetIncome \\f $ \u0014\u0015) \" \"\" ", field_if.get_field_code(True))
+        # By default, the GetFieldCode method displays inner fields.
+        self.assertEqual(field_if.get_field_code(), field_if.get_field_code(True))
+        #ExEnd
 
     def test_display_result(self):
         #ExStart
@@ -33,11 +50,9 @@ class ExField(ApiExampleBase):
         builder.write("This document was written by ")
         field_author = builder.insert_field(field_type=aw.fields.FieldType.FIELD_AUTHOR, update_field=True).as_field_author()
         field_author.author_name = "John Doe"
-
         # We can use the DisplayResult property to verify what exact text
         # a field would display in its place in the document.
         self.assertEqual("", field_author.display_result)
-
         # Fields do not maintain accurate result values in real-time.
         # To make sure our fields display accurate results at any given time,
         # such as right before a save operation, we need to update them manually.
@@ -45,7 +60,6 @@ class ExField(ApiExampleBase):
         self.assertEqual("John Doe", field_author.display_result)
         doc.save(file_name=ARTIFACTS_DIR + "Field.DisplayResult.docx")
         #ExEnd
-
         doc = aw.Document(file_name=ARTIFACTS_DIR + "Field.DisplayResult.docx")
         self.assertEqual("John Doe", doc.range.fields[0].display_result)
 
@@ -61,15 +75,23 @@ class ExField(ApiExampleBase):
     def test_insert_tc_field(self):
         doc = aw.Document()
         builder = aw.DocumentBuilder(doc)
-
         # Insert a TC field at the current document builder position.
         builder.insert_field(field_code="TC \"Entry Text\" \\f t")
+
+    def test_field_locale(self):
+        raise NotImplementedError("Unsupported target type System.Globalization.CultureInfo")
+
+    def test_update_dirty_fields(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_insert_field_with_field_builder_exception(self):
         raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")
 
     def test_preserve_include_picture(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_field_format(self):
+        raise NotImplementedError("Unsupported target type System.Console")
 
     def test_unlink(self):
         raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")
@@ -110,21 +132,17 @@ class ExField(ApiExampleBase):
         doc.update_fields()
         fields = doc.range.fields
         self.assertEqual(6, fields.count)
-
         # Below are four ways of removing fields from a field collection.
         # 1 -  Get a field to remove itself:
         fields[0].remove()
         self.assertEqual(5, fields.count)
-
         # 2 -  Get the collection to remove a field that we pass to its removal method:
         last_field = fields[3]
         fields.remove(last_field)
         self.assertEqual(4, fields.count)
-
         # 3 -  Remove a field from a collection at an index:
         fields.remove_at(2)
         self.assertEqual(3, fields.count)
-
         # 4 -  Remove all the fields from the collection at once:
         fields.clear()
         self.assertEqual(0, fields.count)
@@ -140,7 +158,7 @@ class ExField(ApiExampleBase):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_field_auto_num_lgl(self):
-        raise NotImplementedError("Unsupported call of method named InsertNumberedClause")
+        raise NotImplementedError("ignored method body")
 
     def test_field_auto_num_out(self):
         raise NotImplementedError("Unsupported expression: SimpleLambdaExpression")
@@ -149,16 +167,16 @@ class ExField(ApiExampleBase):
         raise NotImplementedError("Unsupported member target type - System.String[] for expression: doc.FieldOptions.BuiltInTemplatesPaths")
 
     def test_field_auto_text_list(self):
-        raise NotImplementedError("Unsupported call of method named AppendAutoTextEntry")
+        raise NotImplementedError("ignored method body")
 
     def test_field_list_num(self):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_field_toc(self):
-        raise NotImplementedError("Unsupported call of method named InsertNewPageWithHeading")
+        raise NotImplementedError("ignored method body")
 
     def test_field_toc_entry_identifier(self):
-        raise NotImplementedError("Unsupported call of method named InsertTocEntry")
+        raise NotImplementedError("ignored method body")
 
     def test_toc_seq_prefix(self):
         raise NotImplementedError("Unsupported target type System.Console")
@@ -166,10 +184,10 @@ class ExField(ApiExampleBase):
     def test_toc_seq_numbering(self):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
-    def test_field_citation(self):
-        raise NotImplementedError("Unsupported target type System.Threading.Thread")
+    def test_toc_seq_bookmark(self):
+        raise NotImplementedError("Unsupported expression: SimpleLambdaExpression")
 
-    def test_change_bibliography_styles(self):
+    def test_field_citation(self):
         raise NotImplementedError("Unsupported target type System.Threading.Thread")
 
     def test_field_data(self):
@@ -181,11 +199,44 @@ class ExField(ApiExampleBase):
     def test_field_include_picture(self):
         raise NotImplementedError("Unsupported target type System.Text.RegularExpressions.Regex")
 
+    def test_field_include_text(self):
+        raise NotImplementedError("ignored method body")
+
+    def test_field_hyperlink(self):
+        raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
+
+    def test_field_index_filter(self):
+        raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
+
+    def test_field_index_formatting(self):
+        raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
+
+    def test_field_index_sequence(self):
+        raise NotImplementedError("Unsupported expression: SimpleLambdaExpression")
+
+    def test_field_index_page_number_separator(self):
+        raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
+
+    def test_field_index_page_range_bookmark(self):
+        raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
+
+    def test_field_index_cross_reference_separator(self):
+        raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
+
+    def test_field_index_subheading(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_field_index_yomi(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
     def test_field_barcode(self):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_field_display_barcode(self):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
+
+    def test_field_linked_objects_as_text(self):
+        raise NotImplementedError("ignored method body")
 
     def test_field_user_address(self):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
@@ -194,6 +245,21 @@ class ExField(ApiExampleBase):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_field_user_name(self):
+        raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
+
+    def test_field_style_ref_paragraph_numbers(self):
+        raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
+
+    def test_field_date(self):
+        raise NotImplementedError("Unsupported target type System.Text.RegularExpressions.Regex")
+
+    def test_field_create_date(self):
+        raise NotImplementedError("Unsupported ctor for type DateTime")
+
+    def test_field_save_date(self):
+        raise NotImplementedError("Unsupported target type System.DateTime")
+
+    def test_field_builder(self):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_field_author(self):
@@ -237,14 +303,12 @@ class ExField(ApiExampleBase):
         #ExFor:FieldPrintDate.use_um_al_qura_calendar
         #ExSummary:Shows read PRINTDATE fields.
         doc = aw.Document(file_name=MY_DIR + "Field sample - PRINTDATE.docx")
-
         # When a document is printed by a printer or printed as a PDF (but not exported to PDF),
         # PRINTDATE fields will display the print operation's date/time.
         # If no printing has taken place, these fields will display "0/0/0000".
         field = doc.range.fields[0].as_field_print_date()
         self.assertEqual("3/25/2020 12:00:00 AM", field.result)
         self.assertEqual(" PRINTDATE ", field.get_field_code())
-
         # Below are three different calendar types according to which the PRINTDATE field
         # can display the date and time of the last printing operation.
         # 1 -  Islamic Lunar Calendar:
@@ -253,18 +317,34 @@ class ExField(ApiExampleBase):
         self.assertEqual("8/1/1441 12:00:00 AM", field.result)
         self.assertEqual(" PRINTDATE  \\h", field.get_field_code())
         field = doc.range.fields[2].as_field_print_date()
-
         # 2 -  Umm al-Qura calendar:
         self.assertTrue(field.use_um_al_qura_calendar)
         self.assertEqual("8/1/1441 12:00:00 AM", field.result)
         self.assertEqual(" PRINTDATE  \\u", field.get_field_code())
         field = doc.range.fields[3].as_field_print_date()
-
         # 3 -  Indian National Calendar:
         self.assertTrue(field.use_saka_era_calendar)
         self.assertEqual("1/5/1942 12:00:00 AM", field.result)
         self.assertEqual(" PRINTDATE  \\s", field.get_field_code())
         #ExEnd
+
+    def test_field_quote(self):
+        raise NotImplementedError("Unsupported target type System.DateTime")
+
+    def test_field_note_ref(self):
+        raise NotImplementedError("ignored method body")
+
+    def test_note_ref(self):
+        raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
+
+    def test_field_page_ref(self):
+        raise NotImplementedError("ignored method body")
+
+    def test_field_ref(self):
+        raise NotImplementedError("ignored method body")
+
+    def test_field_rd(self):
+        raise NotImplementedError("Unsupported usage of backslash symbol in literal expression: @\"\\\"")
 
     def test_field_set_ref(self):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
@@ -277,7 +357,6 @@ class ExField(ApiExampleBase):
         #ExSummary:Shows how to use a TEMPLATE field to display the local file system location of a document's template.
         doc = aw.Document()
         builder = aw.DocumentBuilder(doc)
-
         # We can set a template name using by the fields. This property is used when the "doc.AttachedTemplate" is empty.
         # If this property is empty the default template file name "Normal.dotm" is used.
         doc.field_options.template_name = ""
@@ -290,7 +369,6 @@ class ExField(ApiExampleBase):
         doc.update_fields()
         doc.save(file_name=ARTIFACTS_DIR + "Field.TEMPLATE.docx")
         #ExEnd
-
         doc = aw.Document(file_name=ARTIFACTS_DIR + "Field.TEMPLATE.docx")
         field = doc.range.fields[0].as_field_template()
         self.assertEqual(" TEMPLATE ", field.get_field_code())
@@ -306,7 +384,7 @@ class ExField(ApiExampleBase):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_field_toa(self):
-        raise NotImplementedError("Unsupported call of method named InsertToaEntry")
+        raise NotImplementedError("ignored method body")
 
     def test_field_add_in(self):
         raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")
@@ -315,7 +393,10 @@ class ExField(ApiExampleBase):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_field_eq(self):
-        raise NotImplementedError("Unsupported call of method named InsertFieldEQ")
+        raise NotImplementedError("ignored method body")
+
+    def test_field_eq_as_office_math(self):
+        raise NotImplementedError("Unsupported target type System.Collections.Generic.IEnumerable")
 
     def test_field_forms(self):
         #ExStart
@@ -346,6 +427,9 @@ class ExField(ApiExampleBase):
     def test_field_section(self):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
+    def test_field_time(self):
+        raise NotImplementedError("ignored method body")
+
     def test_bidi_outline(self):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
@@ -357,29 +441,24 @@ class ExField(ApiExampleBase):
         #ExSummary:Shows how some older Microsoft Word fields such as SHAPE and EMBED are handled during loading.
         # Open a document that was created in Microsoft Word 2003.
         doc = aw.Document(file_name=MY_DIR + "Legacy fields.doc")
-
         # If we open the Word document and press Alt+F9, we will see a SHAPE and an EMBED field.
         # A SHAPE field is the anchor/canvas for an AutoShape object with the "In line with text" wrapping style enabled.
         # An EMBED field has the same function, but for an embedded object,
         # such as a spreadsheet from an external Excel document.
         # However, these fields will not appear in the document's Fields collection.
         self.assertEqual(0, doc.range.fields.count)
-
         # These fields are supported only by old versions of Microsoft Word.
         # The document loading process will convert these fields into Shape objects,
         # which we can access in the document's node collection.
         shapes = doc.get_child_nodes(aw.NodeType.SHAPE, True)
         self.assertEqual(3, shapes.count)
-
         # The first Shape node corresponds to the SHAPE field in the input document,
         # which is the inline canvas for the AutoShape.
         shape = shapes[0].as_shape()
         self.assertEqual(aw.drawing.ShapeType.IMAGE, shape.shape_type)
-
         # The second Shape node is the AutoShape itself.
         shape = shapes[1].as_shape()
         self.assertEqual(aw.drawing.ShapeType.CAN, shape.shape_type)
-
         # The third Shape is what was the EMBED field that contained the external spreadsheet.
         shape = shapes[2].as_shape()
         self.assertEqual(aw.drawing.ShapeType.OLE_OBJECT, shape.shape_type)

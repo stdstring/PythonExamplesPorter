@@ -7,7 +7,6 @@
 # "as is", without warranty of any kind, either expressed or implied.
 #####################################
 
-
 import aspose.words as aw
 import aspose.words.saving
 import unittest
@@ -27,7 +26,6 @@ class ExDocSaveOptions(ApiExampleBase):
         #ExSummary:Shows how to omit PictureBullet data from the document when saving.
         doc = aw.Document(file_name=MY_DIR + "Image bullet points.docx")
         self.assertIsNotNone(doc.lists[0].list_levels[0].image_data) #ExSkip
-
         # Some word processors, such as Microsoft Word 97, are incompatible with PictureBullet data.
         # By setting a flag in the SaveOptions object,
         # we can convert all image bullet points to ordinary bullet points while saving.
@@ -35,7 +33,6 @@ class ExDocSaveOptions(ApiExampleBase):
         save_options.save_picture_bullet = False
         doc.save(file_name=ARTIFACTS_DIR + "DocSaveOptions.PictureBullets.doc", save_options=save_options)
         #ExEnd
-
         doc = aw.Document(file_name=ARTIFACTS_DIR + "DocSaveOptions.PictureBullets.doc")
         self.assertIsNone(doc.lists[0].list_levels[0].image_data)
 

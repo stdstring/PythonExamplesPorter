@@ -7,9 +7,7 @@
 # "as is", without warranty of any kind, either expressed or implied.
 #####################################
 
-
-import aspose.words as aw
-from api_example_base import ApiExampleBase, ARTIFACTS_DIR
+from api_example_base import ApiExampleBase
 
 
 class ExNodeImporter(ApiExampleBase):
@@ -17,4 +15,4 @@ class ExNodeImporter(ApiExampleBase):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_insert_at_bookmark(self):
-        raise NotImplementedError("Unsupported call of method named InsertDocument")
+        raise NotImplementedError("ignored method body")

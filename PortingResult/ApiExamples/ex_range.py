@@ -7,7 +7,6 @@
 # "as is", without warranty of any kind, either expressed or implied.
 #####################################
 
-
 import aspose.words as aw
 import aspose.words.drawing
 import aspose.words.replacing
@@ -18,12 +17,11 @@ from api_example_base import ApiExampleBase, ARTIFACTS_DIR
 class ExRange(ApiExampleBase):
     def test_replace(self):
         #ExStart
-        #ExFor:Range.replace(string,string)
+        #ExFor:Range.replace(str,str)
         #ExSummary:Shows how to perform a find-and-replace text operation on the contents of a document.
         doc = aw.Document()
         builder = aw.DocumentBuilder(doc)
         builder.writeln("Greetings, _FullName_!")
-
         # Perform a find-and-replace operation on our document's contents and verify the number of replacements that took place.
         replacement_count = doc.range.replace(pattern="_FullName_", replacement="John Doe")
         self.assertEqual(1, replacement_count)
@@ -75,14 +73,11 @@ class ExRange(ApiExampleBase):
         builder.insert_field(field_code=" DOCPROPERTY Category")
         builder.insert_break(aw.BreakType.SECTION_BREAK_EVEN_PAGE)
         builder.insert_field(field_code=" DOCPROPERTY Category")
-
         # The above DOCPROPERTY fields will display the value of this built-in document property.
         doc.built_in_document_properties.category = "MyCategory"
-
         # If we update the value of a document property, we will need to update all the DOCPROPERTY fields to display it.
         self.assertEqual("", doc.range.fields[0].result)
         self.assertEqual("", doc.range.fields[1].result)
-
         # Update all the fields that are in the range of the first section.
         doc.first_section.range.update_fields()
         self.assertEqual("MyCategory", doc.range.fields[0].result)
@@ -106,7 +101,7 @@ class ExRange(ApiExampleBase):
     def test_apply_paragraph_format(self):
         #ExStart
         #ExFor:FindReplaceOptions.apply_paragraph_format
-        #ExFor:Range.replace(string,string)
+        #ExFor:Range.replace(str,str)
         #ExSummary:Shows how to add formatting to paragraphs in which a find-and-replace operation has found matches.
         doc = aw.Document()
         builder = aw.DocumentBuilder(doc)
@@ -117,14 +112,11 @@ class ExRange(ApiExampleBase):
         self.assertEqual(aw.ParagraphAlignment.LEFT, paragraphs[0].paragraph_format.alignment)
         self.assertEqual(aw.ParagraphAlignment.LEFT, paragraphs[1].paragraph_format.alignment)
         self.assertEqual(aw.ParagraphAlignment.LEFT, paragraphs[2].paragraph_format.alignment)
-
         # We can use a "FindReplaceOptions" object to modify the find-and-replace process.
         options = aw.replacing.FindReplaceOptions()
-
         # Set the "Alignment" property to "ParagraphAlignment.Right" to right-align every paragraph
         # that contains a match that the find-and-replace operation finds.
         options.apply_paragraph_format.alignment = aw.ParagraphAlignment.RIGHT
-
         # Replace every full stop that is right before a paragraph break with an exclamation point.
         count = doc.range.replace(pattern=".&p", replacement="!&p", options=options)
         self.assertEqual(2, count)
@@ -141,13 +133,11 @@ class ExRange(ApiExampleBase):
         #ExSummary:Shows how to delete all the nodes from a range.
         doc = aw.Document()
         builder = aw.DocumentBuilder(doc)
-
         # Add text to the first section in the document, and then add another section.
         builder.write("Section 1. ")
         builder.insert_break(aw.BreakType.SECTION_BREAK_CONTINUOUS)
         builder.write("Section 2.")
         self.assertEqual("Section 1. \fSection 2.", doc.get_text().strip())
-
         # Remove the first section entirely by removing all the nodes
         # within its range, including the section itself.
         doc.sections[0].range.delete()
