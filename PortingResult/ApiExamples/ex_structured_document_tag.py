@@ -340,4 +340,3 @@ class ExStructuredDocumentTag(ApiExampleBase):
         if tag.appearance == aw.markup.SdtAppearance.HIDDEN:
             tag.appearance = aw.markup.SdtAppearance.TAGS
         #ExEnd:Appearance
-        #ExEnd:Appearance
