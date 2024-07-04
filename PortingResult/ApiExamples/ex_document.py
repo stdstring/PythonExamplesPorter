@@ -7,9 +7,9 @@
 # "as is", without warranty of any kind, either expressed or implied.
 #####################################
 
-
 import aspose.pydrawing
 import aspose.words as aw
+import aspose.words.digitalsignatures
 import aspose.words.drawing
 import aspose.words.fields
 import aspose.words.loading
@@ -24,36 +24,23 @@ from api_example_base import ApiExampleBase, ARTIFACTS_DIR, IMAGE_DIR, MY_DIR
 
 class ExDocument(ApiExampleBase):
     def test_create_simple_document(self):
-        #ExStart:CreateSimpleDocument
-        #GistId:3428e84add5beb0d46a8face6e5fc858
-        #ExFor:Document.__init__()
-        #ExSummary:Shows how to create simple document.
-        doc = aw.Document()
-
-        # New Document objects by default come with the minimal set of nodes
-        # required to begin adding content such as text and shapes: a Section, a Body, and a Paragraph.
-        doc.append_child(aw.Section(doc)).append_child(aw.Body(doc)).append_child(aw.Paragraph(doc)).append_child(aw.Run(doc=doc, text="Hello world!"))
-        #ExEnd:CreateSimpleDocument
+        raise NotImplementedError("ignored method body")
 
     def test_constructor(self):
         #ExStart
         #ExFor:Document.__init__()
-        #ExFor:Document.__init__(string,LoadOptions)
+        #ExFor:Document.__init__(str,LoadOptions)
         #ExSummary:Shows how to create and load documents.
         # There are two ways of creating a Document object using Aspose.Words.
         # 1 -  Create a blank document:
         doc = aw.Document()
-
         # New Document objects by default come with the minimal set of nodes
         # required to begin adding content such as text and shapes: a Section, a Body, and a Paragraph.
         doc.first_section.body.first_paragraph.append_child(aw.Run(doc=doc, text="Hello world!"))
-
         # 2 -  Load a document that exists in the local file system:
         doc = aw.Document(file_name=MY_DIR + "Document.docx")
-
         # Loaded documents will have contents that we can access and edit.
         self.assertEqual("Hello World!", doc.first_section.body.first_paragraph.get_text().strip())
-
         # Some operations that need to occur during loading, such as using a password to decrypt a document,
         # can be done by passing a LoadOptions object when loading the document.
         doc = aw.Document(file_name=MY_DIR + "Encrypted.docx", load_options=aw.loading.LoadOptions(password="docPassword"))
@@ -63,10 +50,13 @@ class ExDocument(ApiExampleBase):
     def test_load_from_stream(self):
         raise NotImplementedError("Unsupported statement type: UsingStatement")
 
+    def test_load_from_web(self):
+        raise NotImplementedError("Unsupported statement type: UsingStatement")
+
     def test_convert_to_pdf(self):
         #ExStart
-        #ExFor:Document.__init__(string)
-        #ExFor:Document.save(string)
+        #ExFor:Document.__init__(str)
+        #ExFor:Document.save(str)
         #ExSummary:Shows how to open a document and convert it to .PDF.
         doc = aw.Document(file_name=MY_DIR + "Document.docx")
         doc.save(file_name=ARTIFACTS_DIR + "Document.ConvertToPdf.pdf")
@@ -97,9 +87,6 @@ class ExDocument(ApiExampleBase):
         load_options.load_format = aw.LoadFormat.PDF
         doc = aw.Document(file_name=ARTIFACTS_DIR + "Document.PdfDocumentEncrypted.pdf", load_options=load_options)
 
-    def test_pdf_renderer(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
-
     def test_open_from_stream_with_base_uri(self):
         raise NotImplementedError("Unsupported statement type: UsingStatement")
 
@@ -114,7 +101,7 @@ class ExDocument(ApiExampleBase):
 
     def test_convert_to_html(self):
         #ExStart
-        #ExFor:Document.save(string,SaveFormat)
+        #ExFor:Document.save(str,SaveFormat)
         #ExFor:SaveFormat
         #ExSummary:Shows how to convert from DOCX to HTML format.
         doc = aw.Document(file_name=MY_DIR + "Document.docx")
@@ -152,7 +139,6 @@ class ExDocument(ApiExampleBase):
         #ExSummary:Shows how resolve a clash when importing documents that have lists with the same list definition identifier.
         src_doc = aw.Document(file_name=MY_DIR + "List with the same definition identifier - source.docx")
         dst_doc = aw.Document(file_name=MY_DIR + "List with the same definition identifier - destination.docx")
-
         # Set the "KeepSourceNumbering" property to "true" to apply a different list definition ID
         # to identical styles as Aspose.Words imports them into destination documents.
         import_format_options = aw.ImportFormatOptions()
@@ -160,7 +146,6 @@ class ExDocument(ApiExampleBase):
         dst_doc.append_document(src_doc=src_doc, import_format_mode=aw.ImportFormatMode.USE_DESTINATION_STYLES, import_format_options=import_format_options)
         dst_doc.update_list_labels()
         #ExEnd
-
         para_text = dst_doc.sections[1].body.last_paragraph.get_text()
         self.assertTrue(para_text.startswith("13->13"), msg=para_text)
         self.assertEqual("1.", dst_doc.sections[1].body.last_paragraph.list_label.label_string)
@@ -173,7 +158,6 @@ class ExDocument(ApiExampleBase):
         dst_doc = aw.Document(file_name=MY_DIR + "List destination.docx")
         options = aw.ImportFormatOptions()
         options.merge_pasted_lists = True
-
         # Set the "MergePastedLists" property to "true" pasted lists will be merged with surrounding lists.
         dst_doc.append_document(src_doc=src_doc, import_format_mode=aw.ImportFormatMode.USE_DESTINATION_STYLES, import_format_options=options)
         dst_doc.save(file_name=ARTIFACTS_DIR + "Document.MergePastedLists.docx")
@@ -212,7 +196,10 @@ class ExDocument(ApiExampleBase):
         #ExEnd
 
     def test_validate_individual_document_signatures(self):
-        raise NotImplementedError("Unsupported expression: InterpolatedStringExpression")
+        raise NotImplementedError("Unsupported expression: ConditionalExpression")
+
+    def test_digital_signature(self):
+        raise NotImplementedError("Unsupported target type System.DateTime")
 
     def test_signature_value(self):
         raise NotImplementedError("Unsupported target type System.Convert")
@@ -227,14 +214,11 @@ class ExDocument(ApiExampleBase):
         # Open a document that contains adjacent runs of text with identical formatting,
         # which commonly occurs if we edit the same paragraph multiple times in Microsoft Word.
         doc = aw.Document(file_name=MY_DIR + "Rendering.docx")
-
         # If any number of these runs are adjacent with identical formatting,
         # then the document may be simplified.
         self.assertEqual(317, doc.get_child_nodes(aw.NodeType.RUN, True).count)
-
         # Combine such runs with this method and verify the number of run joins that will take place.
         self.assertEqual(121, doc.join_runs_with_same_formatting())
-
         # The number of joins and the number of runs we have after the join
         # should add up the number of runs we had initially.
         self.assertEqual(196, doc.get_child_nodes(aw.NodeType.RUN, True).count)
@@ -250,12 +234,11 @@ class ExDocument(ApiExampleBase):
         doc = aw.Document()
         builder = aw.DocumentBuilder(doc)
         builder.write("Hello world!")
-
         # Cloning will produce a new document with the same contents as the original,
         # but with a unique copy of each of the original document's nodes.
         clone = doc.clone()
         self.assertEqual(doc.first_section.body.first_paragraph.runs[0].get_text(), clone.first_section.body.first_paragraph.runs[0].text)
-        self.assertNotEqual(doc.first_section.body.first_paragraph.runs[0].get_hash_code(), clone.first_section.body.first_paragraph.runs[0].get_hash_code())
+        self.assertNotEqual(hash(doc.first_section.body.first_paragraph.runs[0]), hash(clone.first_section.body.first_paragraph.runs[0]))
         #ExEnd
 
     def test_document_get_text_to_string(self):
@@ -266,29 +249,25 @@ class ExDocument(ApiExampleBase):
         doc = aw.Document()
         builder = aw.DocumentBuilder(doc)
         builder.insert_field(field_code="MERGEFIELD Field")
-
         # GetText will retrieve the visible text as well as field codes and special characters.
         self.assertEqual("\u0013MERGEFIELD Field\u0014«Field»\u0015", doc.get_text().strip())
-
         # ToString will give us the document's appearance if saved to a passed save format.
         self.assertEqual("«Field»", doc.to_string(save_format=aw.SaveFormat.TEXT).strip())
         #ExEnd
 
     def test_protect_unprotect(self):
         #ExStart
-        #ExFor:Document.protect(ProtectionType,string)
+        #ExFor:Document.protect(ProtectionType,str)
         #ExFor:Document.protection_type
         #ExFor:Document.unprotect
-        #ExFor:Document.unprotect(string)
+        #ExFor:Document.unprotect(str)
         #ExSummary:Shows how to protect and unprotect a document.
         doc = aw.Document()
         doc.protect(type=aw.ProtectionType.READ_ONLY, password="password")
         self.assertEqual(aw.ProtectionType.READ_ONLY, doc.protection_type)
-
         # If we open this document with Microsoft Word intending to edit it,
         # we will need to apply the password to get through the protection.
         doc.save(file_name=ARTIFACTS_DIR + "Document.Protect.docx")
-
         # Note that the protection only applies to Microsoft Word users opening our document.
         # We have not encrypted the document in any way, and we do not need the password to open and edit it programmatically.
         protected_doc = aw.Document(file_name=ARTIFACTS_DIR + "Document.Protect.docx")
@@ -296,7 +275,6 @@ class ExDocument(ApiExampleBase):
         builder = aw.DocumentBuilder(protected_doc)
         builder.writeln("Text added to a protected document.")
         self.assertEqual("Text added to a protected document.", protected_doc.range.text.strip()) #ExSkip
-
         # There are two ways of removing protection from a document.
         # 1 - With no password:
         doc.unprotect()
@@ -305,7 +283,6 @@ class ExDocument(ApiExampleBase):
         self.assertEqual(aw.ProtectionType.READ_ONLY, doc.protection_type)
         doc.unprotect("WrongPassword")
         self.assertEqual(aw.ProtectionType.READ_ONLY, doc.protection_type)
-
         # 2 - With the correct password:
         doc.unprotect("NewPassword")
         self.assertEqual(aw.ProtectionType.NO_PROTECTION, doc.protection_type)
@@ -325,12 +302,10 @@ class ExDocument(ApiExampleBase):
         self.assertEqual(nodes[0], nodes[1].parent_node)
         self.assertEqual(aw.NodeType.PARAGRAPH, nodes[2].node_type)
         self.assertEqual(nodes[1], nodes[2].parent_node)
-
         # This is the minimal set of nodes that we need to be able to edit the document.
         # We will no longer be able to edit the document if we remove any of them.
         doc.remove_all_children()
         self.assertEqual(0, doc.get_child_nodes(aw.NodeType.ANY, True).count)
-
         # Call this method to make sure that the document has at least those three nodes so we can edit it again.
         doc.ensure_minimum()
         self.assertEqual(aw.NodeType.SECTION, nodes[0].node_type)
@@ -338,7 +313,6 @@ class ExDocument(ApiExampleBase):
         self.assertEqual(aw.NodeType.PARAGRAPH, nodes[2].node_type)
         (nodes[2].as_paragraph()).runs.add(aw.Run(doc=doc, text="Hello world!"))
         #ExEnd
-
         self.assertEqual("Hello world!", doc.get_text().strip())
 
     def test_remove_macros_from_document(self):
@@ -348,7 +322,6 @@ class ExDocument(ApiExampleBase):
         doc = aw.Document(file_name=MY_DIR + "Macro.docm")
         self.assertTrue(doc.has_macros)
         self.assertEqual("Project", doc.vba_project.name)
-
         # Remove the document's VBA project, along with all its macros.
         doc.remove_macros()
         self.assertFalse(doc.has_macros)
@@ -366,10 +339,8 @@ class ExDocument(ApiExampleBase):
         builder.write("Page 2")
         builder.insert_break(aw.BreakType.PAGE_BREAK)
         builder.write("Page 3")
-
         # Verify the expected page count of the document.
         self.assertEqual(3, doc.page_count)
-
         # Getting the PageCount property invoked the document's page layout to calculate the value.
         # This operation will not need to be re-done when rendering the document to a fixed page save format,
         # such as .pdf. So you can save some time, especially with more complex documents.
@@ -389,19 +360,16 @@ class ExDocument(ApiExampleBase):
         builder = aw.DocumentBuilder(doc)
         builder.writeln("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " + "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.")
         builder.write("Ut enim ad minim veniam, " + "quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.")
-
         # Aspose.Words does not track document metrics like these in real time.
         self.assertEqual(0, doc.built_in_document_properties.characters)
         self.assertEqual(0, doc.built_in_document_properties.words)
         self.assertEqual(1, doc.built_in_document_properties.paragraphs)
         self.assertEqual(1, doc.built_in_document_properties.lines)
-
         # To get accurate values for three of these properties, we will need to update them manually.
         doc.update_word_count()
         self.assertEqual(196, doc.built_in_document_properties.characters)
         self.assertEqual(36, doc.built_in_document_properties.words)
         self.assertEqual(2, doc.built_in_document_properties.paragraphs)
-
         # For the line count, we will need to call a specific overload of the updating method.
         self.assertEqual(1, doc.built_in_document_properties.lines)
         doc.update_word_count(True)
@@ -431,7 +399,6 @@ class ExDocument(ApiExampleBase):
         doc.footnote_options.columns = 2
         doc.save(file_name=ARTIFACTS_DIR + "Document.FootnoteColumns.docx")
         #ExEnd
-
         doc = aw.Document(file_name=ARTIFACTS_DIR + "Document.FootnoteColumns.docx")
         self.assertEqual(2, doc.first_section.page_setup.footnote_options.columns)
 
@@ -464,7 +431,6 @@ class ExDocument(ApiExampleBase):
         #ExSummary:Shows how to accept all tracking changes in the document.
         doc = aw.Document()
         builder = aw.DocumentBuilder(doc)
-
         # Edit the document while tracking changes to create a few revisions.
         doc.start_track_revisions(author="John Doe")
         builder.write("Hello world! ")
@@ -472,7 +438,6 @@ class ExDocument(ApiExampleBase):
         builder.write("This is another revision.")
         doc.stop_track_revisions()
         self.assertEqual(3, doc.revisions.count)
-
         # We can iterate through every revision and accept/reject it as a part of our document.
         # If we know we wish to accept every revision, we can do it more straightforwardly so by calling this method.
         doc.accept_all_revisions()
@@ -491,14 +456,12 @@ class ExDocument(ApiExampleBase):
         self.assertEqual("1.", paragraphs[0].list_label.label_string)
         self.assertEqual("a.", paragraphs[1].list_label.label_string)
         self.assertEqual("", paragraphs[2].list_label.label_string)
-
         # View the document object as if all the revisions are accepted. Currently supports list labels.
         doc.revisions_view = aw.RevisionsView.FINAL
         self.assertEqual("", paragraphs[0].list_label.label_string)
         self.assertEqual("1.", paragraphs[1].list_label.label_string)
         self.assertEqual("a.", paragraphs[2].list_label.label_string)
         #ExEnd
-
         doc.revisions_view = aw.RevisionsView.ORIGINAL
         doc.accept_all_revisions()
         self.assertEqual("a.", paragraphs[0].list_label.label_string)
@@ -517,12 +480,10 @@ class ExDocument(ApiExampleBase):
         builder = aw.DocumentBuilder(doc)
         builder.writeln("Hello world!")
         builder.insert_image(file_name=IMAGE_DIR + "Logo.jpg")
-
         # There are two ways of setting a thumbnail image when saving a document to .epub.
         # 1 -  Use the document's first page:
         doc.update_thumbnail()
         doc.save(file_name=ARTIFACTS_DIR + "Document.UpdateThumbnail.FirstPage.epub")
-
         # 2 -  Use the first image found in the document:
         options = aw.rendering.ThumbnailGeneratingOptions()
         self.assertEqual(aspose.pydrawing.Size(600, 900), options.thumbnail_size) #ExSkip
@@ -539,9 +500,6 @@ class ExDocument(ApiExampleBase):
     def test_hyphenation_options_default_values(self):
         raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")
 
-    def test_hyphenation_zone_exception(self):
-        raise NotImplementedError("Unsupported expression: ParenthesizedLambdaExpression")
-
     def test_ooxml_compliance_version(self):
         #ExStart
         #ExFor:Document.compliance
@@ -553,6 +511,9 @@ class ExDocument(ApiExampleBase):
         self.assertEqual(doc.compliance, aw.saving.OoxmlCompliance.ISO29500_2008_TRANSITIONAL)
         #ExEnd
 
+    def test_image_save_options(self):
+        raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
+
     def test_cleanup(self):
         #ExStart
         #ExFor:Document.cleanup
@@ -562,12 +523,10 @@ class ExDocument(ApiExampleBase):
         doc.styles.add(aw.StyleType.LIST, "MyListStyle2")
         doc.styles.add(aw.StyleType.CHARACTER, "MyParagraphStyle1")
         doc.styles.add(aw.StyleType.CHARACTER, "MyParagraphStyle2")
-
         # Combined with the built-in styles, the document now has eight styles.
         # A custom style counts as "used" while applied to some part of the document,
         # which means that the four styles we added are currently unused.
         self.assertEqual(8, doc.styles.count)
-
         # Apply a custom character style, and then a custom list style. Doing so will mark the styles as "used".
         builder = aw.DocumentBuilder(doc)
         builder.font.style = doc.styles.get_by_name("MyParagraphStyle1")
@@ -578,7 +537,6 @@ class ExDocument(ApiExampleBase):
         builder.writeln("Item 2")
         doc.cleanup()
         self.assertEqual(6, doc.styles.count)
-
         # Removing every node that a custom style is applied to marks it as "unused" again.
         # Run the Cleanup method again to remove them.
         doc.first_section.body.remove_all_children()
@@ -602,15 +560,12 @@ class ExDocument(ApiExampleBase):
         doc = aw.Document()
         builder = aw.DocumentBuilder(doc)
         field = builder.insert_field(field_code="DATE", field_value=None)
-
         # Aspose.Words automatically detects field types based on field codes.
         self.assertEqual(aw.fields.FieldType.FIELD_DATE, field.type)
-
         # Manually change the raw text of the field, which determines the field code.
         field_text = doc.first_section.body.first_paragraph.get_child_nodes(aw.NodeType.RUN, True)[0].as_run()
         self.assertEqual("DATE", field_text.text) #ExSkip
         field_text.text = "PAGE"
-
         # Changing the field code has changed this field to one of a different type,
         # but the field's type properties still display the old type.
         self.assertEqual("PAGE", field.get_field_code())
@@ -618,7 +573,6 @@ class ExDocument(ApiExampleBase):
         self.assertEqual(aw.fields.FieldType.FIELD_DATE, field.start.field_type)
         self.assertEqual(aw.fields.FieldType.FIELD_DATE, field.separator.field_type)
         self.assertEqual(aw.fields.FieldType.FIELD_DATE, field.end.field_type)
-
         # Update those properties with this method to display current value.
         doc.normalize_field_types()
         self.assertEqual(aw.fields.FieldType.FIELD_PAGE, field.type)
@@ -633,33 +587,24 @@ class ExDocument(ApiExampleBase):
     def test_layout_options_hidden_text(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
-    def test_use_pdf_document_for_layout_options_hidden_text(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
-
     def test_layout_options_paragraph_marks(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
-
-    def test_use_pdf_document_for_layout_options_paragraph_marks(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_update_page_layout(self):
         #ExStart
-        #ExFor:StyleCollection.__getitem__(string)
+        #ExFor:StyleCollection.__getitem__(str)
         #ExFor:SectionCollection.__getitem__(int)
         #ExFor:Document.update_page_layout
         #ExFor:PageSetup.margins
         #ExSummary:Shows when to recalculate the page layout of the document.
         doc = aw.Document(file_name=MY_DIR + "Rendering.docx")
-
         # Saving a document to PDF, to an image, or printing for the first time will automatically
         # cache the layout of the document within its pages.
         doc.save(file_name=ARTIFACTS_DIR + "Document.UpdatePageLayout.1.pdf")
-
         # Modify the document in some way.
         doc.styles.get_by_name("Normal").font.size = 6
         doc.sections[0].page_setup.orientation = aw.Orientation.LANDSCAPE
         doc.sections[0].page_setup.margins = aw.Margins.MIRRORED
-
         # In the current version of Aspose.Words, modifying the document does not automatically rebuild
         # the cached page layout. If we wish for the cached layout
         # to stay up to date, we will need to update it manually.
@@ -678,7 +623,6 @@ class ExDocument(ApiExampleBase):
         #ExFor:Document.versions_count
         #ExSummary:Shows how to work with the versions count feature of older Microsoft Word documents.
         doc = aw.Document(file_name=MY_DIR + "Versions.doc")
-
         # We can read this property of a document, but we cannot preserve it while saving.
         self.assertEqual(4, doc.versions_count)
         doc.save(file_name=ARTIFACTS_DIR + "Document.VersionsCount.doc")
@@ -692,21 +636,19 @@ class ExDocument(ApiExampleBase):
         #ExFor:WriteProtection
         #ExFor:WriteProtection.is_write_protected
         #ExFor:WriteProtection.read_only_recommended
-        #ExFor:WriteProtection.set_password(string)
-        #ExFor:WriteProtection.validate_password(string)
+        #ExFor:WriteProtection.set_password(str)
+        #ExFor:WriteProtection.validate_password(str)
         #ExSummary:Shows how to protect a document with a password.
         doc = aw.Document()
         builder = aw.DocumentBuilder(doc)
         builder.writeln("Hello world! This document is protected.")
         self.assertFalse(doc.write_protection.is_write_protected) #ExSkip
         self.assertFalse(doc.write_protection.read_only_recommended) #ExSkip
-
         # Enter a password up to 15 characters in length, and then verify the document's protection status.
         doc.write_protection.set_password("MyPassword")
         doc.write_protection.read_only_recommended = True
         self.assertTrue(doc.write_protection.is_write_protected)
         self.assertTrue(doc.write_protection.validate_password("MyPassword"))
-
         # Protection does not prevent the document from being edited programmatically, nor does it encrypt the contents.
         doc.save(file_name=ARTIFACTS_DIR + "Document.WriteProtection.docx")
         doc = aw.Document(file_name=ARTIFACTS_DIR + "Document.WriteProtection.docx")
@@ -726,9 +668,6 @@ class ExDocument(ApiExampleBase):
     def test_show_comments(self):
         raise NotImplementedError("Unsupported target type System.DateTime")
 
-    def test_use_pdf_document_for_show_comments(self):
-        raise NotImplementedError("Unsupported call of method named ShowComments")
-
     def test_copy_template_styles_via_document(self):
         #ExStart
         #ExFor:Document.copy_styles_from_template(Document)
@@ -739,13 +678,12 @@ class ExDocument(ApiExampleBase):
         self.assertEqual(12, target.styles.count) #ExSkip
         target.copy_styles_from_template(template=template)
         self.assertEqual(22, target.styles.count) #ExSkip
-
         #ExEnd
 
     def test_copy_template_styles_via_document_new(self):
         #ExStart
         #ExFor:Document.copy_styles_from_template(Document)
-        #ExFor:Document.copy_styles_from_template(string)
+        #ExFor:Document.copy_styles_from_template(str)
         #ExSummary:Shows how to copy styles from one document to another.
         # Create a document, and then add styles that we will copy to another document.
         template = aw.Document()
@@ -759,26 +697,21 @@ class ExDocument(ApiExampleBase):
         style.font.name = "Courier New"
         style.font.color = aspose.pydrawing.Color.royal_blue
         self.assertEqual(7, template.styles.count)
-
         # Create a document which we will copy the styles to.
         target = aw.Document()
-
         # Create a style with the same name as a style from the template document and add it to the target document.
         style = target.styles.add(aw.StyleType.PARAGRAPH, "TemplateStyle3")
         style.font.name = "Calibri"
         style.font.color = aspose.pydrawing.Color.orange
         self.assertEqual(5, target.styles.count)
-
         # There are two ways of calling the method to copy all the styles from one document to another.
         # 1 -  Passing the template document object:
         target.copy_styles_from_template(template=template)
-
         # Copying styles adds all styles from the template document to the target
         # and overwrites existing styles with the same name.
         self.assertEqual(7, target.styles.count)
         self.assertEqual("Courier New", target.styles.get_by_name("TemplateStyle3").font.name)
         self.assertEqual(aspose.pydrawing.Color.royal_blue.to_argb(), target.styles.get_by_name("TemplateStyle3").font.color.to_argb())
-
         # 2 -  Passing the local system filename of a template document:
         target.copy_styles_from_template(template=MY_DIR + "Rendering.docx")
         self.assertEqual(21, target.styles.count)
@@ -795,11 +728,9 @@ class ExDocument(ApiExampleBase):
         doc = aw.Document()
         builder = aw.DocumentBuilder(doc)
         builder.writeln("Hello world!")
-
         # After we save a document, we can access the Internet Media Type (MIME type) of the newly created output document.
         parameters = doc.save(file_name=ARTIFACTS_DIR + "Document.SaveOutputParameters.doc")
         self.assertEqual("application/msword", parameters.content_type)
-
         # This property changes depending on the save format.
         parameters = doc.save(file_name=ARTIFACTS_DIR + "Document.SaveOutputParameters.pdf")
         self.assertEqual("application/pdf", parameters.content_type)
@@ -813,7 +744,6 @@ class ExDocument(ApiExampleBase):
         doc = aw.Document(file_name=MY_DIR + "Master document.docx")
         sub_documents = doc.get_child_nodes(aw.NodeType.SUB_DOCUMENT, True)
         self.assertEqual(1, sub_documents.count) #ExSkip
-
         # This node serves as a reference to an external document, and its contents cannot be accessed.
         sub_document = sub_documents[0].as_sub_document()
         self.assertFalse(sub_document.is_composite)
@@ -830,8 +760,8 @@ class ExDocument(ApiExampleBase):
 
     def test_text_watermark(self):
         #ExStart
-        #ExFor:Watermark.set_text(string)
-        #ExFor:Watermark.set_text(string,TextWatermarkOptions)
+        #ExFor:Watermark.set_text(str)
+        #ExFor:Watermark.set_text(str,TextWatermarkOptions)
         #ExFor:Watermark.remove
         #ExFor:TextWatermarkOptions.font_family
         #ExFor:TextWatermarkOptions.font_size
@@ -842,10 +772,8 @@ class ExDocument(ApiExampleBase):
         #ExFor:WatermarkType
         #ExSummary:Shows how to create a text watermark.
         doc = aw.Document()
-
         # Add a plain text watermark.
         doc.watermark.set_text(text="Aspose Watermark")
-
         # If we wish to edit the text formatting using it as a watermark,
         # we can do so by passing a TextWatermarkOptions object when creating the watermark.
         text_watermark_options = aw.TextWatermarkOptions()
@@ -856,14 +784,15 @@ class ExDocument(ApiExampleBase):
         text_watermark_options.is_semitrasparent = False
         doc.watermark.set_text(text="Aspose Watermark", options=text_watermark_options)
         doc.save(file_name=ARTIFACTS_DIR + "Document.TextWatermark.docx")
-
         # We can remove a watermark from a document like this.
         if doc.watermark.type == aw.WatermarkType.TEXT:
             doc.watermark.remove()
         #ExEnd
-
         doc = aw.Document(file_name=ARTIFACTS_DIR + "Document.TextWatermark.docx")
         self.assertEqual(aw.WatermarkType.TEXT, doc.watermark.type)
+
+    def test_image_watermark(self):
+        raise NotImplementedError("Unsupported target type System.Drawing.Image")
 
     def test_spelling_and_grammar_errors(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
@@ -888,7 +817,6 @@ class ExDocument(ApiExampleBase):
         doc = doc.extract_pages(0, 2)
         doc.save(file_name=ARTIFACTS_DIR + "Document.ExtractPages.docx")
         #ExEnd
-
         doc = aw.Document(file_name=ARTIFACTS_DIR + "Document.ExtractPages.docx")
         self.assertEqual(doc.page_count, 2)
 
@@ -928,21 +856,17 @@ class ExDocument(ApiExampleBase):
         #ExSummary:Shows how to move cursor of DocumentBuilder inside a structured document tag.
         doc = aw.Document(file_name=MY_DIR + "Structured document tags.docx")
         builder = aw.DocumentBuilder(doc)
-
         # There is a several ways to move the cursor:
         # 1 -  Move to the first character of structured document tag by index.
         builder.move_to_structured_document_tag(structured_document_tag_index=1, character_index=1)
-
         # 2 -  Move to the first character of structured document tag by object.
         tag = doc.get_child(aw.NodeType.STRUCTURED_DOCUMENT_TAG, 2, True).as_structured_document_tag()
         builder.move_to_structured_document_tag(structured_document_tag=tag, character_index=1)
         builder.write(" New text.")
         self.assertEqual("R New text.ichText", tag.get_text().strip())
-
         # 3 -  Move to the end of the second structured document tag.
         builder.move_to_structured_document_tag(structured_document_tag_index=1, character_index=-1)
         self.assertTrue(builder.is_at_end_of_structured_document_tag)
-
         # Get currently selected structured document tag.
         builder.current_structured_document_tag.color = aspose.pydrawing.Color.green
         doc.save(file_name=ARTIFACTS_DIR + "Document.MoveToStructuredDocumentTag.docx")
@@ -956,7 +880,6 @@ class ExDocument(ApiExampleBase):
         builder = aw.DocumentBuilder(doc)
         builder.writeln("Lorem ipsum")
         builder.insert_footnote(footnote_type=aw.notes.FootnoteType.FOOTNOTE, footnote_text="sit amet")
-
         # By default option is set to 'false'.
         doc.update_word_count()
         # Words count without textboxes, footnotes and endnotes.
@@ -984,7 +907,6 @@ class ExDocument(ApiExampleBase):
         #ExFor:PageInfo.colored
         #ExSummary:Shows how to check whether the page is in color or not.
         doc = aw.Document(file_name=MY_DIR + "Document.docx")
-
         # Check that the first page of the document is not colored.
         self.assertFalse(doc.get_page_info(0).colored)
         #ExEnd

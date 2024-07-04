@@ -7,7 +7,6 @@
 # "as is", without warranty of any kind, either expressed or implied.
 #####################################
 
-
 import aspose.words as aw
 import aspose.words.saving
 from api_example_base import ApiExampleBase, ARTIFACTS_DIR, MY_DIR
@@ -26,11 +25,9 @@ class ExXlsxSaveOptions(ApiExampleBase):
 
     def test_selection_mode(self):
         #ExStart:SelectionMode
-        #GistId:470c0da51e4317baae82ad9495747fed
         #ExFor:XlsxSaveOptions.section_mode
         #ExSummary:Shows how to save document as a separate worksheets.
         doc = aw.Document(file_name=MY_DIR + "Big document.docx")
-
         # Each section of a document will be created as a separate worksheet.
         # Use 'SingleWorksheet' to display all document on one worksheet.
         xlsx_save_options = aw.saving.XlsxSaveOptions()

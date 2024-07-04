@@ -7,9 +7,12 @@
 # "as is", without warranty of any kind, either expressed or implied.
 #####################################
 
-
+import aspose.words as aw
+import aspose.words.fields
+import unittest
 from api_example_base import ApiExampleBase
 
 
 class ExVariableCollection(ApiExampleBase):
-    pass
+    def test_primer(self):
+        raise NotImplementedError("Unsupported expression: SimpleLambdaExpression")

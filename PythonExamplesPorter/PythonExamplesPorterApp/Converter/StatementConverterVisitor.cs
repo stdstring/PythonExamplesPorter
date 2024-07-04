@@ -199,7 +199,7 @@ namespace PythonExamplesPorterApp.Converter
             // TODO (std_string) : think about case of complex - etc. comment after 'if' clause
             _currentMethod.SetLineTrailingData(commentsProcessor.Process(CommentsExtractor.ExtractTrailingComment(statement)));
             SyntaxToken nextToken = statement.GetLastToken().GetNextToken();
-            if (nextToken.IsKind(SyntaxKind.CloseBraceToken))
+            if (nextToken.IsKind(SyntaxKind.CloseBraceToken) && (statement.Parent is BlockSyntax))
                 _currentMethod.AddBodyLines(commentsProcessor.Process(CommentsExtractor.ExtractComments(nextToken)));
             if (indent)
                 _indentation -= StorageDef.IndentationDelta;

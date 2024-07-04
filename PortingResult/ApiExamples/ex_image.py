@@ -7,7 +7,6 @@
 # "as is", without warranty of any kind, either expressed or implied.
 #####################################
 
-
 import aspose.words as aw
 import aspose.words.drawing
 import unittest
@@ -47,8 +46,7 @@ class ExImage(ApiExampleBase):
 
     def test_insert_webp_image(self):
         #ExStart:InsertWebpImage
-        #GistId:e386727403c2341ce4018bca370a5b41
-        #ExFor:DocumentBuilder.insert_image(string)
+        #ExFor:DocumentBuilder.insert_image(str)
         #ExSummary:Shows how to insert WebP image.
         doc = aw.Document()
         builder = aw.DocumentBuilder(doc)
@@ -58,7 +56,6 @@ class ExImage(ApiExampleBase):
 
     def test_read_webp_image(self):
         #ExStart:ReadWebpImage
-        #GistId:e386727403c2341ce4018bca370a5b41
         #ExFor:ImageType
         #ExSummary:Shows how to read WebP image.
         doc = aw.Document(file_name=MY_DIR + "Document with WebP image.docx")

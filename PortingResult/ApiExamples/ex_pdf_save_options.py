@@ -7,7 +7,6 @@
 # "as is", without warranty of any kind, either expressed or implied.
 #####################################
 
-
 import aspose.words as aw
 import aspose.words.digitalsignatures
 import aspose.words.saving
@@ -19,9 +18,6 @@ class ExPdfSaveOptions(ApiExampleBase):
     def test_one_page(self):
         raise NotImplementedError("Unsupported statement type: UsingStatement")
 
-    def test_use_pdf_document_for_one_page(self):
-        raise NotImplementedError("Unsupported call of method named OnePage")
-
     def test_headings_outline_levels(self):
         #ExStart
         #ExFor:ParagraphFormat.is_heading
@@ -30,7 +26,6 @@ class ExPdfSaveOptions(ApiExampleBase):
         #ExSummary:Shows how to limit the headings' level that will appear in the outline of a saved PDF document.
         doc = aw.Document()
         builder = aw.DocumentBuilder(doc)
-
         # Insert headings that can serve as TOC entries of levels 1, 2, and then 3.
         builder.paragraph_format.style_identifier = aw.StyleIdentifier.HEADING1
         self.assertTrue(builder.paragraph_format.is_heading)
@@ -41,12 +36,10 @@ class ExPdfSaveOptions(ApiExampleBase):
         builder.paragraph_format.style_identifier = aw.StyleIdentifier.HEADING3
         builder.writeln("Heading 1.2.1")
         builder.writeln("Heading 1.2.2")
-
         # Create a "PdfSaveOptions" object that we can pass to the document's "Save" method
         # to modify how that method converts the document to .PDF.
         save_options = aw.saving.PdfSaveOptions()
         save_options.save_format = aw.SaveFormat.PDF
-
         # The output PDF document will contain an outline, which is a table of contents that lists headings in the document body.
         # Clicking on an entry in this outline will take us to the location of its respective heading.
         # Set the "HeadingsOutlineLevels" property to "2" to exclude all headings whose levels are above 2 from the outline.
@@ -55,31 +48,21 @@ class ExPdfSaveOptions(ApiExampleBase):
         doc.save(file_name=ARTIFACTS_DIR + "PdfSaveOptions.HeadingsOutlineLevels.pdf", save_options=save_options)
         #ExEnd
 
-    def test_use_pdf_bookmark_editor_for_headings_outline_levels(self):
-        raise NotImplementedError("Unsupported call of method named HeadingsOutlineLevels")
-
     def test_create_missing_outline_levels(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
-
-    def test_use_pdf_bookmark_editor_for_create_missing_outline_levels(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_table_heading_outlines(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
-    def test_use_pdf_document_for_table_heading_outlines(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
-
     def test_expanded_outline_levels(self):
         #ExStart
-        #ExFor:Document.save(string,SaveOptions)
+        #ExFor:Document.save(str,SaveOptions)
         #ExFor:PdfSaveOptions
         #ExFor:OutlineOptions.headings_outline_levels
         #ExFor:OutlineOptions.expanded_outline_levels
         #ExSummary:Shows how to convert a whole document to PDF with three levels in the document outline.
         doc = aw.Document()
         builder = aw.DocumentBuilder(doc)
-
         # Insert headings of levels 1 to 5.
         builder.paragraph_format.style_identifier = aw.StyleIdentifier.HEADING1
         self.assertTrue(builder.paragraph_format.is_heading)
@@ -96,16 +79,13 @@ class ExPdfSaveOptions(ApiExampleBase):
         builder.paragraph_format.style_identifier = aw.StyleIdentifier.HEADING5
         builder.writeln("Heading 1.2.2.2.1")
         builder.writeln("Heading 1.2.2.2.2")
-
         # Create a "PdfSaveOptions" object that we can pass to the document's "Save" method
         # to modify how that method converts the document to .PDF.
         options = aw.saving.PdfSaveOptions()
-
         # The output PDF document will contain an outline, which is a table of contents that lists headings in the document body.
         # Clicking on an entry in this outline will take us to the location of its respective heading.
         # Set the "HeadingsOutlineLevels" property to "4" to exclude all headings whose levels are above 4 from the outline.
         options.outline_options.headings_outline_levels = 4
-
         # If an outline entry has subsequent entries of a higher level inbetween itself and the next entry of the same or lower level,
         # an arrow will appear to the left of the entry. This entry is the "owner" of several such "sub-entries".
         # In our document, the outline entries from the 5th heading level are sub-entries of the second 4th level outline entry,
@@ -117,37 +97,22 @@ class ExPdfSaveOptions(ApiExampleBase):
         doc.save(file_name=ARTIFACTS_DIR + "PdfSaveOptions.ExpandedOutlineLevels.pdf", save_options=options)
         #ExEnd
 
-    def test_use_pdf_document_for_expanded_outline_levels(self):
-        raise NotImplementedError("Unsupported call of method named ExpandedOutlineLevels")
-
     def test_update_fields(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
-
-    def test_use_pdf_document_for_update_fields(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_preserve_form_fields(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
-    def test_use_pdf_document_for_preserve_form_fields(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
-
     def test_compliance(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
-    def test_use_pdf_document_for_compliance(self):
+    def test_text_compression(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_image_compression(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
-    def test_use_pdf_document_for_image_compression(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
-
     def test_image_color_space_export_mode(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
-
-    def test_use_pdf_document_for_image_color_space_export_mode(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_downsample_options(self):
@@ -159,41 +124,27 @@ class ExPdfSaveOptions(ApiExampleBase):
         #ExFor:PdfSaveOptions.downsample_options
         #ExSummary:Shows how to change the resolution of images in the PDF document.
         doc = aw.Document(file_name=MY_DIR + "Images.docx")
-
         # Create a "PdfSaveOptions" object that we can pass to the document's "Save" method
         # to modify how that method converts the document to .PDF.
         options = aw.saving.PdfSaveOptions()
-
         # By default, Aspose.Words downsample all images in a document that we save to PDF to 220 ppi.
         self.assertTrue(options.downsample_options.downsample_images)
         self.assertEqual(220, options.downsample_options.resolution)
         self.assertEqual(0, options.downsample_options.resolution_threshold)
         doc.save(file_name=ARTIFACTS_DIR + "PdfSaveOptions.DownsampleOptions.Default.pdf", save_options=options)
-
         # Set the "Resolution" property to "36" to downsample all images to 36 ppi.
         options.downsample_options.resolution = 36
-
         # Set the "ResolutionThreshold" property to only apply the downsampling to
         # images with a resolution that is above 128 ppi.
         options.downsample_options.resolution_threshold = 128
-
         # Only the first two images from the document will be downsampled at this stage.
         doc.save(file_name=ARTIFACTS_DIR + "PdfSaveOptions.DownsampleOptions.LowerResolution.pdf", save_options=options)
         #ExEnd
 
-    def test_use_pdf_document_for_downsample_options(self):
-        raise NotImplementedError("Unsupported call of method named DownsampleOptions")
-
     def test_color_rendering(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
-    def test_use_pdf_document_for_color_rendering(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
-
     def test_doc_title(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
-
-    def test_use_pdf_document_for_doc_title(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_memory_optimization(self):
@@ -202,43 +153,28 @@ class ExPdfSaveOptions(ApiExampleBase):
     def test_escape_uri(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
-    def test_use_pdf_document_for_escape_uri(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
-
-    def test_use_pdf_document_for_open_hyperlinks_in_new_window(self):
+    def test_open_hyperlinks_in_new_window(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_header_footer_bookmarks_export_mode(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
-    def test_use_pdf_document_for_header_footer_bookmarks_export_mode(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
-
     def test_emulate_rendering_to_size_on_page(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
-    def test_use_pdf_document_for_emulate_rendering_to_size_on_page(self):
+    def test_embed_full_fonts(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
-    def test_use_pdf_document_for_embed_full_fonts(self):
+    def test_embed_windows_fonts(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
-    def test_use_pdf_document_for_embed_windows_fonts(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
-
-    def test_use_pdf_document_for_embed_core_fonts(self):
+    def test_embed_core_fonts(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_additional_text_positioning(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
-    def test_use_pdf_document_for_additional_text_positioning(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
-
     def test_save_as_pdf_book_fold(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
-
-    def test_use_pdf_document_for_save_as_pdf_book_fold(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_zoom_behaviour(self):
@@ -250,7 +186,6 @@ class ExPdfSaveOptions(ApiExampleBase):
         doc = aw.Document()
         builder = aw.DocumentBuilder(doc)
         builder.writeln("Hello world!")
-
         # Create a "PdfSaveOptions" object that we can pass to the document's "Save" method
         # to modify how that method converts the document to .PDF.
         # Set the "ZoomBehavior" property to "PdfZoomBehavior.ZoomFactor" to get a PDF reader to
@@ -259,65 +194,46 @@ class ExPdfSaveOptions(ApiExampleBase):
         options = aw.saving.PdfSaveOptions()
         options.zoom_behavior = aw.saving.PdfZoomBehavior.ZOOM_FACTOR
         options.zoom_factor = 25
-
         # When we open this document using a reader such as Adobe Acrobat, we will see the document scaled at 1/4 of its actual size.
         doc.save(file_name=ARTIFACTS_DIR + "PdfSaveOptions.ZoomBehaviour.pdf", save_options=options)
         #ExEnd
 
-    def test_use_pdf_document_for_zoom_behaviour(self):
-        raise NotImplementedError("Unsupported call of method named ZoomBehaviour")
-
-    def test_use_pdf_document_for_page_mode(self):
+    def test_page_mode(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_note_hyperlinks(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
-    def test_use_pdf_document_for_note_hyperlinks(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
-
     def test_custom_properties_export(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
-
-    def test_use_pdf_document_for_custom_properties_export(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_drawing_ml_effects(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
-    def test_use_pdf_document_for_drawing_ml_effects(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
-
     def test_drawing_ml_fallback(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
-
-    def test_use_pdf_document_for_drawing_ml_fallback(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_export_document_structure(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
+    def test_preblend_images(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_interpolate_images(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
     def test_pdf_digital_signature(self):
         raise NotImplementedError("Unsupported ctor for type DateTime")
-
-    def test_use_pdf_document_for_pdf_digital_signature(self):
-        raise NotImplementedError("Unsupported call of method named PdfDigitalSignature")
 
     def test_pdf_digital_signature_timestamp(self):
         raise NotImplementedError("Unsupported target type System.DateTime")
 
-    def test_use_pdf_document_for_pdf_digital_signature_timestamp(self):
-        raise NotImplementedError("Unsupported call of method named PdfDigitalSignatureTimestamp")
-
     def test_render_metafile(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
-
-    def test_use_pdf_document_for_render_metafile(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_encryption_permissions(self):
         #ExStart
-        #ExFor:PdfEncryptionDetails.__init__(string,string,PdfPermissions)
+        #ExFor:PdfEncryptionDetails.__init__(str,str,PdfPermissions)
         #ExFor:PdfSaveOptions.encryption_details
         #ExFor:PdfEncryptionDetails.permissions
         #ExFor:PdfEncryptionDetails.owner_password
@@ -328,34 +244,22 @@ class ExPdfSaveOptions(ApiExampleBase):
         doc = aw.Document()
         builder = aw.DocumentBuilder(doc)
         builder.writeln("Hello world!")
-
         # Extend permissions to allow the editing of annotations.
         encryption_details = aw.saving.PdfEncryptionDetails(user_password="password", owner_password="", permissions=aw.saving.PdfPermissions.MODIFY_ANNOTATIONS | aw.saving.PdfPermissions.DOCUMENT_ASSEMBLY)
-
         # Create a "PdfSaveOptions" object that we can pass to the document's "Save" method
         # to modify how that method converts the document to .PDF.
         save_options = aw.saving.PdfSaveOptions()
         # Enable encryption via the "EncryptionDetails" property.
         save_options.encryption_details = encryption_details
-
         # When we open this document, we will need to provide the password before accessing its contents.
         doc.save(file_name=ARTIFACTS_DIR + "PdfSaveOptions.EncryptionPermissions.pdf", save_options=save_options)
         #ExEnd
 
-    def test_use_pdf_document_for_encryption_permissions(self):
-        raise NotImplementedError("Unsupported call of method named EncryptionPermissions")
-
     def test_set_numeral_format(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
-    def test_use_pdf_document_for_set_numeral_format(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
-
     def test_export_page_set(self):
-        raise NotImplementedError("Unsupported expression: InterpolatedStringExpression")
-
-    def test_use_pdf_document_for_export_page_set(self):
-        raise NotImplementedError("Unsupported call of method named ExportPageSet")
+        raise NotImplementedError("Unsupported expression: ConditionalExpression")
 
     def test_export_language_to_span_tag(self):
         #ExStart
@@ -398,17 +302,12 @@ class ExPdfSaveOptions(ApiExampleBase):
         doc.save(file_name=ARTIFACTS_DIR + "PdfSaveOptions.ExportParagraphGraphicsToArtifact.pdf", save_options=save_options)
         #ExEnd
 
-    def test_use_pdf_document_for_export_paragraph_graphics_to_artifact(self):
-        raise NotImplementedError("Unsupported call of method named ExportParagraphGraphicsToArtifact")
-
     def test_page_layout(self):
         #ExStart:PageLayout
-        #GistId:e386727403c2341ce4018bca370a5b41
         #ExFor:PdfSaveOptions.page_layout
         #ExFor:PdfPageLayout
         #ExSummary:Shows how to display pages when opened in a PDF reader.
         doc = aw.Document(file_name=MY_DIR + "Big document.docx")
-
         # Display the pages two at a time, with odd-numbered pages on the left.
         save_options = aw.saving.PdfSaveOptions()
         save_options.page_layout = aw.saving.PdfPageLayout.TWO_PAGE_LEFT

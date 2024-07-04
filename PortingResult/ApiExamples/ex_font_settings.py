@@ -7,7 +7,6 @@
 # "as is", without warranty of any kind, either expressed or implied.
 #####################################
 
-
 import aspose.words as aw
 import aspose.words.fonts
 import aspose.words.loading
@@ -28,7 +27,6 @@ class ExFontSettings(ApiExampleBase):
         builder = aw.DocumentBuilder(doc)
         builder.font.name = "Non-existent font"
         builder.write("Hello world!")
-
         # This document does not have a FontSettings configuration. When we render the document,
         # the default FontSettings instance will resolve the missing font.
         # Aspose.Words will use "Courier New" to render text that uses the unknown font.
@@ -42,8 +40,8 @@ class ExFontSettings(ApiExampleBase):
     def test_font_source_file(self):
         #ExStart
         #ExFor:FileFontSource
-        #ExFor:FileFontSource.__init__(string)
-        #ExFor:FileFontSource.__init__(string,int)
+        #ExFor:FileFontSource.__init__(str)
+        #ExFor:FileFontSource.__init__(str,int)
         #ExFor:FileFontSource.file_path
         #ExFor:FileFontSource.type
         #ExFor:FontSourceBase
@@ -63,13 +61,12 @@ class ExFontSettings(ApiExampleBase):
     def test_font_source_folder(self):
         #ExStart
         #ExFor:FolderFontSource
-        #ExFor:FolderFontSource.__init__(string,bool)
-        #ExFor:FolderFontSource.__init__(string,bool,int)
+        #ExFor:FolderFontSource.__init__(str,bool)
+        #ExFor:FolderFontSource.__init__(str,bool,int)
         #ExFor:FolderFontSource.folder_path
         #ExFor:FolderFontSource.scan_subfolders
         #ExFor:FolderFontSource.type
         #ExSummary:Shows how to use a local system folder which contains fonts as a font source.
-
         # Create a font source from a folder that contains font files.
         folder_font_source = aw.fonts.FolderFontSource(folder_path=FONTS_DIR, scan_subfolders=False, priority=1)
         doc = aw.Document()
@@ -93,7 +90,6 @@ class ExFontSettings(ApiExampleBase):
     def test_set_specify_font_folder(self):
         font_settings = aw.fonts.FontSettings()
         font_settings.set_fonts_folder(FONTS_DIR, False)
-
         # Using load options
         load_options = aw.loading.LoadOptions()
         load_options.font_settings = font_settings
@@ -108,7 +104,6 @@ class ExFontSettings(ApiExampleBase):
     def test_set_specify_font_folders(self):
         font_settings = aw.fonts.FontSettings()
         font_settings.set_fonts_folders([FONTS_DIR, """C:\\Windows\\Fonts\\"""], True)
-
         # Using load options
         load_options = aw.loading.LoadOptions()
         load_options.font_settings = font_settings
@@ -131,17 +126,15 @@ class ExFontSettings(ApiExampleBase):
 
     def test_load_font_fallback_settings_from_file(self):
         #ExStart
-        #ExFor:FontFallbackSettings.load(string)
-        #ExFor:FontFallbackSettings.save(string)
+        #ExFor:FontFallbackSettings.load(str)
+        #ExFor:FontFallbackSettings.save(str)
         #ExSummary:Shows how to load and save font fallback settings to/from an XML document in the local file system.
         doc = aw.Document(file_name=MY_DIR + "Rendering.docx")
-
         # Load an XML document that defines a set of font fallback settings.
         font_settings = aw.fonts.FontSettings()
         font_settings.fallback_settings.load(file_name=MY_DIR + "Font fallback rules.xml")
         doc.font_settings = font_settings
         doc.save(file_name=ARTIFACTS_DIR + "FontSettings.LoadFontFallbackSettingsFromFile.pdf")
-
         # Save our document's current font fallback settings as an XML document.
         doc.font_settings.fallback_settings.save(file_name=ARTIFACTS_DIR + "FallbackSettings.xml")
         #ExEnd
@@ -154,12 +147,10 @@ class ExFontSettings(ApiExampleBase):
         #ExFor:FontFallbackSettings.load_noto_fallback_settings
         #ExSummary:Shows how to add predefined font fallback settings for Google Noto fonts.
         font_settings = aw.fonts.FontSettings()
-
         # These are free fonts licensed under the SIL Open Font License.
         # We can download the fonts here:
         # https:#www.google.com/get/noto/#sans-lgc
         font_settings.set_fonts_folder(FONTS_DIR + "Noto", False)
-
         # Note that the predefined settings only use Sans-style Noto fonts with regular weight.
         # Some of the Noto fonts use advanced typography features.
         # Fonts featuring advanced typography may not be rendered correctly as Aspose.Words currently do not support them.
@@ -179,16 +170,13 @@ class ExFontSettings(ApiExampleBase):
         doc = aw.Document()
         font_settings = aw.fonts.FontSettings()
         doc.font_settings = font_settings
-
         # Get the default substitution rule within FontSettings.
         # This rule will substitute all missing fonts with "Times New Roman".
         default_font_substitution_rule = font_settings.substitution_settings.default_font_substitution
         self.assertTrue(default_font_substitution_rule.enabled)
         self.assertEqual("Times New Roman", default_font_substitution_rule.default_font_name)
-
         # Set the default font substitute to "Courier New".
         default_font_substitution_rule.default_font_name = "Courier New"
-
         # Using a document builder, add some text in a font that we do not have to see the substitution take place,
         # and then render the result in a PDF.
         builder = aw.DocumentBuilder(doc)
@@ -196,14 +184,16 @@ class ExFontSettings(ApiExampleBase):
         builder.writeln("Line written in a missing font, which will be substituted with Courier New.")
         doc.save(file_name=ARTIFACTS_DIR + "FontSettings.DefaultFontSubstitutionRule.pdf")
         #ExEnd
-
         self.assertEqual("Courier New", default_font_substitution_rule.default_font_name)
+
+    def test_font_config_substitution(self):
+        raise NotImplementedError("Unsupported expression: SimpleLambdaExpression")
 
     def test_fallback_settings(self):
         raise NotImplementedError("Unsupported ctor for type XmlDocument")
 
     def test_fallback_settings_custom(self):
-        raise NotImplementedError("Unsupported expression: InterpolatedStringExpression")
+        raise NotImplementedError("Unsupported target type System.Convert")
 
     def test_table_substitution_rule(self):
         raise NotImplementedError("Unsupported target type System.Collections.Generic.IEnumerable")
@@ -217,7 +207,6 @@ class ExFontSettings(ApiExampleBase):
         #ExSummary:Shows how to designate font substitutes during loading.
         load_options = aw.loading.LoadOptions()
         load_options.font_settings = aw.fonts.FontSettings()
-
         # Set a font substitution rule for a LoadOptions object.
         # If the document we are loading uses a font which we do not have,
         # this rule will substitute the unavailable font with one that does exist.
@@ -225,7 +214,6 @@ class ExFontSettings(ApiExampleBase):
         substitution_rule = load_options.font_settings.substitution_settings.table_substitution
         substitution_rule.add_substitutes("MissingFont", ["Comic Sans MS"])
         doc = aw.Document(file_name=MY_DIR + "Missing font.html", load_options=load_options)
-
         # At this point such text will still be in "MissingFont".
         # Font substitution will take place when we render the document.
         self.assertEqual("MissingFont", doc.first_section.body.first_paragraph.runs[0].font.name)

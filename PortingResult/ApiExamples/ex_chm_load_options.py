@@ -7,9 +7,11 @@
 # "as is", without warranty of any kind, either expressed or implied.
 #####################################
 
-
+import aspose.words as aw
+import aspose.words.loading
 from api_example_base import ApiExampleBase
 
 
-class ExSignDocumentCustom(ApiExampleBase):
-    pass
+class ExChmLoadOptions(ApiExampleBase):
+    def test_original_file_name(self):
+        raise NotImplementedError("Unsupported target type System.IO.File")

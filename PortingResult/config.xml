@@ -17,22 +17,84 @@
         <Files>
             <!-- handmade -->
             <File>ApiExampleBase.cs</File>
-            <!-- ignored (not ported) -->
+            <!-- short files, nested class -->
+            <File>ExReplaceHyperlinks.cs</File>
+            <File>ExSignDocumentCustom.cs</File>
+            <!-- needs refactoring , not ported -->
+            <File>ExReportingEngine.cs</File>
+            <!-- not in api examples(not ported)-->
+            <File>ExMossDoc2Pdf.cs</File>
+            <File>ExMossRtf2Docx.cs</File>
+            <File>ExRenameMergeFields.cs</File>
+            <File>CustomBarcodeGenerator.cs</File>
+
+            <!-- ignored (not ported, callbacks) -->
             <File>ExDocumentVisitor.cs</File>
             <File>ExMailMerge.cs</File>
             <File>ExMailMergeCustom.cs</File>
             <File>ExMailMergeCustomNested.cs</File>
             <File>ExMailMergeEvent.cs</File>
-            <File>ExMossDoc2Pdf.cs</File>
-            <File>ExMossRtf2Docx.cs</File>
             <File>ExPrinting.cs</File>
             <File>ExSavingCallback.cs</File>
             <File>ExXamlFixedSaveOptions.cs</File>
             <File>ExXamlFlowSaveOptions.cs</File>
-            <!-- with runtime errors -->
-            <File>CustomBarcodeGenerator.cs</File>
         </Files>
         <Methods>
+            <!-- not in api examples(not ported)-->
+            <Method>ApiExamples.ExDocumentBuilder.LoadMarkdownDocumentAndAssertContent</Method>
+            <Method>ApiExamples.ExDocument.HyphenationZoneException</Method>
+            <Method>ApiExamples.ExDocument.PdfRenderer</Method>
+            <Method>ApiExamples.ExHtmlLoadOptions.LoadHtmlFixed</Method>
+            <Method>ApiExamples.ExHtmlSaveOptions.MobiAzw3DefaultEncoding</Method>
+            <Method>ApiExamples.ExShape.WorkWithMathObjectType</Method>
+            <Method>ApiExamples.ExField.InsertTcFieldsAtText</Method>
+            <Method>ApiExamples.ExField.BarCodeWord2Pdf</Method>
+            <Method>ApiExamples.ExDocument.NotSupportedWarning</Method>
+            <!-- use Aspose.PDf (not ported) -->
+            <Method>ApiExamples.ExStructuredDocumentTag.UsePdfDocumentForUpdateSdtContent</Method>
+            <Method>ApiExamples.ExParagraphFormat.UsePdfDocumentForSuppressHyphens</Method>
+            <Method>ApiExamples.ExBookmarksOutlineLevelCollection.UsePdfBookmarkEditorForBookmarkLevels</Method>
+            <Method>ApiExamples.ExDocument.UsePdfDocumentForLayoutOptionsHiddenText</Method>
+            <Method>ApiExamples.ExDocument.UsePdfDocumentForLayoutOptionsParagraphMarks</Method>
+            <Method>ApiExamples.ExDocument.UsePdfDocumentForShowComments</Method>
+            <Method>ApiExamples.ExDocumentBase.UsePdfDocumentForBackgroundShape</Method>
+            <Method>ApiExamples.ExHyphenation.UsePdfDocumentForDictionary</Method>
+            <Method>ApiExamples.ExHtmlLoadOptions.UsePdfDocumentForIgnoreNoscriptElements</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfBookmarkEditorForCreateMissingOutlineLevels</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfBookmarkEditorForHeadingsOutlineLevels</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForAdditionalTextPositioning</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForColorRendering</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForCustomPropertiesExport</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForDocTitle</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForDownsampleOptions</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForDrawingMLEffects</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForDrawingMLFallback</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForEmbedCoreFonts</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForEmbedFullFonts</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForEmbedWindowsFonts</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForEmulateRenderingToSizeOnPage</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForEncryptionPermissions</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForEscapeUri</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForExpandedOutlineLevels</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForExportPageSet</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForExportParagraphGraphicsToArtifact</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForHeaderFooterBookmarksExportMode</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForImageColorSpaceExportMode</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForImageCompression</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForNoteHyperlinks</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForOnePage</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForOpenHyperlinksInNewWindow</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForPageMode</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForPdfDigitalSignature</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForPdfDigitalSignatureTimestamp</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForPreserveFormFields</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForRenderMetafile</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForSaveAsPdfBookFold</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForSetNumeralFormat</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForTableHeadingOutlines</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForUpdateFields</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForZoomBehaviour</Method>
+            <Method>ApiExamples.ExPdfSaveOptions.UsePdfDocumentForCompliance</Method>
             <!-- commented (not ported) -->
             <Method>ApiExamples.ExAbsolutePositionTab.DocumentToTxt</Method>
             <Method>ApiExamples.ExBookmarks.CreateUpdateAndPrintBookmarks</Method>
@@ -45,8 +107,6 @@
             <Method>ApiExamples.ExDocumentBuilder.FieldResultFormatting</Method>
             <Method>ApiExamples.ExDrawing.GroupOfShapes</Method>
             <Method>ApiExamples.ExEditableRange.Visitor</Method>
-            <Method>ApiExamples.ExField.InsertTcFieldsAtText</Method>
-            <Method>ApiExamples.ExField.BarCodeWord2Pdf</Method>
             <Method>ApiExamples.ExField.FieldDatabase</Method>
             <Method>ApiExamples.ExField.FieldAsk</Method>
             <Method>ApiExamples.ExField.FieldCollection</Method>
@@ -67,6 +127,7 @@
             <Method>ApiExamples.ExField.ComparisonExpressionEvaluatorNestedFields</Method>
             <Method>ApiExamples.ExField.ComparisonExpressionEvaluatorHeaderFooterFields</Method>
             <Method>ApiExamples.ExField.FieldUpdatingCallbackTest</Method>
+            <Method>ApiExamples.ExField.ChangeBibliographyStyles</Method>
             <Method>ApiExamples.ExFieldOptions.DefineDateTimeFormatting</Method>
             <Method>ApiExamples.ExFieldOptions.BarcodeGenerator</Method>
             <Method>ApiExamples.ExFont.RemoveHiddenContentFromDocument</Method>
@@ -111,160 +172,40 @@
             <Method>ApiExamples.ExShape.InsertOlePackage</Method>
             <Method>ApiExamples.ExShape.VisitShapes</Method>
             <Method>ApiExamples.ExSvgSaveOptions.SvgResourceFolder</Method>
-            <!-- unittest.skip -->
-            <Method>ApiExamples.ExCertificateHolder.Create</Method>
-            <Method>ApiExamples.ExDigitalSignatureUtil.Remove</Method>
-            <Method>ApiExamples.ExDigitalSignatureUtil.SignDocument</Method>
-            <Method>ApiExamples.ExDocument.DigitalSignature</Method>
-            <Method>ApiExamples.ExDocument.ImageSaveOptions</Method>
-            <Method>ApiExamples.ExDocument.ImageWatermark</Method>
-            <Method>ApiExamples.ExDocumentBuilder.InsertWatermark</Method>
-            <Method>ApiExamples.ExDocumentBuilder.SetCellFormatting</Method>
-            <Method>ApiExamples.ExDocumentBuilder.InsertVideoWithUrl</Method>
-            <Method>ApiExamples.ExDocumentBuilder.InsertDocument</Method>
-            <Method>ApiExamples.ExDocumentBuilder.InsertOnlineVideoCustomThumbnail</Method>
-            <Method>ApiExamples.ExDocumentBuilderImages.InsertImageFromImageObject</Method>
-            <Method>ApiExamples.ExDocumentProperties.PropertyTypes</Method>
-            <Method>ApiExamples.ExDrawing.VariousShapes</Method>
-            <Method>ApiExamples.ExDrawing.TypeOfImage</Method>
-            <Method>ApiExamples.ExDrawing.SaveAllImages</Method>
-            <Method>ApiExamples.ExDrawing.ImportImage</Method>
-            <Method>ApiExamples.ExField.FieldLocale</Method>
-            <Method>ApiExamples.ExField.UpdateDirtyFields</Method>
-            <Method>ApiExamples.ExField.TocSeqBookmark</Method>
-            <Method>ApiExamples.ExField.FieldIncludeText</Method>
-            <Method>ApiExamples.ExField.FieldHyperlink</Method>
-            <Method>ApiExamples.ExField.FieldIndexFilter</Method>
-            <Method>ApiExamples.ExField.FieldIndexFormatting</Method>
-            <Method>ApiExamples.ExField.FieldIndexSequence</Method>
-            <Method>ApiExamples.ExField.FieldIndexPageNumberSeparator</Method>
-            <Method>ApiExamples.ExField.FieldIndexPageRangeBookmark</Method>
-            <Method>ApiExamples.ExField.FieldIndexCrossReferenceSeparator</Method>
-            <Method>ApiExamples.ExField.FieldIndexSubheading</Method>
-            <Method>ApiExamples.ExField.FieldIndexYomi</Method>
-            <Method>ApiExamples.ExField.FieldLinkedObjectsAsText</Method>
+            <Method>ApiExamples.ExRevision.RevisionSpecifiedCriteria</Method>
+            <!-- included in FieldLinkedObjectsAsText (not ported)-->
             <Method>ApiExamples.ExField.FieldLinkedObjectsAsImage</Method>
-            <Method>ApiExamples.ExField.FieldStyleRefParagraphNumbers</Method>
-            <Method>ApiExamples.ExField.FieldCreateDate</Method>
-            <Method>ApiExamples.ExField.FieldSaveDate</Method>
-            <Method>ApiExamples.ExField.FieldBuilder</Method>
-            <Method>ApiExamples.ExField.FieldNoteRef</Method>
-            <Method>ApiExamples.ExField.NoteRef</Method>
-            <Method>ApiExamples.ExField.FieldPageRef</Method>
-            <Method>ApiExamples.ExField.FieldRef</Method>
-            <Method>ApiExamples.ExField.FieldRD</Method>
-            <Method>ApiExamples.ExFieldOptions.PreProcessCulture</Method>
-            <Method>ApiExamples.ExFieldOptions.UseInvariantCultureNumberFormat</Method>
-            <Method>ApiExamples.ExHtmlSaveOptions.ResolveFontNames</Method>
-            <Method>ApiExamples.ExHtmlSaveOptions.ExportPageMargins</Method>
-            <Method>ApiExamples.ExHtmlSaveOptions.ExportPageSetup</Method>
-            <Method>ApiExamples.ExHtmlSaveOptions.ExportTocPageNumbers</Method>
-            <Method>ApiExamples.ExHtmlSaveOptions.ScaleImageToShapeSize</Method>
-            <Method>ApiExamples.ExImage.FromImage</Method>
-            <Method>ApiExamples.ExImageSaveOptions.GraphicsQuality</Method>
-            <Method>ApiExamples.ExImageSaveOptions.UseTileFlipMode</Method>
-            <Method>ApiExamples.ExImageSaveOptions.WindowsMetaFile</Method>
-            <Method>ApiExamples.ExImageSaveOptions.PaperColor</Method>
-            <Method>ApiExamples.ExImageSaveOptions.EditImage</Method>
-            <Method>ApiExamples.ExNode.NodeXPathNavigator</Method>
-            <Method>ApiExamples.ExNode.NodeList</Method>
-            <Method>ApiExamples.ExPageSetup.LinesPerPage</Method>
-            <Method>ApiExamples.ExPageSetup.CustomColumnWidth</Method>
-            <Method>ApiExamples.ExPageSetup.Gutter</Method>
-            <Method>ApiExamples.ExPdfSaveOptions.PageMode</Method>
-            <Method>ApiExamples.ExPdfSaveOptions.PreblendImages</Method>
-            <Method>ApiExamples.ExPdfSaveOptions.InterpolateImages</Method>
-            <Method>ApiExamples.ExPdf2Word.LoadPdf</Method>
-            <Method>ApiExamples.ExRendering.RenderToSize</Method>
-            <Method>ApiExamples.ExRendering.Thumbnails</Method>
-            <Method>ApiExamples.ExReportingEngine.TestDataTable</Method>
-            <Method>ApiExamples.ExReportingEngine.RestartingListNumberingDynamicallyWhileInsertingDocumentDynamically</Method>
-            <Method>ApiExamples.ExReportingEngine.RestartingListNumberingDynamicallyWhileMultipleInsertionsDocumentDynamically</Method>
-            <Method>ApiExamples.ExReportingEngine.SetChartSeriesColorsDynamically</Method>
-            <Method>ApiExamples.ExReportingEngine.SetPointColorsDynamically</Method>
-            <Method>ApiExamples.ExReportingEngine.ConditionalExpressionForLeaveChartSeries</Method>
-            <Method>ApiExamples.ExReportingEngine.ConditionalExpressionForRemoveChartSeries</Method>
-            <Method>ApiExamples.ExReportingEngine.ExtensionMethods</Method>
-            <Method>ApiExamples.ExReportingEngine.Operators</Method>
-            <Method>ApiExamples.ExReportingEngine.InsertDocumentDynamicallyWithAdditionalTemplateChecking</Method>
-            <Method>ApiExamples.ExReportingEngine.InsertDocumentDynamicallyWithStyles</Method>
-            <Method>ApiExamples.ExReportingEngine.InsertDocumentDynamicallyTrimLastParagraph</Method>
-            <Method>ApiExamples.ExReportingEngine.InsertDocumentDynamicallyByStream</Method>
-            <Method>ApiExamples.ExReportingEngine.InsertDocumentDynamicallyByBytes</Method>
-            <Method>ApiExamples.ExReportingEngine.InsertImageDynamically</Method>
-            <Method>ApiExamples.ExReportingEngine.InsertImageDynamicallyByStream</Method>
-            <Method>ApiExamples.ExReportingEngine.InsertImageDynamicallyByBytes</Method>
-            <Method>ApiExamples.ExReportingEngine.DynamicStretchingImageWithinTextBox</Method>
-            <Method>ApiExamples.ExReportingEngine.WorkWithKnownTypes</Method>
-            <Method>ApiExamples.ExReportingEngine.IfGreedy</Method>
-            <Method>ApiExamples.ExReportingEngine.StretchImagefitHeight</Method>
-            <Method>ApiExamples.ExReportingEngine.StretchImagefitWidth</Method>
-            <Method>ApiExamples.ExReportingEngine.StretchImagefitSize</Method>
-            <Method>ApiExamples.ExReportingEngine.StretchImagefitSizeLim</Method>
-            <Method>ApiExamples.ExReportingEngine.SetBackgroundColorDynamically</Method>
-            <Method>ApiExamples.ExReportingEngine.SetTextColorDynamically</Method>
-            <Method>ApiExamples.ExSection.CultureInfoPageSetupDefaults</Method>
-            <Method>ApiExamples.ExShape.Rotate</Method>
-            <Method>ApiExamples.ExShape.AspectRatioLockedDefaultValue</Method>
-            <Method>ApiExamples.ExSmartTag.Create</Method>
-            <Method>ApiExamples.ExVariableCollection.Primer</Method>
-            <!-- unittest.skipUnless(sys.platform.startswith("win"), ...) -->
-            <Method>ApiExamples.ExField.FieldDate</Method>
-            <Method>ApiExamples.ExField.FieldQuote</Method>
-            <Method>ApiExamples.ExField.FieldTime</Method>
-            <Method>ApiExamples.ExFile.DetectEncoding</Method>
-            <Method>ApiExamples.ExFont.LineSpacing</Method>
-            <Method>ApiExamples.ExFont.CheckScanUserFontsFolder</Method>
-            <Method>ApiExamples.ExFontSettings.FontConfigSubstitution</Method>
-            <Method>ApiExamples.ExHtmlLoadOptions.SupportVml</Method>
-            <Method>ApiExamples.ExHtmlSaveOptions.ExportOfficeMathEpub</Method>
-            <Method>ApiExamples.ExHtmlSaveOptions.ExternalResourceSavingConfig</Method>
-            <Method>ApiExamples.ExHtmlSaveOptions.ExportFonts</Method>
-            <Method>ApiExamples.ExHtmlSaveOptions.ContentIdUrls</Method>
-            <Method>ApiExamples.ExHtmlSaveOptions.FontSubsetting</Method>
-            <Method>ApiExamples.ExHtmlSaveOptions.OfficeMathOutputMode</Method>
-            <Method>ApiExamples.ExImageSaveOptions.Renderer</Method>
-            <Method>ApiExamples.ExMarkdownSaveOptions.ExportImagesAsBase64</Method>
-            <Method>ApiExamples.ExOoxmlSaveOptions.KeepLegacyControlChars</Method>
-            <Method>ApiExamples.ExParagraph.AppendField</Method>
-            <Method>ApiExamples.ExParagraph.InsertFieldAfterTextInParagraph</Method>
-            <Method>ApiExamples.ExPdfSaveOptions.TextCompression</Method>
-            <Method>ApiExamples.ExPdfSaveOptions.OpenHyperlinksInNewWindow</Method>
-            <Method>ApiExamples.ExPdfSaveOptions.EmbedFullFonts</Method>
-            <Method>ApiExamples.ExPdfSaveOptions.EmbedWindowsFonts</Method>
-            <Method>ApiExamples.ExPdfSaveOptions.EmbedCoreFonts</Method>
-            <Method>ApiExamples.ExReportingEngine.JsonDataString</Method>
-            <Method>ApiExamples.ExReportingEngine.JsonDataStream</Method>
-            <Method>ApiExamples.ExShape.RenderOfficeMath</Method>
-            <Method>ApiExamples.ExShape.OfficeMathRenderer</Method>
-            <Method>ApiExamples.ExTxtSaveOptions.Encoding</Method>
-            <Method>ApiExamples.ExTxtSaveOptions.PreserveTableLayout</Method>
-            <Method>ApiExamples.ExXpsSaveOptions.OptimizeOutput</Method>
-            <!-- not ported -->
-            <Method>ApiExamples.ExDocument.NotSupportedWarning</Method>
-            <!-- with runtime errors -->
-            <Method>ApiExamples.ExDocument.LoadFromWeb</Method>
-            <Method>ApiExamples.ExDocumentBuilder.InsertField</Method>
-            <Method>ApiExamples.ExField.FieldEQAsOfficeMath</Method>
-            <Method>ApiExamples.ExParagraph.AppendField</Method>
-            <Method>ApiExamples.ExDocumentBuilder.InsertPieChart</Method>
-            <Method>ApiExamples.ExField.FieldDate</Method>
-            <Method>ApiExamples.ExField.FieldFormat</Method>
-            <Method>ApiExamples.ExField.FieldQuote</Method>
-            <Method>ApiExamples.ExField.FieldTime</Method>
-            <Method>ApiExamples.ExField.GetFieldFromDocument</Method>
-            <Method>ApiExamples.ExOoxmlSaveOptions.KeepLegacyControlChars</Method>
-            <Method>ApiExamples.ExParagraph.InsertFieldAfterTextInParagraph</Method>
-            <Method>ApiExamples.ExPdfSaveOptions.EmbedWindowsFonts</Method>
-            <Method>ApiExamples.ExPdfSaveOptions.OpenHyperlinksInNewWindow</Method>
-            <Method>ApiExamples.ExReportingEngine.CsvDataStream</Method>
-            <Method>ApiExamples.ExReportingEngine.CsvDataString</Method>
-            <Method>ApiExamples.ExReportingEngine.JsonDataStream</Method>
-            <Method>ApiExamples.ExReportingEngine.JsonDataString</Method>
-            <Method>ApiExamples.ExReportingEngine.XmlDataStreamWithoutSchema</Method>
-            <Method>ApiExamples.ExReportingEngine.XmlDataStringWithoutSchema</Method>
-            <Method>ApiExamples.ExTxtSaveOptions.PreserveTableLayout</Method>
         </Methods>
+        <MethodsBody>
+            <MethodBody>ApiExamples.ExPageSetup.SuppressEndnotes</MethodBody>
+            <MethodBody>ApiExamples.ExDocument.CreateSimpleDocument</MethodBody>
+            <MethodBody>ApiExamples.ExCharts.DataLabels</MethodBody>
+            <MethodBody>ApiExamples.ExCharts.ChartDataPoint</MethodBody>
+            <MethodBody>ApiExamples.ExCharts.ChartSeriesCollection</MethodBody>
+            <MethodBody>ApiExamples.ExCompatibilityOptions.OptimizeFor</MethodBody>
+            <MethodBody>ApiExamples.ExShape.InsertTextPaths</MethodBody>
+            <MethodBody>ApiExamples.ExPdf2Word.LoadPdf</MethodBody>
+            <MethodBody>ApiExamples.ExNodeImporter.InsertAtBookmark</MethodBody>
+            <MethodBody>ApiExamples.ExNode.NodeXPathNavigator</MethodBody>
+            <MethodBody>ApiExamples.ExLayout.LayoutEnumerator</MethodBody>
+            <MethodBody>ApiExamples.ExSmartTag.Create</MethodBody>
+            <MethodBody>ApiExamples.ExLists.OutlineHeadingTemplates</MethodBody>
+            <MethodBody>ApiExamples.ExLists.PrintOutAllLists</MethodBody>
+            <MethodBody>ApiExamples.ExDocumentProperties.Content</MethodBody>
+            <MethodBody>ApiExamples.ExField.FieldAutoNumLgl</MethodBody>
+            <MethodBody>ApiExamples.ExField.FieldAutoTextList</MethodBody>
+            <MethodBody>ApiExamples.ExField.FieldToc</MethodBody>
+            <MethodBody>ApiExamples.ExField.FieldTocEntryIdentifier</MethodBody>
+            <MethodBody>ApiExamples.ExField.FieldIncludeText</MethodBody>
+            <MethodBody>ApiExamples.ExField.FieldLinkedObjectsAsText</MethodBody>
+            <MethodBody>ApiExamples.ExField.FieldNoteRef</MethodBody>
+            <MethodBody>ApiExamples.ExField.FieldPageRef</MethodBody>
+            <MethodBody>ApiExamples.ExField.FieldRef</MethodBody>
+            <MethodBody>ApiExamples.ExField.FieldTOA</MethodBody>
+            <MethodBody>ApiExamples.ExField.FieldEQ</MethodBody>
+            <MethodBody>ApiExamples.ExField.FieldTime</MethodBody>
+            <MethodBody>ApiExamples.ExLowCode.MergeDocumentInstances</MethodBody>
+        </MethodsBody>
     </IgnoredEntities>
     <HandmadeEntities>
         <Types>

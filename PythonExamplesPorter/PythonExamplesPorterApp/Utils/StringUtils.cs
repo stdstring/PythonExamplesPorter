@@ -69,5 +69,22 @@ namespace PythonExamplesPorterApp.Utils
         {
             return source.Replace("\\", "\\\\");
         }
+
+        public static String UnquoteString(String source)
+        {
+            if (source.Length == 0)
+                return source;
+            Int32 startPosition = 0;
+            Int32 endPosition = source.Length - 1;
+            if (source[startPosition] == '@')
+                ++startPosition;
+            if ((startPosition <= endPosition) && (source[startPosition] == '"'))
+                ++startPosition;
+            if (source[endPosition] == '"')
+                --endPosition;
+            return startPosition <= endPosition ?
+                   source.Substring(startPosition, endPosition - startPosition + 1) :
+                   "";
+        }
     }
 }

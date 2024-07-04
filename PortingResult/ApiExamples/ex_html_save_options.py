@@ -7,7 +7,6 @@
 # "as is", without warranty of any kind, either expressed or implied.
 #####################################
 
-
 import aspose.words as aw
 import aspose.words.saving
 import unittest
@@ -16,6 +15,9 @@ from api_example_base import ApiExampleBase, ARTIFACTS_DIR, MY_DIR
 
 class ExHtmlSaveOptions(ApiExampleBase):
     def test_export_page_margins_epub(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_export_office_math_epub(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_export_text_box_as_svg_epub(self):
@@ -61,6 +63,9 @@ class ExHtmlSaveOptions(ApiExampleBase):
         save_options = aw.saving.HtmlSaveOptions(aw.SaveFormat.EPUB)
         self.assertEqual(False, save_options.export_roundtrip_information)
 
+    def test_external_resource_saving_config(self):
+        raise NotImplementedError("Unsupported target type System.IO.SearchOption")
+
     def test_convert_fonts_as_base64(self):
         doc = aw.Document(file_name=MY_DIR + "TextBoxes.docx")
         save_options = aw.saving.HtmlSaveOptions()
@@ -71,6 +76,9 @@ class ExHtmlSaveOptions(ApiExampleBase):
         doc.save(file_name=ARTIFACTS_DIR + "HtmlSaveOptions.ConvertFontsAsBase64.html", save_options=save_options)
 
     def test_html_5_support(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_export_fonts(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_resource_folder_priority(self):
@@ -135,13 +143,15 @@ class ExHtmlSaveOptions(ApiExampleBase):
         save_options.export_cid_urls_for_mhtml_resources = True
         doc.save(file_name=ARTIFACTS_DIR + "HtmlSaveOptions.ContentIdScheme.mhtml", save_options=save_options)
 
+    def test_resolve_font_names(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
     def test_heading_levels(self):
         #ExStart
         #ExFor:HtmlSaveOptions.document_split_heading_level
         #ExSummary:Shows how to split an output HTML document by headings into several parts.
         doc = aw.Document()
         builder = aw.DocumentBuilder(doc)
-
         # Every paragraph that we format using a "Heading" style can serve as a heading.
         # Each heading may also have a heading level, determined by the number of its heading style.
         # The headings below are of levels 1-3.
@@ -157,7 +167,6 @@ class ExHtmlSaveOptions(ApiExampleBase):
         builder.writeln("Heading #5")
         builder.paragraph_format.style = builder.document.styles.get_by_name("Heading 3")
         builder.writeln("Heading #6")
-
         # Create a HtmlSaveOptions object and set the split criteria to "HeadingParagraph".
         # These criteria will split the document at paragraphs with "Heading" styles into several smaller documents,
         # and save each document in a separate HTML file in the local file system.
@@ -166,7 +175,6 @@ class ExHtmlSaveOptions(ApiExampleBase):
         options = aw.saving.HtmlSaveOptions()
         options.document_split_criteria = aw.saving.DocumentSplitCriteria.HEADING_PARAGRAPH
         options.document_split_heading_level = 2
-
         # Our document has four headings of levels 1 - 2. One of those headings will not be
         # a split point since it is at the beginning of the document.
         # The saving operation will split our document at three places, into four smaller documents.
@@ -222,6 +230,9 @@ class ExHtmlSaveOptions(ApiExampleBase):
     def test_doc_2_epub_save_options(self):
         raise NotImplementedError("Unsupported target type System.Text.Encoding")
 
+    def test_content_id_urls(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
     def test_drop_down_form_field(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
@@ -247,6 +258,12 @@ class ExHtmlSaveOptions(ApiExampleBase):
     def test_list(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
+    def test_export_page_margins(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_export_page_setup(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
     def test_relative_font_size(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
@@ -256,14 +273,23 @@ class ExHtmlSaveOptions(ApiExampleBase):
     def test_round_trip_information(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
+    def test_export_toc_page_numbers(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_font_subsetting(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
     def test_metafile_format(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_office_math_output_mode(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_scale_image_to_shape_size(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_image_folder(self):
         raise NotImplementedError("Unsupported target type System.IO.Path")
 
     def test_pretty_format(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
-
-    def test_mobi_azw_3_default_encoding(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")

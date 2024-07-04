@@ -7,7 +7,6 @@
 # "as is", without warranty of any kind, either expressed or implied.
 #####################################
 
-
 import aspose.words as aw
 import aspose.words.settings
 import unittest
@@ -33,7 +32,6 @@ class ExViewOptions(ApiExampleBase):
         self.assertEqual(aw.settings.ZoomType.NONE, doc.view_options.zoom_type)
         doc.save(file_name=ARTIFACTS_DIR + "ViewOptions.SetZoomPercentage.doc")
         #ExEnd
-
         doc = aw.Document(file_name=ARTIFACTS_DIR + "ViewOptions.SetZoomPercentage.doc")
         self.assertEqual(aw.settings.ViewType.PAGE_LAYOUT, doc.view_options.view_type)
         self.assertEqual(50, doc.view_options.zoom_percent)

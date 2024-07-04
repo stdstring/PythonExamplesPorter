@@ -7,18 +7,16 @@
 # "as is", without warranty of any kind, either expressed or implied.
 #####################################
 
-
 import aspose.words as aw
 import aspose.words.digitalsignatures
 import aspose.words.loading
-import aspose.words.saving
 import unittest
 from api_example_base import ApiExampleBase, ARTIFACTS_DIR, IMAGE_DIR, MY_DIR
 
 
 class ExHtmlLoadOptions(ApiExampleBase):
-    def test_load_html_fixed(self):
-        raise NotImplementedError("Unsupported ctor for type ListDocumentWarnings")
+    def test_support_vml(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_encrypted_html(self):
         raise NotImplementedError("Unsupported target type System.DateTime")
@@ -35,15 +33,11 @@ class ExHtmlLoadOptions(ApiExampleBase):
     def test_ignore_noscript_elements(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
-    def test_use_pdf_document_for_ignore_noscript_elements(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
-
     def test_block_import(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_font_face_rules(self):
         #ExStart:FontFaceRules
-        #GistId:5f20ac02cb42c6b08481aa1c5b0cd3db
         #ExFor:HtmlLoadOptions.support_font_face_rules
         #ExSummary:Shows how to load declared "@font-face" rules.
         load_options = aw.loading.HtmlLoadOptions()

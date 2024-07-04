@@ -7,7 +7,6 @@
 # "as is", without warranty of any kind, either expressed or implied.
 #####################################
 
-
 import aspose.words as aw
 import aspose.words.loading
 import aspose.words.saving
@@ -19,7 +18,7 @@ class ExPlainTextDocument(ApiExampleBase):
     def test_load(self):
         #ExStart
         #ExFor:PlainTextDocument
-        #ExFor:PlainTextDocument.__init__(string)
+        #ExFor:PlainTextDocument.__init__(str)
         #ExFor:PlainTextDocument.text
         #ExSummary:Shows how to load the contents of a Microsoft Word document in plaintext.
         doc = aw.Document()
@@ -35,7 +34,7 @@ class ExPlainTextDocument(ApiExampleBase):
 
     def test_load_encrypted(self):
         #ExStart
-        #ExFor:PlainTextDocument.__init__(string,LoadOptions)
+        #ExFor:PlainTextDocument.__init__(str,LoadOptions)
         #ExSummary:Shows how to load the contents of an encrypted Microsoft Word document in plaintext.
         doc = aw.Document()
         builder = aw.DocumentBuilder(doc)

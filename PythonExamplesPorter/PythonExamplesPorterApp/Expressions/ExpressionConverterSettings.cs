@@ -1,6 +1,6 @@
 ﻿namespace PythonExamplesPorterApp.Expressions
 {
-    internal class ExpressionConverterSettings
+    internal struct ExpressionConverterSettings
     {
         public ExpressionConverterSettings()
         {
@@ -10,11 +10,14 @@
         {
             AllowIncrementDecrement = other.AllowIncrementDecrement;
             AllowObjectInitializer = other.AllowObjectInitializer;
+            QuoteMark = other.QuoteMark;
         }
 
         public Boolean AllowIncrementDecrement { get; set; }
 
         public Boolean AllowObjectInitializer { get; set; }
+
+        public Char QuoteMark { get; set; } = '"';
 
         public ExpressionConverterSettings CreateChild()
         {

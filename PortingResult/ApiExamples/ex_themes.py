@@ -7,7 +7,6 @@
 # "as is", without warranty of any kind, either expressed or implied.
 #####################################
 
-
 import aspose.pydrawing
 import aspose.words as aw
 import unittest
@@ -41,20 +40,16 @@ class ExThemes(ApiExampleBase):
         #ExFor:ThemeFonts.latin
         #ExSummary:Shows how to set custom colors and fonts for themes.
         doc = aw.Document(file_name=MY_DIR + "Theme colors.docx")
-
         # The "Theme" object gives us access to the document theme, a source of default fonts and colors.
         theme = doc.theme
-
         # Some styles, such as "Heading 1" and "Subtitle", will inherit these fonts.
         theme.major_fonts.latin = "Courier New"
         theme.minor_fonts.latin = "Agency FB"
-
         # Other languages may also have their custom fonts in this theme.
         self.assertEqual("", theme.major_fonts.complex_script)
         self.assertEqual("", theme.major_fonts.east_asian)
         self.assertEqual("", theme.minor_fonts.complex_script)
         self.assertEqual("", theme.minor_fonts.east_asian)
-
         # The "Colors" property contains the color palette from Microsoft Word,
         # which appears when changing shading or font color.
         # Apply custom colors to the color palette so we have easy access to them in Microsoft Word
@@ -71,13 +66,11 @@ class ExThemes(ApiExampleBase):
         colors.accent4 = aspose.pydrawing.Color.gold
         colors.accent5 = aspose.pydrawing.Color.blue_violet
         colors.accent6 = aspose.pydrawing.Color.dark_violet
-
         # Apply custom colors to hyperlinks in their clicked and un-clicked states.
         colors.hyperlink = aspose.pydrawing.Color.black
         colors.followed_hyperlink = aspose.pydrawing.Color.gray
         doc.save(file_name=ARTIFACTS_DIR + "Themes.CustomColorsAndFonts.docx")
         #ExEnd
-
         doc = aw.Document(file_name=ARTIFACTS_DIR + "Themes.CustomColorsAndFonts.docx")
         self.assertEqual(aspose.pydrawing.Color.orange_red.to_argb(), doc.theme.colors.accent1.to_argb())
         self.assertEqual(aspose.pydrawing.Color.midnight_blue.to_argb(), doc.theme.colors.dark1.to_argb())

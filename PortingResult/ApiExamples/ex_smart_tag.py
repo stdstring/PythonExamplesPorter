@@ -7,11 +7,13 @@
 # "as is", without warranty of any kind, either expressed or implied.
 #####################################
 
-
 import aspose.words as aw
 from api_example_base import ApiExampleBase, MY_DIR
 
 
 class ExSmartTag(ApiExampleBase):
+    def test_create(self):
+        raise NotImplementedError("ignored method body")
+
     def test_properties(self):
         raise NotImplementedError("Unsupported target type System.Collections.Generic.IEnumerable")

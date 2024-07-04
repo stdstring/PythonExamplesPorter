@@ -40,5 +40,19 @@ namespace PythonExamplesPorterAppTests.Utils
         {
             Assert.That(StringUtils.PrepareVerbatimString(source), Is.EqualTo(expected));
         }
+
+        [TestCase("", "")]
+        [TestCase("a", "a")]
+        [TestCase("abcd", "abcd")]
+        [TestCase("\"abcd\"", "abcd")]
+        [TestCase("\"a\\\"b\\\"cd\"", "a\\\"b\\\"cd")]
+        [TestCase("@\"abcd\"", "abcd")]
+        [TestCase("@\"a@\\\"b\\\"cd\"", "a@\\\"b\\\"cd")]
+        [TestCase("\"\\\"abcd\\\"\"", "\\\"abcd\\\"")]
+        [TestCase("@\"\\\"abcd\\\"\"", "\\\"abcd\\\"")]
+        public void UnquoteString(String source, String expected)
+        {
+            Assert.That(StringUtils.UnquoteString(source), Is.EqualTo(expected));
+        }
     }
 }
