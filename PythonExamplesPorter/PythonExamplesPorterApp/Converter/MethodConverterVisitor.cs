@@ -149,8 +149,6 @@ namespace PythonExamplesPorterApp.Converter
         private String CreateTestMethodName(MethodDeclarationSyntax node, String typeName)
         {
             String methodName = node.Identifier.Text;
-            if (_currentClass == null)
-                throw new InvalidOperationException($"Unknown class for method {methodName}");
             String destMethodName = _appData.NameTransformer.TransformMethodName(typeName, methodName);
             if (!destMethodName.StartsWith("test_"))
                 destMethodName = "test_" + destMethodName;

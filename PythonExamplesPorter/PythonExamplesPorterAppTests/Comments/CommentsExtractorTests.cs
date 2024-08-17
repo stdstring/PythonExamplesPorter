@@ -112,7 +112,7 @@ namespace PythonExamplesPorterAppTests.Comments
             SyntaxNode[] descendantNodes = model.SyntaxTree.GetRoot().DescendantNodes().ToArray();
             MethodDeclarationSyntax[] methods = descendantNodes.OfType<MethodDeclarationSyntax>().ToArray();
             MethodDeclarationSyntax method1 = methods.First(method => method.Identifier.ToString().Equals("Method1"));
-            StatementSyntax[] method1Statements = method1.Body!.Statements.ToArray();
+            StatementSyntax[] method1Statements = method1.Body.MustCheck().Statements.ToArray();
             Assert.That(method1Statements.Length, Is.EqualTo(5));
             CheckComments(method1Statements[0], new []{"// Comment 1"}, null);
             CheckComments(method1Statements[1], new []{"// Comment 2"}, null);
@@ -121,19 +121,19 @@ namespace PythonExamplesPorterAppTests.Comments
             CheckComments(method1Statements[4], new []{"", "// Comment 5", ""}, null);
             CheckComments(method1Statements[4].GetLastToken().GetNextToken(), new []{"// Comment 6"});
             MethodDeclarationSyntax method2 = methods.First(method => method.Identifier.ToString().Equals("Method2"));
-            StatementSyntax[] method2Statements = method2.Body!.Statements.ToArray();
+            StatementSyntax[] method2Statements = method2.Body.MustCheck().Statements.ToArray();
             Assert.That(method2Statements.Length, Is.EqualTo(2));
             CheckComments(method2Statements[0], new []{"", "// Comment 1"}, null);
             CheckComments(method2Statements[1], Array.Empty<String>(), null);
             CheckComments(method2Statements[1].GetLastToken().GetNextToken(), new[] {"// Comment 2", ""});
             MethodDeclarationSyntax method3 = methods.First(method => method.Identifier.ToString().Equals("Method3"));
-            StatementSyntax[] method3Statements = method3.Body!.Statements.ToArray();
+            StatementSyntax[] method3Statements = method3.Body.MustCheck().Statements.ToArray();
             Assert.That(method3Statements.Length, Is.EqualTo(2));
             CheckComments(method3Statements[0], new[] {"// Comment 1", ""}, null);
             CheckComments(method3Statements[1], Array.Empty<String>(), null);
             CheckComments(method3Statements[1].GetLastToken().GetNextToken(), new[] {"", "// Comment 2"});
             MethodDeclarationSyntax method4 = methods.First(method => method.Identifier.ToString().Equals("Method4"));
-            StatementSyntax[] method4Statements = method4.Body!.Statements.ToArray();
+            StatementSyntax[] method4Statements = method4.Body.MustCheck().Statements.ToArray();
             Assert.That(method4Statements.Length, Is.EqualTo(2));
             CheckComments(method4Statements[0], new[] {"", "// Comment 1", ""}, null);
             CheckComments(method4Statements[1], Array.Empty<String>(), null);
@@ -163,7 +163,7 @@ namespace PythonExamplesPorterAppTests.Comments
             SyntaxNode[] descendantNodes = model.SyntaxTree.GetRoot().DescendantNodes().ToArray();
             MethodDeclarationSyntax[] methods = descendantNodes.OfType<MethodDeclarationSyntax>().ToArray();
             MethodDeclarationSyntax method1 = methods.First(method => method.Identifier.ToString().Equals("Method1"));
-            StatementSyntax[] method1Statements = method1.Body!.DescendantNodes().OfType<StatementSyntax>().ToArray();
+            StatementSyntax[] method1Statements = method1.Body.MustCheck().DescendantNodes().OfType<StatementSyntax>().ToArray();
             // (std_string) : we will never retrieve comments "// Comment 2 (missed)" and "// Comment 4 (missed)",
             // if we will work only with StatementSyntax nodes
             Assert.That(method1Statements.Length, Is.EqualTo(6));

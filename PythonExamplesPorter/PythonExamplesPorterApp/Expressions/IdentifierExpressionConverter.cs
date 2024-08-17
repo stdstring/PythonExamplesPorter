@@ -28,7 +28,7 @@ namespace PythonExamplesPorterApp.Expressions
                 case ILocalSymbol localSymbol:
                     return new ConvertResult(_appData.NameTransformer.TransformLocalVariableName(localSymbol.Name), importData);
                 case INamedTypeSymbol typeSymbol:
-                    // TODO (std_string) ; think about ability of import rollback, e.g. in case of method from NUnit.Framework.Assert class
+                    // TODO (std_string) : think about ability of import rollback, e.g. in case of method from NUnit.Framework.Assert class
                     OperationResult<TypeResolveData> resolveResult = _externalEntityResolver.ResolveType(typeSymbol);
                     if (!resolveResult.Success)
                         throw new UnsupportedSyntaxException(resolveResult.Reason);

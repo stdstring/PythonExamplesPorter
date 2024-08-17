@@ -34,9 +34,7 @@ namespace PythonExamplesPorterApp.Converter
 
         public static IReadOnlyList<ArgumentSyntax> GetArguments(this ArgumentListSyntax? argumentList)
         {
-            if (argumentList == null)
-                return Array.Empty<ArgumentSyntax>();
-            return argumentList.Arguments;
+            return argumentList == null ? Array.Empty<ArgumentSyntax>() : argumentList.Arguments;
         }
 
         public static String GetTypeFullName(this ITypeSymbol type)

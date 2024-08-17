@@ -4,6 +4,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using PythonExamplesPorterApp.Comments;
 using PythonExamplesPorterApp.Common;
 using PythonExamplesPorterApp.DestStorage;
+using PythonExamplesPorterApp.Utils;
 
 namespace PythonExamplesPorterApp.Converter
 {
@@ -115,9 +116,7 @@ namespace PythonExamplesPorterApp.Converter
 
         public override void VisitMethodDeclaration(MethodDeclarationSyntax node)
         {
-            if (_currentClass == null)
-                throw new InvalidOperationException($"Unknown class for method {node.Identifier.Text}");
-            MethodConverterVisitor methodConverter = new MethodConverterVisitor(_model, _currentClass, _appData);
+            MethodConverterVisitor methodConverter = new MethodConverterVisitor(_model, _currentClass.Must("Unknown class"), _appData);
             methodConverter.Visit(node);
         }
 
