@@ -19,7 +19,7 @@
 
         public Char QuoteMark { get; set; } = '"';
 
-        public ExpressionConverterSettings CreateChild()
+        public readonly ExpressionConverterSettings CreateChild()
         {
             return new ExpressionConverterSettings(this)
             {
