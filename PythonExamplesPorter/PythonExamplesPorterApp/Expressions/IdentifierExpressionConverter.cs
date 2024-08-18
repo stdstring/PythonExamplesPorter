@@ -28,11 +28,8 @@ namespace PythonExamplesPorterApp.Expressions
                 case ILocalSymbol localSymbol:
                     return new ConvertResult(_appData.NameTransformer.TransformLocalVariableName(localSymbol.Name), importData);
                 case INamedTypeSymbol typeSymbol:
-                    // TODO (std_string) : think about ability of import rollback, e.g. in case of method from NUnit.Framework.Assert class
-                    OperationResult<TypeResolveData> resolveResult = _externalEntityResolver.ResolveType(typeSymbol);
-                    if (!resolveResult.Success)
-                        throw new UnsupportedSyntaxException(resolveResult.Reason);
-                    return ProcessTypeResolveData(resolveResult.Data!, importData);
+                    TypeResolveData resolveData = _externalEntityResolver.ResolveType(typeSymbol).MustSuccess();
+                    return ProcessTypeResolveData(resolveData, importData);
                 case IPropertySymbol propertySymbol:
                     // TODO (std_string) : think about smart (not straightforward) solution
                     // TODO (std_string) : think about cases when property/method/etc in source type is absent in dest handmade type

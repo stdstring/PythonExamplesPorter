@@ -34,10 +34,7 @@ namespace PythonExamplesPorterApp.Expressions
             ArgumentListConverter argumentListConverter = new ArgumentListConverter(_model, _appData, _settings.CreateChild());
             ConvertArgumentsResult convertedArguments = argumentListConverter.Convert(expression, arguments);
             importData.Append(convertedArguments.ImportData);
-            OperationResult<MemberResolveData> resolveResult = _externalEntityResolver.ResolveCtor(type, arguments, convertedArguments.Result);
-            if (!resolveResult.Success)
-                throw new UnsupportedSyntaxException(resolveResult.Reason);
-            MemberResolveData resolveData = resolveResult.Data!;
+            MemberResolveData resolveData = _externalEntityResolver.ResolveCtor(type, arguments, convertedArguments.Result).MustSuccess();
             importData.Append(resolveData.ImportData);
             IList<String> afterResults = new List<String>();
             if (expression.Initializer is {Expressions.Count: > 0})
@@ -55,10 +52,9 @@ namespace PythonExamplesPorterApp.Expressions
                 {
                     case AssignmentExpressionSyntax {Left: IdentifierNameSyntax identifier} expr when expr.Kind() == SyntaxKind.SimpleAssignmentExpression:
                         // TODO (std_string) : check identifier: is this field, property or something else
-                        OperationResult<ITypeSymbol> expressionType = identifier.GetExpressionTypeSymbol(_model);
-                        if (!expressionType.Success)
-                            throw new UnsupportedSyntaxException($"Unsupported object initializer expression: {expressionType.Reason}");
-                        String sourceTypeFullName = expressionType.Data!.GetTypeFullName();
+                        ITypeSymbol expressionType = identifier.GetExpressionTypeSymbol(_model)
+                            .MustSuccess("Unsupported object initializer expression: {0}");
+                        String sourceTypeFullName = expressionType.GetTypeFullName();
                         String name = _appData.NameTransformer.TransformPropertyName(sourceTypeFullName, identifier.Identifier.Text);
                         ConvertResult expressionResult = _expressionConverter.Convert(expr.Right);
                         importData.Append(expressionResult.ImportData);

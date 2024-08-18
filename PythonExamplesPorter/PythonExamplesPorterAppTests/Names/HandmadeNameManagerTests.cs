@@ -32,7 +32,11 @@ namespace PythonExamplesPorterAppTests.Names
         {
             HandmadeNameManager manager = new HandmadeNameManager(_handmadeAliases);
             OperationResult<String> actualResult = manager.Search(typeName, memberName);
-            OperationResult<String> expectedResult = new OperationResult<String>(success, Data: success ? expectedData : "");
+            OperationResult<String> expectedResult = success switch
+            {
+                true => new OperationResult<String>.Ok(expectedData),
+                false => new OperationResult<String>.Error("Not found")
+            };
             Assert.That(actualResult, Is.EqualTo(expectedResult));
         }
 

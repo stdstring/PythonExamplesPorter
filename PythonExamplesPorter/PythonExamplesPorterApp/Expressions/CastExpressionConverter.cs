@@ -1,7 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using PythonExamplesPorterApp.Common;
-using PythonExamplesPorterApp.Converter;
 using PythonExamplesPorterApp.DestStorage;
 using PythonExamplesPorterApp.ExternalEntities;
 
@@ -22,12 +21,9 @@ namespace PythonExamplesPorterApp.Expressions
             ConvertResult innerResult = _expressionConverter.Convert(innerExpression);
             importData.Append(innerResult.ImportData);
             String sourceRepresentation = innerResult.Result;
-            OperationResult <CastResolveData> resolveResult = _externalEntityResolver.ResolveCast(expression.Type, expression.Expression, sourceRepresentation);
-            if (!resolveResult.Success)
-                throw new UnsupportedSyntaxException(resolveResult.Reason);
-            CastResolveData castResolveData = resolveResult.Data!;
-            importData.Append(castResolveData.ImportData);
-            return new ConvertResult(castResolveData.Cast, importData);
+            CastResolveData resolveData = _externalEntityResolver.ResolveCast(expression.Type, expression.Expression, sourceRepresentation).MustSuccess();
+            importData.Append(resolveData.ImportData);
+            return new ConvertResult(resolveData.Cast, importData);
         }
 
         private readonly ExpressionConverter _expressionConverter;

@@ -62,16 +62,11 @@ namespace PythonExamplesPorterApp.Expressions
                     switch (expression.Right)
                     {
                         case TypeSyntax typeSyntax:
-                            switch (_externalEntityResolver.ResolveCast(typeSyntax, expression.Left, leftOperandResult.Result))
-                            {
-                                case {Success: false, Reason: var reason}:
-                                    throw new UnsupportedSyntaxException($"Bad binary as expression due to: {reason}");
-                                case {Success: true, Data: var resolveData}:
-                                    importData.Append(resolveData!.ImportData);
-                                    return new ConvertResult(resolveData.Cast, importData);
-                                default:
-                                    throw new UnsupportedSyntaxException($"Unexpected control flow at binary as expression: {expression}");
-                            }
+                            CastResolveData resolveData = _externalEntityResolver
+                                .ResolveCast(typeSyntax, expression.Left, leftOperandResult.Result)
+                                .MustSuccess("Bad binary as expression due to: {0}");
+                            importData.Append(resolveData.ImportData);
+                            return new ConvertResult(resolveData.Cast, importData);
                         default:
                             throw new UnsupportedSyntaxException($"Unsupported binary as expression: {expression}");
                     }
@@ -82,14 +77,12 @@ namespace PythonExamplesPorterApp.Expressions
 
         private ConvertResult ProcessAddExpression(BinaryExpressionSyntax node, String leftOperand, String rightOperand, ImportData importData)
         {
-            OperationResult<IMethodSymbol> operatorSymbol = node.GetMethodSymbol(_model);
-            if (!operatorSymbol.Success)
-                throw new UnsupportedSyntaxException(operatorSymbol.Reason);
-            switch (operatorSymbol.Data!.ContainingType.GetTypeFullName())
+            IMethodSymbol methodSymbol = node.GetMethodSymbol(_model).MustSuccess();
+            switch (methodSymbol.ContainingType.GetTypeFullName())
             {
-                case "System.String" when operatorSymbol.Data.Parameters.Length == 2:
-                    String leftOperandType = operatorSymbol.Data.Parameters[0].Type.GetTypeFullName();
-                    String rightOperandType = operatorSymbol.Data.Parameters[1].Type.GetTypeFullName();
+                case "System.String" when methodSymbol.Parameters.Length == 2:
+                    String leftOperandType = methodSymbol.Parameters[0].Type.GetTypeFullName();
+                    String rightOperandType = methodSymbol.Parameters[1].Type.GetTypeFullName();
                     switch (leftOperandType, rightOperandType)
                     {
                         case ("System.String", "System.String"):
