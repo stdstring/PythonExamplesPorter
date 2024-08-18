@@ -101,9 +101,7 @@ namespace PythonExamplesPorterApp.Converter
             IReadOnlyList<SwitchSectionSyntax> sections = node.Sections;
             for (Int32 index = 0; index < sections.Count; ++index)
             {
-                CheckResult sectionResult = SwitchSectionChecker.Check(sections[index]);
-                if (!sectionResult.Result)
-                    throw new UnsupportedSyntaxException(sectionResult.Reason);
+                SwitchSectionChecker.Check(sections[index]).MustSuccess();
                 IReadOnlyList<SwitchLabelSyntax> labels = sections[index].Labels;
                 IReadOnlyList<StatementSyntax> statements = sections[index].Statements;
                 Boolean hasDefaultLabel = labels.Last() is DefaultSwitchLabelSyntax;

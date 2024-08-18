@@ -17,9 +17,7 @@ namespace PythonExamplesPorterApp.Expressions
 
         public ConvertResult Convert(InvocationExpressionSyntax expression)
         {
-            CheckResult argumentsCheckResult = expression.ArgumentList.GetArguments().CheckForMethod();
-            if (!argumentsCheckResult.Result)
-                throw new UnsupportedSyntaxException(argumentsCheckResult.Reason);
+            expression.ArgumentList.GetArguments().CheckForMethod().MustSuccess();
             switch (expression.Expression)
             {
                 case MemberAccessExpressionSyntax memberAccessExpression:

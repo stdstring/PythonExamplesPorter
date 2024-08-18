@@ -11,11 +11,11 @@ namespace PythonExamplesPorterApp.Checker
             foreach (ArgumentSyntax argument in arguments)
             {
                 if (!argument.RefKindKeyword.IsKind(SyntaxKind.None))
-                    return new CheckResult(false, "Unsupported argument kind: ref");
+                    return new CheckResult.Error("Unsupported argument kind: ref");
                 if (!argument.RefOrOutKeyword.IsKind(SyntaxKind.None))
-                    return new CheckResult(false, "Unsupported argument kind: out");
+                    return new CheckResult.Error("Unsupported argument kind: out");
             }
-            return new CheckResult(true);
+            return new CheckResult.Ok();
         }
     }
 }

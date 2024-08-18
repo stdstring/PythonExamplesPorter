@@ -25,9 +25,7 @@ namespace PythonExamplesPorterApp.Expressions
         {
             ImportData importData = new ImportData();
             IReadOnlyList<ArgumentSyntax> arguments = expression.ArgumentList.GetArguments();
-            CheckResult argumentsCheckResult = arguments.CheckForMethod();
-            if (!argumentsCheckResult.Result)
-                throw new UnsupportedSyntaxException(argumentsCheckResult.Reason);
+            arguments.CheckForMethod().MustSuccess();
             if ((expression.Initializer is {Expressions.Count: > 0}) && !_settings.AllowObjectInitializer)
                 throw new UnsupportedSyntaxException("Forbidden object initializer");
             TypeSyntax type = expression.Type;
