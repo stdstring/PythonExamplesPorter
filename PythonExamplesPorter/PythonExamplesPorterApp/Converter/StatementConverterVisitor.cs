@@ -56,7 +56,7 @@ namespace PythonExamplesPorterApp.Converter
                 ITypeSymbol sourceTypeArgument = enumerableInterface.TypeArguments[0];
                 if (loopVariableInfo.Type.GetTypeFullName() != sourceTypeArgument.GetTypeFullName())
                 {
-                    ExternalEntityResolver resolver = new ExternalEntityResolver(_model, _appData);
+                    ExternalEntityResolver resolver = new ExternalEntityResolver(_model, _appData, _expressionCommonSettings);
                     OperationResult<CastResolveData> castResult = resolver.ResolveCast(loopVariableInfo.Type, node.Type, enumerationVariable);
                     if (!castResult.Success)
                         throw new UnsupportedSyntaxException(castResult.Reason);

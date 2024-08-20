@@ -293,3 +293,16 @@ class ExHtmlSaveOptions(ApiExampleBase):
 
     def test_pretty_format(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_html_replace_backslash_with_yen_sign(self):
+        #ExStart:HtmlReplaceBackslashWithYenSign
+        #ExFor:HtmlSaveOptions.replace_backslash_with_yen_sign
+        #ExSummary:Shows how to replace backslash characters with yen signs (Html).
+        doc = aw.Document(file_name=MY_DIR + "Korean backslash symbol.docx")
+        # By default, Aspose.Words mimics MS Word's behavior and doesn't replace backslash characters with yen signs in
+        # generated HTML documents. However, previous versions of Aspose.Words performed such replacements in certain
+        # scenarios. This flag enables backward compatibility with previous versions of Aspose.Words.
+        save_options = aw.saving.HtmlSaveOptions()
+        save_options.replace_backslash_with_yen_sign = True
+        doc.save(file_name=ARTIFACTS_DIR + "HtmlSaveOptions.ReplaceBackslashWithYenSign.html", save_options=save_options)
+        #ExEnd:HtmlReplaceBackslashWithYenSign

@@ -10,16 +10,17 @@
 import aspose.words as aw
 import aspose.words.fields
 import aspose.words.properties
+import datetime
 import unittest
 from api_example_base import ApiExampleBase, ARTIFACTS_DIR, MY_DIR
 
 
 class ExDocumentProperties(ApiExampleBase):
     def test_built_in(self):
-        raise NotImplementedError("Unsupported target type System.Console")
+        raise NotImplementedError("Unsupported expression: GenericName")
 
     def test_custom(self):
-        raise NotImplementedError("Unsupported target type System.Console")
+        raise NotImplementedError("ignored method body")
 
     def test_description(self):
         #ExStart
@@ -70,7 +71,7 @@ class ExDocumentProperties(ApiExampleBase):
         self.assertEqual("Author:\t\u0013 AUTHOR \u0014John Doe\u0015\r" + "Doc title:\t\u0013 TITLE \u0014John's Document\u0015\r" + "Subject:\t\u0013 SUBJECT \u0014My subject\u0015\r" + "Comments:\t\"\u0013 COMMENTS \u0014This is John Doe's document about My subject\u0015\"", doc.get_text().strip())
 
     def test_origin(self):
-        raise NotImplementedError("Unsupported target type System.Console")
+        raise NotImplementedError("Unsupported target type System.TimeSpan")
 
     def test_content(self):
         raise NotImplementedError("ignored method body")
@@ -112,7 +113,7 @@ class ExDocumentProperties(ApiExampleBase):
         #ExEnd
 
     def test_custom_named_access(self):
-        raise NotImplementedError("Unsupported target type System.DateTime")
+        raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")
 
     def test_link_custom_document_properties_to_bookmark(self):
         #ExStart
@@ -141,7 +142,27 @@ class ExDocumentProperties(ApiExampleBase):
         self.assertEqual("Hello world!", custom_property.value)
 
     def test_document_property_collection(self):
-        raise NotImplementedError("Unsupported target type System.DateTime")
+        raise NotImplementedError("Unsupported statement type: UsingStatement")
 
     def test_property_types(self):
-        raise NotImplementedError("Unsupported target type System.DateTime")
+        #ExStart
+        #ExFor:DocumentProperty.to_bool
+        #ExFor:DocumentProperty.to_int
+        #ExFor:DocumentProperty.to_double
+        #ExFor:DocumentProperty.__str__
+        #ExFor:DocumentProperty.to_date_time
+        #ExSummary:Shows various type conversion methods of custom document properties.
+        doc = aw.Document()
+        properties = doc.custom_document_properties
+        auth_date = datetime.date.today()
+        properties.add(name="Authorized", value=True)
+        properties.add(name="Authorized By", value="John Doe")
+        properties.add(name="Authorized Date", value=auth_date)
+        properties.add(name="Authorized Revision", value=doc.built_in_document_properties.revision_number)
+        properties.add(name="Authorized Amount", value=123.45)
+        self.assertEqual(True, properties.get_by_name("Authorized").to_bool())
+        self.assertEqual("John Doe", properties.get_by_name("Authorized By").to_string())
+        self.assertEqual(auth_date, properties.get_by_name("Authorized Date").to_date_time())
+        self.assertEqual(1, properties.get_by_name("Authorized Revision").to_int())
+        self.assertEqual(123.45, properties.get_by_name("Authorized Amount").to_double())
+        #ExEnd

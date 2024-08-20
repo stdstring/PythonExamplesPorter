@@ -12,7 +12,7 @@ namespace PythonExamplesPorterApp.Expressions
         public CastExpressionConverter(SemanticModel model, AppData appData, ExpressionConverterSettings settings)
         {
             _expressionConverter = new ExpressionConverter(model, appData, settings);
-            _externalEntityResolver = new ExternalEntityResolver(model, appData);
+            _externalEntityResolver = new ExternalEntityResolver(model, appData, settings);
         }
 
         public ConvertResult Convert(CastExpressionSyntax expression)

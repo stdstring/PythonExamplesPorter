@@ -78,7 +78,45 @@ class ExNode(ApiExampleBase):
         self.assertIsNotNone(para.parent_node)
 
     def test_child_nodes_enumerate(self):
-        raise NotImplementedError("Unsupported target type System.Console")
+        #ExStart
+        #ExFor:Node
+        #ExFor:Node.custom_node_id
+        #ExFor:NodeType
+        #ExFor:CompositeNode
+        #ExFor:CompositeNode.get_child
+        #ExFor:CompositeNode.get_child_nodes(NodeType,bool)
+        #ExFor:NodeCollection.count
+        #ExFor:NodeCollection.__getitem__
+        #ExSummary:Shows how to traverse through a composite node's collection of child nodes.
+        doc = aw.Document()
+        # Add two runs and one shape as child nodes to the first paragraph of this document.
+        paragraph = doc.get_child(aw.NodeType.PARAGRAPH, 0, True).as_paragraph()
+        paragraph.append_child(aw.Run(doc=doc, text="Hello world! "))
+        shape = aw.drawing.Shape(doc, aw.drawing.ShapeType.RECTANGLE)
+        shape.width = 200
+        shape.height = 200
+        # Note that the 'CustomNodeId' is not saved to an output file and exists only during the node lifetime.
+        shape.custom_node_id = 100
+        shape.wrap_type = aw.drawing.WrapType.INLINE
+        paragraph.append_child(shape)
+        paragraph.append_child(aw.Run(doc=doc, text="Hello again!"))
+        # Iterate through the paragraph's collection of immediate children,
+        # and print any runs or shapes that we find within.
+        children = paragraph.get_child_nodes(aw.NodeType.ANY, False)
+        self.assertEqual(3, paragraph.get_child_nodes(aw.NodeType.ANY, False).count)
+        for child in children:
+            switch_condition = child.node_type
+            if switch_condition == aw.NodeType.RUN:
+                print("Run contents:")
+                print(f"\t\"{child.get_text().strip()}\"")
+            elif switch_condition == aw.NodeType.SHAPE:
+                child_shape = child.as_shape()
+                print("Shape:")
+                print(f"\t{child_shape.shape_type}, {child_shape.width}x{child_shape.height}")
+                self.assertEqual(100, shape.custom_node_id) #ExSkip
+        #ExEnd
+        self.assertEqual(aw.NodeType.RUN, paragraph.get_child(aw.NodeType.RUN, 0, True).node_type)
+        self.assertEqual("Hello world! Hello again!", doc.get_text().strip())
 
     def test_recurse_children(self):
         raise NotImplementedError("Unsupported call of method named TraverseAllNodes")

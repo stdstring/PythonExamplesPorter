@@ -10,11 +10,11 @@ namespace PythonExamplesPorterApp.Expressions
 {
     internal class IdentifierExpressionConverter
     {
-        public IdentifierExpressionConverter(SemanticModel model, AppData appData)
+        public IdentifierExpressionConverter(SemanticModel model, AppData appData, ExpressionConverterSettings settings)
         {
             _model = model;
             _appData = appData;
-            _externalEntityResolver = new ExternalEntityResolver(model, appData);
+            _externalEntityResolver = new ExternalEntityResolver(model, appData, settings);
         }
 
         public ConvertResult Convert(IdentifierNameSyntax identifier)

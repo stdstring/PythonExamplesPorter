@@ -9,9 +9,10 @@ namespace PythonExamplesPorterApp.ExternalEntities
 {
     internal class SystemEntityResolver : IExternalEntityResolver
     {
-        public SystemEntityResolver(SemanticModel model, AppData appData)
+        public SystemEntityResolver(SemanticModel model, AppData appData, ExpressionConverterSettings settings)
         {
             _systemStringResolver = new SystemStringMemberResolver(model);
+            _systemConsoleMemberResolver = new SystemConsoleMemberResolver(model, appData, settings);
             _systemDrawingColorResolver = new SystemDrawingColorMemberResolver(model, appData);
             _systemDrawingPointResolver = new SystemDrawingPointMemberResolver(model, appData, "Point");
             _systemDrawingPointFResolver = new SystemDrawingPointMemberResolver(model, appData, "PointF");
@@ -19,6 +20,8 @@ namespace PythonExamplesPorterApp.ExternalEntities
             _systemDrawingSizeFResolver = new SystemDrawingSizeMemberResolver(model, appData, "SizeF");
             _systemDrawingRectangleResolver = new SystemDrawingRectangleMemberResolver(model, appData, "Rectangle");
             _systemDrawingRectangleFResolver = new SystemDrawingRectangleMemberResolver(model, appData, "RectangleF");
+            _systemDateTimeMemberResolver = new SystemDateTimeMemberResolver(model, appData);
+            _systemGuidMemberResolver = new SystemGuidMemberResolver(model, appData);
         }
 
         public OperationResult<MemberResolveData> ResolveCtor(ITypeSymbol sourceType, IReadOnlyList<ArgumentSyntax> argumentsData, ConvertedArguments argumentsRepresentation)
@@ -38,6 +41,8 @@ namespace PythonExamplesPorterApp.ExternalEntities
                     return _systemDrawingRectangleFResolver.ResolveCtor(argumentsData, argumentsRepresentation);
                 case "System.Drawing.Rectangle":
                     return _systemDrawingRectangleResolver.ResolveCtor(argumentsData, argumentsRepresentation);
+                case "System.DateTime":
+                    return _systemDateTimeMemberResolver.ResolveCtor(argumentsData, argumentsRepresentation);
             }
             return new OperationResult<MemberResolveData>(false, $"Unsupported type: {sourceTypeFullName}");
         }
@@ -49,6 +54,12 @@ namespace PythonExamplesPorterApp.ExternalEntities
             {
                 case "System.String":
                     return _systemStringResolver.ResolveMember(data, representation);
+                case "System.Console":
+                    return _systemConsoleMemberResolver.ResolveMember(data, representation);
+                case "System.DateTime":
+                    return _systemDateTimeMemberResolver.ResolveMember(data, representation);
+                case "System.Guid":
+                    return _systemGuidMemberResolver.ResolveMember(data, representation);
                 case "System.Drawing.Color":
                     return _systemDrawingColorResolver.ResolveMember(data, representation);
                 case "System.Drawing.PointF":
@@ -80,6 +91,140 @@ namespace PythonExamplesPorterApp.ExternalEntities
         private readonly SystemDrawingSizeMemberResolver _systemDrawingSizeFResolver;
         private readonly SystemDrawingRectangleMemberResolver _systemDrawingRectangleResolver;
         private readonly SystemDrawingRectangleMemberResolver _systemDrawingRectangleFResolver;
+        private readonly SystemConsoleMemberResolver _systemConsoleMemberResolver;
+        private readonly SystemDateTimeMemberResolver _systemDateTimeMemberResolver;
+        private readonly SystemGuidMemberResolver _systemGuidMemberResolver;
+    }
+
+    internal class SystemConsoleMemberResolver
+    {
+        internal SystemConsoleMemberResolver(SemanticModel model, AppData appData, ExpressionConverterSettings settings)
+        {
+            _model = model;
+            _appData = appData;
+            _settings = settings;
+        }
+
+        public OperationResult<MemberResolveData> ResolveMember(MemberData data, MemberRepresentation representation)
+        {
+            SimpleNameSyntax memberName = data.Name;
+            SymbolInfo memberInfo = _model.GetSymbolInfo(memberName);
+            switch (memberInfo.Symbol)
+            {
+                case IMethodSymbol {Name: "WriteLine"}:
+                    return ResolveWriteLineMethod(data, representation);
+                default:
+                    return new OperationResult<MemberResolveData>(false, $"Unsupported member: System.Console.{memberName}");
+            }
+        }
+
+        private OperationResult<MemberResolveData> ResolveWriteLineMethod(MemberData data, MemberRepresentation representation)
+        {
+            String member = String.Empty;
+            switch (data.Arguments)
+            {
+                case []:
+                    return new OperationResult<MemberResolveData>(false, "", new MemberResolveData("print()"));
+                case [_]:
+                {
+                    member = $"print({ConvertExpressions(data.Arguments)[0]})";
+                    return new OperationResult<MemberResolveData>(true, "", new MemberResolveData(member));
+                }
+                default:
+                    if (!(data.Arguments[0].Expression is LiteralExpressionSyntax))
+                        return new OperationResult<MemberResolveData>(false, "Unsupported arguments for System.Console.WriteLine");
+                    IList<String> convertResult = ConvertExpressions(data.Arguments);
+                    member = $"print({convertResult[0]}.format({String.Join(",", convertResult.ToArray()[1..])}))";
+                    return new OperationResult<MemberResolveData>(true, "", new MemberResolveData(member));
+            }
+        }
+
+        private IList<String> ConvertExpressions(IReadOnlyList<ArgumentSyntax> arguments)
+        {
+            ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData, _settings);
+            IList<String> result = new List<String>();
+            foreach (ArgumentSyntax arg in arguments)
+                result.Add(expressionConverter.Convert(arg.Expression).Result);
+            return result;
+        }
+
+        private readonly SemanticModel _model;
+        private readonly AppData _appData;
+        private readonly ExpressionConverterSettings _settings;
+    }
+
+    internal class SystemDateTimeMemberResolver
+    {
+        internal SystemDateTimeMemberResolver(SemanticModel model, AppData appData)
+        {
+            _model = model;
+            _appData = appData;
+        }
+
+        public OperationResult<MemberResolveData> ResolveCtor(IReadOnlyList<ArgumentSyntax> argumentsData, ConvertedArguments argumentsRepresentation)
+        {
+            ImportData import = new ImportData().AddImport("datetime");
+            switch (argumentsRepresentation.Values)
+            {
+                // TODO: add check of arg type
+                case [var year, var month, var day]:
+                case [_, _, _, var hour, var minute, var second]:
+                    MemberResolveData resolveData = new MemberResolveData($"datetime.datetime({String.Join(",", argumentsRepresentation.Values)})", import);
+                    return new OperationResult<MemberResolveData>(true, "", resolveData);
+                default:
+                    return new OperationResult<MemberResolveData>(false, "Unsupported arguments for ctor System.String.DateTime");
+            }
+        }
+
+        public OperationResult<MemberResolveData> ResolveMember(MemberData data, MemberRepresentation representation)
+        {
+            SimpleNameSyntax memberName = data.Name;
+            SymbolInfo memberInfo = _model.GetSymbolInfo(memberName);
+            switch (memberInfo.Symbol)
+            {
+                case IPropertySymbol {Name: "Now"}:
+                    return ResolveProperty("datetime", "now");
+                case IPropertySymbol {Name: "Today"}:
+                    return ResolveProperty("date", "today");
+                default:
+                    return new OperationResult<MemberResolveData>(false, $"Unsupported member: System.DateTime.{memberName}");
+            }
+        }
+
+        private OperationResult<MemberResolveData> ResolveProperty(String className, String methodName)
+        {
+            MemberResolveData resolveData = new MemberResolveData($"datetime.{className}.{methodName}()", new ImportData().AddImport("datetime"));
+            return new OperationResult<MemberResolveData>(true, "", resolveData);
+        }
+
+        private readonly SemanticModel _model;
+        private readonly AppData _appData;
+    }
+
+    internal class SystemGuidMemberResolver
+    {
+        internal SystemGuidMemberResolver(SemanticModel model, AppData appData)
+        {
+            _model = model;
+            _appData = appData;
+        }
+
+        public OperationResult<MemberResolveData> ResolveMember(MemberData data, MemberRepresentation representation)
+        {
+            SimpleNameSyntax memberName = data.Name;
+            SymbolInfo memberInfo = _model.GetSymbolInfo(memberName);
+            switch (memberInfo.Symbol)
+            {
+                case IMethodSymbol {Name: "NewGuid"}:
+                    MemberResolveData resolveData = new MemberResolveData("uuid.uuid4()", new ImportData().AddImport("uuid"));
+                    return new OperationResult<MemberResolveData>(true, "", resolveData);
+                default:
+                    return new OperationResult<MemberResolveData>(false, $"Unsupported member: System.Guid.{memberName}");
+            }
+        }
+
+        private readonly SemanticModel _model;
+        private readonly AppData _appData;
     }
 
     internal class SystemStringMemberResolver

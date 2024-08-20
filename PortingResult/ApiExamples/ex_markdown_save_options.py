@@ -3,6 +3,7 @@
 # Copyright (c) 2001-2024 Aspose Pty Ltd. All Rights Reserved.
 
 import aspose.words as aw
+import aspose.words.drawing
 import aspose.words.saving
 from api_example_base import ApiExampleBase, ARTIFACTS_DIR, IMAGE_DIR
 
@@ -32,3 +33,6 @@ class ExMarkdownSaveOptions(ApiExampleBase):
         save_options.export_underline_formatting = True
         doc.save(file_name=ARTIFACTS_DIR + "MarkdownSaveOptions.ExportUnderlineFormatting.md", save_options=save_options)
         #ExEnd:ExportUnderlineFormatting
+
+    def test_link_export_mode(self):
+        raise NotImplementedError("Unsupported target type System.IO.File")

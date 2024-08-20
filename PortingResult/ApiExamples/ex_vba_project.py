@@ -81,3 +81,11 @@ class ExVbaProject(ApiExampleBase):
 
     def test_remove_vba_reference(self):
         raise NotImplementedError("Unsupported call of method named GetLibIdPath")
+
+    def test_is_protected(self):
+        #ExStart:IsProtected
+        #ExFor:VbaProject.is_protected
+        #ExSummary:Shows whether the VbaProject is password protected.
+        doc = aw.Document(file_name=MY_DIR + "Vba protected.docm")
+        self.assertTrue(doc.vba_project.is_protected)
+        #ExEnd:IsProtected

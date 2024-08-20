@@ -10,14 +10,15 @@
 import aspose.pydrawing
 import aspose.words as aw
 import aspose.words.digitalsignatures
-import aspose.words.drawing
 import aspose.words.fields
+import aspose.words.layout
 import aspose.words.loading
 import aspose.words.notes
 import aspose.words.rendering
 import aspose.words.saving
 import aspose.words.settings
 import aspose.words.webextensions
+import datetime
 import unittest
 from api_example_base import ApiExampleBase, ARTIFACTS_DIR, IMAGE_DIR, MY_DIR
 
@@ -199,7 +200,7 @@ class ExDocument(ApiExampleBase):
         raise NotImplementedError("Unsupported expression: ConditionalExpression")
 
     def test_digital_signature(self):
-        raise NotImplementedError("Unsupported target type System.DateTime")
+        raise NotImplementedError("Unsupported statement type: UsingStatement")
 
     def test_signature_value(self):
         raise NotImplementedError("Unsupported target type System.Convert")
@@ -402,18 +403,6 @@ class ExDocument(ApiExampleBase):
         doc = aw.Document(file_name=ARTIFACTS_DIR + "Document.FootnoteColumns.docx")
         self.assertEqual(2, doc.first_section.page_setup.footnote_options.columns)
 
-    def test_compare(self):
-        raise NotImplementedError("Unsupported target type System.DateTime")
-
-    def test_compare_document_with_revisions(self):
-        raise NotImplementedError("Unsupported expression: ParenthesizedLambdaExpression")
-
-    def test_compare_options(self):
-        raise NotImplementedError("Unsupported target type System.DateTime")
-
-    def test_ignore_dml_unique_id(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
-
     def test_remove_external_schema_references(self):
         #ExStart
         #ExFor:Document.remove_external_schema_references
@@ -421,52 +410,6 @@ class ExDocument(ApiExampleBase):
         doc = aw.Document(file_name=MY_DIR + "External XML schema.docx")
         doc.remove_external_schema_references()
         #ExEnd
-
-    def test_track_revisions(self):
-        raise NotImplementedError("Unsupported target type System.DateTime")
-
-    def test_accept_all_revisions(self):
-        #ExStart
-        #ExFor:Document.accept_all_revisions
-        #ExSummary:Shows how to accept all tracking changes in the document.
-        doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
-        # Edit the document while tracking changes to create a few revisions.
-        doc.start_track_revisions(author="John Doe")
-        builder.write("Hello world! ")
-        builder.write("Hello again! ")
-        builder.write("This is another revision.")
-        doc.stop_track_revisions()
-        self.assertEqual(3, doc.revisions.count)
-        # We can iterate through every revision and accept/reject it as a part of our document.
-        # If we know we wish to accept every revision, we can do it more straightforwardly so by calling this method.
-        doc.accept_all_revisions()
-        self.assertEqual(0, doc.revisions.count)
-        self.assertEqual("Hello world! Hello again! This is another revision.", doc.get_text().strip())
-        #ExEnd
-
-    def test_get_revised_properties_of_list(self):
-        #ExStart
-        #ExFor:RevisionsView
-        #ExFor:Document.revisions_view
-        #ExSummary:Shows how to switch between the revised and the original view of a document.
-        doc = aw.Document(file_name=MY_DIR + "Revisions at list levels.docx")
-        doc.update_list_labels()
-        paragraphs = doc.first_section.body.paragraphs
-        self.assertEqual("1.", paragraphs[0].list_label.label_string)
-        self.assertEqual("a.", paragraphs[1].list_label.label_string)
-        self.assertEqual("", paragraphs[2].list_label.label_string)
-        # View the document object as if all the revisions are accepted. Currently supports list labels.
-        doc.revisions_view = aw.RevisionsView.FINAL
-        self.assertEqual("", paragraphs[0].list_label.label_string)
-        self.assertEqual("1.", paragraphs[1].list_label.label_string)
-        self.assertEqual("a.", paragraphs[2].list_label.label_string)
-        #ExEnd
-        doc.revisions_view = aw.RevisionsView.ORIGINAL
-        doc.accept_all_revisions()
-        self.assertEqual("a.", paragraphs[0].list_label.label_string)
-        self.assertEqual("", paragraphs[1].list_label.label_string)
-        self.assertEqual("b.", paragraphs[2].list_label.label_string)
 
     def test_update_thumbnail(self):
         #ExStart
@@ -556,6 +499,7 @@ class ExDocument(ApiExampleBase):
     def test_set_invalidate_field_types(self):
         #ExStart
         #ExFor:Document.normalize_field_types
+        #ExFor:Range.normalize_field_types
         #ExSummary:Shows how to get the keep a field's type up to date with its field code.
         doc = aw.Document()
         builder = aw.DocumentBuilder(doc)
@@ -581,9 +525,6 @@ class ExDocument(ApiExampleBase):
         self.assertEqual(aw.fields.FieldType.FIELD_PAGE, field.end.field_type)
         #ExEnd
 
-    def test_layout_options_revisions(self):
-        raise NotImplementedError("Unsupported target type System.DateTime")
-
     def test_layout_options_hidden_text(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
@@ -595,6 +536,7 @@ class ExDocument(ApiExampleBase):
         #ExFor:StyleCollection.__getitem__(str)
         #ExFor:SectionCollection.__getitem__(int)
         #ExFor:Document.update_page_layout
+        #ExFor:Margins
         #ExFor:PageSetup.margins
         #ExSummary:Shows when to recalculate the page layout of the document.
         doc = aw.Document(file_name=MY_DIR + "Rendering.docx")
@@ -666,7 +608,26 @@ class ExDocument(ApiExampleBase):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_show_comments(self):
-        raise NotImplementedError("Unsupported target type System.DateTime")
+        #ExStart
+        #ExFor:LayoutOptions.comment_display_mode
+        #ExFor:CommentDisplayMode
+        #ExSummary:Shows how to show comments when saving a document to a rendered format.
+        doc = aw.Document()
+        builder = aw.DocumentBuilder(doc)
+        builder.write("Hello world!")
+        comment = aw.Comment(doc=doc, author="John Doe", initial="J.D.", date_time=datetime.datetime.now())
+        comment.set_text("My comment.")
+        builder.current_paragraph.append_child(comment)
+        # ShowInAnnotations is only available in Pdf1.7 and Pdf1.5 formats.
+        # In other formats, it will work similarly to Hide.
+        doc.layout_options.comment_display_mode = aw.layout.CommentDisplayMode.SHOW_IN_ANNOTATIONS
+        doc.save(file_name=ARTIFACTS_DIR + "Document.ShowCommentsInAnnotations.pdf")
+        # Note that it's required to rebuild the document page layout (via Document.UpdatePageLayout() method)
+        # after changing the Document.LayoutOptions values.
+        doc.layout_options.comment_display_mode = aw.layout.CommentDisplayMode.SHOW_IN_BALLOONS
+        doc.update_page_layout()
+        doc.save(file_name=ARTIFACTS_DIR + "Document.ShowCommentsInBalloons.pdf")
+        #ExEnd
 
     def test_copy_template_styles_via_document(self):
         #ExStart
@@ -760,9 +721,12 @@ class ExDocument(ApiExampleBase):
 
     def test_text_watermark(self):
         #ExStart
+        #ExFor:Document.watermark
+        #ExFor:Watermark
         #ExFor:Watermark.set_text(str)
         #ExFor:Watermark.set_text(str,TextWatermarkOptions)
         #ExFor:Watermark.remove
+        #ExFor:TextWatermarkOptions
         #ExFor:TextWatermarkOptions.font_family
         #ExFor:TextWatermarkOptions.font_size
         #ExFor:TextWatermarkOptions.color
@@ -770,6 +734,7 @@ class ExDocument(ApiExampleBase):
         #ExFor:TextWatermarkOptions.is_semitrasparent
         #ExFor:WatermarkLayout
         #ExFor:WatermarkType
+        #ExFor:Watermark.type
         #ExSummary:Shows how to create a text watermark.
         doc = aw.Document()
         # Add a plain text watermark.
@@ -795,9 +760,6 @@ class ExDocument(ApiExampleBase):
         raise NotImplementedError("Unsupported target type System.Drawing.Image")
 
     def test_spelling_and_grammar_errors(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
-
-    def test_granularity_compare_option(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_ignore_printer_metrics(self):
@@ -905,6 +867,7 @@ class ExDocument(ApiExampleBase):
     def test_page_is_in_color(self):
         #ExStart
         #ExFor:PageInfo.colored
+        #ExFor:Document.get_page_info(int)
         #ExSummary:Shows how to check whether the page is in color or not.
         doc = aw.Document(file_name=MY_DIR + "Document.docx")
         # Check that the first page of the document is not colored.
@@ -916,3 +879,11 @@ class ExDocument(ApiExampleBase):
 
     def test_save_document_to_stream(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_has_macros(self):
+        #ExStart:HasMacros
+        #ExFor:FileFormatInfo.has_macros
+        #ExSummary:Shows how to check VBA macro presence without loading document.
+        file_format_info = aw.FileFormatUtil.detect_file_format(file_name=MY_DIR + "Macro.docm")
+        self.assertTrue(file_format_info.has_macros)
+        #ExEnd:HasMacros

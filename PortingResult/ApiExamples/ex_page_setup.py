@@ -230,25 +230,7 @@ class ExPageSetup(ApiExampleBase):
         self.assertEqual(480, doc.sections[2].page_setup.page_height)
 
     def test_columns_same_width(self):
-        #ExStart
-        #ExFor:PageSetup.text_columns
-        #ExFor:TextColumnCollection
-        #ExFor:TextColumnCollection.spacing
-        #ExFor:TextColumnCollection.set_count
-        #ExSummary:Shows how to create multiple evenly spaced columns in a section.
-        doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
-        columns = builder.page_setup.text_columns
-        columns.spacing = 100
-        columns.set_count(2)
-        builder.writeln("Column 1.")
-        builder.insert_break(aw.BreakType.COLUMN_BREAK)
-        builder.writeln("Column 2.")
-        doc.save(file_name=ARTIFACTS_DIR + "PageSetup.ColumnsSameWidth.docx")
-        #ExEnd
-        doc = aw.Document(file_name=ARTIFACTS_DIR + "PageSetup.ColumnsSameWidth.docx")
-        self.assertEqual(100, doc.first_section.page_setup.text_columns.spacing)
-        self.assertEqual(2, doc.first_section.page_setup.text_columns.count)
+        raise NotImplementedError("ignored method body")
 
     def test_custom_column_width(self):
         #ExStart
@@ -555,6 +537,7 @@ class ExPageSetup(ApiExampleBase):
         #ExFor:PageSetup.gutter
         #ExFor:PageSetup.multiple_pages
         #ExFor:PageSetup.sheets_per_booklet
+        #ExFor:MultiplePagesType
         #ExSummary:Shows how to configure a document that can be printed as a book fold.
         doc = aw.Document()
         # Insert text that spans 16 pages.
