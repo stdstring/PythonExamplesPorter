@@ -28,11 +28,11 @@ namespace PythonExamplesPorterApp.ExternalEntities
             SymbolInfo symbolInfo = _model.GetSymbolInfo(type);
             ISymbol? typeInfo = symbolInfo.Symbol;
             if (typeInfo == null)
-                return new OperationResult<TypeResolveData>(false, $"Unrecognizable type: {type}");
+                return new OperationResult<TypeResolveData>.Error($"Unrecognizable type: {type}");
             return typeInfo switch
             {
                 INamedTypeSymbol typeSymbol => ResolveType(typeSymbol),
-                _ => new OperationResult<TypeResolveData>(false, $"Unsupported {typeInfo.Kind} kind of symbol info for {type}")
+                _ => new OperationResult<TypeResolveData>.Error($"Unsupported {typeInfo.Kind} kind of symbol info for {type}")
             };
         }
 
@@ -45,72 +45,92 @@ namespace PythonExamplesPorterApp.ExternalEntities
             Boolean isSystemType = systemNamespaces.Any(sourceNamespaceName.StartsWith);
             // TODO (std_string) : I return empty type for system type because we need in additional analysis - think about approach
             if (isSystemType)
-                return new OperationResult<TypeResolveData>(true, "", new TypeResolveData("", "", new ImportData()));
+                return new OperationResult<TypeResolveData>.Ok(new TypeResolveData("", "", new ImportData()));
             // TODO (std_string) : think about check containing assemblies
             String[] knownNamespaces = _appData.AppConfig.GetSourceDetails().KnownNamespaces ?? Array.Empty<String>();
             Boolean isSupportedType = knownNamespaces.Any(sourceNamespaceName.StartsWith);
             if (!isSupportedType)
-                return new OperationResult<TypeResolveData>(false, $"Unsupported type: {sourceNamespaceName}.{sourceTypeName}");
+                return new OperationResult<TypeResolveData>.Error($"Unsupported type: {sourceNamespaceName}.{sourceTypeName}");
             String destModuleName = _appData.NameTransformer.TransformNamespaceName(sourceNamespaceName);
             String destTypeName = _appData.NameTransformer.TransformTypeName(sourceTypeName);
             (String moduleName, ImportData importData) prepareResult = _appData.ImportAliasManager.PrepareImport(destModuleName);
-            return new OperationResult<TypeResolveData>(true, "", new TypeResolveData(destTypeName, prepareResult.moduleName, prepareResult.importData));
+            return new OperationResult<TypeResolveData>.Ok(new TypeResolveData(destTypeName, prepareResult.moduleName, prepareResult.importData));
         }
 
         public OperationResult<MemberResolveData> ResolveCtor(TypeSyntax type, IReadOnlyList<ArgumentSyntax> argumentsData, ConvertedArguments argumentsRepresentation)
         {
-            OperationResult<ITypeSymbol> typeResult = ExtractExpressionType(type);
-            if (!typeResult.Success)
-                return new OperationResult<MemberResolveData>(false, typeResult.Reason);
-            ITypeSymbol typeSymbol = typeResult.Data!;
-            foreach (IExternalEntityResolver resolver in _resolvers)
+            switch (ExtractExpressionType(type))
             {
-                OperationResult<MemberResolveData> result = resolver.ResolveCtor(typeSymbol, argumentsData, argumentsRepresentation);
-                if (result.Success)
-                    return result;
+                case OperationResult<ITypeSymbol>.Error(Reason: var reason):
+                    return new OperationResult<MemberResolveData>.Error(reason);
+                case OperationResult<ITypeSymbol>.Ok(Data: var typeSymbol):
+                    foreach (IExternalEntityResolver resolver in _resolvers)
+                    {
+                        switch (resolver.ResolveCtor(typeSymbol, argumentsData, argumentsRepresentation))
+                        {
+                            case OperationResult<MemberResolveData>.Ok result:
+                                return result;
+                        }
+                    }
+                    return new OperationResult<MemberResolveData>.Error($"Unsupported ctor for type {type}");
+                default:
+                    throw new InvalidOperationException("Unexpected control flow branch");
             }
-            return new OperationResult<MemberResolveData>(false, $"Unsupported ctor for type {type}");
         }
 
         public OperationResult<MemberResolveData> ResolveMember(MemberData data, MemberRepresentation representation)
         {
-            OperationResult<ITypeSymbol> targetTypeResult = ExtractExpressionType(data.Target);
-            if (!targetTypeResult.Success)
-                return new OperationResult<MemberResolveData>(false, targetTypeResult.Reason);
-            ITypeSymbol sourceType = targetTypeResult.Data!;
-            foreach (IExternalEntityResolver resolver in _resolvers)
+            switch (ExtractExpressionType(data.Target))
             {
-                OperationResult<MemberResolveData> result = resolver.ResolveMember(data, sourceType, representation);
-                if (result.Success)
-                    return result;
+                case OperationResult<ITypeSymbol>.Error(Reason: var reason):
+                    return new OperationResult<MemberResolveData>.Error(reason);
+                case OperationResult<ITypeSymbol>.Ok(Data: var sourceType):
+                    foreach (IExternalEntityResolver resolver in _resolvers)
+                    {
+                        switch (resolver.ResolveMember(data, sourceType, representation))
+                        {
+                            case OperationResult<MemberResolveData>.Ok result:
+                                return result;
+                        }
+                    }
+                    return new OperationResult<MemberResolveData>.Error($"Unsupported target type {sourceType.GetTypeFullName()}");
+                default:
+                    throw new InvalidOperationException("Unexpected control flow branch");
             }
-            return new OperationResult<MemberResolveData>(false, $"Unsupported target type {sourceType.GetTypeFullName()}");
         }
 
         public OperationResult<CastResolveData> ResolveCast(TypeSyntax castType, ExpressionSyntax sourceExpression, String sourceRepresentation)
         {
-            OperationResult<ITypeSymbol> targetTypeResult = ExtractExpressionType(castType);
-            if (!targetTypeResult.Success)
-                return new OperationResult<CastResolveData>(false, targetTypeResult.Reason);
-            ITypeSymbol castTypeSymbol = targetTypeResult.Data!;
-            foreach (IExternalEntityResolver resolver in _resolvers)
+            switch (ExtractExpressionType(castType))
             {
-                OperationResult<CastResolveData> result = resolver.ResolveCast(sourceExpression, castTypeSymbol, sourceRepresentation);
-                if (result.Success)
-                    return result;
+                case OperationResult<ITypeSymbol>.Error(Reason: var reason):
+                    return new OperationResult<CastResolveData>.Error(reason);
+                case OperationResult<ITypeSymbol>.Ok(Data: var castTypeSymbol):
+                    foreach (IExternalEntityResolver resolver in _resolvers)
+                    {
+                        switch (resolver.ResolveCast(sourceExpression, castTypeSymbol, sourceRepresentation))
+                        {
+                            case OperationResult<CastResolveData>.Ok result:
+                                return result;
+                        }
+                    }
+                    return new OperationResult<CastResolveData>.Error($"Unsupported cast to type {castType}");
+                default:
+                    throw new InvalidOperationException("Unexpected control flow branch");
             }
-            return new OperationResult<CastResolveData>(false, $"Unsupported cast to type {castType}");
         }
 
         public OperationResult<CastResolveData> ResolveCast(ITypeSymbol castType, ExpressionSyntax sourceExpression, String sourceRepresentation)
         {
             foreach (IExternalEntityResolver resolver in _resolvers)
             {
-                OperationResult<CastResolveData> result = resolver.ResolveCast(sourceExpression, castType, sourceRepresentation);
-                if (result.Success)
-                    return result;
+                switch (resolver.ResolveCast(sourceExpression, castType, sourceRepresentation))
+                {
+                    case OperationResult<CastResolveData>.Ok result:
+                        return result;
+                }
             }
-            return new OperationResult<CastResolveData>(false, $"Unsupported cast to type {castType.GetTypeFullName()}");
+            return new OperationResult<CastResolveData>.Error($"Unsupported cast to type {castType.GetTypeFullName()}");
         }
 
         // TODO (std_string) : think about separation for members, cast etc
@@ -118,9 +138,11 @@ namespace PythonExamplesPorterApp.ExternalEntities
         {
             return target.GetExpressionTypeSymbol(_model) switch
             {
-                {Success: false, Reason: var reason} => new OperationResult<ITypeSymbol>(false, reason),
-                {Success: true, Data: IArrayTypeSymbol type} => new OperationResult<ITypeSymbol>(false, $"Unsupported member target type - {type.ElementType.GetTypeFullName()}[] for expression: {target}"),
-                {Success: true, Data: var type} => new OperationResult<ITypeSymbol>(true, "", type)
+                OperationResult<ITypeSymbol>.Error error => error,
+                OperationResult<ITypeSymbol>.Ok(Data: IArrayTypeSymbol type) =>
+                    new OperationResult<ITypeSymbol>.Error($"Unsupported member target type - {type.ElementType.GetTypeFullName()}[] for expression: {target}"),
+                OperationResult<ITypeSymbol>.Ok result => result,
+                _ => throw new InvalidOperationException("Unexpected control flow branch")
             };
         }
 

@@ -7,7 +7,7 @@ namespace PythonExamplesPorterApp.ExternalEntities
         public static OperationResult<MemberResolveData> ResolveInstanceProperty(MemberRepresentation representation, String propertyName)
         {
             MemberResolveData memberData = new MemberResolveData($"{representation.Target}.{propertyName}");
-            return new OperationResult<MemberResolveData>(true, "", memberData);
+            return new OperationResult<MemberResolveData>.Ok(memberData);
         }
     }
 }

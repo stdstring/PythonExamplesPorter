@@ -57,12 +57,10 @@ namespace PythonExamplesPorterApp.Converter
                 if (loopVariableInfo.Type.GetTypeFullName() != sourceTypeArgument.GetTypeFullName())
                 {
                     ExternalEntityResolver resolver = new ExternalEntityResolver(_model, _appData, _expressionCommonSettings);
-                    OperationResult<CastResolveData> castResult = resolver.ResolveCast(loopVariableInfo.Type, node.Type, enumerationVariable);
-                    if (!castResult.Success)
-                        throw new UnsupportedSyntaxException(castResult.Reason);
-                    _currentMethod.ImportStorage.Append(castResult.Data!.ImportData);
+                    CastResolveData resolveData = resolver.ResolveCast(loopVariableInfo.Type, node.Type, enumerationVariable).MustSuccess();
+                    _currentMethod.ImportStorage.Append(resolveData.ImportData);
                     _indentation += StorageDef.IndentationDelta;
-                    _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}{enumerationVariable} = {castResult.Data!.Cast}");
+                    _currentMethod.AddBodyLine($"{IndentationUtils.Create(_indentation)}{enumerationVariable} = {resolveData.Cast}");
                     _indentation -= StorageDef.IndentationDelta;
                 }
             }
@@ -103,9 +101,7 @@ namespace PythonExamplesPorterApp.Converter
             IReadOnlyList<SwitchSectionSyntax> sections = node.Sections;
             for (Int32 index = 0; index < sections.Count; ++index)
             {
-                CheckResult sectionResult = SwitchSectionChecker.Check(sections[index]);
-                if (!sectionResult.Result)
-                    throw new UnsupportedSyntaxException(sectionResult.Reason);
+                SwitchSectionChecker.Check(sections[index]).MustSuccess();
                 IReadOnlyList<SwitchLabelSyntax> labels = sections[index].Labels;
                 IReadOnlyList<StatementSyntax> statements = sections[index].Statements;
                 Boolean hasDefaultLabel = labels.Last() is DefaultSwitchLabelSyntax;

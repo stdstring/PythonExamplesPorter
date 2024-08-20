@@ -5,6 +5,7 @@ using PythonExamplesPorterApp.Handmade;
 using PythonExamplesPorterApp.Ignored;
 using PythonExamplesPorterApp.Import;
 using PythonExamplesPorterApp.Names;
+using PythonExamplesPorterAppTests.TestUtils;
 
 namespace PythonExamplesPorterAppTests.Config
 {
@@ -772,16 +773,15 @@ namespace PythonExamplesPorterAppTests.Config
             XmlSerializer serializer = new XmlSerializer(typeof(ConfigData));
             using (StringReader reader = new StringReader(actualSource))
             {
-                ConfigData? actual = serializer.Deserialize(reader) as ConfigData;
-                Assert.That(actual, Is.Not.Null);
-                CheckConfigData(expected, actual!);
+                ConfigData actual = serializer.Deserialize(reader).MustCheckCast<Object, ConfigData>();
+                CheckConfigData(expected, actual);
             }
         }
 
         private void CheckConfigData(ConfigData expected, ConfigData actual)
         {
-            Assert.That(actual.BaseConfig, Is.Not.Null);
-            CheckBaseConfig(expected.BaseConfig!, actual.BaseConfig!);
+            BaseConfig baseConfig = actual.BaseConfig.MustCheck();
+            CheckBaseConfig(baseConfig, actual.BaseConfig!);
             CheckIgnoredEntities(expected.IgnoredEntities, actual.IgnoredEntities);
             CheckHandmadeEntities(expected.HandmadeEntities, actual.HandmadeEntities);
             CheckImportAliases(expected.ImportAliases, actual.ImportAliases);
@@ -804,10 +804,8 @@ namespace PythonExamplesPorterAppTests.Config
 
         private void CheckBaseConfig(BaseConfig expected, BaseConfig actual)
         {
-            Assert.That(actual.Source, Is.Not.Null);
-            CheckTargetPath(expected.Source!, actual.Source!);
-            Assert.That(actual.DestDirectory, Is.Not.Null);
-            CheckTargetPath(expected.DestDirectory!, actual.DestDirectory!);
+            CheckTargetPath(expected.Source!, actual.Source.MustCheck());
+            CheckTargetPath(expected.DestDirectory!, actual.DestDirectory.MustCheck());
             CheckSourceDetails(expected.SourceDetails, actual.SourceDetails);
             Assert.That(actual.ForceDestDelete, Is.EqualTo(expected.ForceDestDelete));
         }
@@ -818,11 +816,12 @@ namespace PythonExamplesPorterAppTests.Config
                 Assert.That(actual, Is.Null);
             else
             {
-                CheckCollections(expected.Directories!, actual!.Directories);
-                CheckCollections(expected.Files!, actual.Files);
-                CheckCollections(expected.Types!, actual.Types);
-                CheckCollections(expected.Methods!, actual.Methods);
-                CheckCollections(expected.MethodsBody!, actual.MethodsBody);
+                IgnoredEntities actualEntities = actual.MustCheck();
+                CheckCollections(expected.Directories!, actualEntities.Directories);
+                CheckCollections(expected.Files!, actualEntities.Files);
+                CheckCollections(expected.Types!, actualEntities.Types);
+                CheckCollections(expected.Methods!, actualEntities.Methods);
+                CheckCollections(expected.MethodsBody!, actualEntities.MethodsBody);
             }
         }
 
@@ -832,10 +831,10 @@ namespace PythonExamplesPorterAppTests.Config
                 Assert.That(actual == null || actual.Length == 0);
             else
             {
-                Assert.That(actual, Is.Not.Null);
-                Assert.That(actual!.Length, Is.EqualTo(expected.Length));
+                String[] actualCollection = actual.MustCheck();
+                Assert.That(actualCollection.Length, Is.EqualTo(expected.Length));
                 for (Int32 index = 0; index < expected.Length; ++index)
-                    Assert.That(actual[index], Is.EqualTo(expected[index]));
+                    Assert.That(actualCollection[index], Is.EqualTo(expected[index]));
             }
         }
 
@@ -844,7 +843,7 @@ namespace PythonExamplesPorterAppTests.Config
             if (expected == null)
                 Assert.That(actual, Is.Null);
             else
-                CheckHandmadeTypes(expected.HandmadeTypes, actual!.HandmadeTypes);
+                CheckHandmadeTypes(expected.HandmadeTypes, actual.MustCheck().HandmadeTypes);
         }
 
         private void CheckHandmadeTypes(HandmadeType[]? expected, HandmadeType[]? actual)
@@ -853,10 +852,10 @@ namespace PythonExamplesPorterAppTests.Config
                 Assert.That(actual == null || actual.Length == 0);
             else
             {
-                Assert.That(actual, Is.Not.Null);
-                Assert.That(actual!.Length, Is.EqualTo(expected.Length));
+                HandmadeType[] actualTypes = actual.MustCheck();
+                Assert.That(actualTypes.Length, Is.EqualTo(expected.Length));
                 for (Int32 index = 0; index < expected.Length; ++index)
-                    CheckHandmadeType(expected[index], actual[index]);
+                    CheckHandmadeType(expected[index], actualTypes[index]);
             }
         }
 
@@ -874,13 +873,13 @@ namespace PythonExamplesPorterAppTests.Config
                 Assert.That(actual == null || actual.Length == 0);
             else
             {
-                Assert.That(actual, Is.Not.Null);
-                Assert.That(actual!.Length, Is.EqualTo(expected.Length));
+                HandmadeMemberMapping[] actualMappings = actual.MustCheck();
+                Assert.That(actualMappings.Length, Is.EqualTo(expected.Length));
                 for (Int32 index = 0; index < expected.Length; ++index)
                 {
-                    Assert.That(actual[index].SourceName, Is.EqualTo(expected[index].SourceName));
-                    Assert.That(actual[index].DestName, Is.EqualTo(expected[index].DestName));
-                    Assert.That(actual[index].NeedImport, Is.EqualTo(expected[index].NeedImport));
+                    Assert.That(actualMappings[index].SourceName, Is.EqualTo(expected[index].SourceName));
+                    Assert.That(actualMappings[index].DestName, Is.EqualTo(expected[index].DestName));
+                    Assert.That(actualMappings[index].NeedImport, Is.EqualTo(expected[index].NeedImport));
                 }
             }
         }
@@ -891,8 +890,8 @@ namespace PythonExamplesPorterAppTests.Config
                 Assert.That(actual, Is.Null);
             else
             {
-                Assert.That(actual, Is.Not.Null);
-                CheckImportAliasEntries(expected.ImportAliases, actual!.ImportAliases);
+                ImportAliasEntries actualEntries = actual.MustCheck();
+                CheckImportAliasEntries(expected.ImportAliases, actualEntries.ImportAliases);
             }
         }
 
@@ -902,10 +901,10 @@ namespace PythonExamplesPorterAppTests.Config
                 Assert.That(actual == null || actual.Length == 0);
             else
             {
-                Assert.That(actual, Is.Not.Null);
-                Assert.That(actual!.Length, Is.EqualTo(expected.Length));
+                ImportAliasEntry[] actualEntries = actual.MustCheck();
+                Assert.That(actualEntries.Length, Is.EqualTo(expected.Length));
                 for (Int32 index = 0; index < expected.Length; ++index)
-                    CheckImportAliasEntry(expected[index], actual[index]);
+                    CheckImportAliasEntry(expected[index], actualEntries[index]);
             }
         }
 
@@ -921,22 +920,19 @@ namespace PythonExamplesPorterAppTests.Config
                 Assert.That(actual, Is.Null);
             else
             {
-                Assert.That(actual, Is.Not.Null);
-                CheckNamespaceNameEntries(expected.Namespaces, actual!.Namespaces);
+                HandmadeNameAliases actualAliases = actual.MustCheck();
+                CheckNamespaceNameEntries(expected.Namespaces, actualAliases.Namespaces);
             }
         }
 
         private void CheckNameConditions(NameConditions? expected, NameConditions? actual)
         {
-            if (expected == null)
+            if (expected == null || expected.EqualCondition == null)
                 Assert.That(actual, Is.Null);
             else
             {
-                Assert.That(actual, Is.Not.Null);
-                if (expected.EqualCondition == null)
-                    Assert.That(actual, Is.Null);
-                else
-                    Assert.That(actual!.EqualCondition, Is.EqualTo(expected.EqualCondition));
+                NameConditions actualConditions = actual.MustCheck();
+                Assert.That(actualConditions.EqualCondition, Is.EqualTo(expected.EqualCondition));
             }
         }
 
@@ -946,10 +942,10 @@ namespace PythonExamplesPorterAppTests.Config
                 Assert.That(actual == null || actual.Length == 0);
             else
             {
-                Assert.That(actual, Is.Not.Null);
-                Assert.That(actual!.Length, Is.EqualTo(expected.Length));
+                NamespaceNameEntry[] actualEntries = actual.MustCheck();
+                Assert.That(actualEntries.Length, Is.EqualTo(expected.Length));
                 for (Int32 index = 0; index < expected.Length; ++index)
-                    CheckNamespaceNameEntry(expected[index], actual[index]);
+                    CheckNamespaceNameEntry(expected[index], actualEntries[index]);
             }
         }
 
@@ -965,10 +961,10 @@ namespace PythonExamplesPorterAppTests.Config
                 Assert.That(actual == null || actual.Length == 0);
             else
             {
-                Assert.That(actual, Is.Not.Null);
-                Assert.That(actual!.Length, Is.EqualTo(expected.Length));
+                TypeNameEntry[] actualEntries = actual.MustCheck();
+                Assert.That(actualEntries.Length, Is.EqualTo(expected.Length));
                 for (Int32 index = 0; index < expected.Length; ++index)
-                    CheckTypeNameEntry(expected[index], actual[index]);
+                    CheckTypeNameEntry(expected[index], actualEntries[index]);
             }
         }
 
@@ -984,12 +980,12 @@ namespace PythonExamplesPorterAppTests.Config
                 Assert.That(actual == null || actual.Length == 0);
             else
             {
-                Assert.That(actual, Is.Not.Null);
-                Assert.That(actual!.Length, Is.EqualTo(expected.Length));
+                MemberAliasMapping[] actualMappings = actual.MustCheck();
+                Assert.That(actualMappings.Length, Is.EqualTo(expected.Length));
                 for (Int32 index = 0; index < expected.Length; ++index)
                 {
-                    Assert.That(actual[index].Name, Is.EqualTo(expected[index].Name));
-                    Assert.That(actual[index].Alias, Is.EqualTo(expected[index].Alias));
+                    Assert.That(actualMappings[index].Name, Is.EqualTo(expected[index].Name));
+                    Assert.That(actualMappings[index].Alias, Is.EqualTo(expected[index].Alias));
                 }
             }
         }

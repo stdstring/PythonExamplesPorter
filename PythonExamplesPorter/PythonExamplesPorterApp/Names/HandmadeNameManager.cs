@@ -11,7 +11,7 @@ namespace PythonExamplesPorterApp.Names
     {
         public OperationResult<String> Search(String typeName, String memberName)
         {
-            return new OperationResult<String>(false);
+            return new OperationResult<String>.Error("Not found");
         }
     }
 
@@ -55,17 +55,21 @@ namespace PythonExamplesPorterApp.Names
             String simpleTypeName = lastDotIndex == -1 ? typeName : typeName.Substring(lastDotIndex + 1);
             if (_commonNamespaceData is not null)
             {
-                OperationResult<String> result = Search(_commonNamespaceData, namespaceName, simpleTypeName, memberName);
-                if (result.Success)
-                    return result;
+                switch (Search(_commonNamespaceData, namespaceName, simpleTypeName, memberName))
+                {
+                    case OperationResult<String>.Ok result:
+                        return result;
+                }
             }
             foreach (NamespaceData namespaceData in _namespacesData)
             {
-                OperationResult<String> result = Search(namespaceData, namespaceName, simpleTypeName, memberName);
-                if (result.Success)
-                    return result;
+                switch (Search(namespaceData, namespaceName, simpleTypeName, memberName))
+                {
+                    case OperationResult<String>.Ok result:
+                        return result;
+                }
             }
-            return new OperationResult<String>(false, Data: "");
+            return new OperationResult<String>.Error("Not found");
         }
 
         private OperationResult<String> Search(NamespaceData data, String namespaceName, String typeName, String memberName)
@@ -76,19 +80,23 @@ namespace PythonExamplesPorterApp.Names
                 case {EqualCondition: var expectedNamespaceName} when String.Equals(expectedNamespaceName, namespaceName):
                     if (data.CommonData is not null)
                     {
-                        OperationResult<String> result = Search(data.CommonData, typeName, memberName);
-                        if (result.Success)
-                            return result;
+                        switch (Search(data.CommonData, typeName, memberName))
+                        {
+                            case OperationResult<String>.Ok result:
+                                return result;
+                        }
                     }
                     foreach (TypeData typeData in data.TypesData)
                     {
-                        OperationResult<String> result = Search(typeData, typeName, memberName);
-                        if (result.Success)
-                            return result;
+                        switch (Search(typeData, typeName, memberName))
+                        {
+                            case OperationResult<String>.Ok result:
+                                return result;
+                        }
                     }
-                    return new OperationResult<String>(false, Data: "");
+                    return new OperationResult<String>.Error("Not found");
                 default:
-                    return new OperationResult<String>(false, Data: "");
+                    return new OperationResult<String>.Error("Not found");
             }
         }
 
@@ -98,9 +106,9 @@ namespace PythonExamplesPorterApp.Names
             {
                 case null when data.MemberAliasMapping.ContainsKey(memberName):
                 case {EqualCondition: var expectedTypeName} when String.Equals(expectedTypeName, typeName) && data.MemberAliasMapping.ContainsKey(memberName):
-                    return new OperationResult<String>(true, Data: data.MemberAliasMapping[memberName]);
+                    return new OperationResult<String>.Ok(data.MemberAliasMapping[memberName]);
                 default:
-                    return new OperationResult<String>(false, Data: "");
+                    return new OperationResult<String>.Error("Not found");
             }
         }
 

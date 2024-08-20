@@ -1,6 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using PythonExamplesPorterApp.Common;
 using PythonExamplesPorterApp.Converter;
+using PythonExamplesPorterApp.Utils;
 
 namespace PythonExamplesPorterApp.Processor
 {
@@ -30,9 +31,7 @@ namespace PythonExamplesPorterApp.Processor
 
         private void ProcessImpl(String relativeFilename, Document file, Compilation compilation)
         {
-            SyntaxTree? tree = file.GetSyntaxTreeAsync().Result;
-            if (tree == null)
-                throw new InvalidOperationException();
+            SyntaxTree tree = file.GetSyntaxTreeAsync().Result.Must("Bad file: without syntax tree");
             SemanticModel model = compilation.GetSemanticModel(tree);
             FileConverter converter = new FileConverter(_appData);
             converter.Convert(relativeFilename, tree, model);

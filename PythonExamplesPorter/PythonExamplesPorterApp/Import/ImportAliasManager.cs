@@ -39,7 +39,6 @@ namespace PythonExamplesPorterApp.Import
                         break;
                 }
             }
-
             String alias = "";
             if (leftPart.Length > 0)
             {

@@ -20,8 +20,8 @@ namespace PythonExamplesPorterApp.ExternalEntities
             _systemDrawingSizeFResolver = new SystemDrawingSizeMemberResolver(model, appData, "SizeF");
             _systemDrawingRectangleResolver = new SystemDrawingRectangleMemberResolver(model, appData, "Rectangle");
             _systemDrawingRectangleFResolver = new SystemDrawingRectangleMemberResolver(model, appData, "RectangleF");
-            _systemDateTimeMemberResolver = new SystemDateTimeMemberResolver(model, appData);
-            _systemGuidMemberResolver = new SystemGuidMemberResolver(model, appData);
+            _systemDateTimeMemberResolver = new SystemDateTimeMemberResolver(model);
+            _systemGuidMemberResolver = new SystemGuidMemberResolver(model);
         }
 
         public OperationResult<MemberResolveData> ResolveCtor(ITypeSymbol sourceType, IReadOnlyList<ArgumentSyntax> argumentsData, ConvertedArguments argumentsRepresentation)
@@ -44,7 +44,7 @@ namespace PythonExamplesPorterApp.ExternalEntities
                 case "System.DateTime":
                     return _systemDateTimeMemberResolver.ResolveCtor(argumentsData, argumentsRepresentation);
             }
-            return new OperationResult<MemberResolveData>(false, $"Unsupported type: {sourceTypeFullName}");
+            return new OperationResult<MemberResolveData>.Error($"Unsupported type: {sourceTypeFullName}");
         }
 
         public OperationResult<MemberResolveData> ResolveMember(MemberData data, ITypeSymbol sourceType, MemberRepresentation representation)
@@ -75,12 +75,12 @@ namespace PythonExamplesPorterApp.ExternalEntities
                 case "System.Drawing.Rectangle":
                     return _systemDrawingRectangleResolver.ResolveMember(data, representation);
             }
-            return new OperationResult<MemberResolveData>(false, $"Unsupported type: {sourceTypeFullName}");
+            return new OperationResult<MemberResolveData>.Error($"Unsupported type: {sourceTypeFullName}");
         }
 
         public OperationResult<CastResolveData> ResolveCast(ExpressionSyntax sourceExpression, ITypeSymbol castTypeSymbol, String sourceRepresentation)
         {
-            return new OperationResult<CastResolveData>(false, "Not supported now");
+            return new OperationResult<CastResolveData>.Error("Not supported now");
         }
 
         private readonly SystemStringMemberResolver _systemStringResolver;
@@ -112,30 +112,31 @@ namespace PythonExamplesPorterApp.ExternalEntities
             switch (memberInfo.Symbol)
             {
                 case IMethodSymbol {Name: "WriteLine"}:
-                    return ResolveWriteLineMethod(data, representation);
+                    return ResolveWriteLineMethod(data);
                 default:
-                    return new OperationResult<MemberResolveData>(false, $"Unsupported member: System.Console.{memberName}");
+                    return new OperationResult<MemberResolveData>.Error($"Unsupported member: System.Console.{memberName}");
             }
         }
 
-        private OperationResult<MemberResolveData> ResolveWriteLineMethod(MemberData data, MemberRepresentation representation)
+        private OperationResult<MemberResolveData> ResolveWriteLineMethod(MemberData data)
         {
-            String member = String.Empty;
             switch (data.Arguments)
             {
                 case []:
-                    return new OperationResult<MemberResolveData>(false, "", new MemberResolveData("print()"));
+                    return new OperationResult<MemberResolveData>.Ok(new MemberResolveData("print()"));
                 case [_]:
                 {
-                    member = $"print({ConvertExpressions(data.Arguments)[0]})";
-                    return new OperationResult<MemberResolveData>(true, "", new MemberResolveData(member));
+                    String member = $"print({ConvertExpressions(data.Arguments)[0]})";
+                    return new OperationResult<MemberResolveData>.Ok(new MemberResolveData(member));
                 }
                 default:
+                {
                     if (!(data.Arguments[0].Expression is LiteralExpressionSyntax))
-                        return new OperationResult<MemberResolveData>(false, "Unsupported arguments for System.Console.WriteLine");
+                        return new OperationResult<MemberResolveData>.Error("Unsupported arguments for System.Console.WriteLine");
                     IList<String> convertResult = ConvertExpressions(data.Arguments);
-                    member = $"print({convertResult[0]}.format({String.Join(",", convertResult.ToArray()[1..])}))";
-                    return new OperationResult<MemberResolveData>(true, "", new MemberResolveData(member));
+                    String member = $"print({convertResult[0]}.format({String.Join(",", convertResult.ToArray()[1..])}))";
+                    return new OperationResult<MemberResolveData>.Ok(new MemberResolveData(member));
+                }
             }
         }
 
@@ -155,10 +156,9 @@ namespace PythonExamplesPorterApp.ExternalEntities
 
     internal class SystemDateTimeMemberResolver
     {
-        internal SystemDateTimeMemberResolver(SemanticModel model, AppData appData)
+        internal SystemDateTimeMemberResolver(SemanticModel model)
         {
             _model = model;
-            _appData = appData;
         }
 
         public OperationResult<MemberResolveData> ResolveCtor(IReadOnlyList<ArgumentSyntax> argumentsData, ConvertedArguments argumentsRepresentation)
@@ -167,12 +167,14 @@ namespace PythonExamplesPorterApp.ExternalEntities
             switch (argumentsRepresentation.Values)
             {
                 // TODO: add check of arg type
-                case [var year, var month, var day]:
-                case [_, _, _, var hour, var minute, var second]:
+                // year, month, day
+                case [_, _, _]:
+                // year, month, day, hour, minute, second
+                case [_, _, _, _, _, _]:
                     MemberResolveData resolveData = new MemberResolveData($"datetime.datetime({String.Join(",", argumentsRepresentation.Values)})", import);
-                    return new OperationResult<MemberResolveData>(true, "", resolveData);
+                    return new OperationResult<MemberResolveData>.Ok(resolveData);
                 default:
-                    return new OperationResult<MemberResolveData>(false, "Unsupported arguments for ctor System.String.DateTime");
+                    return new OperationResult<MemberResolveData>.Error("Unsupported arguments for ctor System.String.DateTime");
             }
         }
 
@@ -187,26 +189,24 @@ namespace PythonExamplesPorterApp.ExternalEntities
                 case IPropertySymbol {Name: "Today"}:
                     return ResolveProperty("date", "today");
                 default:
-                    return new OperationResult<MemberResolveData>(false, $"Unsupported member: System.DateTime.{memberName}");
+                    return new OperationResult<MemberResolveData>.Error($"Unsupported member: System.DateTime.{memberName}");
             }
         }
 
         private OperationResult<MemberResolveData> ResolveProperty(String className, String methodName)
         {
             MemberResolveData resolveData = new MemberResolveData($"datetime.{className}.{methodName}()", new ImportData().AddImport("datetime"));
-            return new OperationResult<MemberResolveData>(true, "", resolveData);
+            return new OperationResult<MemberResolveData>.Ok(resolveData);
         }
 
         private readonly SemanticModel _model;
-        private readonly AppData _appData;
     }
 
     internal class SystemGuidMemberResolver
     {
-        internal SystemGuidMemberResolver(SemanticModel model, AppData appData)
+        internal SystemGuidMemberResolver(SemanticModel model)
         {
             _model = model;
-            _appData = appData;
         }
 
         public OperationResult<MemberResolveData> ResolveMember(MemberData data, MemberRepresentation representation)
@@ -217,14 +217,13 @@ namespace PythonExamplesPorterApp.ExternalEntities
             {
                 case IMethodSymbol {Name: "NewGuid"}:
                     MemberResolveData resolveData = new MemberResolveData("uuid.uuid4()", new ImportData().AddImport("uuid"));
-                    return new OperationResult<MemberResolveData>(true, "", resolveData);
+                    return new OperationResult<MemberResolveData>.Ok(resolveData);
                 default:
-                    return new OperationResult<MemberResolveData>(false, $"Unsupported member: System.Guid.{memberName}");
+                    return new OperationResult<MemberResolveData>.Error($"Unsupported member: System.Guid.{memberName}");
             }
         }
 
         private readonly SemanticModel _model;
-        private readonly AppData _appData;
     }
 
     internal class SystemStringMemberResolver
@@ -241,7 +240,7 @@ namespace PythonExamplesPorterApp.ExternalEntities
             switch (memberInfo.Symbol)
             {
                 case null:
-                    return new OperationResult<MemberResolveData>(false, $"Unsupported member: System.String.{memberName}");
+                    return new OperationResult<MemberResolveData>.Error($"Unsupported member: System.String.{memberName}");
                 case IMethodSymbol {Name: "Contains"}:
                     return ResolveContainsMethod(data, representation);
                 case IMethodSymbol {Name: "Replace"}:
@@ -251,7 +250,7 @@ namespace PythonExamplesPorterApp.ExternalEntities
                 case IMethodSymbol {Name: "Trim"}:
                     return ResolveTrimMethod(data, representation);
             }
-            return new OperationResult<MemberResolveData>(false, $"Unsupported member: System.String.{memberName}");
+            return new OperationResult<MemberResolveData>.Error($"Unsupported member: System.String.{memberName}");
         }
 
         private OperationResult<MemberResolveData> ResolveTrimMethod(MemberData data, MemberRepresentation representation)
@@ -259,8 +258,7 @@ namespace PythonExamplesPorterApp.ExternalEntities
             switch (data.Arguments)
             {
                 case []:
-                    return new OperationResult<MemberResolveData>(true, "",
-                        new MemberResolveData($"{representation.Target}.strip()"));
+                    return new OperationResult<MemberResolveData>.Ok(new MemberResolveData($"{representation.Target}.strip()"));
                 case [var arg]:
                     switch (arg.Expression)
                     {
@@ -269,13 +267,13 @@ namespace PythonExamplesPorterApp.ExternalEntities
                         {
                             String member = $"{representation.Target}.strip({representation.Arguments.Values[0].Trim('[', ']')})";
                             MemberResolveData memberData = new MemberResolveData(member);
-                            return new OperationResult<MemberResolveData>(true, "", memberData);
+                            return new OperationResult<MemberResolveData>.Ok(memberData);
                         }
                         default:
-                            return new OperationResult<MemberResolveData>(false, "Unsupported arguments for System.String.Trim");
+                            return new OperationResult<MemberResolveData>.Error("Unsupported arguments for System.String.Trim");
                     }
             }
-            return new OperationResult<MemberResolveData>(false, "Unsupported arguments for System.String.Trim");
+            return new OperationResult<MemberResolveData>.Error("Unsupported arguments for System.String.Trim");
         }
 
         private OperationResult<MemberResolveData> ResolveStartsWithMethod(MemberData data, MemberRepresentation representation)
@@ -287,10 +285,10 @@ namespace PythonExamplesPorterApp.ExternalEntities
                 {
                     String member = $"{representation.Target}.startswith({representation.Arguments.Values[0]})";
                     MemberResolveData memberData = new MemberResolveData(member);
-                    return new OperationResult<MemberResolveData>(true, "", memberData);
+                    return new OperationResult<MemberResolveData>.Ok(memberData);
                 }
             }
-            return new OperationResult<MemberResolveData>(false, "Unsupported arguments for System.String.StartsWith");
+            return new OperationResult<MemberResolveData>.Error("Unsupported arguments for System.String.StartsWith");
         }
 
         private OperationResult<MemberResolveData> ResolveContainsMethod(MemberData data, MemberRepresentation representation)
@@ -302,10 +300,10 @@ namespace PythonExamplesPorterApp.ExternalEntities
                 {
                     String member = $"({representation.Arguments.Values[0]} in {representation.Target})";
                     MemberResolveData memberData = new MemberResolveData(member);
-                    return new OperationResult<MemberResolveData>(true, "", memberData);
+                    return new OperationResult<MemberResolveData>.Ok(memberData);
                 }
             }
-            return new OperationResult<MemberResolveData>(false, "Unsupported arguments for System.String.Contains");
+            return new OperationResult<MemberResolveData>.Error("Unsupported arguments for System.String.Contains");
         }
 
         private OperationResult<MemberResolveData> ResolveReplaceMethod(MemberData data, MemberRepresentation representation)
@@ -317,10 +315,10 @@ namespace PythonExamplesPorterApp.ExternalEntities
                 {
                     String member = $"{representation.Target}.replace({representation.Arguments.Values[0]}, {representation.Arguments.Values[1]})";
                     MemberResolveData memberData = new MemberResolveData(member);
-                    return new OperationResult<MemberResolveData>(true, "", memberData);
+                    return new OperationResult<MemberResolveData>.Ok(memberData);
                 }
             }
-            return new OperationResult<MemberResolveData>(false, "Unsupported arguments for System.String.Replace");
+            return new OperationResult<MemberResolveData>.Error("Unsupported arguments for System.String.Replace");
         }
 
         private readonly SemanticModel _model;
@@ -341,7 +339,7 @@ namespace PythonExamplesPorterApp.ExternalEntities
             switch (memberInfo.Symbol)
             {
                 case null:
-                    return new OperationResult<MemberResolveData>(false, $"Unsupported member: System.Drawing.Color.{memberName}");
+                    return new OperationResult<MemberResolveData>.Error($"Unsupported member: System.Drawing.Color.{memberName}");
                 case IPropertySymbol {IsStatic: true, Name: var name}:
                     return ResolveColorDefinitionProperty(name);
                 case IFieldSymbol {Name: "Empty"}:
@@ -359,7 +357,7 @@ namespace PythonExamplesPorterApp.ExternalEntities
                 case IMethodSymbol {Name: "FromArgb" }:
                     return ResolveFromArgbMethod(representation);
             }
-            return new OperationResult<MemberResolveData>(false, $"Unsupported member: System.Drawing.Color.{memberName}");
+            return new OperationResult<MemberResolveData>.Error($"Unsupported member: System.Drawing.Color.{memberName}");
         }
 
         private OperationResult<MemberResolveData> ResolveColorDefinitionProperty(String sourceColorName)
@@ -368,14 +366,14 @@ namespace PythonExamplesPorterApp.ExternalEntities
             String destColorName = _appData.NameTransformer.TransformPropertyName("System.Drawing.Color", sourceColorName);
             (String moduleName, ImportData importData) prepareResult = _appData.ImportAliasManager.PrepareImport("aspose.pydrawing");
             MemberResolveData colorData = new MemberResolveData($"{prepareResult.moduleName}.Color.{destColorName}", prepareResult.importData);
-            return new OperationResult<MemberResolveData>(true, "", colorData);
+            return new OperationResult<MemberResolveData>.Ok(colorData);
         }
 
         private OperationResult<MemberResolveData> ResolveEmptyField()
         {
             (String moduleName, ImportData importData) prepareResult = _appData.ImportAliasManager.PrepareImport("aspose.pydrawing");
             MemberResolveData colorData = new MemberResolveData($"{prepareResult.moduleName}.Color.empty()", prepareResult.importData);
-            return new OperationResult<MemberResolveData>(true, "", colorData);
+            return new OperationResult<MemberResolveData>.Ok(colorData);
         }
 
         private OperationResult<MemberResolveData> ResolveFromArgbMethod(MemberRepresentation representation)
@@ -383,14 +381,14 @@ namespace PythonExamplesPorterApp.ExternalEntities
             (String moduleName, ImportData importData) prepareResult = _appData.ImportAliasManager.PrepareImport("aspose.pydrawing");
             String arguments = String.Join(", ", representation.Arguments.Values);
             MemberResolveData colorData = new MemberResolveData($"{prepareResult.moduleName}.Color.from_argb({arguments})", prepareResult.importData);
-            return new OperationResult<MemberResolveData>(true, "", colorData);
+            return new OperationResult<MemberResolveData>.Ok(colorData);
         }
 
         private OperationResult<MemberResolveData> ResolveToArgbMethod(MemberRepresentation representation)
         {
             // the only signature is System.Drawing.Color.ToArgb()
             MemberResolveData memberData = new MemberResolveData($"{representation.Target}.to_argb()");
-            return new OperationResult<MemberResolveData>(true, "", memberData);
+            return new OperationResult<MemberResolveData>.Ok(memberData);
         }
 
         private readonly AppData _appData;
@@ -419,10 +417,10 @@ namespace PythonExamplesPorterApp.ExternalEntities
                 {
                     (String moduleName, ImportData importData) prepareResult = _appData.ImportAliasManager.PrepareImport("aspose.pydrawing");
                     MemberResolveData ctorData = new MemberResolveData($"{prepareResult.moduleName}.{_typeName}({x}, {y})", prepareResult.importData);
-                    return new OperationResult<MemberResolveData>(true, "", ctorData);
+                    return new OperationResult<MemberResolveData>.Ok(ctorData);
                 }
             }
-            return new OperationResult<MemberResolveData>(false, $"Unsupported ctor for System.Drawing.{_typeName}");
+            return new OperationResult<MemberResolveData>.Error($"Unsupported ctor for System.Drawing.{_typeName}");
         }
 
         public OperationResult<MemberResolveData> ResolveMember(MemberData data, MemberRepresentation representation)
@@ -432,7 +430,7 @@ namespace PythonExamplesPorterApp.ExternalEntities
             switch (memberInfo.Symbol)
             {
                 case null:
-                    return new OperationResult<MemberResolveData>(false, $"Unsupported member: System.Drawing.{_typeName}.{memberName}");
+                    return new OperationResult<MemberResolveData>.Error($"Unsupported member: System.Drawing.{_typeName}.{memberName}");
                 case IPropertySymbol {Name: "IsEmpty"}:
                     return ExternalEntityResolverHelper.ResolveInstanceProperty(representation, "is_empty");
                 case IPropertySymbol {Name: "X"}:
@@ -440,7 +438,7 @@ namespace PythonExamplesPorterApp.ExternalEntities
                 case IPropertySymbol {Name: "Y"}:
                     return ExternalEntityResolverHelper.ResolveInstanceProperty(representation, "y");
             }
-            return new OperationResult<MemberResolveData>(false, $"Unsupported member: System.Drawing.{_typeName}.{memberName}");
+            return new OperationResult<MemberResolveData>.Error($"Unsupported member: System.Drawing.{_typeName}.{memberName}");
         }
 
         private readonly SemanticModel _model;
@@ -470,16 +468,16 @@ namespace PythonExamplesPorterApp.ExternalEntities
                 case [var location, var size]:
                 {
                     MemberResolveData ctorData = new MemberResolveData($"{prepareResult.moduleName}{_typeName}({location}, {size})", prepareResult.importData);
-                    return new OperationResult<MemberResolveData>(true, "", ctorData);
+                    return new OperationResult<MemberResolveData>.Ok(ctorData);
                 }
                 case [var x, var y, var width, var height]:
                 {
                     String member = $"{prepareResult.moduleName}.{_typeName}({x}, {y}, {width}, {height})";
                     MemberResolveData ctorData = new MemberResolveData(member, prepareResult.importData);
-                    return new OperationResult<MemberResolveData>(true, "", ctorData);
+                    return new OperationResult<MemberResolveData>.Ok(ctorData);
                 }
             }
-            return new OperationResult<MemberResolveData>(false, $"Not supported now for System.Drawing.{_typeName}");
+            return new OperationResult<MemberResolveData>.Error($"Not supported now for System.Drawing.{_typeName}");
         }
 
         public OperationResult<MemberResolveData> ResolveMember(MemberData data, MemberRepresentation representation)
@@ -489,7 +487,7 @@ namespace PythonExamplesPorterApp.ExternalEntities
             switch (memberInfo.Symbol)
             {
                 case null:
-                    return new OperationResult<MemberResolveData>(false, $"Unsupported member: System.Drawing.{_typeName}.{memberName}");
+                    return new OperationResult<MemberResolveData>.Error($"Unsupported member: System.Drawing.{_typeName}.{memberName}");
                 case IPropertySymbol {Name: "Bottom"}:
                     return ExternalEntityResolverHelper.ResolveInstanceProperty(representation, "bottom");
                 case IPropertySymbol {Name: "Height"}:
@@ -513,7 +511,7 @@ namespace PythonExamplesPorterApp.ExternalEntities
                 case IPropertySymbol {Name: "Y"}:
                     return ExternalEntityResolverHelper.ResolveInstanceProperty(representation, "y");
             }
-            return new OperationResult<MemberResolveData>(false, $"Unsupported member: System.Drawing.{_typeName}.{memberName}");
+            return new OperationResult<MemberResolveData>.Error($"Unsupported member: System.Drawing.{_typeName}.{memberName}");
         }
 
         private readonly SemanticModel _model;
@@ -543,10 +541,10 @@ namespace PythonExamplesPorterApp.ExternalEntities
                 {
                     (String moduleName, ImportData importData) prepareResult = _appData.ImportAliasManager.PrepareImport("aspose.pydrawing");
                     MemberResolveData ctorData = new MemberResolveData($"{prepareResult.moduleName}.{_typeName}({width}, {height})", prepareResult.importData);
-                    return new OperationResult<MemberResolveData>(true, "", ctorData);
+                    return new OperationResult<MemberResolveData>.Ok(ctorData);
                 }
             }
-            return new OperationResult<MemberResolveData>(false, $"Not supported now for System.Drawing.{_typeName}");
+            return new OperationResult<MemberResolveData>.Error($"Not supported now for System.Drawing.{_typeName}");
         }
 
         public OperationResult<MemberResolveData> ResolveMember(MemberData data, MemberRepresentation representation)
@@ -556,7 +554,7 @@ namespace PythonExamplesPorterApp.ExternalEntities
             switch (memberInfo.Symbol)
             {
                 case null:
-                    return new OperationResult<MemberResolveData>(false, $"Unsupported member: System.Drawing.{_typeName}.{memberName}");
+                    return new OperationResult<MemberResolveData>.Error($"Unsupported member: System.Drawing.{_typeName}.{memberName}");
                 case IPropertySymbol {Name: "Height"}:
                     return ExternalEntityResolverHelper.ResolveInstanceProperty(representation, "height");
                 case IPropertySymbol {Name: "IsEmpty"}:
@@ -564,7 +562,7 @@ namespace PythonExamplesPorterApp.ExternalEntities
                 case IPropertySymbol {Name: "Width"}:
                     return ExternalEntityResolverHelper.ResolveInstanceProperty(representation, "width");
             }
-            return new OperationResult<MemberResolveData>(false, $"Unsupported member: System.Drawing.{_typeName}.{memberName}");
+            return new OperationResult<MemberResolveData>.Error($"Unsupported member: System.Drawing.{_typeName}.{memberName}");
         }
 
         private readonly SemanticModel _model;

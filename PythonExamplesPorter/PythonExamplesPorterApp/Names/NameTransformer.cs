@@ -28,45 +28,42 @@ namespace PythonExamplesPorterApp.Names
 
         public String TransformMethodName(String typeName, String methodName)
         {
-            OperationResult<String> handmadeResult = _manager.Search(typeName, methodName);
-            return handmadeResult.Success
-                ? handmadeResult.Data!
-                : _transformStrategy.ConvertPascalCaseIntoSnakeCase(methodName);
+            return TransformImpl(typeName, methodName);
         }
 
         public String TransformPropertyName(String typeName, String propertyName)
         {
-            OperationResult<String> handmadeResult = _manager.Search(typeName, propertyName);
-            return handmadeResult.Success
-                ? handmadeResult.Data!
-                : _transformStrategy.ConvertPascalCaseIntoSnakeCase(propertyName);
+            return TransformImpl(typeName, propertyName);
         }
 
         public String TransformFieldName(String typeName, String fieldName)
         {
-            OperationResult<String> handmadeResult = _manager.Search(typeName, fieldName);
-            return handmadeResult.Success
-                ? handmadeResult.Data!
-                : _transformStrategy.ConvertPascalCaseIntoSnakeCase(fieldName);
+            return TransformImpl(typeName, fieldName);
         }
 
         public String TransformStaticReadonlyFieldName(String typeName, String fieldName)
         {
-            OperationResult<String> handmadeResult = _manager.Search(typeName, fieldName);
-            String destName = handmadeResult.Success ? handmadeResult.Data! : _transformStrategy.ConvertPascalCaseIntoSnakeCase(fieldName);
-            return destName.ToUpper();
+            return TransformImpl(typeName, fieldName).ToUpper();
         }
 
         public String TransformEnumValueName(String typeName, String enumValueName)
         {
-            OperationResult<String> handmadeResult = _manager.Search(typeName, enumValueName);
-            String destName = handmadeResult.Success ? handmadeResult.Data! : _transformStrategy.ConvertPascalCaseIntoSnakeCase(enumValueName);
-            return destName.ToUpper();
+            return TransformImpl(typeName, enumValueName).ToUpper();
         }
 
         public String TransformLocalVariableName(String variableName)
         {
             return _transformStrategy.ConvertPascalCaseIntoSnakeCase(variableName);
+        }
+
+        private String TransformImpl(String typeName, String memberName)
+        {
+            return _manager.Search(typeName, memberName) switch
+            {
+                OperationResult<String>.Ok(Data: var result) => result,
+                OperationResult<String>.Error => _transformStrategy.ConvertPascalCaseIntoSnakeCase(memberName),
+                _ => throw new InvalidOperationException("Unexpected control flow branch")
+            };
         }
 
         private readonly INameTransformStrategy _transformStrategy;

@@ -41,7 +41,7 @@ namespace PythonExamplesPorterApp.Expressions
                         afterResults.AddRange(result.AfterResults);
                         break;
                     default:
-                        throw new InvalidOperationException($"Unsupported type of interpolation string content: {content}");
+                        throw new UnsupportedSyntaxException($"Unsupported type of interpolation string content: {content}");
                 }
             }
             dest.Append(quotes);

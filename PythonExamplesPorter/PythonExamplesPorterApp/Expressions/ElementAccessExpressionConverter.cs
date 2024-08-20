@@ -29,20 +29,13 @@ namespace PythonExamplesPorterApp.Expressions
                 case LiteralExpressionSyntax literalExpression when literalExpression.Kind() == SyntaxKind.StringLiteralExpression:
                     return ProcessSpecialCase(expression, arguments, importData);
                 default:
-                    switch (arguments[0].Expression.GetExpressionTypeSymbol(_model))
+                    ITypeSymbol typeSymbol = arguments[0].Expression.GetExpressionTypeSymbol(_model).MustSuccess();
+                    switch (typeSymbol)
                     {
-                        case {Success: false, Reason: var reason}:
-                            throw new UnsupportedSyntaxException(reason);
-                        case {Success: true, Data: var typeSymbol}:
-                            switch (typeSymbol)
-                            {
-                                case var _ when typeSymbol!.GetTypeFullName() == "System.Int32":
-                                    return ProcessCommonCase(expression, arguments, importData);
-                                default:
-                                    return ProcessSpecialCase(expression, arguments, importData);
-                            }
+                        case var _ when typeSymbol.GetTypeFullName() == "System.Int32":
+                            return ProcessCommonCase(expression, arguments, importData);
                         default:
-                            throw new UnsupportedSyntaxException($"Unexpected control flow at converting ElementAccessExpression expression: {expression}");
+                            return ProcessSpecialCase(expression, arguments, importData);
                     }
             }
         }
@@ -59,22 +52,15 @@ namespace PythonExamplesPorterApp.Expressions
                 case LiteralExpressionSyntax literalExpression when literalExpression.Kind() != SyntaxKind.NumericLiteralExpression:
                     throw new UnsupportedSyntaxException($"Unsupported type of ElementAccessExpression expression: {expression}");
                 default:
-                    switch (arguments[0].Expression.GetExpressionTypeSymbol(_model))
+                    ITypeSymbol typeSymbol = arguments[0].Expression.GetExpressionTypeSymbol(_model).MustSuccess();
+                    switch (typeSymbol)
                     {
-                        case {Success: false, Reason: var reason}:
-                            throw new UnsupportedSyntaxException(reason);
-                        case {Success: true, Data: var typeSymbol}:
-                            switch (typeSymbol)
-                            {
-                                case var _ when typeSymbol!.GetTypeFullName() == "System.Int32":
-                                    ConvertResult argumentResult = _expressionConverter.Convert(arguments[0].Expression);
-                                    importData.Append(argumentResult.ImportData);
-                                    return new ConvertResult($"{targetResult.Result}[{argumentResult.Result}]", importData);
-                                default:
-                                    throw new UnsupportedSyntaxException($"Unsupported type of ElementAccessExpression expression: {expression}");
-                            }
+                        case var _ when typeSymbol.GetTypeFullName() == "System.Int32":
+                            ConvertResult argumentResult = _expressionConverter.Convert(arguments[0].Expression);
+                            importData.Append(argumentResult.ImportData);
+                            return new ConvertResult($"{targetResult.Result}[{argumentResult.Result}]", importData);
                         default:
-                            throw new UnsupportedSyntaxException($"Unexpected control flow at converting ElementAccessExpression expression: {expression}");
+                            throw new UnsupportedSyntaxException($"Unsupported type of ElementAccessExpression expression: {expression}");
                     }
             }
         }
@@ -84,10 +70,9 @@ namespace PythonExamplesPorterApp.Expressions
         {
             ConvertResult targetResult = _expressionConverter.Convert(expression.Expression);
             importData.Append(targetResult.ImportData);
-            OperationResult<ITypeSymbol> expressionType = expression.GetExpressionTypeSymbol(_model);
-            if (!expressionType.Success)
-                throw new UnsupportedSyntaxException($"Unsupported ElementAccessExpression expression: {expressionType.Reason}");
-            String sourceTypeFullName = expressionType.Data!.GetTypeFullName();
+            ITypeSymbol expressionType = expression.GetExpressionTypeSymbol(_model)
+                .MustSuccess("Unsupported ElementAccessExpression expression: {0}");
+            String sourceTypeFullName = expressionType.GetTypeFullName();
             String getByNameMethod = _appData.NameTransformer.TransformMethodName(sourceTypeFullName, "GetByName");
             switch (arguments[0].Expression)
             {
@@ -99,31 +84,24 @@ namespace PythonExamplesPorterApp.Expressions
                 case LiteralExpressionSyntax literalExpression when literalExpression.Kind() != SyntaxKind.StringLiteralExpression:
                     throw new UnsupportedSyntaxException($"Unsupported type of ElementAccessExpression expression: {expression}");
                 default:
-                    switch (arguments[0].Expression.GetExpressionTypeSymbol(_model))
+                    ITypeSymbol typeSymbol = arguments[0].Expression.GetExpressionTypeSymbol(_model).MustSuccess();
+                    switch (typeSymbol)
                     {
-                        case {Success: false, Reason: var reason}:
-                            throw new UnsupportedSyntaxException(reason);
-                        case {Success: true, Data: var typeSymbol}:
-                            switch (typeSymbol)
-                            {
-                                case var _ when typeSymbol!.GetTypeFullName() == "System.String":
-                                {
-                                    ConvertResult argumentResult = _expressionConverter.Convert(arguments[0].Expression);
-                                    importData.Append(argumentResult.ImportData);
-                                    return new ConvertResult($"{targetResult.Result}.{getByNameMethod}({argumentResult.Result})", importData);
-                                }
-                                case {TypeKind: TypeKind.Enum, Name: var enumName}:
-                                {
-                                    ConvertResult argumentResult = _expressionConverter.Convert(arguments[0].Expression);
-                                    importData.Append(argumentResult.ImportData);
-                                    String getByEnumMethod = _appData.NameTransformer.TransformMethodName(sourceTypeFullName, $"GetBy{enumName}");
-                                    return new ConvertResult($"{targetResult.Result}.{getByEnumMethod}({argumentResult.Result})", importData);
-                                }
-                                default:
-                                    throw new UnsupportedSyntaxException($"Unsupported type of ElementAccessExpression expression: {expression}");
-                            }
+                        case var _ when typeSymbol.GetTypeFullName() == "System.String":
+                        {
+                            ConvertResult argumentResult = _expressionConverter.Convert(arguments[0].Expression);
+                            importData.Append(argumentResult.ImportData);
+                            return new ConvertResult($"{targetResult.Result}.{getByNameMethod}({argumentResult.Result})", importData);
+                        }
+                        case {TypeKind: TypeKind.Enum, Name: var enumName}:
+                        {
+                            ConvertResult argumentResult = _expressionConverter.Convert(arguments[0].Expression);
+                            importData.Append(argumentResult.ImportData);
+                            String getByEnumMethod = _appData.NameTransformer.TransformMethodName(sourceTypeFullName, $"GetBy{enumName}");
+                            return new ConvertResult($"{targetResult.Result}.{getByEnumMethod}({argumentResult.Result})", importData);
+                        }
                         default:
-                            throw new UnsupportedSyntaxException($"Unexpected control flow at converting ElementAccessExpression expression: {expression}");
+                            throw new UnsupportedSyntaxException($"Unsupported type of ElementAccessExpression expression: {expression}");
                     }
             }
         }

@@ -31,11 +31,9 @@ namespace PythonExamplesPorterApp.Expressions
             ImportData importData = new ImportData();
             if (arguments.Count == 0)
                 return new ConvertArgumentsResult(new ConvertedArguments(Array.Empty<String>(), null), importData);
-            OperationResult<IMethodSymbol> methodSymbol = source.GetMethodSymbol(_model);
-            if (!methodSymbol.Success)
-                throw new UnsupportedSyntaxException(methodSymbol.Reason);
-            IReadOnlyList<IParameterSymbol> parameters = methodSymbol.Data!.Parameters;
-            Boolean useNamedArguments = (arguments[^1].NameColon is not null) || IsOverloadedMember(methodSymbol.Data);
+            IMethodSymbol methodSymbol = source.GetMethodSymbol(_model).MustSuccess();
+            IReadOnlyList<IParameterSymbol> parameters = methodSymbol.Parameters;
+            Boolean useNamedArguments = (arguments[^1].NameColon is not null) || IsOverloadedMember(methodSymbol);
             Boolean hasParamsArguments = (parameters[^1].IsParams) && (arguments.Count >= parameters.Count);
             Int32 destCount = Math.Min(parameters.Count, arguments.Count);
             String[] destArguments = new String[destCount];

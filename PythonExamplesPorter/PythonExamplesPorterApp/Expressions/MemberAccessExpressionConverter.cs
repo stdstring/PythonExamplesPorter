@@ -39,12 +39,9 @@ namespace PythonExamplesPorterApp.Expressions
                     return _expressionConverter.Convert(expression.Name);
                 case ITypeSymbol type:
                 {
-                    OperationResult<TypeResolveData> typeResolveResult = _externalEntityResolver.ResolveType(type);
-                    if (!typeResolveResult.Success)
-                        throw new UnsupportedSyntaxException(typeResolveResult.Reason);
-                    TypeResolveData typeResolveData = typeResolveResult.Data!;
-                    importData.Append(typeResolveData.ImportData);
-                    String typeName = $"{typeResolveData.ModuleName}.{typeResolveData.TypeName}";
+                    TypeResolveData resolveData = _externalEntityResolver.ResolveType(type).MustSuccess();
+                    importData.Append(resolveData.ImportData);
+                    String typeName = $"{resolveData.ModuleName}.{resolveData.TypeName}";
                     return ConvertImpl(expression, target, arguments, importData: importData, typeName, convertedArguments.Result);
                 }
                 default:
@@ -66,12 +63,9 @@ namespace PythonExamplesPorterApp.Expressions
             SimpleNameSyntax name = expression.Name;
             MemberData memberData = new MemberData(target, name, arguments);
             MemberRepresentation memberRepresentation = new MemberRepresentation(targetRepresentation, convertedArguments);
-            OperationResult<MemberResolveData> resolveResult = _externalEntityResolver.ResolveMember(memberData, memberRepresentation);
-            if (!resolveResult.Success)
-                throw new UnsupportedSyntaxException(resolveResult.Reason);
-            MemberResolveData memberResolveData = resolveResult.Data!;
-            importData.Append(memberResolveData.ImportData);
-            return new ConvertResult(memberResolveData.Member, importData);
+            MemberResolveData resolveData = _externalEntityResolver.ResolveMember(memberData, memberRepresentation).MustSuccess();
+            importData.Append(resolveData.ImportData);
+            return new ConvertResult(resolveData.Member, importData);
         }
 
         private readonly SemanticModel _model;

@@ -6,9 +6,11 @@ namespace PythonExamplesPorterApp.Checker
     {
         public static CheckResult Check(SwitchSectionSyntax switchSection)
         {
-            CheckResult labelsResult = Check(switchSection.Labels);
-            if (!labelsResult.Result)
-                return labelsResult;
+            switch (Check(switchSection.Labels))
+            {
+                case CheckResult.Error error:
+                    return error;
+            }
             return Check(switchSection.Statements);
         }
 
@@ -17,9 +19,9 @@ namespace PythonExamplesPorterApp.Checker
             foreach (SwitchLabelSyntax label in labels)
             {
                 if (label is CasePatternSwitchLabelSyntax)
-                    return new CheckResult(Result: false, Reason: "Unsupported type of expression: pattern matching");
+                    return new CheckResult.Error("Unsupported type of expression: pattern matching");
             }
-            return new CheckResult(Result: true);
+            return new CheckResult.Ok();
         }
 
         private static CheckResult Check(IReadOnlyList<StatementSyntax> statements)
@@ -32,7 +34,7 @@ namespace PythonExamplesPorterApp.Checker
             switch (statement)
             {
                 case BreakStatementSyntax _ when !allowBreak:
-                    return new CheckResult(false, "Unsupported break statement usage");
+                    return new CheckResult.Error("Unsupported break statement usage");
                 case BreakStatementSyntax _:
                 case ForEachStatementSyntax _:
                 case ForStatementSyntax _:
@@ -41,7 +43,7 @@ namespace PythonExamplesPorterApp.Checker
                 case LocalDeclarationStatementSyntax _:
                 case ExpressionStatementSyntax _:
                 case SwitchStatementSyntax _:
-                    return new CheckResult(true);
+                    return new CheckResult.Ok();
                 case BlockSyntax blockStatement:
                     return CheckStatements(blockStatement.Statements, false);
                 case IfStatementSyntax ifStatement:
@@ -49,7 +51,7 @@ namespace PythonExamplesPorterApp.Checker
                 case ContinueStatementSyntax _:
                     throw new InvalidOperationException("Unexpected continue operator in compiled code");
                 default:
-                    return new CheckResult(false, $"Unsupported statement type: {statement.Kind()}");
+                    return new CheckResult.Error($"Unsupported statement type: {statement.Kind()}");
             }
         }
 
@@ -57,21 +59,23 @@ namespace PythonExamplesPorterApp.Checker
         {
             foreach (StatementSyntax statement in statements)
             {
-                CheckResult result = Check(statement, allowBreak);
-                if (!result.Result)
-                    return result;
+                switch (Check(statement, allowBreak))
+                {
+                    case CheckResult.Error error:
+                        return error;
+                }
             }
-            return new CheckResult(true);
+            return new CheckResult.Ok();
         }
 
         private static CheckResult CheckIfStatement(IfStatementSyntax ifStatement)
         {
-            CheckResult thenResult = Check(ifStatement.Statement, false);
-            if (!thenResult.Result)
-                return thenResult;
-            if (ifStatement.Else == null)
-                return new CheckResult(true);
-            return Check(ifStatement.Else.Statement, false);
+            switch (Check(ifStatement.Statement, false))
+            {
+                case CheckResult.Error error:
+                    return error;
+            }
+            return ifStatement.Else == null ? new CheckResult.Ok() : Check(ifStatement.Else.Statement, false);
         }
     }
 }

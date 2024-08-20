@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using PythonExamplesPorterApp.Handmade;
 using PythonExamplesPorterApp.Names;
+using PythonExamplesPorterAppTests.TestUtils;
 
 namespace PythonExamplesPorterAppTests.Handmade
 {
@@ -81,7 +82,8 @@ namespace PythonExamplesPorterAppTests.Handmade
         {
             HandmadeEntitiesManager manager = new HandmadeEntitiesManager(_handmadeEntities, _nameTransformer);
             HandmadeMemberMapping[] expected = _handmadeEntities
-                .HandmadeTypes!
+                .HandmadeTypes
+                .MustCheck()
                 .SingleOrDefault(type => type.FullName == fullName)?
                 .MemberMappings ?? Array.Empty<HandmadeMemberMapping>();
             CheckMemberMappings(expected, manager.GetHandmadeTypeMapping(fullName));

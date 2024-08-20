@@ -34,9 +34,7 @@ namespace PythonExamplesPorterApp.Converter
 
         public static IReadOnlyList<ArgumentSyntax> GetArguments(this ArgumentListSyntax? argumentList)
         {
-            if (argumentList == null)
-                return Array.Empty<ArgumentSyntax>();
-            return argumentList.Arguments;
+            return argumentList == null ? Array.Empty<ArgumentSyntax>() : argumentList.Arguments;
         }
 
         public static String GetTypeFullName(this ITypeSymbol type)
@@ -64,16 +62,16 @@ namespace PythonExamplesPorterApp.Converter
             SymbolInfo symbolInfo = model.GetSymbolInfo(targetExpression);
             return symbolInfo.Symbol switch
             {
-                null => new OperationResult<ITypeSymbol>(false, $"Unrecognizable type of expression: {expression}"),
-                ILocalSymbol localSymbol => new OperationResult<ITypeSymbol>(true, "", localSymbol.Type),
-                IPropertySymbol propertySymbol => new OperationResult<ITypeSymbol>(true, "", propertySymbol.Type),
-                IFieldSymbol fieldSymbol => new OperationResult<ITypeSymbol>(true, "", fieldSymbol.Type),
-                IMethodSymbol {MethodKind: MethodKind.Constructor} methodSymbol => new OperationResult<ITypeSymbol>(true, "", methodSymbol.ContainingType),
-                IMethodSymbol {ReturnsVoid: true} => new OperationResult<ITypeSymbol>(false, $"Unsupported type (void) of expression: {expression}"),
-                IMethodSymbol methodSymbol => new OperationResult<ITypeSymbol>(true, "", methodSymbol.ReturnType),
-                IArrayTypeSymbol arrayTypeSymbol => new OperationResult<ITypeSymbol>(true, "", arrayTypeSymbol),
-                ITypeSymbol typeSymbol => new OperationResult<ITypeSymbol>(true, "", typeSymbol),
-                _ => new OperationResult<ITypeSymbol>(false, $"Unsupported type of expression: {expression}")
+                null => new OperationResult<ITypeSymbol>.Error($"Unrecognizable type of expression: {expression}"),
+                ILocalSymbol localSymbol => new OperationResult<ITypeSymbol>.Ok(localSymbol.Type),
+                IPropertySymbol propertySymbol => new OperationResult<ITypeSymbol>.Ok(propertySymbol.Type),
+                IFieldSymbol fieldSymbol => new OperationResult<ITypeSymbol>.Ok(fieldSymbol.Type),
+                IMethodSymbol {MethodKind: MethodKind.Constructor} methodSymbol => new OperationResult<ITypeSymbol>.Ok(methodSymbol.ContainingType),
+                IMethodSymbol {ReturnsVoid: true} => new OperationResult<ITypeSymbol>.Error($"Unsupported type (void) of expression: {expression}"),
+                IMethodSymbol methodSymbol => new OperationResult<ITypeSymbol>.Ok(methodSymbol.ReturnType),
+                IArrayTypeSymbol arrayTypeSymbol => new OperationResult<ITypeSymbol>.Ok(arrayTypeSymbol),
+                ITypeSymbol typeSymbol => new OperationResult<ITypeSymbol>.Ok(typeSymbol),
+                _ => new OperationResult<ITypeSymbol>.Error($"Unsupported type of expression: {expression}")
             };
         }
 
@@ -82,9 +80,9 @@ namespace PythonExamplesPorterApp.Converter
             SymbolInfo nodeInfo = model.GetSymbolInfo(expression);
             return nodeInfo.Symbol switch
             {
-                null => new OperationResult<IMethodSymbol>(false, $"Unrecognizable type of expression: {expression}"),
-                IMethodSymbol symbol => new OperationResult<IMethodSymbol>(true, "", symbol),
-                _ => new OperationResult<IMethodSymbol>(false, $"Unexpected type of expression: {expression}")
+                null => new OperationResult<IMethodSymbol>.Error($"Unrecognizable type of expression: {expression}"),
+                IMethodSymbol symbol => new OperationResult<IMethodSymbol>.Ok(symbol),
+                _ => new OperationResult<IMethodSymbol>.Error($"Unexpected type of expression: {expression}")
             };
         }
     }
