@@ -8,7 +8,11 @@
 #####################################
 
 import aspose.words as aw
+import aspose.words.comparing
+import aspose.words.drawing
 import aspose.words.layout
+import aspose.words.notes
+import datetime
 import unittest
 from api_example_base import ApiExampleBase, ARTIFACTS_DIR, MY_DIR
 
@@ -18,10 +22,22 @@ class ExRevision(ApiExampleBase):
         raise NotImplementedError("Unsupported target type System.DateTime")
 
     def test_revision_collection(self):
-        raise NotImplementedError("Unsupported target type System.Console")
+        raise NotImplementedError("Unsupported statement type: UsingStatement")
 
     def test_get_info_about_revisions_in_revision_groups(self):
-        raise NotImplementedError("Unsupported target type System.Console")
+        #ExStart
+        #ExFor:RevisionGroup
+        #ExFor:RevisionGroup.author
+        #ExFor:RevisionGroup.revision_type
+        #ExFor:RevisionGroup.text
+        #ExFor:RevisionGroupCollection
+        #ExFor:RevisionGroupCollection.count
+        #ExSummary:Shows how to print info about a group of revisions in a document.
+        doc = aw.Document(file_name=MY_DIR + "Revisions.docx")
+        self.assertEqual(7, doc.revisions.groups.count)
+        for group in doc.revisions.groups:
+            print(f"Revision author: {group.author}; Revision type: {group.revision_type} \n\tRevision text: {group.text}")
+        #ExEnd
 
     def test_get_specific_revision_group(self):
         #ExStart
@@ -81,7 +97,7 @@ class ExRevision(ApiExampleBase):
         revision_options.moved_from_text_color = aw.layout.RevisionColor.YELLOW
         revision_options.moved_from_text_effect = aw.layout.RevisionTextEffect.DOUBLE_STRIKE_THROUGH
         revision_options.moved_to_text_color = aw.layout.RevisionColor.CLASSIC_BLUE
-        revision_options.moved_from_text_effect = aw.layout.RevisionTextEffect.DOUBLE_UNDERLINE
+        revision_options.moved_to_text_effect = aw.layout.RevisionTextEffect.DOUBLE_UNDERLINE
         # Render format revisions in dark red and bold.
         revision_options.revised_properties_color = aw.layout.RevisionColor.DARK_RED
         revision_options.revised_properties_effect = aw.layout.RevisionTextEffect.BOLD
@@ -98,3 +114,110 @@ class ExRevision(ApiExampleBase):
         # These features are only applicable to formats such as .pdf or .jpg.
         doc.save(file_name=ARTIFACTS_DIR + "Revision.RevisionOptions.pdf")
         #ExEnd
+
+    def test_track_revisions(self):
+        raise NotImplementedError("Unsupported target type System.TimeSpan")
+
+    def test_accept_all_revisions(self):
+        #ExStart
+        #ExFor:Document.accept_all_revisions
+        #ExSummary:Shows how to accept all tracking changes in the document.
+        doc = aw.Document()
+        builder = aw.DocumentBuilder(doc)
+        # Edit the document while tracking changes to create a few revisions.
+        doc.start_track_revisions(author="John Doe")
+        builder.write("Hello world! ")
+        builder.write("Hello again! ")
+        builder.write("This is another revision.")
+        doc.stop_track_revisions()
+        self.assertEqual(3, doc.revisions.count)
+        # We can iterate through every revision and accept/reject it as a part of our document.
+        # If we know we wish to accept every revision, we can do it more straightforwardly so by calling this method.
+        doc.accept_all_revisions()
+        self.assertEqual(0, doc.revisions.count)
+        self.assertEqual("Hello world! Hello again! This is another revision.", doc.get_text().strip())
+        #ExEnd
+
+    def test_get_revised_properties_of_list(self):
+        #ExStart
+        #ExFor:RevisionsView
+        #ExFor:Document.revisions_view
+        #ExSummary:Shows how to switch between the revised and the original view of a document.
+        doc = aw.Document(file_name=MY_DIR + "Revisions at list levels.docx")
+        doc.update_list_labels()
+        paragraphs = doc.first_section.body.paragraphs
+        self.assertEqual("1.", paragraphs[0].list_label.label_string)
+        self.assertEqual("a.", paragraphs[1].list_label.label_string)
+        self.assertEqual("", paragraphs[2].list_label.label_string)
+        # View the document object as if all the revisions are accepted. Currently supports list labels.
+        doc.revisions_view = aw.RevisionsView.FINAL
+        self.assertEqual("", paragraphs[0].list_label.label_string)
+        self.assertEqual("1.", paragraphs[1].list_label.label_string)
+        self.assertEqual("a.", paragraphs[2].list_label.label_string)
+        #ExEnd
+        doc.revisions_view = aw.RevisionsView.ORIGINAL
+        doc.accept_all_revisions()
+        self.assertEqual("a.", paragraphs[0].list_label.label_string)
+        self.assertEqual("", paragraphs[1].list_label.label_string)
+        self.assertEqual("b.", paragraphs[2].list_label.label_string)
+
+    def test_compare(self):
+        raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")
+
+    def test_compare_document_with_revisions(self):
+        raise NotImplementedError("Unsupported expression: ParenthesizedLambdaExpression")
+
+    def test_compare_options(self):
+        raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
+
+    def test_ignore_dml_unique_id(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_layout_options_revisions(self):
+        #ExStart
+        #ExFor:Document.layout_options
+        #ExFor:LayoutOptions
+        #ExFor:LayoutOptions.revision_options
+        #ExFor:RevisionColor
+        #ExFor:RevisionOptions
+        #ExFor:RevisionOptions.inserted_text_color
+        #ExFor:RevisionOptions.show_revision_bars
+        #ExFor:RevisionOptions.revision_bars_position
+        #ExSummary:Shows how to alter the appearance of revisions in a rendered output document.
+        doc = aw.Document()
+        builder = aw.DocumentBuilder(doc)
+        # Insert a revision, then change the color of all revisions to green.
+        builder.writeln("This is not a revision.")
+        doc.start_track_revisions(author="John Doe", date_time=datetime.datetime.now())
+        self.assertEqual(aw.layout.RevisionColor.BY_AUTHOR, doc.layout_options.revision_options.inserted_text_color) #ExSkip
+        self.assertTrue(doc.layout_options.revision_options.show_revision_bars) #ExSkip
+        builder.writeln("This is a revision.")
+        doc.stop_track_revisions()
+        builder.writeln("This is not a revision.")
+        # Remove the bar that appears to the left of every revised line.
+        doc.layout_options.revision_options.inserted_text_color = aw.layout.RevisionColor.BRIGHT_GREEN
+        doc.layout_options.revision_options.show_revision_bars = False
+        doc.layout_options.revision_options.revision_bars_position = aw.drawing.HorizontalAlignment.RIGHT
+        doc.save(file_name=ARTIFACTS_DIR + "Document.LayoutOptionsRevisions.pdf")
+        #ExEnd
+
+    def test_granularity_compare_option(self):
+        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+
+    def test_ignore_store_item_id(self):
+        #ExStart:IgnoreStoreItemId
+        #ExFor:AdvancedCompareOptions
+        #ExFor:AdvancedCompareOptions.ignore_store_item_id
+        #ExSummary:Shows how to compare SDT with same content but different store item id.
+        doc_a = aw.Document(file_name=MY_DIR + "Document with SDT 1.docx")
+        doc_b = aw.Document(file_name=MY_DIR + "Document with SDT 2.docx")
+        # Configure options to compare SDT with same content but different store item id.
+        compare_options = aw.comparing.CompareOptions()
+        compare_options.advanced_options.ignore_store_item_id = False
+        doc_a.compare(document=doc_b, author="user", date_time=datetime.datetime.now(), options=compare_options)
+        self.assertEqual(8, doc_a.revisions.count)
+        compare_options.advanced_options.ignore_store_item_id = True
+        doc_a.revisions.reject_all()
+        doc_a.compare(document=doc_b, author="user", date_time=datetime.datetime.now(), options=compare_options)
+        self.assertEqual(0, doc_a.revisions.count)
+        #ExEnd:IgnoreStoreItemId

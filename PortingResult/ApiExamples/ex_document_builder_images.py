@@ -42,7 +42,7 @@ class ExDocumentBuilderImages(ApiExampleBase):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_insert_image_from_byte_array(self):
-        raise NotImplementedError("Unsupported target type System.IO.File")
+        raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_insert_gif(self):
         raise NotImplementedError("Unsupported target type System.IO.File")

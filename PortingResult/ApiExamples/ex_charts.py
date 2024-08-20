@@ -11,6 +11,7 @@ import aspose.pydrawing
 import aspose.words as aw
 import aspose.words.drawing
 import aspose.words.drawing.charts
+import datetime
 import unittest
 from api_example_base import ApiExampleBase, ARTIFACTS_DIR, MY_DIR
 
@@ -93,9 +94,13 @@ class ExCharts(ApiExampleBase):
         #ExFor:ChartAxis.minor_tick_mark
         #ExFor:ChartAxis.major_unit
         #ExFor:ChartAxis.minor_unit
+        #ExFor:AxisTickLabels
         #ExFor:AxisTickLabels.offset
         #ExFor:AxisTickLabels.position
         #ExFor:AxisTickLabels.is_auto_spacing
+        #ExFor:AxisTickLabels.alignment
+        #ExFor:AxisTickLabels.font
+        #ExFor:AxisTickLabels.spacing
         #ExFor:ChartAxis.tick_mark_spacing
         #ExFor:AxisCategoryType
         #ExFor:AxisCrosses
@@ -134,6 +139,9 @@ class ExCharts(ApiExampleBase):
         y_axis.major_unit = 100
         y_axis.minor_unit = 20
         y_axis.tick_labels.position = aw.drawing.charts.AxisTickLabelPosition.NEXT_TO_AXIS
+        y_axis.tick_labels.alignment = aw.ParagraphAlignment.CENTER
+        y_axis.tick_labels.font.color = aspose.pydrawing.Color.red
+        y_axis.tick_labels.spacing = 1
         # Column charts do not have a Z-axis.
         self.assertIsNone(chart.axis_z)
         doc.save(file_name=ARTIFACTS_DIR + "Charts.AxisProperties.docx")
@@ -159,6 +167,9 @@ class ExCharts(ApiExampleBase):
         self.assertEqual(100, chart.axis_y.major_unit)
         self.assertEqual(20, chart.axis_y.minor_unit)
         self.assertEqual(aw.drawing.charts.AxisTickLabelPosition.NEXT_TO_AXIS, chart.axis_y.tick_labels.position)
+        self.assertEqual(aw.ParagraphAlignment.CENTER, chart.axis_y.tick_labels.alignment)
+        self.assertEqual(aspose.pydrawing.Color.red.to_argb(), chart.axis_y.tick_labels.font.color.to_argb())
+        self.assertEqual(1, chart.axis_y.tick_labels.spacing)
 
     def test_axis_collection(self):
         #ExStart
@@ -177,7 +188,7 @@ class ExCharts(ApiExampleBase):
         #ExEnd
 
     def test_date_time_values(self):
-        raise NotImplementedError("Unsupported ctor for type DateTime")
+        raise NotImplementedError("Unsupported target type System.DateTime")
 
     def test_hide_chart_axis(self):
         #ExStart
@@ -403,7 +414,58 @@ class ExCharts(ApiExampleBase):
         self.assertEqual(20, chart.axis_y.scaling.log_base)
 
     def test_axis_bound(self):
-        raise NotImplementedError("Unsupported ctor for type DateTime")
+        #ExStart
+        #ExFor:AxisBound.__init__
+        #ExFor:AxisBound.is_auto
+        #ExFor:AxisBound.value
+        #ExFor:AxisBound.value_as_date
+        #ExSummary:Shows how to set custom axis bounds.
+        doc = aw.Document()
+        builder = aw.DocumentBuilder(doc)
+        chart_shape = builder.insert_chart(chart_type=aw.drawing.charts.ChartType.SCATTER, width=450, height=300)
+        chart = chart_shape.chart
+        # Clear the chart's demo data series to start with a clean chart.
+        chart.series.clear()
+        # Add a series with two decimal arrays. The first array contains the X-values,
+        # and the second contains corresponding Y-values for points in the scatter chart.
+        chart.series.add(series_name="Series 1", x_values=[1.1, 5.4, 7.9, 3.5, 2.1, 9.7], y_values=[2.1, 0.3, 0.6, 3.3, 1.4, 1.9])
+        # By default, default scaling is applied to the graph's X and Y-axes,
+        # so that both their ranges are big enough to encompass every X and Y-value of every series.
+        self.assertTrue(chart.axis_x.scaling.minimum.is_auto)
+        # We can define our own axis bounds.
+        # In this case, we will make both the X and Y-axis rulers show a range of 0 to 10.
+        chart.axis_x.scaling.minimum = aw.drawing.charts.AxisBound(value=0)
+        chart.axis_x.scaling.maximum = aw.drawing.charts.AxisBound(value=10)
+        chart.axis_y.scaling.minimum = aw.drawing.charts.AxisBound(value=0)
+        chart.axis_y.scaling.maximum = aw.drawing.charts.AxisBound(value=10)
+        self.assertFalse(chart.axis_x.scaling.minimum.is_auto)
+        self.assertFalse(chart.axis_y.scaling.minimum.is_auto)
+        # Create a line chart with a series requiring a range of dates on the X-axis, and decimal values for the Y-axis.
+        chart_shape = builder.insert_chart(chart_type=aw.drawing.charts.ChartType.LINE, width=450, height=300)
+        chart = chart_shape.chart
+        chart.series.clear()
+        dates = [datetime.datetime(1973,5,11), datetime.datetime(1981,2,4), datetime.datetime(1985,9,23), datetime.datetime(1989,6,28), datetime.datetime(1994,12,15)]
+        chart.series.add(series_name="Series 1", dates=dates, values=[3, 4.7, 5.9, 7.1, 8.9])
+        # We can set axis bounds in the form of dates as well, limiting the chart to a period.
+        # Setting the range to 1980-1990 will omit the two of the series values
+        # that are outside of the range from the graph.
+        chart.axis_x.scaling.minimum = aw.drawing.charts.AxisBound(datetime=datetime.datetime(1980,1,1))
+        chart.axis_x.scaling.maximum = aw.drawing.charts.AxisBound(datetime=datetime.datetime(1990,1,1))
+        doc.save(file_name=ARTIFACTS_DIR + "Charts.AxisBound.docx")
+        #ExEnd
+        doc = aw.Document(file_name=ARTIFACTS_DIR + "Charts.AxisBound.docx")
+        chart = (doc.get_child(aw.NodeType.SHAPE, 0, True).as_shape()).chart
+        self.assertFalse(chart.axis_x.scaling.minimum.is_auto)
+        self.assertEqual(0, chart.axis_x.scaling.minimum.value)
+        self.assertEqual(10, chart.axis_x.scaling.maximum.value)
+        self.assertFalse(chart.axis_y.scaling.minimum.is_auto)
+        self.assertEqual(0, chart.axis_y.scaling.minimum.value)
+        self.assertEqual(10, chart.axis_y.scaling.maximum.value)
+        chart = (doc.get_child(aw.NodeType.SHAPE, 1, True).as_shape()).chart
+        self.assertFalse(chart.axis_x.scaling.minimum.is_auto)
+        self.assertEqual(aw.drawing.charts.AxisBound(datetime=datetime.datetime(1980,1,1)), chart.axis_x.scaling.minimum)
+        self.assertEqual(aw.drawing.charts.AxisBound(datetime=datetime.datetime(1990,1,1)), chart.axis_x.scaling.maximum)
+        self.assertTrue(chart.axis_y.scaling.minimum.is_auto)
 
     def test_chart_legend(self):
         #ExStart
@@ -545,6 +607,7 @@ class ExCharts(ApiExampleBase):
         #ExFor:Stroke.back_color
         #ExFor:Stroke.visible
         #ExFor:Stroke.transparency
+        #ExFor:PresetTexture
         #ExFor:Fill.preset_textured(PresetTexture)
         #ExSummary:Show how to set marker formatting.
         doc = aw.Document()
@@ -641,6 +704,7 @@ class ExCharts(ApiExampleBase):
 
     def test_legend_font(self):
         #ExStart:LegendFont
+        #ExFor:ChartLegendEntry
         #ExFor:ChartLegendEntry.font
         #ExFor:ChartLegend.font
         #ExSummary:Shows how to work with a legend font.
@@ -674,6 +738,7 @@ class ExCharts(ApiExampleBase):
 
     def test_populate_chart_with_data(self):
         #ExStart
+        #ExFor:ChartXValue
         #ExFor:ChartXValue.from_double(float)
         #ExFor:ChartYValue.from_double(float)
         #ExFor:ChartSeries.add(ChartXValue,ChartYValue)
@@ -860,6 +925,7 @@ class ExCharts(ApiExampleBase):
 
     def test_data_table(self):
         #ExStart:DataTable
+        #ExFor:Chart.data_table
         #ExFor:ChartDataTable
         #ExFor:ChartDataTable.show
         #ExSummary:Shows how to show data table with chart series data.
@@ -887,10 +953,12 @@ class ExCharts(ApiExampleBase):
 
     def test_chart_format(self):
         #ExStart:ChartFormat
+        #ExFor:ChartFormat
         #ExFor:Chart.format
         #ExFor:ChartTitle.format
         #ExFor:ChartAxisTitle.format
         #ExFor:ChartLegend.format
+        #ExFor:Fill.solid(Color)
         #ExSummary:Shows how to use chart formating.
         doc = aw.Document()
         builder = aw.DocumentBuilder(doc)
@@ -923,3 +991,216 @@ class ExCharts(ApiExampleBase):
         self.assertEqual(aspose.pydrawing.Color.light_goldenrod_yellow.to_argb(), chart.title.format.fill.color.to_argb())
         self.assertEqual(aspose.pydrawing.Color.light_goldenrod_yellow.to_argb(), chart.axis_x.title.format.fill.color.to_argb())
         self.assertEqual(aspose.pydrawing.Color.light_goldenrod_yellow.to_argb(), chart.legend.format.fill.color.to_argb())
+
+    def test_secondary_axis(self):
+        #ExStart:SecondaryAxis
+        #ExFor:ChartSeriesGroup
+        #ExFor:ChartSeriesGroup.axis_group
+        #ExFor:ChartSeriesGroup.axis_x
+        #ExFor:ChartSeriesGroup.axis_y
+        #ExFor:ChartSeriesGroup.series
+        #ExFor:ChartSeriesGroupCollection
+        #ExFor:ChartSeriesGroupCollection.add(ChartSeriesType)
+        #ExFor:AxisGroup
+        #ExSummary:Shows how to work with the secondary axis of chart.
+        doc = aw.Document()
+        builder = aw.DocumentBuilder(doc)
+        shape = builder.insert_chart(chart_type=aw.drawing.charts.ChartType.LINE, width=450, height=250)
+        chart = shape.chart
+        series = chart.series
+        # Delete default generated series.
+        series.clear()
+        categories = ["Category 1", "Category 2", "Category 3"]
+        series.add(series_name="Series 1 of primary series group", categories=categories, values=[2, 3, 4])
+        series.add(series_name="Series 2 of primary series group", categories=categories, values=[5, 2, 3])
+        # Create an additional series group, also of the line type.
+        new_series_group = chart.series_groups.add(aw.drawing.charts.ChartSeriesType.LINE)
+        # Specify the use of secondary axes for the new series group.
+        new_series_group.axis_group = aw.drawing.charts.AxisGroup.SECONDARY
+        # Hide the secondary X axis.
+        new_series_group.axis_x.hidden = True
+        # Define title of the secondary Y axis.
+        new_series_group.axis_y.title.show = True
+        new_series_group.axis_y.title.text = "Secondary Y axis"
+        # Add a series to the new series group.
+        series3 = new_series_group.series.add(series_name="Series of secondary series group", categories=categories, values=[13, 11, 16])
+        series3.format.stroke.weight = 3.5
+        doc.save(file_name=ARTIFACTS_DIR + "Charts.SecondaryAxis.docx")
+        #ExEnd:SecondaryAxis
+
+    def test_configure_gap_overlap(self):
+        #ExStart:ConfigureGapOverlap
+        #ExFor:Chart.series_groups
+        #ExFor:ChartSeriesGroup.gap_width
+        #ExFor:ChartSeriesGroup.overlap
+        #ExSummary:Show how to configure gap width and overlap.
+        doc = aw.Document()
+        builder = aw.DocumentBuilder(doc)
+        shape = builder.insert_chart(chart_type=aw.drawing.charts.ChartType.COLUMN, width=450, height=250)
+        series_group = shape.chart.series_groups[0]
+        # Set column gap width and overlap.
+        series_group.gap_width = 450
+        series_group.overlap = -75
+        doc.save(file_name=ARTIFACTS_DIR + "Charts.ConfigureGapOverlap.docx")
+        #ExEnd:ConfigureGapOverlap
+
+    def test_bubble_scale(self):
+        #ExStart:BubbleScale
+        #ExFor:ChartSeriesGroup.bubble_scale
+        #ExSummary:Show how to set size of the bubbles.
+        doc = aw.Document()
+        builder = aw.DocumentBuilder(doc)
+        # Insert a bubble 3D chart.
+        shape = builder.insert_chart(chart_type=aw.drawing.charts.ChartType.BUBBLE_3D, width=450, height=250)
+        series_group = shape.chart.series_groups[0]
+        # Set bubble scale to 200%.
+        series_group.bubble_scale = 200
+        doc.save(file_name=ARTIFACTS_DIR + "Charts.BubbleScale.docx")
+        #ExEnd:BubbleScale
+
+    def test_remove_secondary_axis(self):
+        #ExStart:RemoveSecondaryAxis
+        #ExFor:ChartSeriesGroupCollection.count
+        #ExFor:ChartSeriesGroupCollection.__getitem__(int)
+        #ExFor:ChartSeriesGroupCollection.remove_at(int)
+        #ExSummary:Show how to remove secondary axis.
+        doc = aw.Document(file_name=MY_DIR + "Combo chart.docx")
+        shape = doc.get_child(aw.NodeType.SHAPE, 0, True).as_shape()
+        chart = shape.chart
+        series_groups = chart.series_groups
+        # Find secondary axis and remove from the collection.
+        i = 0
+        while i < series_groups.count:
+            if series_groups[i].axis_group == aw.drawing.charts.AxisGroup.SECONDARY:
+                series_groups.remove_at(i)
+            i += 1
+        #ExEnd:RemoveSecondaryAxis
+
+    def test_treemap_chart(self):
+        raise NotImplementedError("Unsupported target type System.Globalization.CultureInfo")
+
+    def test_sunburst_chart(self):
+        raise NotImplementedError("ignored method body")
+
+    def test_histogram_chart(self):
+        #ExStart:HistogramChart
+        #ExFor:ChartSeriesCollection.add(str,List[float])
+        #ExSummary:Shows how to create histogram chart.
+        doc = aw.Document()
+        builder = aw.DocumentBuilder(doc)
+        # Insert a Histogram chart.
+        shape = builder.insert_chart(chart_type=aw.drawing.charts.ChartType.HISTOGRAM, width=450, height=450)
+        chart = shape.chart
+        chart.title.text = "Avg Temperature since 1991"
+        # Delete default generated series.
+        chart.series.clear()
+        # Add a series.
+        chart.series.add(series_name="Avg Temperature", x_values=[51.8, 53.6, 50.3, 54.7, 53.9, 54.3, 53.4, 52.9, 53.3, 53.7, 53.8, 52, 55, 52.1, 53.4, 53.8, 53.8, 51.9, 52.1, 52.7, 51.8, 56.6, 53.3, 55.6, 56.3, 56.2, 56.1, 56.2, 53.6, 55.7, 56.3, 55.9, 55.6])
+        doc.save(file_name=ARTIFACTS_DIR + "Charts.Histogram.docx")
+        #ExEnd:HistogramChart
+
+    def test_pareto_chart(self):
+        #ExStart:ParetoChart
+        #ExFor:ChartSeriesCollection.add(str,List[str],List[float])
+        #ExSummary:Shows how to create pareto chart.
+        doc = aw.Document()
+        builder = aw.DocumentBuilder(doc)
+        # Insert a Pareto chart.
+        shape = builder.insert_chart(chart_type=aw.drawing.charts.ChartType.PARETO, width=450, height=450)
+        chart = shape.chart
+        chart.title.text = "Best-Selling Car"
+        # Delete default generated series.
+        chart.series.clear()
+        # Add a series.
+        chart.series.add(series_name="Best-Selling Car", categories=["Tesla Model Y", "Toyota Corolla", "Toyota RAV4", "Ford F-Series", "Honda CR-V"], values=[1.43, 0.91, 1.17, 0.98, 0.85])
+        doc.save(file_name=ARTIFACTS_DIR + "Charts.Pareto.docx")
+        #ExEnd:ParetoChart
+
+    def test_box_and_whisker_chart(self):
+        #ExStart:BoxAndWhiskerChart
+        #ExFor:ChartSeriesCollection.add(str,List[str],List[float])
+        #ExSummary:Shows how to create box and whisker chart.
+        doc = aw.Document()
+        builder = aw.DocumentBuilder(doc)
+        # Insert a Box & Whisker chart.
+        shape = builder.insert_chart(chart_type=aw.drawing.charts.ChartType.BOX_AND_WHISKER, width=450, height=450)
+        chart = shape.chart
+        chart.title.text = "Points by Years"
+        # Delete default generated series.
+        chart.series.clear()
+        # Add a series.
+        series = chart.series.add(series_name="Points by Years", categories=["WC", "WC", "WC", "WC", "WC", "WC", "WC", "WC", "WC", "WC", "NR", "NR", "NR", "NR", "NR", "NR", "NR", "NR", "NR", "NR", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA"], values=[91, 80, 100, 77, 90, 104, 105, 118, 120, 101, 114, 107, 110, 60, 79, 78, 77, 102, 101, 113, 94, 93, 84, 71, 80, 103, 80, 94, 100, 101])
+        # Show data labels.
+        series.has_data_labels = True
+        doc.save(file_name=ARTIFACTS_DIR + "Charts.BoxAndWhisker.docx")
+        #ExEnd:BoxAndWhiskerChart
+
+    def test_waterfall_chart(self):
+        #ExStart:WaterfallChart
+        #ExFor:ChartSeriesCollection.add(str,List[str],List[float],List[bool])
+        #ExSummary:Shows how to create waterfall chart.
+        doc = aw.Document()
+        builder = aw.DocumentBuilder(doc)
+        # Insert a Waterfall chart.
+        shape = builder.insert_chart(chart_type=aw.drawing.charts.ChartType.WATERFALL, width=450, height=450)
+        chart = shape.chart
+        chart.title.text = "New Zealand GDP"
+        # Delete default generated series.
+        chart.series.clear()
+        # Add a series.
+        series = chart.series.add(series_name="New Zealand GDP", categories=["2018", "2019 growth", "2020 growth", "2020", "2021 growth", "2022 growth", "2022"], values=[100, 0.57, -0.25, 100.32, 20.22, -2.92, 117.62], is_subtotal=[True, False, False, True, False, False, True])
+        # Show data labels.
+        series.has_data_labels = True
+        doc.save(file_name=ARTIFACTS_DIR + "Charts.Waterfall.docx")
+        #ExEnd:WaterfallChart
+
+    def test_funnel_chart(self):
+        raise NotImplementedError("Unsupported target type System.Globalization.CultureInfo")
+
+    def test_label_orientation_rotation(self):
+        #ExStart:LabelOrientationRotation
+        #ExFor:ChartDataLabelCollection.orientation
+        #ExFor:ChartDataLabelCollection.rotation
+        #ExFor:ChartDataLabel.rotation
+        #ExFor:ChartDataLabel.orientation
+        #ExFor:ShapeTextOrientation
+        #ExSummary:Shows how to change orientation and rotation for data labels.
+        doc = aw.Document()
+        builder = aw.DocumentBuilder(doc)
+        shape = builder.insert_chart(chart_type=aw.drawing.charts.ChartType.COLUMN, width=432, height=252)
+        series = shape.chart.series[0]
+        data_labels = series.data_labels
+        # Show data labels.
+        series.has_data_labels = True
+        data_labels.show_value = True
+        data_labels.show_category_name = True
+        # Define data label shape.
+        data_labels.format.shape_type = aw.drawing.charts.ChartShapeType.UP_ARROW
+        data_labels.format.stroke.fill.solid(aspose.pydrawing.Color.dark_blue)
+        # Set data label orientation and rotation for the entire series.
+        data_labels.orientation = aw.drawing.ShapeTextOrientation.VERTICAL_FAR_EAST
+        data_labels.rotation = -45
+        # Change orientation and rotation of the first data label.
+        data_labels[0].orientation = aw.drawing.ShapeTextOrientation.HORIZONTAL
+        data_labels[0].rotation = 45
+        doc.save(file_name=ARTIFACTS_DIR + "Charts.LabelOrientationRotation.docx")
+        #ExEnd:LabelOrientationRotation
+
+    def test_tick_labels_orientation_rotation(self):
+        #ExStart:TickLabelsOrientationRotation
+        #ExFor:AxisTickLabels.rotation
+        #ExFor:AxisTickLabels.orientation
+        #ExSummary:Shows how to change orientation and rotation for axis tick labels.
+        doc = aw.Document()
+        builder = aw.DocumentBuilder(doc)
+        # Insert a column chart.
+        shape = builder.insert_chart(chart_type=aw.drawing.charts.ChartType.COLUMN, width=432, height=252)
+        x_tick_labels = shape.chart.axis_x.tick_labels
+        y_tick_labels = shape.chart.axis_y.tick_labels
+        # Set axis tick label orientation and rotation.
+        x_tick_labels.orientation = aw.drawing.ShapeTextOrientation.VERTICAL_FAR_EAST
+        x_tick_labels.rotation = -30
+        y_tick_labels.orientation = aw.drawing.ShapeTextOrientation.HORIZONTAL
+        y_tick_labels.rotation = 45
+        doc.save(file_name=ARTIFACTS_DIR + "Charts.TickLabelsOrientationRotation.docx")
+        #ExEnd:TickLabelsOrientationRotation

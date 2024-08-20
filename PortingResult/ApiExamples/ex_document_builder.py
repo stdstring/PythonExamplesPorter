@@ -1433,6 +1433,10 @@ class ExDocumentBuilder(ApiExampleBase):
         self.assertEqual(aspose.pydrawing.Color.red.to_argb(), dst_doc.first_section.body.paragraphs[1].runs[0].font.color.to_argb())
 
     def test_emphases_warning_source_markdown(self):
+        #ExStart
+        #ExFor:WarningInfo.source
+        #ExFor:WarningSource
+        #ExSummary:Shows how to work with the warning source.
         doc = aw.Document(file_name=MY_DIR + "Emphases markdown warning.docx")
         warnings = aw.WarningInfoCollection()
         doc.warning_callback = warnings
@@ -1440,6 +1444,7 @@ class ExDocumentBuilder(ApiExampleBase):
         for warning_info in warnings:
             if warning_info.source == aw.WarningSource.MARKDOWN:
                 self.assertEqual("The (*, 0:11) cannot be properly written into Markdown.", warning_info.description)
+        #ExEnd
 
     def test_do_not_ignore_header_footer(self):
         #ExStart
@@ -1447,6 +1452,10 @@ class ExDocumentBuilder(ApiExampleBase):
         #ExSummary:Shows how to specifies ignoring or not source formatting of headers/footers content.
         dst_doc = aw.Document(file_name=MY_DIR + "Document.docx")
         src_doc = aw.Document(file_name=MY_DIR + "Header and footer types.docx")
+        # If 'IgnoreHeaderFooter' is false then the original formatting for header/footer content
+        # from "Header and footer types.docx" will be used.
+        # If 'IgnoreHeaderFooter' is true then the formatting for header/footer content
+        # from "Document.docx" will be used.
         import_format_options = aw.ImportFormatOptions()
         import_format_options.ignore_header_footer = False
         dst_doc.append_document(src_doc=src_doc, import_format_mode=aw.ImportFormatMode.KEEP_SOURCE_FORMATTING, import_format_options=import_format_options)
@@ -1486,6 +1495,7 @@ class ExDocumentBuilder(ApiExampleBase):
         #ExStart
         #ExFor:Run.is_phonetic_guide
         #ExFor:Run.phonetic_guide
+        #ExFor:PhoneticGuide
         #ExFor:PhoneticGuide.base_text
         #ExFor:PhoneticGuide.ruby_text
         #ExSummary:Shows how to get properties of the phonetic guide.
@@ -1493,6 +1503,7 @@ class ExDocumentBuilder(ApiExampleBase):
         runs = doc.first_section.body.first_paragraph.runs
         # Use phonetic guide in the Asian text.
         self.assertEqual(True, runs[0].is_phonetic_guide)
-        self.assertEqual("base", runs[0].phonetic_guide.base_text)
-        self.assertEqual("ruby", runs[0].phonetic_guide.ruby_text)
+        phonetic_guide = runs[0].phonetic_guide
+        self.assertEqual("base", phonetic_guide.base_text)
+        self.assertEqual("ruby", phonetic_guide.ruby_text)
         #ExEnd

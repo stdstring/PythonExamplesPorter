@@ -14,7 +14,7 @@ namespace PythonExamplesPorterApp.Expressions
         {
             _model = model;
             _expressionConverter = new ExpressionConverter(model, appData, settings);
-            _externalEntityResolver = new ExternalEntityResolver(model, appData);
+            _externalEntityResolver = new ExternalEntityResolver(model, appData, settings);
         }
 
         public ConvertResult Convert(BinaryExpressionSyntax expression)

@@ -7,9 +7,11 @@
 # "as is", without warranty of any kind, either expressed or implied.
 #####################################
 
+import aspose.words as aw
+import unittest
 from api_example_base import ApiExampleBase
 
 
 class ExBuildVersion(ApiExampleBase):
     def test_print_build_version_info(self):
-        raise NotImplementedError("Unsupported target type System.Console")
+        raise NotImplementedError("Unsupported target type System.Text.RegularExpressions.Regex")

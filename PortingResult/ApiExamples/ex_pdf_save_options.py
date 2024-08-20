@@ -10,6 +10,7 @@
 import aspose.words as aw
 import aspose.words.digitalsignatures
 import aspose.words.saving
+import datetime
 import unittest
 from api_example_base import ApiExampleBase, ARTIFACTS_DIR, MY_DIR
 
@@ -223,10 +224,10 @@ class ExPdfSaveOptions(ApiExampleBase):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_pdf_digital_signature(self):
-        raise NotImplementedError("Unsupported ctor for type DateTime")
+        raise NotImplementedError("Unsupported target type System.DateTime")
 
     def test_pdf_digital_signature_timestamp(self):
-        raise NotImplementedError("Unsupported target type System.DateTime")
+        raise NotImplementedError("Unsupported target type System.TimeSpan")
 
     def test_render_metafile(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
@@ -313,3 +314,16 @@ class ExPdfSaveOptions(ApiExampleBase):
         save_options.page_layout = aw.saving.PdfPageLayout.TWO_PAGE_LEFT
         doc.save(file_name=ARTIFACTS_DIR + "PdfSaveOptions.PageLayout.pdf", save_options=save_options)
         #ExEnd:PageLayout
+
+    def test_sdt_tag_as_form_field_name(self):
+        #ExStart:SdtTagAsFormFieldName
+        #ExFor:PdfSaveOptions.use_sdt_tag_as_form_field_name
+        #ExSummary:Shows how to use SDT control Tag or Id property as a name of form field in PDF.
+        doc = aw.Document(file_name=MY_DIR + "Form fields.docx")
+        save_options = aw.saving.PdfSaveOptions()
+        save_options.preserve_form_fields = True
+        # When set to 'false', SDT control Id property is used as a name of form field in PDF.
+        # When set to 'true', SDT control Tag property is used as a name of form field in PDF.
+        save_options.use_sdt_tag_as_form_field_name = True
+        doc.save(file_name=ARTIFACTS_DIR + "PdfSaveOptions.SdtTagAsFormFieldName.pdf", save_options=save_options)
+        #ExEnd:SdtTagAsFormFieldName

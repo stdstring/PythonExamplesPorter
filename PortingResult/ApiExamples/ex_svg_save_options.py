@@ -30,12 +30,17 @@ class ExSvgSaveOptions(ApiExampleBase):
         #ExEnd
 
     def test_save_office_math(self):
-        #ExStart:SaveOfficeMath
-        #ExFor:NodeRendererBase.save(str,SvgSaveOptions)
-        #ExSummary:Shows how to pass save options when rendering office math.
-        doc = aw.Document(file_name=MY_DIR + "Office math.docx")
-        math = doc.get_child(aw.NodeType.OFFICE_MATH, 0, True).as_office_math()
-        options = aw.saving.SvgSaveOptions()
-        options.text_output_mode = aw.saving.SvgTextOutputMode.USE_PLACED_GLYPHS
-        math.get_math_renderer().save(file_name=ARTIFACTS_DIR + "SvgSaveOptions.Output.svg", save_options=options)
-        #ExEnd:SaveOfficeMath
+        raise NotImplementedError("Unsupported statement type: UsingStatement")
+
+    def test_max_image_resolution(self):
+        #ExStart:MaxImageResolution
+        #ExFor:ShapeBase.soft_edge
+        #ExFor:SoftEdgeFormat.radius
+        #ExFor:SoftEdgeFormat.remove
+        #ExFor:SvgSaveOptions.max_image_resolution
+        #ExSummary:Shows how to set limit for image resolution.
+        doc = aw.Document(file_name=MY_DIR + "Rendering.docx")
+        save_options = aw.saving.SvgSaveOptions()
+        save_options.max_image_resolution = 72
+        doc.save(file_name=ARTIFACTS_DIR + "SvgSaveOptions.MaxImageResolution.svg", save_options=save_options)
+        #ExEnd:MaxImageResolution

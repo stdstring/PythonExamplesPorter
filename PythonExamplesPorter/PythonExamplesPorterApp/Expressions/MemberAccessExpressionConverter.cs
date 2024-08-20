@@ -15,7 +15,7 @@ namespace PythonExamplesPorterApp.Expressions
             _appData = appData;
             _settings = settings;
             _expressionConverter = new ExpressionConverter(model, appData, settings);
-            _externalEntityResolver = new ExternalEntityResolver(model, appData);
+            _externalEntityResolver = new ExternalEntityResolver(model, appData, settings);
         }
 
         public ConvertResult Convert(MemberAccessExpressionSyntax expression)

@@ -52,7 +52,7 @@ class ExLists(ApiExampleBase):
         raise NotImplementedError("ignored method body")
 
     def test_list_document(self):
-        raise NotImplementedError("Unsupported target type System.Console")
+        raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")
 
     def test_create_list_restart_after_higher(self):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
@@ -83,7 +83,7 @@ class ExLists(ApiExampleBase):
         doc = aw.Document(file_name=ARTIFACTS_DIR + "Lists.CreatePictureBullet.docx")
         self.assertTrue(doc.lists[0].list_levels[0].image_data.has_image)
 
-    def test_custom_number_style_format(self):
+    def test_get_custom_number_style_format(self):
         raise NotImplementedError("Unsupported expression: ParenthesizedLambdaExpression")
 
     def test_has_same_template(self):
@@ -94,3 +94,20 @@ class ExLists(ApiExampleBase):
         self.assertTrue(doc.lists[0].has_same_template(doc.lists[1]))
         self.assertFalse(doc.lists[1].has_same_template(doc.lists[2]))
         #ExEnd
+
+    def test_set_custom_number_style_format(self):
+        #ExStart:SetCustomNumberStyleFormat
+        #ExFor:ListLevel.custom_number_style_format
+        #ExSummary:Shows how to set customer number style format.
+        doc = aw.Document(file_name=MY_DIR + "List with leading zero.docx")
+        doc.update_list_labels()
+        paras = doc.first_section.body.paragraphs
+        self.assertEqual("001.", paras[0].list_label.label_string)
+        self.assertEqual("0001.", paras[1].list_label.label_string)
+        self.assertEqual("0002.", paras[2].list_label.label_string)
+        paras[1].list_format.list_level.custom_number_style_format = "001, 002, 003, ..."
+        doc.update_list_labels()
+        self.assertEqual("001.", paras[0].list_label.label_string)
+        self.assertEqual("001.", paras[1].list_label.label_string)
+        self.assertEqual("002.", paras[2].list_label.label_string)
+        #ExEnd:SetCustomNumberStyleFormat

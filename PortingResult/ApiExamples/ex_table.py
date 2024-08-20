@@ -339,7 +339,21 @@ class ExTable(ApiExampleBase):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_print_table_range(self):
-        raise NotImplementedError("Unsupported target type System.Console")
+        doc = aw.Document(file_name=MY_DIR + "Tables.docx")
+        table = doc.first_section.body.tables[0]
+        # The range text will include control characters such as "\a" for a cell.
+        # You can call ToString on the desired node to retrieve the plain text content.
+        # Print the plain text range of the table to the screen.
+        print("Contents of the table: ")
+        print(table.range.text)
+        # Print the contents of the second row to the screen.
+        print("\nContents of the row: ")
+        print(table.rows[1].range.text)
+        # Print the contents of the last cell in the table to the screen.
+        print("\nContents of the cell: ")
+        print(table.last_row.last_cell.range.text)
+        self.assertEqual("\aColumn 1\aColumn 2\aColumn 3\aColumn 4\a\a", table.rows[1].range.text)
+        self.assertEqual("Cell 12 contents\a", table.last_row.last_cell.range.text)
 
     def test_clone_table(self):
         doc = aw.Document(file_name=MY_DIR + "Tables.docx")
@@ -605,4 +619,20 @@ class ExTable(ApiExampleBase):
         raise NotImplementedError("Unsupported expression: SimpleLambdaExpression")
 
     def test_get_text_from_cells(self):
-        raise NotImplementedError("Unsupported target type System.Console")
+        #ExStart
+        #ExFor:Row.next_row
+        #ExFor:Row.previous_row
+        #ExFor:Cell.next_cell
+        #ExFor:Cell.previous_cell
+        #ExSummary:Shows how to enumerate through all table cells.
+        doc = aw.Document(file_name=MY_DIR + "Tables.docx")
+        table = doc.first_section.body.tables[0]
+        # Enumerate through all cells of the table.
+        row = table.first_row
+        while row != None:
+            cell = row.first_cell
+            while cell != None:
+                print(cell.get_text())
+                cell = cell.next_cell
+            row = row.next_row
+        #ExEnd

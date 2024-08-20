@@ -13,6 +13,7 @@ import aspose.words.drawing
 import aspose.words.fields
 import aspose.words.lists
 import aspose.words.notes
+import datetime
 import unittest
 from api_example_base import ApiExampleBase, ARTIFACTS_DIR, IMAGE_DIR, MY_DIR
 
@@ -91,7 +92,7 @@ class ExField(ApiExampleBase):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_field_format(self):
-        raise NotImplementedError("Unsupported target type System.Console")
+        raise NotImplementedError("Unsupported statement type: UsingStatement")
 
     def test_unlink(self):
         raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")
@@ -179,7 +180,7 @@ class ExField(ApiExampleBase):
         raise NotImplementedError("ignored method body")
 
     def test_toc_seq_prefix(self):
-        raise NotImplementedError("Unsupported target type System.Console")
+        raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_toc_seq_numbering(self):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
@@ -254,10 +255,10 @@ class ExField(ApiExampleBase):
         raise NotImplementedError("Unsupported target type System.Text.RegularExpressions.Regex")
 
     def test_field_create_date(self):
-        raise NotImplementedError("Unsupported ctor for type DateTime")
+        raise NotImplementedError("Unsupported target type System.DateTime")
 
     def test_field_save_date(self):
-        raise NotImplementedError("Unsupported target type System.DateTime")
+        raise NotImplementedError("Unsupported target type System.Text.RegularExpressions.Regex")
 
     def test_field_builder(self):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
@@ -466,6 +467,7 @@ class ExField(ApiExampleBase):
 
     def test_set_field_index_format(self):
         #ExStart
+        #ExFor:FieldIndexFormat
         #ExFor:FieldOptions.field_index_format
         #ExSummary:Shows how to formatting FieldIndex fields.
         doc = aw.Document()
@@ -481,4 +483,4 @@ class ExField(ApiExampleBase):
         #ExEnd
 
     def test_bibliography_sources(self):
-        raise NotImplementedError("Unsupported target type System.Collections.Generic.ICollection")
+        raise NotImplementedError("Unsupported target type System.Collections.Generic.IList")

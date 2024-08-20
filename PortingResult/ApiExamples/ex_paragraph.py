@@ -10,6 +10,7 @@
 import aspose.pydrawing
 import aspose.words as aw
 import aspose.words.fields
+import datetime
 import unittest
 from api_example_base import ApiExampleBase, ARTIFACTS_DIR, MY_DIR
 
@@ -19,7 +20,7 @@ class ExParagraph(ApiExampleBase):
         raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")
 
     def test_append_field(self):
-        raise NotImplementedError("Unsupported target type System.DateTime")
+        raise NotImplementedError("Unsupported ctor for type TimeSpan")
 
     def test_insert_field(self):
         raise NotImplementedError("Forbidden object initializer")
@@ -130,7 +131,37 @@ class ExParagraph(ApiExampleBase):
         raise NotImplementedError("Unsupported expression: SimpleLambdaExpression")
 
     def test_is_revision(self):
-        raise NotImplementedError("Unsupported target type System.DateTime")
+        #ExStart
+        #ExFor:Paragraph.is_delete_revision
+        #ExFor:Paragraph.is_insert_revision
+        #ExSummary:Shows how to work with revision paragraphs.
+        doc = aw.Document()
+        body = doc.first_section.body
+        para = body.first_paragraph
+        para.append_child(aw.Run(doc=doc, text="Paragraph 1. "))
+        body.append_paragraph("Paragraph 2. ")
+        body.append_paragraph("Paragraph 3. ")
+        # The above paragraphs are not revisions.
+        # Paragraphs that we add after starting revision tracking will register as "Insert" revisions.
+        doc.start_track_revisions(author="John Doe", date_time=datetime.datetime.now())
+        para = body.append_paragraph("Paragraph 4. ")
+        self.assertTrue(para.is_insert_revision)
+        # Paragraphs that we remove after starting revision tracking will register as "Delete" revisions.
+        paragraphs = body.paragraphs
+        self.assertEqual(4, paragraphs.count)
+        para = paragraphs[2]
+        para.remove()
+        # Such paragraphs will remain until we either accept or reject the delete revision.
+        # Accepting the revision will remove the paragraph for good,
+        # and rejecting the revision will leave it in the document as if we never deleted it.
+        self.assertEqual(4, paragraphs.count)
+        self.assertTrue(para.is_delete_revision)
+        # Accept the revision, and then verify that the paragraph is gone.
+        doc.accept_all_revisions()
+        self.assertEqual(3, paragraphs.count)
+        self.assertEqual(0, para.count)
+        self.assertEqual("Paragraph 1. \r" + "Paragraph 2. \r" + "Paragraph 4.", doc.get_text().strip())
+        #ExEnd
 
     def test_break_is_style_separator(self):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")

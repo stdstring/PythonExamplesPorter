@@ -150,6 +150,7 @@ class ExShape(ApiExampleBase):
 
     def test_texture_fill(self):
         #ExStart
+        #ExFor:Fill.preset_texture
         #ExFor:Fill.texture_alignment
         #ExFor:TextureAlignment
         #ExSummary:Shows how to fill and tiling the texture inside the shape.
@@ -164,10 +165,11 @@ class ExShape(ApiExampleBase):
         save_options = aw.saving.OoxmlSaveOptions()
         save_options.compliance = aw.saving.OoxmlCompliance.ISO29500_2008_STRICT
         doc.save(file_name=ARTIFACTS_DIR + "Shape.TextureFill.docx", save_options=save_options)
-        #ExEnd
         doc = aw.Document(file_name=ARTIFACTS_DIR + "Shape.TextureFill.docx")
         shape = doc.get_child(aw.NodeType.SHAPE, 0, True).as_shape()
         self.assertEqual(aw.drawing.TextureAlignment.TOP_RIGHT, shape.fill.texture_alignment)
+        self.assertEqual(aw.drawing.PresetTexture.CANVAS, shape.fill.preset_texture)
+        #ExEnd
 
     def test_gradient_fill(self):
         #ExStart
@@ -175,6 +177,7 @@ class ExShape(ApiExampleBase):
         #ExFor:Fill.one_color_gradient(GradientStyle,GradientVariant,float)
         #ExFor:Fill.two_color_gradient(Color,Color,GradientStyle,GradientVariant)
         #ExFor:Fill.two_color_gradient(GradientStyle,GradientVariant)
+        #ExFor:Fill.back_color
         #ExFor:Fill.gradient_style
         #ExFor:Fill.gradient_variant
         #ExFor:Fill.gradient_angle
@@ -230,6 +233,7 @@ class ExShape(ApiExampleBase):
         #ExFor:GradientStopCollection.remove(GradientStop)
         #ExFor:GradientStopCollection.__getitem__(int)
         #ExFor:GradientStopCollection.count
+        #ExFor:GradientStop
         #ExFor:GradientStop.__init__(Color,float)
         #ExFor:GradientStop.__init__(Color,float,float)
         #ExFor:GradientStop.base_color
@@ -284,7 +288,23 @@ class ExShape(ApiExampleBase):
         self.assertAlmostEqual(0.3, gradient_stops[1].transparency, delta=0.01)
 
     def test_fill_pattern(self):
-        raise NotImplementedError("Unsupported target type System.Console")
+        #ExStart
+        #ExFor:PatternType
+        #ExFor:Fill.pattern
+        #ExFor:Fill.patterned(PatternType)
+        #ExFor:Fill.patterned(PatternType,Color,Color)
+        #ExSummary:Shows how to set pattern for a shape.
+        doc = aw.Document(file_name=MY_DIR + "Shape stroke pattern border.docx")
+        shape = doc.get_child(aw.NodeType.SHAPE, 0, True).as_shape()
+        fill = shape.fill
+        print("Pattern value is: {0}".format(fill.pattern))
+        # There are several ways specified fill to a pattern.
+        # 1 -  Apply pattern to the shape fill:
+        fill.patterned(pattern_type=aw.drawing.PatternType.DIAGONAL_BRICK)
+        # 2 -  Apply pattern with foreground and background colors to the shape fill:
+        fill.patterned(pattern_type=aw.drawing.PatternType.DIAGONAL_BRICK, fore_color=aspose.pydrawing.Color.aqua, back_color=aspose.pydrawing.Color.bisque)
+        doc.save(file_name=ARTIFACTS_DIR + "Shape.FillPattern.docx")
+        #ExEnd
 
     def test_fill_theme_color(self):
         #ExStart
@@ -527,7 +547,7 @@ class ExShape(ApiExampleBase):
         doc.save(file_name=ARTIFACTS_DIR + "Shape.TextBoxShapeType.docx")
 
     def test_create_link_between_text_boxes(self):
-        raise NotImplementedError("Unsupported target type System.Console")
+        raise NotImplementedError("Unsupported target type System.Collections.Generic.IEnumerable")
 
     def test_vertical_anchor(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
@@ -569,28 +589,28 @@ class ExShape(ApiExampleBase):
         office_math = doc.get_child(aw.NodeType.OFFICE_MATH, 0, True).as_office_math()
         renderer = aw.rendering.OfficeMathRenderer(office_math)
         # Verify the size of the image that the OfficeMath object will create when we render it.
-        self.assertAlmostEqual(119, renderer.size_in_points.width, delta=0.25)
-        self.assertAlmostEqual(13, renderer.size_in_points.height, delta=0.1)
-        self.assertAlmostEqual(119, renderer.bounds_in_points.width, delta=0.25)
-        self.assertAlmostEqual(13, renderer.bounds_in_points.height, delta=0.1)
+        self.assertAlmostEqual(122, renderer.size_in_points.width, delta=0.25)
+        self.assertAlmostEqual(13, renderer.size_in_points.height, delta=0.15)
+        self.assertAlmostEqual(122, renderer.bounds_in_points.width, delta=0.25)
+        self.assertAlmostEqual(13, renderer.bounds_in_points.height, delta=0.15)
         # Shapes with transparent parts may contain different values in the "OpaqueBoundsInPoints" properties.
-        self.assertAlmostEqual(119, renderer.opaque_bounds_in_points.width, delta=0.25)
+        self.assertAlmostEqual(122, renderer.opaque_bounds_in_points.width, delta=0.25)
         self.assertAlmostEqual(14.2, renderer.opaque_bounds_in_points.height, delta=0.1)
         # Get the shape size in pixels, with linear scaling to a specific DPI.
         bounds = renderer.get_bounds_in_pixels(scale=1, dpi=96)
-        self.assertEqual(159, bounds.width)
+        self.assertEqual(163, bounds.width)
         self.assertEqual(18, bounds.height)
         # Get the shape size in pixels, but with a different DPI for the horizontal and vertical dimensions.
         bounds = renderer.get_bounds_in_pixels(scale=1, horizontal_dpi=96, vertical_dpi=150)
-        self.assertEqual(159, bounds.width)
-        self.assertEqual(28, bounds.height)
+        self.assertEqual(163, bounds.width)
+        self.assertEqual(27, bounds.height)
         # The opaque bounds may vary here also.
         bounds = renderer.get_opaque_bounds_in_pixels(scale=1, dpi=96)
-        self.assertEqual(159, bounds.width)
-        self.assertEqual(18, bounds.height)
+        self.assertEqual(163, bounds.width)
+        self.assertEqual(19, bounds.height)
         bounds = renderer.get_opaque_bounds_in_pixels(scale=1, horizontal_dpi=96, vertical_dpi=150)
-        self.assertEqual(159, bounds.width)
-        self.assertEqual(30, bounds.height)
+        self.assertEqual(163, bounds.width)
+        self.assertEqual(29, bounds.height)
         #ExEnd
 
     def test_shape_types(self):
@@ -763,6 +783,7 @@ class ExShape(ApiExampleBase):
         #ExStart:TextBoxOleControl
         #ExFor:TextBoxControl
         #ExFor:TextBoxControl.text
+        #ExFor:TextBoxControl.type
         #ExSummary:Shows how to change text of the TextBox OLE control.
         doc = aw.Document(file_name=MY_DIR + "Textbox control.docm")
         shape = doc.get_child(aw.NodeType.SHAPE, 0, True).as_shape()
@@ -770,11 +791,13 @@ class ExShape(ApiExampleBase):
         self.assertEqual("Aspose.Words test", text_box_control.text)
         text_box_control.text = "Updated text"
         self.assertEqual("Updated text", text_box_control.text)
+        self.assertEqual(aw.drawing.ole.Forms2OleControlType.TEXTBOX, text_box_control.type)
         #ExEnd:TextBoxOleControl
 
     def test_glow(self):
         #ExStart:Glow
         #ExFor:ShapeBase.glow
+        #ExFor:GlowFormat
         #ExFor:GlowFormat.color
         #ExFor:GlowFormat.radius
         #ExFor:GlowFormat.transparency
@@ -800,6 +823,7 @@ class ExShape(ApiExampleBase):
     def test_reflection(self):
         #ExStart:Reflection
         #ExFor:ShapeBase.reflection
+        #ExFor:ReflectionFormat
         #ExFor:ReflectionFormat.size
         #ExFor:ReflectionFormat.blur
         #ExFor:ReflectionFormat.transparency
@@ -815,13 +839,135 @@ class ExShape(ApiExampleBase):
         doc.save(file_name=ARTIFACTS_DIR + "Shape.Reflection.docx")
         doc = aw.Document(file_name=ARTIFACTS_DIR + "Shape.Reflection.docx")
         shape = doc.get_child(aw.NodeType.SHAPE, 0, True).as_shape()
-        self.assertAlmostEqual(0.37, shape.reflection.transparency, delta=0.01)
-        self.assertAlmostEqual(0.48, shape.reflection.size, delta=0.01)
-        self.assertAlmostEqual(17.5, shape.reflection.blur, delta=0.01)
-        self.assertAlmostEqual(9.2, shape.reflection.distance, delta=0.01)
-        shape.reflection.remove()
-        self.assertEqual(0, shape.reflection.transparency)
-        self.assertEqual(0, shape.reflection.size)
-        self.assertEqual(0, shape.reflection.blur)
-        self.assertEqual(0, shape.reflection.distance)
+        reflection_format = shape.reflection
+        self.assertAlmostEqual(0.37, reflection_format.transparency, delta=0.01)
+        self.assertAlmostEqual(0.48, reflection_format.size, delta=0.01)
+        self.assertAlmostEqual(17.5, reflection_format.blur, delta=0.01)
+        self.assertAlmostEqual(9.2, reflection_format.distance, delta=0.01)
+        reflection_format.remove()
+        self.assertEqual(0, reflection_format.transparency)
+        self.assertEqual(0, reflection_format.size)
+        self.assertEqual(0, reflection_format.blur)
+        self.assertEqual(0, reflection_format.distance)
         #ExEnd:Reflection
+
+    def test_soft_edge(self):
+        #ExStart:SoftEdge
+        #ExFor:ShapeBase.soft_edge
+        #ExFor:SoftEdgeFormat
+        #ExFor:SoftEdgeFormat.radius
+        #ExFor:SoftEdgeFormat.remove
+        #ExSummary:Shows how to work with soft edge formatting.
+        builder = aw.DocumentBuilder()
+        shape = builder.insert_shape(shape_type=aw.drawing.ShapeType.RECTANGLE, width=200, height=200)
+        # Apply soft edge to the shape.
+        shape.soft_edge.radius = 30
+        builder.document.save(file_name=ARTIFACTS_DIR + "Shape.SoftEdge.docx")
+        # Load document with rectangle shape with soft edge.
+        doc = aw.Document(file_name=ARTIFACTS_DIR + "Shape.SoftEdge.docx")
+        shape = doc.get_child(aw.NodeType.SHAPE, 0, True).as_shape()
+        soft_edge_format = shape.soft_edge
+        # Check soft edge radius.
+        self.assertEqual(30, soft_edge_format.radius)
+        # Remove soft edge from the shape.
+        soft_edge_format.remove()
+        # Check radius of the removed soft edge.
+        self.assertEqual(0, soft_edge_format.radius)
+        #ExEnd:SoftEdge
+
+    def test_adjustments(self):
+        #ExStart:Adjustments
+        #ExFor:Shape.adjustments
+        #ExFor:AdjustmentCollection
+        #ExFor:AdjustmentCollection.count
+        #ExFor:AdjustmentCollection.__getitem__(int)
+        #ExFor:Adjustment
+        #ExFor:Adjustment.name
+        #ExFor:Adjustment.value
+        #ExSummary:Shows how to work with adjustment raw values.
+        doc = aw.Document(file_name=MY_DIR + "Rounded rectangle shape.docx")
+        shape = doc.get_child(aw.NodeType.SHAPE, 0, True).as_shape()
+        adjustments = shape.adjustments
+        self.assertEqual(1, adjustments.count)
+        adjustment = adjustments[0]
+        self.assertEqual("adj", adjustment.name)
+        self.assertEqual(16667, adjustment.value)
+        adjustment.value = 30000
+        doc.save(file_name=ARTIFACTS_DIR + "Shape.Adjustments.docx")
+        #ExEnd:Adjustments
+        doc = aw.Document(file_name=ARTIFACTS_DIR + "Shape.Adjustments.docx")
+        shape = doc.get_child(aw.NodeType.SHAPE, 0, True).as_shape()
+        adjustments = shape.adjustments
+        self.assertEqual(1, adjustments.count)
+        adjustment = adjustments[0]
+        self.assertEqual("adj", adjustment.name)
+        self.assertEqual(30000, adjustment.value)
+
+    def test_shadow_format_color(self):
+        #ExStart:ShadowFormatColor
+        #ExFor:ShapeBase.shadow_format
+        #ExFor:ShadowFormat
+        #ExFor:ShadowFormat.color
+        #ExFor:ShadowFormat.type
+        #ExSummary:Shows how to get shadow color.
+        doc = aw.Document(file_name=MY_DIR + "Shadow color.docx")
+        shape = doc.get_child(aw.NodeType.SHAPE, 0, True).as_shape()
+        shadow_format = shape.shadow_format
+        self.assertEqual(aspose.pydrawing.Color.red.to_argb(), shadow_format.color.to_argb())
+        self.assertEqual(aw.drawing.ShadowType.SHADOW_MIXED, shadow_format.type)
+        #ExEnd:ShadowFormatColor
+
+    def test_set_active_x_properties(self):
+        #ExStart:SetActiveXProperties
+        #ExFor:Forms2OleControl.fore_color
+        #ExFor:Forms2OleControl.back_color
+        #ExFor:Forms2OleControl.height
+        #ExFor:Forms2OleControl.width
+        #ExSummary:Shows how to set properties for ActiveX control.
+        doc = aw.Document(file_name=MY_DIR + "ActiveX controls.docx")
+        shape = doc.get_child(aw.NodeType.SHAPE, 0, True).as_shape()
+        ole_control = shape.ole_format.ole_control.as_forms2_ole_control()
+        ole_control.fore_color = aspose.pydrawing.Color.from_argb(23, 225, 53)
+        ole_control.back_color = aspose.pydrawing.Color.from_argb(51, 151, 244)
+        ole_control.height = 100.54
+        ole_control.width = 201.06
+        #ExEnd:SetActiveXProperties
+        self.assertEqual(aspose.pydrawing.Color.from_argb(23, 225, 53).to_argb(), ole_control.fore_color.to_argb())
+        self.assertEqual(aspose.pydrawing.Color.from_argb(51, 151, 244).to_argb(), ole_control.back_color.to_argb())
+        self.assertEqual(100.54, ole_control.height)
+        self.assertEqual(201.06, ole_control.width)
+
+    def test_select_radio_control(self):
+        #ExStart:SelectRadioControl
+        #ExFor:OptionButtonControl
+        #ExFor:OptionButtonControl.selected
+        #ExFor:OptionButtonControl.type
+        #ExSummary:Shows how to select radio button.
+        doc = aw.Document(file_name=MY_DIR + "Radio buttons.docx")
+        shape1 = doc.get_child(aw.NodeType.SHAPE, 0, True).as_shape()
+        option_button1 = shape1.ole_format.ole_control.as_option_button_control()
+        # Deselect selected first item.
+        option_button1.selected = False
+        shape2 = doc.get_child(aw.NodeType.SHAPE, 1, True).as_shape()
+        option_button2 = shape2.ole_format.ole_control.as_option_button_control()
+        # Select second option button.
+        option_button2.selected = True
+        self.assertEqual(aw.drawing.ole.Forms2OleControlType.OPTION_BUTTON, option_button1.type)
+        self.assertEqual(aw.drawing.ole.Forms2OleControlType.OPTION_BUTTON, option_button2.type)
+        doc.save(file_name=ARTIFACTS_DIR + "Shape.SelectRadioControl.docx")
+        #ExEnd:SelectRadioControl
+
+    def test_checked_check_box(self):
+        #ExStart:CheckedCheckBox
+        #ExFor:CheckBoxControl
+        #ExFor:CheckBoxControl.checked
+        #ExFor:CheckBoxControl.type
+        #ExFor:Forms2OleControlType
+        #ExSummary:Shows how to change state of the CheckBox control.
+        doc = aw.Document(file_name=MY_DIR + "ActiveX controls.docx")
+        shape = doc.get_child(aw.NodeType.SHAPE, 0, True).as_shape()
+        check_box_control = shape.ole_format.ole_control.as_check_box_control()
+        check_box_control.checked = True
+        self.assertEqual(True, check_box_control.checked)
+        self.assertEqual(aw.drawing.ole.Forms2OleControlType.CHECK_BOX, check_box_control.type)
+        #ExEnd:CheckedCheckBox

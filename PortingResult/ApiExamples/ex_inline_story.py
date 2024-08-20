@@ -12,6 +12,7 @@ import aspose.words as aw
 import aspose.words.drawing
 import aspose.words.notes
 import aspose.words.tables
+import datetime
 import unittest
 from api_example_base import ApiExampleBase, ARTIFACTS_DIR, MY_DIR
 
@@ -39,13 +40,13 @@ class ExInlineStory(ApiExampleBase):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_add_comment(self):
-        raise NotImplementedError("Unsupported target type System.DateTime")
+        raise NotImplementedError("ignored method body")
 
     def test_inline_story_revisions(self):
         raise NotImplementedError("Unsupported target type System.Collections.Generic.IEnumerable")
 
     def test_insert_inline_story_nodes(self):
-        raise NotImplementedError("Unsupported target type System.DateTime")
+        raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_delete_shapes(self):
         #ExStart

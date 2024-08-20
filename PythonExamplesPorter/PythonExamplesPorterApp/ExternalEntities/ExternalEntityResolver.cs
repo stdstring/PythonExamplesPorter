@@ -11,14 +11,14 @@ namespace PythonExamplesPorterApp.ExternalEntities
 {
     internal class ExternalEntityResolver
     {
-        public ExternalEntityResolver(SemanticModel model, AppData appData)
+        public ExternalEntityResolver(SemanticModel model, AppData appData, ExpressionConverterSettings settings)
         {
             _model = model;
             _appData = appData;
             _resolvers = new IExternalEntityResolver[]
             {
                 new KnownNamespacesEntityResolver(model, appData),
-                new SystemEntityResolver(model, _appData),
+                new SystemEntityResolver(model, _appData, settings),
                 new NUnitEntityResolver(model)
             };
         }
