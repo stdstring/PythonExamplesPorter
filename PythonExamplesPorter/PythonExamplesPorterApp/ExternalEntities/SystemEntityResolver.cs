@@ -20,8 +20,8 @@ namespace PythonExamplesPorterApp.ExternalEntities
             _systemDrawingSizeFResolver = new SystemDrawingSizeMemberResolver(model, appData, "SizeF");
             _systemDrawingRectangleResolver = new SystemDrawingRectangleMemberResolver(model, appData, "Rectangle");
             _systemDrawingRectangleFResolver = new SystemDrawingRectangleMemberResolver(model, appData, "RectangleF");
-            _systemDateTimeMemberResolver = new SystemDateTimeMemberResolver(model, appData);
-            _systemGuidMemberResolver = new SystemGuidMemberResolver(model, appData);
+            _systemDateTimeMemberResolver = new SystemDateTimeMemberResolver(model);
+            _systemGuidMemberResolver = new SystemGuidMemberResolver(model);
         }
 
         public OperationResult<MemberResolveData> ResolveCtor(ITypeSymbol sourceType, IReadOnlyList<ArgumentSyntax> argumentsData, ConvertedArguments argumentsRepresentation)
@@ -112,30 +112,31 @@ namespace PythonExamplesPorterApp.ExternalEntities
             switch (memberInfo.Symbol)
             {
                 case IMethodSymbol {Name: "WriteLine"}:
-                    return ResolveWriteLineMethod(data, representation);
+                    return ResolveWriteLineMethod(data);
                 default:
-                    return new OperationResult<MemberResolveData>(false, $"Unsupported member: System.Console.{memberName}");
+                    return new OperationResult<MemberResolveData>.Error($"Unsupported member: System.Console.{memberName}");
             }
         }
 
-        private OperationResult<MemberResolveData> ResolveWriteLineMethod(MemberData data, MemberRepresentation representation)
+        private OperationResult<MemberResolveData> ResolveWriteLineMethod(MemberData data)
         {
-            String member = String.Empty;
             switch (data.Arguments)
             {
                 case []:
-                    return new OperationResult<MemberResolveData>(false, "", new MemberResolveData("print()"));
+                    return new OperationResult<MemberResolveData>.Ok(new MemberResolveData("print()"));
                 case [_]:
                 {
-                    member = $"print({ConvertExpressions(data.Arguments)[0]})";
-                    return new OperationResult<MemberResolveData>(true, "", new MemberResolveData(member));
+                    String member = $"print({ConvertExpressions(data.Arguments)[0]})";
+                    return new OperationResult<MemberResolveData>.Ok(new MemberResolveData(member));
                 }
                 default:
+                {
                     if (!(data.Arguments[0].Expression is LiteralExpressionSyntax))
-                        return new OperationResult<MemberResolveData>(false, "Unsupported arguments for System.Console.WriteLine");
+                        return new OperationResult<MemberResolveData>.Error("Unsupported arguments for System.Console.WriteLine");
                     IList<String> convertResult = ConvertExpressions(data.Arguments);
-                    member = $"print({convertResult[0]}.format({String.Join(",", convertResult.ToArray()[1..])}))";
-                    return new OperationResult<MemberResolveData>(true, "", new MemberResolveData(member));
+                    String member = $"print({convertResult[0]}.format({String.Join(",", convertResult.ToArray()[1..])}))";
+                    return new OperationResult<MemberResolveData>.Ok(new MemberResolveData(member));
+                }
             }
         }
 
@@ -155,10 +156,9 @@ namespace PythonExamplesPorterApp.ExternalEntities
 
     internal class SystemDateTimeMemberResolver
     {
-        internal SystemDateTimeMemberResolver(SemanticModel model, AppData appData)
+        internal SystemDateTimeMemberResolver(SemanticModel model)
         {
             _model = model;
-            _appData = appData;
         }
 
         public OperationResult<MemberResolveData> ResolveCtor(IReadOnlyList<ArgumentSyntax> argumentsData, ConvertedArguments argumentsRepresentation)
@@ -167,12 +167,14 @@ namespace PythonExamplesPorterApp.ExternalEntities
             switch (argumentsRepresentation.Values)
             {
                 // TODO: add check of arg type
-                case [var year, var month, var day]:
-                case [_, _, _, var hour, var minute, var second]:
+                // year, month, day
+                case [_, _, _]:
+                // year, month, day, hour, minute, second
+                case [_, _, _, _, _, _]:
                     MemberResolveData resolveData = new MemberResolveData($"datetime.datetime({String.Join(",", argumentsRepresentation.Values)})", import);
-                    return new OperationResult<MemberResolveData>(true, "", resolveData);
+                    return new OperationResult<MemberResolveData>.Ok(resolveData);
                 default:
-                    return new OperationResult<MemberResolveData>(false, "Unsupported arguments for ctor System.String.DateTime");
+                    return new OperationResult<MemberResolveData>.Error("Unsupported arguments for ctor System.String.DateTime");
             }
         }
 
@@ -187,26 +189,24 @@ namespace PythonExamplesPorterApp.ExternalEntities
                 case IPropertySymbol {Name: "Today"}:
                     return ResolveProperty("date", "today");
                 default:
-                    return new OperationResult<MemberResolveData>(false, $"Unsupported member: System.DateTime.{memberName}");
+                    return new OperationResult<MemberResolveData>.Error($"Unsupported member: System.DateTime.{memberName}");
             }
         }
 
         private OperationResult<MemberResolveData> ResolveProperty(String className, String methodName)
         {
             MemberResolveData resolveData = new MemberResolveData($"datetime.{className}.{methodName}()", new ImportData().AddImport("datetime"));
-            return new OperationResult<MemberResolveData>(true, "", resolveData);
+            return new OperationResult<MemberResolveData>.Ok(resolveData);
         }
 
         private readonly SemanticModel _model;
-        private readonly AppData _appData;
     }
 
     internal class SystemGuidMemberResolver
     {
-        internal SystemGuidMemberResolver(SemanticModel model, AppData appData)
+        internal SystemGuidMemberResolver(SemanticModel model)
         {
             _model = model;
-            _appData = appData;
         }
 
         public OperationResult<MemberResolveData> ResolveMember(MemberData data, MemberRepresentation representation)
@@ -217,14 +217,13 @@ namespace PythonExamplesPorterApp.ExternalEntities
             {
                 case IMethodSymbol {Name: "NewGuid"}:
                     MemberResolveData resolveData = new MemberResolveData("uuid.uuid4()", new ImportData().AddImport("uuid"));
-                    return new OperationResult<MemberResolveData>(true, "", resolveData);
+                    return new OperationResult<MemberResolveData>.Ok(resolveData);
                 default:
-                    return new OperationResult<MemberResolveData>(false, $"Unsupported member: System.Guid.{memberName}");
+                    return new OperationResult<MemberResolveData>.Error($"Unsupported member: System.Guid.{memberName}");
             }
         }
 
         private readonly SemanticModel _model;
-        private readonly AppData _appData;
     }
 
     internal class SystemStringMemberResolver
