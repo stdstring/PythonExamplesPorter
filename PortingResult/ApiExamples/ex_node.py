@@ -142,7 +142,7 @@ class ExNode(ApiExampleBase):
         #ExEnd
 
     def test_enum_next_sibling(self):
-        raise NotImplementedError("Unsupported target type System.Console")
+        raise NotImplementedError("Unsupported expression: ConditionalExpression")
 
     def test_typed_access(self):
         raise NotImplementedError("Unsupported expression: ConditionalAccessExpression")
