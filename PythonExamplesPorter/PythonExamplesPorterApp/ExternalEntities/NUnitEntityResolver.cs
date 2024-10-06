@@ -58,23 +58,36 @@ namespace PythonExamplesPorterApp.ExternalEntities
                 case IMethodSymbol {Name: "AreNotSame"}:
                     return ResolveAreNotSameMethod(data, representation);
                 case IMethodSymbol {Name: "False"}:
-                    return ResolveFalseMethod(data, representation);
                 case IMethodSymbol {Name: "IsFalse"}:
+                case IMethodSymbol {Name: "IsEmpty"}:
                     return ResolveFalseMethod(data, representation);
                 case IMethodSymbol {Name: "IsNull"}:
-                    return ResolveNullMethod(data, representation);
-                case IMethodSymbol {Name: "IsNotNull"}:
-                    return ResolveNotNullMethod(data, representation);
-                case IMethodSymbol {Name: "IsTrue"}:
-                    return ResolveTrueMethod(data, representation);
                 case IMethodSymbol {Name: "Null"}:
                     return ResolveNullMethod(data, representation);
                 case IMethodSymbol {Name: "NotNull"}:
+                case IMethodSymbol {Name: "IsNotNull"}:
                     return ResolveNotNullMethod(data, representation);
+                case IMethodSymbol {Name: "IsTrue"}:
+                case IMethodSymbol {Name: "IsNotEmpty"}:
                 case IMethodSymbol {Name: "True"}:
                     return ResolveTrueMethod(data, representation);
+                case IMethodSymbol {Name: "Less"}:
+                    return ResolveLessMethod(data, representation);
             }
             return new OperationResult<MemberResolveData>.Error($"Unsupported member NUnit.Framework.Assert.{name.Identifier}");
+        }
+
+        private OperationResult<MemberResolveData> ResolveLessMethod(MemberData data, MemberRepresentation representation)
+        {
+            if (data.Arguments.Count < 2)
+                return new OperationResult<MemberResolveData>.Error($"Bad arguments count in Assert.Less: {data.Arguments.Count}");
+            switch (data.Arguments.Count)
+            {
+                case 2:
+                    return GenerateMethodCall("assertLess", representation.Arguments.Values, Array.Empty<(String name, String value)>());
+                default:
+                    return new OperationResult<MemberResolveData>.Error("Unsupported arguments for Assert.Less");
+            }
         }
 
         private OperationResult<MemberResolveData> ResolveAreEqualMethod(MemberData data, MemberRepresentation representation)
@@ -174,7 +187,7 @@ namespace PythonExamplesPorterApp.ExternalEntities
         private OperationResult<MemberResolveData> ResolveFalseMethod(MemberData data, MemberRepresentation representation)
         {
             if (data.Arguments.Count < 1)
-                return new OperationResult<MemberResolveData>.Error($"Bad arguments count in Assert.False/Assert.IsFalse: {data.Arguments.Count}");
+                return new OperationResult<MemberResolveData>.Error($"Bad arguments count in Assert.False/Assert.IsFalse/Assert.IsEmpty: {data.Arguments.Count}");
             // TODO (std_string) : add check of arg type
             String[] args = {representation.Arguments.Values[0]};
             switch (data.Arguments.Count)
@@ -184,7 +197,7 @@ namespace PythonExamplesPorterApp.ExternalEntities
                 case 2:
                     return GenerateMethodCall("assertFalse", args, new[]{(name: "msg", value: representation.Arguments.Values[1])});
             }
-            return new OperationResult<MemberResolveData>.Error("Unsupported arguments for Assert.False/Assert.IsFalse");
+            return new OperationResult<MemberResolveData>.Error("Unsupported arguments for Assert.False/Assert.IsFalse/Assert.IsEmpty");
         }
 
         private OperationResult<MemberResolveData> ResolveNullMethod(MemberData data, MemberRepresentation representation)
@@ -222,7 +235,7 @@ namespace PythonExamplesPorterApp.ExternalEntities
         private OperationResult<MemberResolveData> ResolveTrueMethod(MemberData data, MemberRepresentation representation)
         {
             if (data.Arguments.Count < 1)
-                return new OperationResult<MemberResolveData>.Error($"Bad arguments count in Assert.True/Assert.IsTrue: {data.Arguments.Count}");
+                return new OperationResult<MemberResolveData>.Error($"Bad arguments count in Assert.True/Assert.IsTrue/Assert.IsNotEmpty: {data.Arguments.Count}");
             // TODO (std_string) : add check of arg type
             String[] args = {representation.Arguments.Values[0]};
             switch (data.Arguments.Count)
@@ -232,7 +245,7 @@ namespace PythonExamplesPorterApp.ExternalEntities
                 case 2:
                     return GenerateMethodCall("assertTrue", args, new[]{(name: "msg", value: representation.Arguments.Values[1])});
             }
-            return new OperationResult<MemberResolveData>.Error("Unsupported arguments for Assert.True/Assert.IsTrue");
+            return new OperationResult<MemberResolveData>.Error("Unsupported arguments for Assert.True/Assert.IsTrue/Assert.IsNotEmpty");
         }
 
         private OperationResult<MemberResolveData> GenerateMethodCall(String methodName, String[] args, (String name, String value)[] namedArgs)
