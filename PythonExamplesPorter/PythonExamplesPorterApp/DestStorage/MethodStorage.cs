@@ -1,4 +1,5 @@
-﻿using PythonExamplesPorterApp.Utils;
+﻿using System.Linq.Expressions;
+using PythonExamplesPorterApp.Utils;
 
 namespace PythonExamplesPorterApp.DestStorage
 {
@@ -7,7 +8,7 @@ namespace PythonExamplesPorterApp.DestStorage
         public MethodStorage(String methodName, Int32 indentation, ImportStorage importStorage)
         {
             _methodName = methodName;
-            _indentation = indentation;
+            _globalIndentation = indentation;
             ImportStorage = importStorage;
         }
 
@@ -29,8 +30,8 @@ namespace PythonExamplesPorterApp.DestStorage
 
         public void Save(TextWriter writer)
         {
-            String baseIndentation = IndentationUtils.Create(_indentation);
-            String bodyIndentation = IndentationUtils.Create(_indentation + StorageDef.IndentationDelta);
+            String baseIndentation = IndentationUtils.Create(_globalIndentation);
+            String bodyIndentation = IndentationUtils.Create(_globalIndentation + StorageDef.IndentationDelta);
             if (_errorReason == null)
                 SaveBorderData(writer, baseIndentation, _headerData);
             foreach (String decorator in _decorators)
@@ -65,15 +66,17 @@ namespace PythonExamplesPorterApp.DestStorage
         {
             if (_errorReason != null)
                 return;
-            _body.Add(bodyLine);
+            String localIndentation = IndentationUtils.Create(_localIndentation);
+            _body.Add($"{localIndentation}{bodyLine}");
         }
 
         public void AddBodyLines(String[] bodyLines)
         {
             if (_errorReason != null)
                 return;
+            String localIndentation = IndentationUtils.Create(_localIndentation);
             foreach (String bodyLine in bodyLines)
-                _body.Add(bodyLine);
+                _body.Add($"{localIndentation}{bodyLine}");
         }
 
         public void SetLineTrailingData(String? data)
@@ -88,6 +91,20 @@ namespace PythonExamplesPorterApp.DestStorage
         public void SetError(String errorReason)
         {
             _errorReason = errorReason;
+        }
+
+        public void IncreaseLocalIndentation(Int32 delta)
+        {
+            if (delta < 0)
+                throw new ArgumentOutOfRangeException(nameof(delta));
+            _localIndentation += delta;
+        }
+
+        public void DecreaseLocalIndentation(Int32 delta)
+        {
+            if ((delta < 0) || (delta > _localIndentation))
+                throw new ArgumentOutOfRangeException(nameof(delta));
+            _localIndentation -= delta;
         }
 
         public Boolean HasError => _errorReason != null;
@@ -111,7 +128,8 @@ namespace PythonExamplesPorterApp.DestStorage
         }
 
         private readonly String _methodName;
-        private readonly Int32 _indentation;
+        private readonly Int32 _globalIndentation;
+        private Int32 _localIndentation;
         private readonly IList<String> _headerData = new List<String>();
         private readonly IList<String> _footerData = new List<String>();
         private String _trailingData = String.Empty;

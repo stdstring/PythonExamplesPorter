@@ -32,6 +32,32 @@ namespace PythonExamplesPorterApp.Converter
             return false;
         }
 
+        public static AttributeSyntax[] GetAttributes(this IReadOnlyList<AttributeListSyntax> attributes, SemanticModel model, String expectedFullName)
+        {
+            IList<AttributeSyntax> result = new List<AttributeSyntax>();
+            foreach (AttributeListSyntax attributeList in attributes)
+            {
+                foreach (AttributeSyntax attribute in attributeList.Attributes)
+                {
+                    ISymbol? symbol = model.GetSymbolInfo(attribute.Name).Symbol;
+                    if (symbol == null)
+                        continue;
+                    if (symbol.Kind != SymbolKind.Method)
+                        continue;
+                    INamedTypeSymbol? symbolType = symbol.ContainingType;
+                    if (symbolType == null)
+                        continue;
+                    if (symbolType.Kind != SymbolKind.NamedType)
+                        continue;
+                    // TODO (std_string) : think about using SymbolDisplayFormat
+                    String attributeFullName = symbolType.ToDisplayString();
+                    if (String.Equals(expectedFullName, attributeFullName))
+                        result.Add(attribute);
+                }
+            }
+            return result.ToArray();
+        }
+
         public static IReadOnlyList<ArgumentSyntax> GetArguments(this ArgumentListSyntax? argumentList)
         {
             return argumentList == null ? Array.Empty<ArgumentSyntax>() : argumentList.Arguments;

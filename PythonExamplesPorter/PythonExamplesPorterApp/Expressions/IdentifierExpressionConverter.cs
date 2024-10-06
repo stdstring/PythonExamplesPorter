@@ -27,6 +27,8 @@ namespace PythonExamplesPorterApp.Expressions
                     throw new UnsupportedSyntaxException($"Unrecognizable identifier: {identifier.Identifier}");
                 case ILocalSymbol localSymbol:
                     return new ConvertResult(_appData.NameTransformer.TransformLocalVariableName(localSymbol.Name), importData);
+                case IParameterSymbol parameterSymbol:
+                    return new ConvertResult(_appData.NameTransformer.TransformLocalVariableName(parameterSymbol.Name), importData);
                 case INamedTypeSymbol typeSymbol:
                     TypeResolveData resolveData = _externalEntityResolver.ResolveType(typeSymbol).MustSuccess();
                     return ProcessTypeResolveData(resolveData, importData);
