@@ -7,9 +7,12 @@
 # "as is", without warranty of any kind, either expressed or implied.
 #####################################
 
-from api_example_base import ApiExampleBase
+import aspose.words as aw
+import aspose.words.digitalsignatures
+import system_helper
+from api_example_base import ApiExampleBase, MY_DIR
 
 
 class ExCertificateHolder(ApiExampleBase):
     def test_create(self):
-        raise NotImplementedError("Unsupported target type System.IO.File")
+        raise NotImplementedError("Unsupported ctor for type NetworkCredential")

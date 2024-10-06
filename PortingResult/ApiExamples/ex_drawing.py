@@ -10,13 +10,14 @@
 import aspose.pydrawing
 import aspose.words as aw
 import aspose.words.drawing
+import system_helper
 import unittest
 from api_example_base import ApiExampleBase, ARTIFACTS_DIR, IMAGE_DIR, MY_DIR
 
 
 class ExDrawing(ApiExampleBase):
     def test_various_shapes(self):
-        raise NotImplementedError("Unsupported target type System.IO.File")
+        raise NotImplementedError("Unsupported statement type: UsingStatement")
 
     def test_import_image(self):
         raise NotImplementedError("Unsupported statement type: UsingStatement")
@@ -60,7 +61,7 @@ class ExDrawing(ApiExampleBase):
         raise NotImplementedError("Unsupported expression: SimpleLambdaExpression")
 
     def test_stroke_pattern(self):
-        raise NotImplementedError("Unsupported target type System.IO.File")
+        raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_text_box(self):
         #ExStart

@@ -14,6 +14,7 @@ import aspose.words.markup
 import aspose.words.replacing
 import aspose.words.tables
 import unittest
+import uuid
 from api_example_base import ApiExampleBase, ARTIFACTS_DIR, MY_DIR
 
 
@@ -163,19 +164,34 @@ class ExStructuredDocumentTag(ApiExampleBase):
         raise NotImplementedError("Unsupported statement type: UsingStatement")
 
     def test_creating_custom_xml(self):
-        raise NotImplementedError("Unsupported target type System.Guid")
+        raise NotImplementedError("Unsupported target type System.Text.Encoding")
 
     def test_data_checksum(self):
-        raise NotImplementedError("Unsupported target type System.Guid")
+        #ExStart
+        #ExFor:CustomXmlPart.data_checksum
+        #ExSummary:Shows how the checksum is calculated in a runtime.
+        doc = aw.Document()
+        rich_text = aw.markup.StructuredDocumentTag(doc, aw.markup.SdtType.RICH_TEXT, aw.markup.MarkupLevel.BLOCK)
+        doc.first_section.body.append_child(rich_text)
+        # The checksum is read-only and computed using the data of the corresponding custom XML data part.
+        rich_text.xml_mapping.set_mapping(doc.custom_xml_parts.add(id=str(uuid.uuid4()), xml="<root><text>ContentControl</text></root>"), "/root/text", "")
+        checksum = rich_text.xml_mapping.custom_xml_part.data_checksum
+        print(checksum)
+        rich_text.xml_mapping.set_mapping(doc.custom_xml_parts.add(id=str(uuid.uuid4()), xml="<root><text>Updated ContentControl</text></root>"), "/root/text", "")
+        updated_checksum = rich_text.xml_mapping.custom_xml_part.data_checksum
+        print(updated_checksum)
+        # We changed the XmlPart of the tag, and the checksum was updated at runtime.
+        self.assertNotEqual(checksum, updated_checksum)
+        #ExEnd
 
     def test_xml_mapping(self):
-        raise NotImplementedError("Unsupported target type System.Guid")
+        raise NotImplementedError("Unsupported target type System.Text.Encoding")
 
     def test_structured_document_tag_range_start_xml_mapping(self):
-        raise NotImplementedError("Unsupported target type System.Guid")
+        raise NotImplementedError("Unsupported target type System.Text.Encoding")
 
     def test_custom_xml_schema_collection(self):
-        raise NotImplementedError("Unsupported target type System.Guid")
+        raise NotImplementedError("Unsupported statement type: UsingStatement")
 
     def test_custom_xml_part_store_item_id_read_only(self):
         #ExStart
@@ -269,7 +285,16 @@ class ExStructuredDocumentTag(ApiExampleBase):
         raise NotImplementedError("Unsupported target type System.Collections.Generic.IEnumerable")
 
     def test_custom_xml_part(self):
-        raise NotImplementedError("Unsupported target type System.Guid")
+        xml_string = "<?xml version=\"1.0\"?>" + "<Company>" + "<Employee id=\"1\">" + "<FirstName>John</FirstName>" + "<LastName>Doe</LastName>" + "</Employee>" + "<Employee id=\"2\">" + "<FirstName>Jane</FirstName>" + "<LastName>Doe</LastName>" + "</Employee>" + "</Company>"
+        doc = aw.Document()
+        # Insert the full XML document as a custom document part.
+        # We can find the mapping for this part in Microsoft Word via "Developer" -> "XML Mapping Pane", if it is enabled.
+        xml_part = doc.custom_xml_parts.add(id='{' + str(uuid.uuid4()) + '}', xml=xml_string)
+        # Create a structured document tag, which will use an XPath to refer to a single element from the XML.
+        sdt = aw.markup.StructuredDocumentTag(doc, aw.markup.SdtType.PLAIN_TEXT, aw.markup.MarkupLevel.BLOCK)
+        sdt.xml_mapping.set_mapping(xml_part, "Company//Employee[@id='2']/FirstName", "")
+        # Add the StructuredDocumentTag to the document to display the element in the text.
+        doc.first_section.body.append_child(sdt)
 
     def test_multi_section_tags(self):
         #ExStart

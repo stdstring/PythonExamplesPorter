@@ -11,8 +11,9 @@ import aspose.words as aw
 import aspose.words.fields
 import aspose.words.properties
 import datetime
+import system_helper
 import unittest
-from api_example_base import ApiExampleBase, ARTIFACTS_DIR, MY_DIR
+from api_example_base import ApiExampleBase, ARTIFACTS_DIR, IMAGE_DIR, MY_DIR
 
 
 class ExDocumentProperties(ApiExampleBase):
@@ -71,16 +72,43 @@ class ExDocumentProperties(ApiExampleBase):
         self.assertEqual("Author:\t\u0013 AUTHOR \u0014John Doe\u0015\r" + "Doc title:\t\u0013 TITLE \u0014John's Document\u0015\r" + "Subject:\t\u0013 SUBJECT \u0014My subject\u0015\r" + "Comments:\t\"\u0013 COMMENTS \u0014This is John Doe's document about My subject\u0015\"", doc.get_text().strip())
 
     def test_origin(self):
-        raise NotImplementedError("Unsupported target type System.TimeSpan")
+        raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_content(self):
         raise NotImplementedError("ignored method body")
 
     def test_thumbnail(self):
-        raise NotImplementedError("Unsupported target type System.IO.File")
+        raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_hyperlink_base(self):
-        raise NotImplementedError("Unsupported target type System.IO.File")
+        #ExStart
+        #ExFor:BuiltInDocumentProperties.hyperlink_base
+        #ExSummary:Shows how to store the base part of a hyperlink in the document's properties.
+        doc = aw.Document()
+        builder = aw.DocumentBuilder(doc)
+        # Insert a relative hyperlink to a document in the local file system named "Document.docx".
+        # Clicking on the link in Microsoft Word will open the designated document, if it is available.
+        builder.insert_hyperlink("Relative hyperlink", "Document.docx", False)
+        # This link is relative. If there is no "Document.docx" in the same folder
+        # as the document that contains this link, the link will be broken.
+        self.assertFalse(system_helper.io.File.exist(ARTIFACTS_DIR + "Document.docx"))
+        doc.save(file_name=ARTIFACTS_DIR + "DocumentProperties.HyperlinkBase.BrokenLink.docx")
+        # The document we are trying to link to is in a different directory to the one we are planning to save the document in.
+        # We could fix links like this by putting an absolute filename in each one.
+        # Alternatively, we could provide a base link that every hyperlink with a relative filename
+        # will prepend to its link when we click on it.
+        properties = doc.built_in_document_properties
+        properties.hyperlink_base = MY_DIR
+        self.assertTrue(system_helper.io.File.exist(properties.hyperlink_base + (doc.range.fields[0].as_field_hyperlink()).address))
+        doc.save(file_name=ARTIFACTS_DIR + "DocumentProperties.HyperlinkBase.WorkingLink.docx")
+        #ExEnd
+        doc = aw.Document(file_name=ARTIFACTS_DIR + "DocumentProperties.HyperlinkBase.BrokenLink.docx")
+        properties = doc.built_in_document_properties
+        self.assertEqual("", properties.hyperlink_base)
+        doc = aw.Document(file_name=ARTIFACTS_DIR + "DocumentProperties.HyperlinkBase.WorkingLink.docx")
+        properties = doc.built_in_document_properties
+        self.assertEqual(MY_DIR, properties.hyperlink_base)
+        self.assertTrue(system_helper.io.File.exist(properties.hyperlink_base + (doc.range.fields[0].as_field_hyperlink()).address))
 
     def test_heading_pairs(self):
         raise NotImplementedError("Unsupported member target type - System.Object[] for expression: headingPairs")

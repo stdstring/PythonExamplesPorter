@@ -16,6 +16,7 @@ import aspose.words.rendering
 import aspose.words.saving
 import aspose.words.settings
 import aspose.words.themes
+import system_helper
 import unittest
 from api_example_base import ApiExampleBase, ARTIFACTS_DIR, IMAGE_DIR, MY_DIR
 
@@ -396,7 +397,27 @@ class ExShape(ApiExampleBase):
         raise NotImplementedError("Unsupported target type System.Collections.Generic.IEnumerable")
 
     def test_ole_control_collection(self):
-        raise NotImplementedError("Unsupported target type System.Guid")
+        #ExStart
+        #ExFor:OleFormat.clsid
+        #ExFor:Forms2OleControlCollection
+        #ExFor:Forms2OleControlCollection.count
+        #ExFor:Forms2OleControlCollection.__getitem__(int)
+        #ExSummary:Shows how to access an OLE control embedded in a document and its child controls.
+        doc = aw.Document(file_name=MY_DIR + "OLE ActiveX controls.docm")
+        # Shapes store and display OLE objects in the document's body.
+        shape = doc.get_child(aw.NodeType.SHAPE, 0, True).as_shape()
+        self.assertEqual("6e182020-f460-11ce-9bcd-00aa00608e01", str(shape.ole_format.clsid))
+        ole_control = shape.ole_format.ole_control.as_forms2_ole_control()
+        # Some OLE controls may contain child controls, such as the one in this document with three options buttons.
+        ole_control_collection = ole_control.child_nodes
+        self.assertEqual(3, ole_control_collection.count)
+        self.assertEqual("C#", ole_control_collection[0].caption)
+        self.assertEqual("1", ole_control_collection[0].value)
+        self.assertEqual("Visual Basic", ole_control_collection[1].caption)
+        self.assertEqual("0", ole_control_collection[1].value)
+        self.assertEqual("Delphi", ole_control_collection[2].caption)
+        self.assertEqual("0", ole_control_collection[2].value)
+        #ExEnd
 
     def test_suggested_file_name(self):
         raise NotImplementedError("Unsupported statement type: UsingStatement")
@@ -636,7 +657,7 @@ class ExShape(ApiExampleBase):
         #ExEnd
 
     def test_fill_image(self):
-        raise NotImplementedError("Unsupported target type System.IO.File")
+        raise NotImplementedError("Unsupported statement type: UsingStatement")
 
     def test_shadow_format(self):
         #ExStart

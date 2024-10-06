@@ -9,12 +9,16 @@
 
 import aspose.pydrawing
 import aspose.words as aw
+import aspose.words.digitalsignatures
 import aspose.words.drawing
 import aspose.words.drawing.charts
 import aspose.words.fields
 import aspose.words.notes
 import aspose.words.tables
+import datetime
+import system_helper
 import unittest
+import uuid
 from api_example_base import ApiExampleBase, ARTIFACTS_DIR, IMAGE_DIR, IMAGE_URL, MY_DIR
 
 
@@ -1089,7 +1093,7 @@ class ExDocumentBuilder(ApiExampleBase):
         self.assertEqual(aw.fields.FieldType.FIELD_FORM_DROP_DOWN, form_field.type)
 
     def test_signature_line_provider_id(self):
-        raise NotImplementedError("Unsupported target type System.Guid")
+        raise NotImplementedError("Unsupported target type System.DateTime")
 
     def test_signature_line_inline(self):
         #ExStart
@@ -1466,7 +1470,7 @@ class ExDocumentBuilder(ApiExampleBase):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_insert_online_video_custom_thumbnail(self):
-        raise NotImplementedError("Unsupported target type System.IO.File")
+        raise NotImplementedError("Unsupported statement type: UsingStatement")
 
     def test_insert_ole_object_as_icon(self):
         raise NotImplementedError("Unsupported statement type: UsingStatement")

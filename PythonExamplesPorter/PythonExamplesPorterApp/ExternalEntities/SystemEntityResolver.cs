@@ -51,7 +51,16 @@ namespace PythonExamplesPorterApp.ExternalEntities
                 new SystemDrawingRectangleMemberResolver(model, appData, "Rectangle"),
                 new SystemDrawingRectangleMemberResolver(model, appData, "RectangleF"),
                 new SystemDateTimeMemberResolver(model),
-                new SystemGuidMemberResolver(model)
+                new SystemGuidMemberResolver(model),
+                new SystemTimeSpanMemberResolver(model),
+                new SystemIoSearchOptionMemberResolver(model),
+                new SystemIoFileMemberResolver(model),
+                new SystemIoFileInfoMemberResolver(model),
+                new SystemIoDirectoryMemberResolver(model),
+                new SystemSpecialFolderMemberResolver(model),
+                new SystemEnvironmentMemberResolver(model),
+                new SystemIoPathMemberResolver(model),
+                new SystemIListMemberResolver(model),
             };
         }
 

@@ -11,6 +11,7 @@ import aspose.pydrawing
 import aspose.words as aw
 import aspose.words.digitalsignatures
 import aspose.words.fields
+import aspose.words.fonts
 import aspose.words.layout
 import aspose.words.loading
 import aspose.words.notes
@@ -19,8 +20,9 @@ import aspose.words.saving
 import aspose.words.settings
 import aspose.words.webextensions
 import datetime
+import system_helper
 import unittest
-from api_example_base import ApiExampleBase, ARTIFACTS_DIR, IMAGE_DIR, MY_DIR
+from api_example_base import ApiExampleBase, ARTIFACTS_DIR, FONTS_DIR, IMAGE_DIR, MY_DIR
 
 
 class ExDocument(ApiExampleBase):
@@ -98,7 +100,16 @@ class ExDocument(ApiExampleBase):
         raise NotImplementedError("Unsupported expression: ParenthesizedLambdaExpression")
 
     def test_temp_folder(self):
-        raise NotImplementedError("Unsupported target type System.IO.Directory")
+        #ExStart
+        #ExFor:LoadOptions.temp_folder
+        #ExSummary:Shows how to load a document using temporary files.
+        # Note that such an approach can reduce memory usage but degrades speed
+        load_options = aw.loading.LoadOptions()
+        load_options.temp_folder = """C:\\TempFolder\\"""
+        # Ensure that the directory exists and load
+        system_helper.io.Directory.create_directory(load_options.temp_folder)
+        doc = aw.Document(file_name=MY_DIR + "Document.docx", load_options=load_options)
+        #ExEnd
 
     def test_convert_to_html(self):
         #ExStart
@@ -488,10 +499,43 @@ class ExDocument(ApiExampleBase):
         #ExEnd
 
     def test_automatically_update_styles(self):
-        raise NotImplementedError("Unsupported target type System.IO.File")
+        #ExStart
+        #ExFor:Document.automatically_update_styles
+        #ExSummary:Shows how to attach a template to a document.
+        doc = aw.Document()
+        # Microsoft Word documents by default come with an attached template called "Normal.dotm".
+        # There is no default template for blank Aspose.Words documents.
+        self.assertEqual("", doc.attached_template)
+        # Attach a template, then set the flag to apply style changes
+        # within the template to styles in our document.
+        doc.attached_template = MY_DIR + "Business brochure.dotx"
+        doc.automatically_update_styles = True
+        doc.save(file_name=ARTIFACTS_DIR + "Document.AutomaticallyUpdateStyles.docx")
+        #ExEnd
+        doc = aw.Document(file_name=ARTIFACTS_DIR + "Document.AutomaticallyUpdateStyles.docx")
+        self.assertTrue(doc.automatically_update_styles)
+        self.assertEqual(MY_DIR + "Business brochure.dotx", doc.attached_template)
+        self.assertTrue(system_helper.io.File.exist(doc.attached_template))
 
     def test_default_template(self):
-        raise NotImplementedError("Unsupported target type System.IO.File")
+        #ExStart
+        #ExFor:Document.attached_template
+        #ExFor:Document.automatically_update_styles
+        #ExFor:SaveOptions.create_save_options(str)
+        #ExFor:SaveOptions.default_template
+        #ExSummary:Shows how to set a default template for documents that do not have attached templates.
+        doc = aw.Document()
+        # Enable automatic style updating, but do not attach a template document.
+        doc.automatically_update_styles = True
+        self.assertEqual("", doc.attached_template)
+        # Since there is no template document, the document had nowhere to track style changes.
+        # Use a SaveOptions object to automatically set a template
+        # if a document that we are saving does not have one.
+        options = aw.saving.SaveOptions.create_save_options(file_name="Document.DefaultTemplate.docx")
+        options.default_template = MY_DIR + "Business brochure.dotx"
+        doc.save(file_name=ARTIFACTS_DIR + "Document.DefaultTemplate.docx", save_options=options)
+        #ExEnd
+        self.assertTrue(system_helper.io.File.exist(options.default_template))
 
     def test_use_substitutions(self):
         raise NotImplementedError("Unsupported ctor for type Regex")
@@ -717,7 +761,16 @@ class ExDocument(ApiExampleBase):
         raise NotImplementedError("Unsupported statement type: UsingStatement")
 
     def test_epub_cover(self):
-        raise NotImplementedError("Unsupported target type System.IO.File")
+        doc = aw.Document()
+        builder = aw.DocumentBuilder(doc)
+        builder.writeln("Hello world!")
+        # When saving to .epub, some Microsoft Word document properties convert to .epub metadata.
+        doc.built_in_document_properties.author = "John Doe"
+        doc.built_in_document_properties.title = "My Book Title"
+        # The thumbnail we specify here can become the cover image.
+        image = system_helper.io.File.read_all_bytes(IMAGE_DIR + "Transparent background logo.png")
+        doc.built_in_document_properties.thumbnail = image
+        doc.save(file_name=ARTIFACTS_DIR + "Document.EpubCover.epub")
 
     def test_text_watermark(self):
         #ExStart
@@ -786,7 +839,25 @@ class ExDocument(ApiExampleBase):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_allow_embedding_post_script_fonts(self):
-        raise NotImplementedError("Unsupported target type System.IO.File")
+        #ExStart
+        #ExFor:SaveOptions.allow_embedding_post_script_fonts
+        #ExSummary:Shows how to save the document with PostScript font.
+        doc = aw.Document()
+        builder = aw.DocumentBuilder(doc)
+        builder.font.name = "PostScriptFont"
+        builder.writeln("Some text with PostScript font.")
+        # Load the font with PostScript to use in the document.
+        otf = aw.fonts.MemoryFontSource(font_data=system_helper.io.File.read_all_bytes(FONTS_DIR + "AllegroOpen.otf"))
+        doc.font_settings = aw.fonts.FontSettings()
+        doc.font_settings.set_fonts_sources(sources=[otf])
+        # Embed TrueType fonts.
+        doc.font_infos.embed_true_type_fonts = True
+        # Allow embedding PostScript fonts while embedding TrueType fonts.
+        # Microsoft Word does not embed PostScript fonts, but can open documents with embedded fonts of this type.
+        save_options = aw.saving.SaveOptions.create_save_options(save_format=aw.SaveFormat.DOCX)
+        save_options.allow_embedding_post_script_fonts = True
+        doc.save(file_name=ARTIFACTS_DIR + "Document.AllowEmbeddingPostScriptFonts.docx", save_options=save_options)
+        #ExEnd
 
     def test_frameset(self):
         raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")

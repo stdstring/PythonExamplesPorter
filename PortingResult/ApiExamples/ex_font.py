@@ -11,6 +11,8 @@ import aspose.pydrawing
 import aspose.words as aw
 import aspose.words.fonts
 import aspose.words.themes
+import os
+import system_helper
 import unittest
 from api_example_base import ApiExampleBase, ARTIFACTS_DIR, FONTS_DIR, MY_DIR
 
@@ -607,7 +609,28 @@ class ExFont(ApiExampleBase):
         #ExEnd
 
     def test_extract_embedded_font(self):
-        raise NotImplementedError("Unsupported target type System.IO.File")
+        #ExStart
+        #ExFor:EmbeddedFontFormat
+        #ExFor:EmbeddedFontStyle
+        #ExFor:FontInfo.get_embedded_font(EmbeddedFontFormat,EmbeddedFontStyle)
+        #ExFor:FontInfo.get_embedded_font_as_open_type(EmbeddedFontStyle)
+        #ExFor:FontInfoCollection.__getitem__(int)
+        #ExFor:FontInfoCollection.__getitem__(str)
+        #ExSummary:Shows how to extract an embedded font from a document, and save it to the local file system.
+        doc = aw.Document(file_name=MY_DIR + "Embedded font.docx")
+        embedded_font = doc.font_infos.get_by_name("Alte DIN 1451 Mittelschrift")
+        embedded_font_bytes = embedded_font.get_embedded_font(aw.fonts.EmbeddedFontFormat.OPEN_TYPE, aw.fonts.EmbeddedFontStyle.REGULAR)
+        self.assertIsNotNone(embedded_font_bytes) #ExSkip
+        system_helper.io.File.write_all_bytes(ARTIFACTS_DIR + "Alte DIN 1451 Mittelschrift.ttf", embedded_font_bytes)
+        # Embedded font formats may be different in other formats such as .doc.
+        # We need to know the correct format before we can extract the font.
+        doc = aw.Document(file_name=MY_DIR + "Embedded font.doc")
+        self.assertIsNone(doc.font_infos.get_by_name("Alte DIN 1451 Mittelschrift").get_embedded_font(aw.fonts.EmbeddedFontFormat.OPEN_TYPE, aw.fonts.EmbeddedFontStyle.REGULAR))
+        self.assertIsNotNone(doc.font_infos.get_by_name("Alte DIN 1451 Mittelschrift").get_embedded_font(aw.fonts.EmbeddedFontFormat.EMBEDDED_OPEN_TYPE, aw.fonts.EmbeddedFontStyle.REGULAR))
+        # Also, we can convert embedded OpenType format, which comes from .doc documents, to OpenType.
+        embedded_font_bytes = doc.font_infos.get_by_name("Alte DIN 1451 Mittelschrift").get_embedded_font_as_open_type(aw.fonts.EmbeddedFontStyle.REGULAR)
+        system_helper.io.File.write_all_bytes(ARTIFACTS_DIR + "Alte DIN 1451 Mittelschrift.otf", embedded_font_bytes)
+        #ExEnd
 
     def test_get_font_info_from_file(self):
         raise NotImplementedError("Unsupported target type System.Collections.Generic.IEnumerator")
@@ -640,7 +663,7 @@ class ExFont(ApiExampleBase):
         #ExEnd
 
     def test_check_scan_user_fonts_folder(self):
-        raise NotImplementedError("Unsupported target type System.SpecialFolder")
+        raise NotImplementedError("Unsupported target type System.IO.Directory")
 
     def test_set_emphasis_mark(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")

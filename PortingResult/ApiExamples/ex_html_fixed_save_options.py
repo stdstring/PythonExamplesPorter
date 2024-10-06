@@ -9,6 +9,7 @@
 
 import aspose.words as aw
 import aspose.words.saving
+import system_helper
 from api_example_base import ApiExampleBase, ARTIFACTS_DIR, MY_DIR
 
 
@@ -35,13 +36,13 @@ class ExHtmlFixedSaveOptions(ApiExampleBase):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_add_css_class_names_prefix(self):
-        raise NotImplementedError("Unsupported target type System.IO.File")
+        raise NotImplementedError("Unsupported target type System.Text.RegularExpressions.Regex")
 
     def test_horizontal_alignment(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_page_margins(self):
-        raise NotImplementedError("Unsupported target type System.IO.File")
+        raise NotImplementedError("Unsupported target type System.Text.RegularExpressions.Regex")
 
     def test_page_margins_exception(self):
         raise NotImplementedError("Unsupported expression: ParenthesizedLambdaExpression")
