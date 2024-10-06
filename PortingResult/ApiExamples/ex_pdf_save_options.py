@@ -11,6 +11,7 @@ import aspose.words as aw
 import aspose.words.digitalsignatures
 import aspose.words.saving
 import datetime
+import system_helper
 import unittest
 from api_example_base import ApiExampleBase, ARTIFACTS_DIR, MY_DIR
 
@@ -289,7 +290,17 @@ class ExPdfSaveOptions(ApiExampleBase):
         #ExEnd
 
     def test_cache_background_graphics(self):
-        raise NotImplementedError("Unsupported ctor for type FileInfo")
+        #ExStart
+        #ExFor:PdfSaveOptions.cache_background_graphics
+        #ExSummary:Shows how to cache graphics placed in document's background.
+        doc = aw.Document(file_name=MY_DIR + "Background images.docx")
+        save_options = aw.saving.PdfSaveOptions()
+        save_options.cache_background_graphics = True
+        doc.save(file_name=ARTIFACTS_DIR + "PdfSaveOptions.CacheBackgroundGraphics.pdf", save_options=save_options)
+        aspose_to_pdf_size = system_helper.io.FileInfo(ARTIFACTS_DIR + "PdfSaveOptions.CacheBackgroundGraphics.pdf").length()
+        word_to_pdf_size = system_helper.io.FileInfo(MY_DIR + "Background images (word to pdf).pdf").length()
+        self.assertLess(aspose_to_pdf_size, word_to_pdf_size)
+        #ExEnd
 
     def test_export_paragraph_graphics_to_artifact(self):
         #ExStart

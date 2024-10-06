@@ -14,4 +14,4 @@ from api_example_base import ApiExampleBase
 
 class ExChmLoadOptions(ApiExampleBase):
     def test_original_file_name(self):
-        raise NotImplementedError("Unsupported target type System.IO.File")
+        raise NotImplementedError("Unsupported ctor for type MemoryStream")

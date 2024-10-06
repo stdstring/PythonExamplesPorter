@@ -7,12 +7,14 @@
 # "as is", without warranty of any kind, either expressed or implied.
 #####################################
 
-from api_example_base import ApiExampleBase
+import aspose.words as aw
+import os
+from api_example_base import ApiExampleBase, LICENSE_PATH
 
 
 class ExLicense(ApiExampleBase):
     def test_license_from_file_no_path(self):
-        raise NotImplementedError("Unsupported target type System.IO.Path")
+        raise NotImplementedError("Unsupported target type System.IO.File")
 
     def test_license_from_stream(self):
         raise NotImplementedError("Unsupported statement type: UsingStatement")

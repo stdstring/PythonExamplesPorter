@@ -9,6 +9,7 @@
 
 import aspose.words as aw
 import aspose.words.saving
+import system_helper
 import unittest
 from api_example_base import ApiExampleBase, ARTIFACTS_DIR, MY_DIR
 

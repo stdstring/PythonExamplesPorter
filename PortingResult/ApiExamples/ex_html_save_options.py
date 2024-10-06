@@ -9,6 +9,8 @@
 
 import aspose.words as aw
 import aspose.words.saving
+import os
+import system_helper
 import unittest
 from api_example_base import ApiExampleBase, ARTIFACTS_DIR, MY_DIR
 
@@ -64,7 +66,7 @@ class ExHtmlSaveOptions(ApiExampleBase):
         self.assertEqual(False, save_options.export_roundtrip_information)
 
     def test_external_resource_saving_config(self):
-        raise NotImplementedError("Unsupported target type System.IO.SearchOption")
+        raise NotImplementedError("Unsupported member target type - System.String[] for expression: imageFiles")
 
     def test_convert_fonts_as_base64(self):
         doc = aw.Document(file_name=MY_DIR + "TextBoxes.docx")
@@ -82,10 +84,32 @@ class ExHtmlSaveOptions(ApiExampleBase):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_resource_folder_priority(self):
-        raise NotImplementedError("Unsupported target type System.IO.SearchOption")
+        doc = aw.Document(file_name=MY_DIR + "Rendering.docx")
+        save_options = aw.saving.HtmlSaveOptions()
+        save_options.css_style_sheet_type = aw.saving.CssStyleSheetType.EXTERNAL
+        save_options.export_font_resources = True
+        save_options.resource_folder = ARTIFACTS_DIR + "Resources"
+        save_options.resource_folder_alias = "http://example.com/resources"
+        doc.save(file_name=ARTIFACTS_DIR + "HtmlSaveOptions.ResourceFolderPriority.html", save_options=save_options)
+        self.assertTrue(system_helper.io.Directory.get_files(ARTIFACTS_DIR + "Resources", "HtmlSaveOptions.ResourceFolderPriority.001.png", system_helper.io.SearchOption.All_DIRECTORIES))
+        self.assertTrue(system_helper.io.Directory.get_files(ARTIFACTS_DIR + "Resources", "HtmlSaveOptions.ResourceFolderPriority.002.png", system_helper.io.SearchOption.All_DIRECTORIES))
+        self.assertTrue(system_helper.io.Directory.get_files(ARTIFACTS_DIR + "Resources", "HtmlSaveOptions.ResourceFolderPriority.arial.ttf", system_helper.io.SearchOption.All_DIRECTORIES))
+        self.assertTrue(system_helper.io.Directory.get_files(ARTIFACTS_DIR + "Resources", "HtmlSaveOptions.ResourceFolderPriority.css", system_helper.io.SearchOption.All_DIRECTORIES))
 
     def test_resource_folder_low_priority(self):
-        raise NotImplementedError("Unsupported target type System.IO.SearchOption")
+        doc = aw.Document(file_name=MY_DIR + "Rendering.docx")
+        save_options = aw.saving.HtmlSaveOptions()
+        save_options.css_style_sheet_type = aw.saving.CssStyleSheetType.EXTERNAL
+        save_options.export_font_resources = True
+        save_options.fonts_folder = ARTIFACTS_DIR + "Fonts"
+        save_options.images_folder = ARTIFACTS_DIR + "Images"
+        save_options.resource_folder = ARTIFACTS_DIR + "Resources"
+        save_options.resource_folder_alias = "http://example.com/resources"
+        doc.save(file_name=ARTIFACTS_DIR + "HtmlSaveOptions.ResourceFolderLowPriority.html", save_options=save_options)
+        self.assertTrue(system_helper.io.Directory.get_files(ARTIFACTS_DIR + "Images", "HtmlSaveOptions.ResourceFolderLowPriority.001.png", system_helper.io.SearchOption.All_DIRECTORIES))
+        self.assertTrue(system_helper.io.Directory.get_files(ARTIFACTS_DIR + "Images", "HtmlSaveOptions.ResourceFolderLowPriority.002.png", system_helper.io.SearchOption.All_DIRECTORIES))
+        self.assertTrue(system_helper.io.Directory.get_files(ARTIFACTS_DIR + "Fonts", "HtmlSaveOptions.ResourceFolderLowPriority.arial.ttf", system_helper.io.SearchOption.All_DIRECTORIES))
+        self.assertTrue(system_helper.io.Directory.get_files(ARTIFACTS_DIR + "Resources", "HtmlSaveOptions.ResourceFolderLowPriority.css", system_helper.io.SearchOption.All_DIRECTORIES))
 
     def test_svg_metafile_format(self):
         builder = aw.DocumentBuilder()
@@ -124,7 +148,21 @@ class ExHtmlSaveOptions(ApiExampleBase):
         builder.document.save(file_name=ARTIFACTS_DIR + "HtmlSaveOptions.EmfOrWmfMetafileFormat.html", save_options=save_options)
 
     def test_css_class_names_prefix(self):
-        raise NotImplementedError("Unsupported target type System.IO.File")
+        #ExStart
+        #ExFor:HtmlSaveOptions.css_class_name_prefix
+        #ExSummary:Shows how to save a document to HTML, and add a prefix to all of its CSS class names.
+        doc = aw.Document(file_name=MY_DIR + "Paragraphs.docx")
+        save_options = aw.saving.HtmlSaveOptions()
+        save_options.css_style_sheet_type = aw.saving.CssStyleSheetType.EXTERNAL
+        save_options.css_class_name_prefix = "myprefix-"
+        doc.save(file_name=ARTIFACTS_DIR + "HtmlSaveOptions.CssClassNamePrefix.html", save_options=save_options)
+        out_doc_contents = system_helper.io.File.read_all_text(ARTIFACTS_DIR + "HtmlSaveOptions.CssClassNamePrefix.html")
+        self.assertTrue(("<p class=\"myprefix-Header\">" in out_doc_contents))
+        self.assertTrue(("<p class=\"myprefix-Footer\">" in out_doc_contents))
+        out_doc_contents = system_helper.io.File.read_all_text(ARTIFACTS_DIR + "HtmlSaveOptions.CssClassNamePrefix.css")
+        self.assertTrue((".myprefix-Footer { margin-bottom:0pt; line-height:normal; font-family:Arial; font-size:11pt; -aw-style-name:footer }" in out_doc_contents))
+        self.assertTrue((".myprefix-Header { margin-bottom:0pt; line-height:normal; font-family:Arial; font-size:11pt; -aw-style-name:header }" in out_doc_contents))
+        #ExEnd
 
     def test_css_class_names_not_valid_prefix(self):
         raise NotImplementedError("Unsupported expression: ParenthesizedLambdaExpression")
@@ -289,7 +327,7 @@ class ExHtmlSaveOptions(ApiExampleBase):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
 
     def test_image_folder(self):
-        raise NotImplementedError("Unsupported target type System.IO.Path")
+        raise NotImplementedError("Unsupported target type System.IO.Directory")
 
     def test_pretty_format(self):
         raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")

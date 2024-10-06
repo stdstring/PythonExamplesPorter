@@ -50,6 +50,9 @@
             <Method>ApiExamples.ExField.InsertTcFieldsAtText</Method>
             <Method>ApiExamples.ExField.BarCodeWord2Pdf</Method>
             <Method>ApiExamples.ExDocument.NotSupportedWarning</Method>
+            <Method>ApiExamples.ExTable.ConvertWith</Method>
+            <Method>ApiExamples.ExTable.GetColSpanRowSpan</Method>
+            <Method>ApiExamples.ExTable.ConvertWithParagraphMark</Method>
             <!-- use Aspose.PDf (not ported) -->
             <Method>ApiExamples.ExStructuredDocumentTag.UsePdfDocumentForUpdateSdtContent</Method>
             <Method>ApiExamples.ExParagraphFormat.UsePdfDocumentForSuppressHyphens</Method>
@@ -205,6 +208,11 @@
             <MethodBody>ApiExamples.ExField.FieldEQ</MethodBody>
             <MethodBody>ApiExamples.ExField.FieldTime</MethodBody>
             <MethodBody>ApiExamples.ExLowCode.MergeDocumentInstances</MethodBody>
+            <MethodBody>ApiExamples.ExPageSetup.ColumnsSameWidth</MethodBody>
+            <MethodBody>ApiExamples.ExDocumentProperties.Custom</MethodBody>
+            <MethodBody>ApiExamples.ExInlineStory.AddComment</MethodBody>
+            <MethodBody>ApiExamples.ExCharts.SunburstChart</MethodBody>
+            <MethodBody>ApiExamples.ExLayout.LayoutCollector</MethodBody>
         </MethodsBody>
     </IgnoredEntities>
     <HandmadeEntities>

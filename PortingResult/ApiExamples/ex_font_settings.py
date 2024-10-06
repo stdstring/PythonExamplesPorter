@@ -10,6 +10,7 @@
 import aspose.words as aw
 import aspose.words.fonts
 import aspose.words.loading
+import system_helper
 import unittest
 from api_example_base import ApiExampleBase, ARTIFACTS_DIR, FONTS_DIR, MY_DIR
 
@@ -119,7 +120,21 @@ class ExFontSettings(ApiExampleBase):
         raise NotImplementedError("Unsupported target type System.Collections.Generic.IEnumerable")
 
     def test_font_source_memory(self):
-        raise NotImplementedError("Unsupported target type System.IO.File")
+        #ExStart
+        #ExFor:MemoryFontSource
+        #ExFor:MemoryFontSource.__init__(bytes)
+        #ExFor:MemoryFontSource.__init__(bytes,int)
+        #ExFor:MemoryFontSource.font_data
+        #ExFor:MemoryFontSource.type
+        #ExSummary:Shows how to use a byte array with data from a font file as a font source.
+        font_bytes = system_helper.io.File.read_all_bytes(MY_DIR + "Alte DIN 1451 Mittelschrift.ttf")
+        memory_font_source = aw.fonts.MemoryFontSource(font_data=font_bytes, priority=0)
+        doc = aw.Document()
+        doc.font_settings = aw.fonts.FontSettings()
+        doc.font_settings.set_fonts_sources(sources=[memory_font_source])
+        self.assertEqual(aw.fonts.FontSourceType.MEMORY_FONT, memory_font_source.type)
+        self.assertEqual(0, memory_font_source.priority)
+        #ExEnd
 
     def test_font_source_system(self):
         raise NotImplementedError("Unsupported member target type - Aspose.Words.Fonts.FontSourceBase[] for expression: doc.FontSettings.GetFontsSources()")

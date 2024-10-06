@@ -10,6 +10,7 @@
 import aspose.words as aw
 import aspose.words.drawing
 import aspose.words.settings
+import system_helper
 import unittest
 from api_example_base import ApiExampleBase, ARTIFACTS_DIR, IMAGE_DIR
 
@@ -45,4 +46,14 @@ class ExDocumentBuilderImages(ApiExampleBase):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_insert_gif(self):
-        raise NotImplementedError("Unsupported target type System.IO.File")
+        #ExStart
+        #ExFor:DocumentBuilder.insert_image(str)
+        #ExSummary:Shows how to insert gif image to the document.
+        builder = aw.DocumentBuilder()
+        # We can insert gif image using path or bytes array.
+        # It works only if DocumentBuilder optimized to Word version 2010 or higher.
+        # Note, that access to the image bytes causes conversion Gif to Png.
+        gif_image = builder.insert_image(file_name=IMAGE_DIR + "Graphics Interchange Format.gif")
+        gif_image = builder.insert_image(image_bytes=system_helper.io.File.read_all_bytes(IMAGE_DIR + "Graphics Interchange Format.gif"))
+        builder.document.save(file_name=ARTIFACTS_DIR + "InsertGif.docx")
+        #ExEnd

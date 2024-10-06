@@ -12,6 +12,7 @@ import aspose.words.drawing
 import aspose.words.fonts
 import aspose.words.loading
 import aspose.words.settings
+import system_helper
 import unittest
 from api_example_base import ApiExampleBase, ARTIFACTS_DIR, FONTS_DIR, IMAGE_DIR, MY_DIR
 

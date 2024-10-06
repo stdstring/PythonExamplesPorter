@@ -9,6 +9,7 @@
 
 import aspose.words as aw
 import aspose.words.drawing
+import system_helper
 import unittest
 from api_example_base import ApiExampleBase, ARTIFACTS_DIR, IMAGE_DIR, IMAGE_URL, MY_DIR
 
@@ -33,7 +34,7 @@ class ExImage(ApiExampleBase):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_create_linked_image(self):
-        raise NotImplementedError("Unsupported ctor for type FileInfo")
+        raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_delete_all_images(self):
         raise NotImplementedError("Unsupported expression: SimpleLambdaExpression")
