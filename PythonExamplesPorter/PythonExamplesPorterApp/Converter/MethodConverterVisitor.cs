@@ -4,8 +4,6 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using PythonExamplesPorterApp.Comments;
 using PythonExamplesPorterApp.Common;
 using PythonExamplesPorterApp.DestStorage;
-using PythonExamplesPorterApp.Expressions;
-using PythonExamplesPorterApp.Utils;
 
 namespace PythonExamplesPorterApp.Converter
 {
@@ -33,15 +31,16 @@ namespace PythonExamplesPorterApp.Converter
             methodStorage.AppendFooterData(commentsProcessor.Process(CommentsExtractor.ExtractFooterComments(node)));
             methodStorage.SetTrailingData(commentsProcessor.Process(CommentsExtractor.ExtractTrailingComment(node)));
             Boolean hasTestCaseAttribute = node.AttributeLists.ContainAttribute(_model, "NUnit.Framework.TestCaseAttribute");
-            Func<Boolean> beforeGenerateChecker = hasTestCaseAttribute ?
-                                                  () => CheckTestCaseMethodDeclaration(node, currentMethod!, methodStorage) :
-                                                  () => true;
-            Action beforeGenerateAction = hasTestCaseAttribute ?
-                                          () => GenerateTestCaseHandler(node, currentMethod!, methodStorage) :
-                                          () => {};
-            Action afterGenerateAction = hasTestCaseAttribute ?
-                                         () => { methodStorage.DecreaseLocalIndentation(StorageDef.IndentationDelta); } :
-                                         () => {};
+            Func<Boolean> beforeGenerateChecker = () => true;
+            Action beforeGenerateAction = () => {};
+            Action afterGenerateAction = () => {};
+            if (hasTestCaseAttribute)
+            {
+                TestCaseProcessor testCaseProcessor = new TestCaseProcessor(_model, _appData, node, currentMethod!, methodStorage);
+                beforeGenerateChecker = testCaseProcessor.CheckMethodDeclaration;
+                beforeGenerateAction = testCaseProcessor.Process;
+                afterGenerateAction = () => { methodStorage.DecreaseLocalIndentation(StorageDef.IndentationDelta); };
+            }
             _appData.Logger.LogInfo($"{logHead} processed");
             GenerateTestMethodDeclaration(node, parentFullName, methodStorage, beforeGenerateChecker, beforeGenerateAction, afterGenerateAction);
         }
@@ -94,58 +93,6 @@ namespace PythonExamplesPorterApp.Converter
                 return false;
             }
             return true;
-        }
-
-        private Boolean CheckTestCaseMethodDeclaration(MethodDeclarationSyntax node, IMethodSymbol currentMethod, MethodStorage methodStorage)
-        {
-            String methodName = node.Identifier.Text;
-            IList<IParameterSymbol> parameters = currentMethod.Parameters;
-            if (parameters.IsEmpty())
-            {
-                _appData.Logger.LogError($"Bad {methodName} method: absence of parameters");
-                methodStorage.SetError("absence of method's parameters");
-                return false;
-            }
-            Boolean hasParamsArg = parameters.Last().IsParams;
-            Boolean hasDefaultValue = parameters.Any(parameter => parameter.HasExplicitDefaultValue);
-            Boolean hasRefOutModifier = parameters.Any(parameter => parameter.RefKind != RefKind.None);
-            if (hasParamsArg || hasDefaultValue || hasRefOutModifier)
-            {
-                _appData.Logger.LogError($"Bad {methodName} method: unsupported kind of parameters");
-                methodStorage.SetError("unsupported kind of parameters");
-                return false;
-            }
-            return true;
-        }
-
-        private void GenerateTestCaseHandler(MethodDeclarationSyntax node, IMethodSymbol currentMethod, MethodStorage methodStorage)
-        {
-            String[] parameters = currentMethod.Parameters
-                .Select(parameter => _appData.NameTransformer.TransformLocalVariableName(parameter.Name))
-                .ToArray();
-            String parametersDest = String.Join(", ", parameters);
-            ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData, new ExpressionConverterSettings());
-            AttributeSyntax[] testCaseAttributes = node.AttributeLists.GetAttributes(_model, "NUnit.Framework.TestCaseAttribute");
-            IList<String> valuesList = new List<String>();
-            foreach (AttributeSyntax attribute in testCaseAttributes)
-            {
-                if (attribute.ArgumentList == null)
-                    throw new UnsupportedSyntaxException("Bad NUnit.Framework.TestCaseAttribute");
-                IReadOnlyList<AttributeArgumentSyntax> arguments = attribute.ArgumentList.Arguments;
-                String[] values = new String[arguments.Count];
-                for (Int32 argumentIndex = 0; argumentIndex < arguments.Count; ++argumentIndex)
-                {
-                    ConvertResult expressionResult = expressionConverter.Convert(arguments[argumentIndex].Expression);
-                    if (!expressionResult.AfterResults.IsEmpty())
-                        throw new UnsupportedSyntaxException("Unexpected attribute's value conversion result");
-                    methodStorage.ImportStorage.Append(expressionResult.ImportData);
-                    values[argumentIndex] = expressionResult.Result;
-                }
-                valuesList.Add(values.Length == 1 ? values.First() : $"({String.Join(", ", values)})");
-            }
-            String valuesDest = $"[{String.Join(", ", valuesList)}]";
-            methodStorage.AddBodyLine($"for {parametersDest} in {valuesDest}:");
-            methodStorage.IncreaseLocalIndentation(StorageDef.IndentationDelta);
         }
 
         private void GenerateTestMethodDeclaration(MethodDeclarationSyntax node,
