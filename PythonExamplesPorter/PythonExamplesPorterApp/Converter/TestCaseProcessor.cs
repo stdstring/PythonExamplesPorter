@@ -1,4 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using PythonExamplesPorterApp.Common;
 using PythonExamplesPorterApp.DestStorage;
@@ -21,21 +22,25 @@ namespace PythonExamplesPorterApp.Converter
         public Boolean CheckMethodDeclaration()
         {
             String methodName = _node.Identifier.Text;
-            IList<IParameterSymbol> parameters = _currentMethod.Parameters;
-            if (parameters.IsEmpty())
+            IReadOnlyList<ParameterSyntax> parameters = _node.ParameterList.Parameters;
+            Boolean isLastParams = parameters.Last().Modifiers.Any(modifier => modifier.IsKind(SyntaxKind.ParamsKeyword));
+            foreach (AttributeSyntax attribute in _node.AttributeLists.GetAttributes(_model, "NUnit.Framework.TestCaseAttribute"))
             {
-                _appData.Logger.LogError($"Bad {methodName} method: absence of parameters");
-                _methodStorage.SetError("absence of method's parameters");
-                return false;
-            }
-            Boolean hasParamsArg = parameters.Last().IsParams;
-            Boolean hasDefaultValue = parameters.Any(parameter => parameter.HasExplicitDefaultValue);
-            Boolean hasRefOutModifier = parameters.Any(parameter => parameter.RefKind != RefKind.None);
-            if (hasParamsArg || hasDefaultValue || hasRefOutModifier)
-            {
-                _appData.Logger.LogError($"Bad {methodName} method: unsupported kind of parameters");
-                _methodStorage.SetError("unsupported kind of parameters");
-                return false;
+                if (attribute.ArgumentList == null)
+                    continue;
+                IReadOnlyList<AttributeArgumentSyntax> arguments = attribute.ArgumentList.Arguments;
+                if (arguments.Any(argument => argument.NameColon != null))
+                {
+                    _appData.Logger.LogError($"Bad {methodName} method: unsupported usage of argument's names in NUnit.Framework.TestCaseAttribute attribute");
+                    _methodStorage.SetError("unsupported usage of argument's names in NUnit.Framework.TestCaseAttribute attribute");
+                    return false;
+                }
+                if ((arguments.Count > parameters.Count) && !isLastParams)
+                {
+                    _appData.Logger.LogError($"Bad {methodName} method: bad NUnit.Framework.TestCaseAttribute attribute's arguments count");
+                    _methodStorage.SetError("bad NUnit.Framework.TestCaseAttribute attribute's arguments count");
+                    return false;
+                }
             }
             return true;
         }
@@ -53,20 +58,48 @@ namespace PythonExamplesPorterApp.Converter
                 if (attribute.ArgumentList == null)
                     throw new UnsupportedSyntaxException("Bad NUnit.Framework.TestCaseAttribute");
                 IReadOnlyList<AttributeArgumentSyntax> arguments = attribute.ArgumentList.Arguments;
-                String[] values = new String[arguments.Count];
-                for (Int32 argumentIndex = 0; argumentIndex < arguments.Count; ++argumentIndex)
-                {
-                    ConvertResult expressionResult = expressionConverter.Convert(arguments[argumentIndex].Expression);
-                    if (!expressionResult.AfterResults.IsEmpty())
-                        throw new UnsupportedSyntaxException("Unexpected attribute's value conversion result");
-                    _methodStorage.ImportStorage.Append(expressionResult.ImportData);
-                    values[argumentIndex] = expressionResult.Result;
-                }
+                String[] values = ExtractValues(arguments, expressionConverter);
                 valuesList.Add(values.Length == 1 ? values.First() : $"({String.Join(", ", values)})");
             }
             foreach (String line in CreateTestCaseForHeader(String.Join(", ", parameters), valuesList))
                 _methodStorage.AddBodyLine(line);
             _methodStorage.IncreaseLocalIndentation(StorageDef.IndentationDelta);
+        }
+
+        private String[] ExtractValues(IReadOnlyList<AttributeArgumentSyntax> arguments, ExpressionConverter expressionConverter)
+        {
+            IReadOnlyList<ParameterSyntax> parameters = _node.ParameterList.Parameters;
+            Boolean isLastParams = parameters.Last().Modifiers.Any(modifier => modifier.IsKind(SyntaxKind.ParamsKeyword));
+            String[] values = new String[parameters.Count];
+            Int32 usualParametersCount = parameters.Count - (isLastParams ? 1 : 0);
+            for (Int32 parameterIndex = 0; parameterIndex < usualParametersCount; ++parameterIndex)
+            {
+                if ((parameterIndex >= arguments.Count) && (parameters[parameterIndex].Default == null))
+                    throw new UnsupportedSyntaxException("Bad NUnit.Framework.TestCaseAttribute attribute's arguments count");
+                ExpressionSyntax expression = parameterIndex < arguments.Count ? arguments[parameterIndex].Expression : parameters[parameterIndex].Default!.Value;
+                ConvertResult expressionResult = expressionConverter.Convert(expression);
+                if (!expressionResult.AfterResults.IsEmpty())
+                    throw new UnsupportedSyntaxException("Unexpected attribute's value conversion result");
+                _methodStorage.ImportStorage.Append(expressionResult.ImportData);
+                values[parameterIndex] = expressionResult.Result;
+            }
+            if (isLastParams)
+                values[parameters.Count - 1] = ExtractParamsValue(arguments, parameters.Count - 1, expressionConverter);
+            return values;
+        }
+
+        private String ExtractParamsValue(IReadOnlyList<AttributeArgumentSyntax> arguments, Int32 argumentIndex, ExpressionConverter expressionConverter)
+        {
+            IList<String> values = new List<String>();
+            for (; argumentIndex < arguments.Count; ++argumentIndex)
+            {
+                ConvertResult expressionResult = expressionConverter.Convert(arguments[argumentIndex].Expression);
+                if (!expressionResult.AfterResults.IsEmpty())
+                    throw new UnsupportedSyntaxException("Unexpected attribute's value conversion result");
+                _methodStorage.ImportStorage.Append(expressionResult.ImportData);
+                values.Add(expressionResult.Result);
+            }
+            return $"[{String.Join(", ", values)}]";
         }
 
         private IList<String> CreateTestCaseForHeader(String parameters, IList<String> valuesList)
