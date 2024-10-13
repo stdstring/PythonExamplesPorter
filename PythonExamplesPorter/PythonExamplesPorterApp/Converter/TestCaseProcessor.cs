@@ -5,6 +5,7 @@ using PythonExamplesPorterApp.Common;
 using PythonExamplesPorterApp.DestStorage;
 using PythonExamplesPorterApp.Expressions;
 using PythonExamplesPorterApp.Utils;
+using System.Xml.Linq;
 
 namespace PythonExamplesPorterApp.Converter
 {
@@ -45,7 +46,7 @@ namespace PythonExamplesPorterApp.Converter
             return true;
         }
 
-        public void Process()
+        public void ProcessBefore()
         {
             String[] parameters = _currentMethod.Parameters
                 .Select(parameter => _appData.NameTransformer.TransformLocalVariableName(parameter.Name))
@@ -64,6 +65,14 @@ namespace PythonExamplesPorterApp.Converter
             foreach (String line in CreateTestCaseForHeader(String.Join(", ", parameters), valuesList))
                 _methodStorage.AddBodyLine(line);
             _methodStorage.IncreaseLocalIndentation(StorageDef.IndentationDelta);
+        }
+
+        public void ProcessAfter()
+        {
+            // TODO (std_string) : think about approach
+            if (_node.Body!.Statements.Count == 0)
+                _methodStorage.AddBodyLine("pass");
+            _methodStorage.DecreaseLocalIndentation(StorageDef.IndentationDelta);
         }
 
         private String[] ExtractValues(IReadOnlyList<AttributeArgumentSyntax> arguments, ExpressionConverter expressionConverter)

@@ -38,8 +38,8 @@ namespace PythonExamplesPorterApp.Converter
             {
                 TestCaseProcessor testCaseProcessor = new TestCaseProcessor(_model, _appData, node, currentMethod!, methodStorage);
                 beforeGenerateChecker = testCaseProcessor.CheckMethodDeclaration;
-                beforeGenerateAction = testCaseProcessor.Process;
-                afterGenerateAction = () => { methodStorage.DecreaseLocalIndentation(StorageDef.IndentationDelta); };
+                beforeGenerateAction = testCaseProcessor.ProcessBefore;
+                afterGenerateAction = testCaseProcessor.ProcessAfter;
             }
             _appData.Logger.LogInfo($"{logHead} processed");
             GenerateTestMethodDeclaration(node, parentFullName, methodStorage, beforeGenerateChecker, beforeGenerateAction, afterGenerateAction);
@@ -92,6 +92,11 @@ namespace PythonExamplesPorterApp.Converter
                 _appData.Logger.LogInfo($"{logHead} skipped for method non marked by NUnit.Framework.TestAttribute/NUnit.Framework.TestCaseAttribute attributes");
                 return false;
             }
+            if (node.Body == null)
+            {
+                _appData.Logger.LogError($"Bad {methodName} method: absence of body");
+                return false;
+            }
             return true;
         }
 
@@ -109,20 +114,13 @@ namespace PythonExamplesPorterApp.Converter
                 methodStorage.SetError("ignored method body");
                 return;
             }
-            if (node.Body == null)
-            {
-                _appData.Logger.LogError($"Bad {methodName} method: absence of body");
-                methodStorage.SetError("absence of method's body");
-                return;
-            }
-
             if (!beforeGenerateChecker())
                 return;
             try
             {
                 beforeGenerateAction();
                 StatementConverterVisitor statementConverter = new StatementConverterVisitor(_model, methodStorage, _appData);
-                statementConverter.VisitBlock(node.Body);
+                statementConverter.VisitBlock(node.Body!);
                 afterGenerateAction();
             }
             catch (UnsupportedSyntaxException exc)
