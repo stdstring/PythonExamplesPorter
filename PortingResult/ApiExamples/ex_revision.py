@@ -123,7 +123,7 @@ class ExRevision(ApiExampleBase):
         #ExFor:Document.accept_all_revisions
         #ExSummary:Shows how to accept all tracking changes in the document.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         # Edit the document while tracking changes to create a few revisions.
         doc.start_track_revisions(author="John Doe")
         builder.write("Hello world! ")
@@ -171,7 +171,7 @@ class ExRevision(ApiExampleBase):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_ignore_dml_unique_id(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        raise NotImplementedError("Unsupported expression: ConditionalExpression")
 
     def test_layout_options_revisions(self):
         #ExStart
@@ -185,7 +185,7 @@ class ExRevision(ApiExampleBase):
         #ExFor:RevisionOptions.revision_bars_position
         #ExSummary:Shows how to alter the appearance of revisions in a rendered output document.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         # Insert a revision, then change the color of all revisions to green.
         builder.writeln("This is not a revision.")
         doc.start_track_revisions(author="John Doe", date_time=datetime.datetime.now())
@@ -202,7 +202,49 @@ class ExRevision(ApiExampleBase):
         #ExEnd
 
     def test_granularity_compare_option(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        for granularity in [aw.comparing.Granularity.CHAR_LEVEL,
+                            aw.comparing.Granularity.WORD_LEVEL]:
+            #ExStart
+            #ExFor:CompareOptions.granularity
+            #ExFor:Granularity
+            #ExSummary:Shows to specify a granularity while comparing documents.
+            doc_a = aw.Document()
+            builder_a = aw.DocumentBuilder(doc=doc_a)
+            builder_a.writeln("Alpha Lorem ipsum dolor sit amet, consectetur adipiscing elit")
+            doc_b = aw.Document()
+            builder_b = aw.DocumentBuilder(doc=doc_b)
+            builder_b.writeln("Lorems ipsum dolor sit amet consectetur - \"adipiscing\" elit")
+            # Specify whether changes are tracking
+            # by character ('Granularity.CharLevel'), or by word ('Granularity.WordLevel').
+            compare_options = aw.comparing.CompareOptions()
+            compare_options.granularity = granularity
+            doc_a.compare(document=doc_b, author="author", date_time=datetime.datetime.now(), options=compare_options)
+            # The first document's collection of revision groups contains all the differences between documents.
+            groups = doc_a.revisions.groups
+            self.assertEqual(5, groups.count)
+            #ExEnd
+            if granularity == aw.comparing.Granularity.CHAR_LEVEL:
+                self.assertEqual(aw.RevisionType.DELETION, groups[0].revision_type)
+                self.assertEqual("Alpha ", groups[0].text)
+                self.assertEqual(aw.RevisionType.DELETION, groups[1].revision_type)
+                self.assertEqual(",", groups[1].text)
+                self.assertEqual(aw.RevisionType.INSERTION, groups[2].revision_type)
+                self.assertEqual("s", groups[2].text)
+                self.assertEqual(aw.RevisionType.INSERTION, groups[3].revision_type)
+                self.assertEqual("- \"", groups[3].text)
+                self.assertEqual(aw.RevisionType.INSERTION, groups[4].revision_type)
+                self.assertEqual("\"", groups[4].text)
+            else:
+                self.assertEqual(aw.RevisionType.DELETION, groups[0].revision_type)
+                self.assertEqual("Alpha Lorem", groups[0].text)
+                self.assertEqual(aw.RevisionType.DELETION, groups[1].revision_type)
+                self.assertEqual(",", groups[1].text)
+                self.assertEqual(aw.RevisionType.INSERTION, groups[2].revision_type)
+                self.assertEqual("Lorems", groups[2].text)
+                self.assertEqual(aw.RevisionType.INSERTION, groups[3].revision_type)
+                self.assertEqual("- \"", groups[3].text)
+                self.assertEqual(aw.RevisionType.INSERTION, groups[4].revision_type)
+                self.assertEqual("\"", groups[4].text)
 
     def test_ignore_store_item_id(self):
         #ExStart:IgnoreStoreItemId

@@ -13,6 +13,7 @@ import aspose.words.digitalsignatures
 import aspose.words.drawing
 import aspose.words.drawing.charts
 import aspose.words.fields
+import aspose.words.lists
 import aspose.words.notes
 import aspose.words.tables
 import datetime
@@ -40,7 +41,7 @@ class ExDocumentBuilder(ApiExampleBase):
         #ExFor:BreakType
         #ExSummary:Shows how to create headers and footers in a document using DocumentBuilder.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         # Specify that we want different headers and footers for first, even and odd pages.
         builder.page_setup.different_first_page_header_footer = True
         builder.page_setup.odd_and_even_pages_header_footer = True
@@ -83,7 +84,7 @@ class ExDocumentBuilder(ApiExampleBase):
         #ExFor:Underline
         #ExSummary:Shows how to insert a hyperlink field.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         builder.write("For more information, please visit the ")
         # Insert a hyperlink and emphasize it with custom formatting.
         # The hyperlink will be a clickable piece of text which will take us to the location specified in the URL.
@@ -110,7 +111,7 @@ class ExDocumentBuilder(ApiExampleBase):
         #ExFor:DocumentBuilder.insert_hyperlink
         #ExSummary:Shows how to use a document builder's formatting stack.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         # Set up font formatting, then write the text that goes before the hyperlink.
         builder.font.name = "Arial"
         builder.font.size = 24
@@ -154,7 +155,7 @@ class ExDocumentBuilder(ApiExampleBase):
         #ExFor:DocumentBuilder.insert_html(str)
         #ExSummary:Shows how to use a document builder to insert html content into a document.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         html = "<p align='right'>Paragraph right</p>" + "<b>Implicit paragraph left</b>" + "<div align='center'>Div center</div>" + "<h1 align='left'>Heading 1 left.</h1>"
         builder.insert_html(html=html)
         # Inserting HTML code parses the formatting of each element into equivalent document text formatting.
@@ -172,7 +173,7 @@ class ExDocumentBuilder(ApiExampleBase):
         #ExEnd
 
     def test_insert_html_with_formatting(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        raise NotImplementedError("Unsupported expression: ConditionalExpression")
 
     def test_math_ml(self):
         raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")
@@ -183,7 +184,7 @@ class ExDocumentBuilder(ApiExampleBase):
         #ExFor:DocumentBuilder.end_bookmark
         #ExSummary:Shows how create a bookmark.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         # A valid bookmark needs to have document body text enclosed by
         # BookmarkStart and BookmarkEnd nodes created with a matching bookmark name.
         builder.start_bookmark("MyBookmark")
@@ -232,7 +233,7 @@ class ExDocumentBuilder(ApiExampleBase):
         #ExFor:DocumentBuilder.insert_check_box(str,bool,int)
         #ExSummary:Shows how to insert checkboxes into the document.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         # Insert checkboxes of varying sizes and default checked statuses.
         builder.write("Unchecked check box of a default size: ")
         builder.insert_check_box(name="", default_value=False, checked_value=False, size=0)
@@ -264,7 +265,7 @@ class ExDocumentBuilder(ApiExampleBase):
 
     def test_insert_check_box_empty_name(self):
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         # Checking that the checkbox insertion with an empty name working correctly
         builder.insert_check_box(name="", default_value=True, checked_value=False, size=1)
         builder.insert_check_box(name="", checked_value=False, size=1)
@@ -281,7 +282,7 @@ class ExDocumentBuilder(ApiExampleBase):
         #ExFor:DocumentBuilder.is_at_start_of_paragraph
         #ExSummary:Shows how to move a document builder's cursor to different nodes in a document.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         # Create a valid bookmark, an entity that consists of nodes enclosed by a bookmark start node,
         # and a bookmark end node.
         builder.start_bookmark("MyBookmark")
@@ -321,7 +322,7 @@ class ExDocumentBuilder(ApiExampleBase):
         #ExFor:DocumentBuilder.italic
         #ExSummary:Shows how to fill MERGEFIELDs with data with a document builder instead of a mail merge.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         # Insert some MERGEFIELDS, which accept data from columns of the same name in a data source during a mail merge,
         # and then fill them manually.
         builder.insert_field(field_code=" MERGEFIELD Chairman ")
@@ -357,7 +358,7 @@ class ExDocumentBuilder(ApiExampleBase):
         #ExFor:BreakType
         #ExSummary:Shows how to insert a Table of contents (TOC) into a document using heading styles as entries.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         # Insert a table of contents for the first page of the document.
         # Configure the table to pick up paragraphs with headings of levels 1 to 3.
         # Also, set its entries to be hyperlinks that will take us
@@ -420,7 +421,7 @@ class ExDocumentBuilder(ApiExampleBase):
         #ExFor:Shading.clear_formatting
         #ExSummary:Shows how to build a table with custom borders.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         builder.start_table()
         # Setting table formatting options for a document builder
         # will apply them to every row and cell that we add with it.
@@ -505,7 +506,7 @@ class ExDocumentBuilder(ApiExampleBase):
         #ExFor:AutoFitBehavior
         #ExSummary:Shows how to build a new table while applying a style.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         table = builder.start_table()
         # We must insert at least one row before setting any table formatting.
         builder.insert_cell()
@@ -551,7 +552,7 @@ class ExDocumentBuilder(ApiExampleBase):
         #ExFor:RowFormat.heading_format
         #ExSummary:Shows how to build a table with rows that repeat on every page.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         table = builder.start_table()
         # Any rows inserted while the "HeadingFormat" flag is set to "true"
         # will show up at the top of the table on every page that it spans.
@@ -592,7 +593,7 @@ class ExDocumentBuilder(ApiExampleBase):
         #ExFor:PreferredWidth
         #ExSummary:Shows how to set a table to auto fit to 50% of the width of the page.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         table = builder.start_table()
         builder.insert_cell()
         builder.write("Cell #1")
@@ -621,7 +622,7 @@ class ExDocumentBuilder(ApiExampleBase):
         #ExFor:PreferredWidth.__str__
         #ExSummary:Shows how to set a preferred width for table cells.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         table = builder.start_table()
         # There are two ways of applying the "PreferredWidth" class to table cells.
         # 1 -  Set an absolute preferred width based on points:
@@ -659,7 +660,7 @@ class ExDocumentBuilder(ApiExampleBase):
 
     def test_insert_table_from_html(self):
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         # Insert the table from HTML. Note that AutoFitSettings does not apply to tables
         # inserted from HTML.
         builder.insert_html(html="<table>" + "<tr>" + "<td>Row 1, Cell 1</td>" + "<td>Row 1, Cell 2</td>" + "</tr>" + "<tr>" + "<td>Row 2, Cell 2</td>" + "<td>Row 2, Cell 2</td>" + "</tr>" + "</table>")
@@ -674,7 +675,7 @@ class ExDocumentBuilder(ApiExampleBase):
         #ExFor:Cell.first_paragraph
         #ExSummary:Shows how to create a nested table using a document builder.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         # Build the outer table.
         cell = builder.insert_cell()
         builder.writeln("Outer Table Cell 1")
@@ -703,7 +704,7 @@ class ExDocumentBuilder(ApiExampleBase):
         #ExFor:DocumentBuilder.insert_cell
         #ExSummary:Shows how to use a document builder to create a table.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         # Start the table, then populate the first row with two cells.
         builder.start_table()
         builder.insert_cell()
@@ -736,7 +737,7 @@ class ExDocumentBuilder(ApiExampleBase):
         #ExFor:DocumentBuilder.font
         #ExSummary:Shows how to create a formatted table using DocumentBuilder.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         table = builder.start_table()
         builder.insert_cell()
         table.left_indent = 20
@@ -810,7 +811,7 @@ class ExDocumentBuilder(ApiExampleBase):
         #ExFor:BorderCollection.bottom
         #ExSummary:Shows how to apply border and shading color while building a table.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         # Start a table and set a default color/thickness for its borders.
         table = builder.start_table()
         table.set_borders(aw.LineStyle.SINGLE, 2, aspose.pydrawing.Color.black)
@@ -863,7 +864,7 @@ class ExDocumentBuilder(ApiExampleBase):
         #ExFor:PreferredWidth.from_points
         #ExSummary:Shows how to use unit conversion tools while specifying a preferred width for a cell.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         table = builder.start_table()
         builder.cell_format.preferred_width = aw.tables.PreferredWidth.from_points(aw.ConvertUtil.inch_to_point(3))
         builder.insert_cell()
@@ -875,7 +876,7 @@ class ExDocumentBuilder(ApiExampleBase):
 
     def test_cursor_position(self):
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         builder.write("Hello world!")
         # If the builder's cursor is at the end of the document,
         # there will be no nodes in front of it so that the current node will be null.
@@ -891,7 +892,7 @@ class ExDocumentBuilder(ApiExampleBase):
         #ExFor:DocumentBuilder.move_to(Node)
         #ExSummary:Shows how to move a DocumentBuilder's cursor position to a specified node.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         builder.writeln("Run 1. ")
         # The document builder has a cursor, which acts as the part of the document
         # where the builder appends new nodes when we use its document construction methods.
@@ -921,7 +922,7 @@ class ExDocumentBuilder(ApiExampleBase):
         #ExFor:DocumentBuilder.move_to_cell
         #ExSummary:Shows how to move a document builder's cursor to a cell in a table.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         # Create an empty 2x2 table.
         builder.start_table()
         builder.insert_cell()
@@ -948,7 +949,7 @@ class ExDocumentBuilder(ApiExampleBase):
         #ExFor:DocumentBuilder.move_to_bookmark(str,bool,bool)
         #ExSummary:Shows how to move a document builder's node insertion point cursor to a bookmark.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         # A valid bookmark consists of a BookmarkStart node, a BookmarkEnd node with a
         # matching bookmark name somewhere afterward, and contents enclosed by those nodes.
         builder.start_bookmark("MyBookmark")
@@ -995,7 +996,7 @@ class ExDocumentBuilder(ApiExampleBase):
         #ExFor:AutoFitBehavior
         #ExSummary:Shows how to build a formatted 2x2 table.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         table = builder.start_table()
         builder.insert_cell()
         builder.cell_format.vertical_alignment = aw.tables.CellVerticalAlignment.CENTER
@@ -1057,7 +1058,7 @@ class ExDocumentBuilder(ApiExampleBase):
         #ExFor:DocumentBuilder.insert_text_input
         #ExSummary:Shows how to insert a text input form field into a document.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         # Insert a form that prompts the user to enter text.
         builder.insert_text_input("TextInput", aw.fields.TextFormFieldType.REGULAR, "", "Enter your text here", 0)
         doc.save(file_name=ARTIFACTS_DIR + "DocumentBuilder.InsertTextInput.docx")
@@ -1077,7 +1078,7 @@ class ExDocumentBuilder(ApiExampleBase):
         #ExFor:DocumentBuilder.insert_combo_box
         #ExSummary:Shows how to insert a combo box form field into a document.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         # Insert a form that prompts the user to pick one of the items from the menu.
         builder.write("Pick a fruit: ")
         items = ["Apple", "Banana", "Cherry"]
@@ -1100,7 +1101,7 @@ class ExDocumentBuilder(ApiExampleBase):
         #ExFor:DocumentBuilder.insert_signature_line(SignatureLineOptions,RelativeHorizontalPosition,float,RelativeVerticalPosition,float,WrapType)
         #ExSummary:Shows how to insert an inline signature line into a document.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         options = aw.SignatureLineOptions()
         options.signer = "John Doe"
         options.signer_title = "Manager"
@@ -1132,7 +1133,7 @@ class ExDocumentBuilder(ApiExampleBase):
         #ExFor:ParagraphFormat.left_indent
         #ExSummary:Shows how to configure paragraph formatting to create off-center text.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         # Center all text that the document builder writes, and set up indents.
         # The indent configuration below will create a body of text that will sit asymmetrically on the page.
         # The "center" that we align the text to will be the middle of the body of text, not the middle of the page.
@@ -1165,7 +1166,7 @@ class ExDocumentBuilder(ApiExampleBase):
         #ExFor:DocumentBuilder.end_table
         #ExSummary:Shows how to format cells with a document builder.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         table = builder.start_table()
         builder.insert_cell()
         builder.write("Row 1, cell 1.")
@@ -1216,7 +1217,7 @@ class ExDocumentBuilder(ApiExampleBase):
         #ExFor:RowFormat.height_rule
         #ExSummary:Shows how to format rows with a document builder.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         table = builder.start_table()
         builder.insert_cell()
         builder.write("Row 1, cell 1.")
@@ -1257,7 +1258,7 @@ class ExDocumentBuilder(ApiExampleBase):
         #ExFor:Shading.foreground_pattern_color
         #ExSummary:Shows how to decorate text with borders and shading.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         borders = builder.paragraph_format.borders
         borders.distance_from_text = 20
         borders.get_by_border_type(aw.BorderType.LEFT).line_style = aw.LineStyle.DOUBLE
@@ -1287,7 +1288,7 @@ class ExDocumentBuilder(ApiExampleBase):
         #ExFor:DocumentBuilder.delete_row
         #ExSummary:Shows how to delete a row from a table.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         table = builder.start_table()
         builder.insert_cell()
         builder.write("Row 1, cell 1.")
@@ -1307,19 +1308,137 @@ class ExDocumentBuilder(ApiExampleBase):
         #ExEnd
 
     def test_append_document_and_resolve_styles(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        for keep_source_numbering in [False, True]:
+            #ExStart
+            #ExFor:Document.append_document(Document,ImportFormatMode,ImportFormatOptions)
+            #ExSummary:Shows how to manage list style clashes while appending a document.
+            # Load a document with text in a custom style and clone it.
+            src_doc = aw.Document(file_name=MY_DIR + "Custom list numbering.docx")
+            dst_doc = src_doc.clone()
+            # We now have two documents, each with an identical style named "CustomStyle".
+            # Change the text color for one of the styles to set it apart from the other.
+            dst_doc.styles.get_by_name("CustomStyle").font.color = aspose.pydrawing.Color.dark_red
+            # If there is a clash of list styles, apply the list format of the source document.
+            # Set the "KeepSourceNumbering" property to "false" to not import any list numbers into the destination document.
+            # Set the "KeepSourceNumbering" property to "true" import all clashing
+            # list style numbering with the same appearance that it had in the source document.
+            options = aw.ImportFormatOptions()
+            options.keep_source_numbering = keep_source_numbering
+            # Joining two documents that have different styles that share the same name causes a style clash.
+            # We can specify an import format mode while appending documents to resolve this clash.
+            dst_doc.append_document(src_doc=src_doc, import_format_mode=aw.ImportFormatMode.KEEP_DIFFERENT_STYLES, import_format_options=options)
+            dst_doc.update_list_labels()
+            dst_doc.save(file_name=ARTIFACTS_DIR + "DocumentBuilder.AppendDocumentAndResolveStyles.docx")
+            #ExEnd
 
     def test_insert_document_and_resolve_styles(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        for keep_source_numbering in [False, True]:
+            #ExStart
+            #ExFor:Document.append_document(Document,ImportFormatMode,ImportFormatOptions)
+            #ExSummary:Shows how to manage list style clashes while inserting a document.
+            dst_doc = aw.Document()
+            builder = aw.DocumentBuilder(doc=dst_doc)
+            builder.insert_break(aw.BreakType.PARAGRAPH_BREAK)
+            dst_doc.lists.add(list_template=aw.lists.ListTemplate.NUMBER_DEFAULT)
+            list = dst_doc.lists[0]
+            builder.list_format.list = list
+            i = 1
+            while i <= 15:
+                builder.write(f"List Item {i}\n")
+                i += 1
+            attach_doc = dst_doc.clone(True).as_document()
+            # If there is a clash of list styles, apply the list format of the source document.
+            # Set the "KeepSourceNumbering" property to "false" to not import any list numbers into the destination document.
+            # Set the "KeepSourceNumbering" property to "true" import all clashing
+            # list style numbering with the same appearance that it had in the source document.
+            import_options = aw.ImportFormatOptions()
+            import_options.keep_source_numbering = keep_source_numbering
+            builder.insert_break(aw.BreakType.SECTION_BREAK_NEW_PAGE)
+            builder.insert_document(src_doc=attach_doc, import_format_mode=aw.ImportFormatMode.KEEP_SOURCE_FORMATTING, import_format_options=import_options)
+            dst_doc.save(file_name=ARTIFACTS_DIR + "DocumentBuilder.InsertDocumentAndResolveStyles.docx")
+            #ExEnd
 
     def test_load_document_with_list_numbering(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        for keep_source_numbering in [False, True]:
+            #ExStart
+            #ExFor:Document.append_document(Document,ImportFormatMode,ImportFormatOptions)
+            #ExSummary:Shows how to manage list style clashes while appending a clone of a document to itself.
+            src_doc = aw.Document(file_name=MY_DIR + "List item.docx")
+            dst_doc = aw.Document(file_name=MY_DIR + "List item.docx")
+            # If there is a clash of list styles, apply the list format of the source document.
+            # Set the "KeepSourceNumbering" property to "false" to not import any list numbers into the destination document.
+            # Set the "KeepSourceNumbering" property to "true" import all clashing
+            # list style numbering with the same appearance that it had in the source document.
+            builder = aw.DocumentBuilder(doc=dst_doc)
+            builder.move_to_document_end()
+            builder.insert_break(aw.BreakType.SECTION_BREAK_NEW_PAGE)
+            options = aw.ImportFormatOptions()
+            options.keep_source_numbering = keep_source_numbering
+            builder.insert_document(src_doc=src_doc, import_format_mode=aw.ImportFormatMode.KEEP_SOURCE_FORMATTING, import_format_options=options)
+            dst_doc.update_list_labels()
+            #ExEnd
 
     def test_ignore_text_boxes(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        for ignore_text_boxes in [True, False]:
+            #ExStart
+            #ExFor:ImportFormatOptions.ignore_text_boxes
+            #ExSummary:Shows how to manage text box formatting while appending a document.
+            # Create a document that will have nodes from another document inserted into it.
+            dst_doc = aw.Document()
+            builder = aw.DocumentBuilder(doc=dst_doc)
+            builder.writeln("Hello world!")
+            # Create another document with a text box, which we will import into the first document.
+            src_doc = aw.Document()
+            builder = aw.DocumentBuilder(doc=src_doc)
+            text_box = builder.insert_shape(shape_type=aw.drawing.ShapeType.TEXT_BOX, width=300, height=100)
+            builder.move_to(text_box.first_paragraph)
+            builder.paragraph_format.style.font.name = "Courier New"
+            builder.paragraph_format.style.font.size = 24
+            builder.write("Textbox contents")
+            # Set a flag to specify whether to clear or preserve text box formatting
+            # while importing them to other documents.
+            import_format_options = aw.ImportFormatOptions()
+            import_format_options.ignore_text_boxes = ignore_text_boxes
+            # Import the text box from the source document into the destination document,
+            # and then verify whether we have preserved the styling of its text contents.
+            importer = aw.NodeImporter(src_doc=src_doc, dst_doc=dst_doc, import_format_mode=aw.ImportFormatMode.KEEP_SOURCE_FORMATTING, import_format_options=import_format_options)
+            imported_text_box = importer.import_node(text_box, True).as_shape()
+            dst_doc.first_section.body.paragraphs[1].append_child(imported_text_box)
+            if ignore_text_boxes:
+                self.assertEqual(12, imported_text_box.first_paragraph.runs[0].font.size)
+                self.assertEqual("Times New Roman", imported_text_box.first_paragraph.runs[0].font.name)
+            else:
+                self.assertEqual(24, imported_text_box.first_paragraph.runs[0].font.size)
+                self.assertEqual("Courier New", imported_text_box.first_paragraph.runs[0].font.name)
+            dst_doc.save(file_name=ARTIFACTS_DIR + "DocumentBuilder.IgnoreTextBoxes.docx")
+            #ExEnd
 
     def test_move_to_field(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        for move_cursor_to_after_the_field in [False, True]:
+            #ExStart
+            #ExFor:DocumentBuilder.move_to_field
+            #ExSummary:Shows how to move a document builder's node insertion point cursor to a specific field.
+            doc = aw.Document()
+            builder = aw.DocumentBuilder(doc=doc)
+            # Insert a field using the DocumentBuilder and add a run of text after it.
+            field = builder.insert_field(field_code=" AUTHOR \"John Doe\" ")
+            # The builder's cursor is currently at end of the document.
+            self.assertIsNone(builder.current_node)
+            # Move the cursor to the field while specifying whether to place that cursor before or after the field.
+            builder.move_to_field(field, move_cursor_to_after_the_field)
+            # Note that the cursor is outside of the field in both cases.
+            # This means that we cannot edit the field using the builder like this.
+            # To edit a field, we can use the builder's MoveTo method on a field's FieldStart
+            # or FieldSeparator node to place the cursor inside.
+            if move_cursor_to_after_the_field:
+                self.assertIsNone(builder.current_node)
+                builder.write(" Text immediately after the field.")
+                self.assertEqual("\u0013 AUTHOR \"John Doe\" \u0014John Doe\u0015 Text immediately after the field.", doc.get_text().strip())
+            else:
+                self.assertEqual(field.start, builder.current_node)
+                builder.write("Text immediately before the field. ")
+                self.assertEqual("Text immediately before the field. \u0013 AUTHOR \"John Doe\" \u0014John Doe\u0015", doc.get_text().strip())
+            #ExEnd
 
     def test_insert_ole_object_exception(self):
         raise NotImplementedError("Unsupported expression: ParenthesizedLambdaExpression")
@@ -1329,7 +1448,7 @@ class ExDocumentBuilder(ApiExampleBase):
         #ExFor:DocumentBuilder.insert_chart(ChartType,float,float)
         #ExSummary:Shows how to insert a pie chart into a document.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         chart = builder.insert_chart(chart_type=aw.drawing.charts.ChartType.PIE, width=aw.ConvertUtil.pixel_to_point(pixels=300), height=aw.ConvertUtil.pixel_to_point(pixels=300)).chart
         self.assertEqual(225, aw.ConvertUtil.pixel_to_point(pixels=300)) #ExSkip
         chart.series.clear()
@@ -1347,7 +1466,7 @@ class ExDocumentBuilder(ApiExampleBase):
         #ExFor:DocumentBuilder.insert_chart(ChartType,RelativeHorizontalPosition,float,RelativeVerticalPosition,float,float,float,WrapType)
         #ExSummary:Shows how to specify position and wrapping while inserting a chart.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         builder.insert_chart(chart_type=aw.drawing.charts.ChartType.PIE, horz_pos=aw.drawing.RelativeHorizontalPosition.MARGIN, left=100, vert_pos=aw.drawing.RelativeVerticalPosition.MARGIN, top=100, width=200, height=100, wrap_type=aw.drawing.WrapType.SQUARE)
         doc.save(file_name=ARTIFACTS_DIR + "DocumentBuilder.InsertedChartRelativePosition.docx")
         #ExEnd
@@ -1365,7 +1484,7 @@ class ExDocumentBuilder(ApiExampleBase):
         raise NotImplementedError("Unsupported target type System.DateTime")
 
     def test_insert_field_and_update(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")
 
     def test_insert_video_with_url(self):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
@@ -1375,7 +1494,7 @@ class ExDocumentBuilder(ApiExampleBase):
         #ExFor:DocumentBuilder.underline
         #ExSummary:Shows how to format text inserted by a document builder.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         builder.underline = aw.Underline.DASH
         builder.font.color = aspose.pydrawing.Color.blue
         builder.font.size = 32
@@ -1409,7 +1528,7 @@ class ExDocumentBuilder(ApiExampleBase):
         #ExFor:DocumentBuilder.insert_document(Document,ImportFormatMode,ImportFormatOptions)
         #ExSummary:Shows how to resolve duplicate styles while inserting documents.
         dst_doc = aw.Document()
-        builder = aw.DocumentBuilder(dst_doc)
+        builder = aw.DocumentBuilder(doc=dst_doc)
         my_style = builder.document.styles.add(aw.StyleType.PARAGRAPH, "MyStyle")
         my_style.font.size = 14
         my_style.font.name = "Courier New"

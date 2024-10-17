@@ -20,7 +20,22 @@ class ExImageSaveOptions(ApiExampleBase):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_renderer(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        for use_gdi_emf_renderer in [False, True]:
+            #ExStart
+            #ExFor:ImageSaveOptions.use_gdi_emf_renderer
+            #ExSummary:Shows how to choose a renderer when converting a document to .emf.
+            doc = aw.Document()
+            builder = aw.DocumentBuilder(doc=doc)
+            builder.paragraph_format.style = doc.styles.get_by_name("Heading 1")
+            builder.writeln("Hello world!")
+            builder.insert_image(file_name=IMAGE_DIR + "Logo.jpg")
+            # When we save the document as an EMF image, we can pass a SaveOptions object to select a renderer for the image.
+            # If we set the "UseGdiEmfRenderer" flag to "true", Aspose.Words will use the GDI+ renderer.
+            # If we set the "UseGdiEmfRenderer" flag to "false", Aspose.Words will use its own metafile renderer.
+            save_options = aw.saving.ImageSaveOptions(aw.SaveFormat.EMF)
+            save_options.use_gdi_emf_renderer = use_gdi_emf_renderer
+            doc.save(file_name=ARTIFACTS_DIR + "ImageSaveOptions.Renderer.emf", save_options=save_options)
+            #ExEnd
 
     def test_page_set(self):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
@@ -43,19 +58,94 @@ class ExImageSaveOptions(ApiExampleBase):
         #ExEnd
 
     def test_windows_meta_file(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_page_by_page(self):
         raise NotImplementedError("Unsupported expression: SimpleLambdaExpression")
 
     def test_color_mode(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        for image_color_mode in [aw.saving.ImageColorMode.BLACK_AND_WHITE,
+                                 aw.saving.ImageColorMode.GRAYSCALE,
+                                 aw.saving.ImageColorMode.NONE]:
+            #ExStart
+            #ExFor:ImageColorMode
+            #ExFor:ImageSaveOptions.image_color_mode
+            #ExSummary:Shows how to set a color mode when rendering documents.
+            doc = aw.Document()
+            builder = aw.DocumentBuilder(doc=doc)
+            builder.paragraph_format.style = doc.styles.get_by_name("Heading 1")
+            builder.writeln("Hello world!")
+            builder.insert_image(file_name=IMAGE_DIR + "Logo.jpg")
+            # When we save the document as an image, we can pass a SaveOptions object to
+            # select a color mode for the image that the saving operation will generate.
+            # If we set the "ImageColorMode" property to "ImageColorMode.BlackAndWhite",
+            # the saving operation will apply grayscale color reduction while rendering the document.
+            # If we set the "ImageColorMode" property to "ImageColorMode.Grayscale",
+            # the saving operation will render the document into a monochrome image.
+            # If we set the "ImageColorMode" property to "None", the saving operation will apply the default method
+            # and preserve all the document's colors in the output image.
+            image_save_options = aw.saving.ImageSaveOptions(aw.SaveFormat.PNG)
+            image_save_options.image_color_mode = image_color_mode
+            doc.save(file_name=ARTIFACTS_DIR + "ImageSaveOptions.ColorMode.png", save_options=image_save_options)
+            #ExEnd
+            tested_image_length = system_helper.io.FileInfo(ARTIFACTS_DIR + "ImageSaveOptions.ColorMode.png").length()
+            switch_condition = image_color_mode
+            if switch_condition == aw.saving.ImageColorMode.NONE:
+                self.assertTrue(tested_image_length < 175000)
+            elif switch_condition == aw.saving.ImageColorMode.GRAYSCALE:
+                self.assertTrue(tested_image_length < 90000)
+            elif switch_condition == aw.saving.ImageColorMode.BLACK_AND_WHITE:
+                self.assertTrue(tested_image_length < 15000)
 
     def test_paper_color(self):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_pixel_format(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        for image_pixel_format in [aw.saving.ImagePixelFormat.FORMAT_1BPP_INDEXED,
+                                   aw.saving.ImagePixelFormat.FORMAT_16BPP_RGB_555,
+                                   aw.saving.ImagePixelFormat.FORMAT_16BPP_RGB_565,
+                                   aw.saving.ImagePixelFormat.FORMAT_24BPP_RGB,
+                                   aw.saving.ImagePixelFormat.FORMAT_32BPP_RGB,
+                                   aw.saving.ImagePixelFormat.FORMAT_32BPP_ARGB,
+                                   aw.saving.ImagePixelFormat.FORMAT_32BPP_P_ARGB,
+                                   aw.saving.ImagePixelFormat.FORMAT_48BPP_RGB,
+                                   aw.saving.ImagePixelFormat.FORMAT_64BPP_ARGB,
+                                   aw.saving.ImagePixelFormat.FORMAT_64BPP_P_ARGB]:
+            #ExStart
+            #ExFor:ImagePixelFormat
+            #ExFor:ImageSaveOptions.clone
+            #ExFor:ImageSaveOptions.pixel_format
+            #ExSummary:Shows how to select a bit-per-pixel rate with which to render a document to an image.
+            doc = aw.Document()
+            builder = aw.DocumentBuilder(doc=doc)
+            builder.paragraph_format.style = doc.styles.get_by_name("Heading 1")
+            builder.writeln("Hello world!")
+            builder.insert_image(file_name=IMAGE_DIR + "Logo.jpg")
+            # When we save the document as an image, we can pass a SaveOptions object to
+            # select a pixel format for the image that the saving operation will generate.
+            # Various bit per pixel rates will affect the quality and file size of the generated image.
+            image_save_options = aw.saving.ImageSaveOptions(aw.SaveFormat.PNG)
+            image_save_options.pixel_format = image_pixel_format
+            # We can clone ImageSaveOptions instances.
+            self.assertNotEqual(image_save_options, image_save_options.clone())
+            doc.save(file_name=ARTIFACTS_DIR + "ImageSaveOptions.PixelFormat.png", save_options=image_save_options)
+            #ExEnd
+            tested_image_length = system_helper.io.FileInfo(ARTIFACTS_DIR + "ImageSaveOptions.PixelFormat.png").length()
+            switch_condition = image_pixel_format
+            if switch_condition == aw.saving.ImagePixelFormat.FORMAT_1BPP_INDEXED:
+                self.assertTrue(tested_image_length < 2500)
+            elif switch_condition == aw.saving.ImagePixelFormat.FORMAT_16BPP_RGB_565:
+                self.assertTrue(tested_image_length < 104000)
+            elif switch_condition == aw.saving.ImagePixelFormat.FORMAT_16BPP_RGB_555:
+                self.assertTrue(tested_image_length < 88000)
+            elif switch_condition == aw.saving.ImagePixelFormat.FORMAT_24BPP_RGB:
+                self.assertTrue(tested_image_length < 160000)
+            elif (switch_condition == aw.saving.ImagePixelFormat.FORMAT_32BPP_RGB) and (switch_condition == aw.saving.ImagePixelFormat.FORMAT_32BPP_ARGB):
+                self.assertTrue(tested_image_length < 175000)
+            elif switch_condition == aw.saving.ImagePixelFormat.FORMAT_48BPP_RGB:
+                self.assertTrue(tested_image_length < 212000)
+            elif (switch_condition == aw.saving.ImagePixelFormat.FORMAT_64BPP_ARGB) and (switch_condition == aw.saving.ImagePixelFormat.FORMAT_64BPP_P_ARGB):
+                self.assertTrue(tested_image_length < 239000)
 
     def test_floyd_steinberg_dithering(self):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
@@ -72,7 +162,7 @@ class ExImageSaveOptions(ApiExampleBase):
         #ExFor:ImageSaveOptions.jpeg_quality
         #ExSummary:Shows how to configure compression while saving a document as a JPEG.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         builder.insert_image(file_name=IMAGE_DIR + "Logo.jpg")
         # Create an "ImageSaveOptions" object which we can pass to the document's "Save" method
         # to modify the way in which that method renders the document into an image.
@@ -90,7 +180,42 @@ class ExImageSaveOptions(ApiExampleBase):
         self.assertTrue(system_helper.io.FileInfo(ARTIFACTS_DIR + "ImageSaveOptions.JpegQuality.HighQuality.jpg").length() < 75000)
 
     def test_tiff_image_compression(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        for tiff_compression in [aw.saving.TiffCompression.NONE,
+                                 aw.saving.TiffCompression.RLE,
+                                 aw.saving.TiffCompression.LZW,
+                                 aw.saving.TiffCompression.CCITT3,
+                                 aw.saving.TiffCompression.CCITT4]:
+            #ExStart
+            #ExFor:TiffCompression
+            #ExFor:ImageSaveOptions.tiff_compression
+            #ExSummary:Shows how to select the compression scheme to apply to a document that we convert into a TIFF image.
+            doc = aw.Document()
+            builder = aw.DocumentBuilder(doc=doc)
+            builder.insert_image(file_name=IMAGE_DIR + "Logo.jpg")
+            # Create an "ImageSaveOptions" object which we can pass to the document's "Save" method
+            # to modify the way in which that method renders the document into an image.
+            options = aw.saving.ImageSaveOptions(aw.SaveFormat.TIFF)
+            # Set the "TiffCompression" property to "TiffCompression.None" to apply no compression while saving,
+            # which may result in a very large output file.
+            # Set the "TiffCompression" property to "TiffCompression.Rle" to apply RLE compression
+            # Set the "TiffCompression" property to "TiffCompression.Lzw" to apply LZW compression.
+            # Set the "TiffCompression" property to "TiffCompression.Ccitt3" to apply CCITT3 compression.
+            # Set the "TiffCompression" property to "TiffCompression.Ccitt4" to apply CCITT4 compression.
+            options.tiff_compression = tiff_compression
+            doc.save(file_name=ARTIFACTS_DIR + "ImageSaveOptions.TiffImageCompression.tiff", save_options=options)
+            #ExEnd
+            tested_image_length = system_helper.io.FileInfo(ARTIFACTS_DIR + "ImageSaveOptions.TiffImageCompression.tiff").length()
+            switch_condition = tiff_compression
+            if switch_condition == aw.saving.TiffCompression.NONE:
+                self.assertTrue(tested_image_length < 3450000)
+            elif switch_condition == aw.saving.TiffCompression.RLE:
+                self.assertTrue(tested_image_length < 687000)
+            elif switch_condition == aw.saving.TiffCompression.LZW:
+                self.assertTrue(tested_image_length < 250000)
+            elif switch_condition == aw.saving.TiffCompression.CCITT3:
+                self.assertTrue(tested_image_length < 8300)
+            elif switch_condition == aw.saving.TiffCompression.CCITT4:
+                self.assertTrue(tested_image_length < 1700)
 
     def test_resolution(self):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")

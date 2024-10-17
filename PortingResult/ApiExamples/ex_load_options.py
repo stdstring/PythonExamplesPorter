@@ -19,7 +19,22 @@ from api_example_base import ApiExampleBase, ARTIFACTS_DIR, FONTS_DIR, IMAGE_DIR
 
 class ExLoadOptions(ApiExampleBase):
     def test_convert_shape_to_office_math(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        for is_convert_shape_to_office_math in [True, False]:
+            #ExStart
+            #ExFor:LoadOptions.convert_shape_to_office_math
+            #ExSummary:Shows how to convert EquationXML shapes to Office Math objects.
+            load_options = aw.loading.LoadOptions()
+            # Use this flag to specify whether to convert the shapes with EquationXML attributes
+            # to Office Math objects and then load the document.
+            load_options.convert_shape_to_office_math = is_convert_shape_to_office_math
+            doc = aw.Document(file_name=MY_DIR + "Math shapes.docx", load_options=load_options)
+            if is_convert_shape_to_office_math:
+                self.assertEqual(16, doc.get_child_nodes(aw.NodeType.SHAPE, True).count)
+                self.assertEqual(34, doc.get_child_nodes(aw.NodeType.OFFICE_MATH, True).count)
+            else:
+                self.assertEqual(24, doc.get_child_nodes(aw.NodeType.SHAPE, True).count)
+                self.assertEqual(0, doc.get_child_nodes(aw.NodeType.OFFICE_MATH, True).count)
+            #ExEnd
 
     def test_set_encoding(self):
         raise NotImplementedError("Unsupported target type System.Text.Encoding")

@@ -30,7 +30,7 @@ class ExPageSetup(ApiExampleBase):
         #ExFor:BreakType
         #ExSummary:Shows how to apply and revert page setup settings to sections in a document.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         # Modify the page setup properties for the builder's current section and add text.
         builder.page_setup.orientation = aw.Orientation.LANDSCAPE
         builder.page_setup.vertical_alignment = aw.PageVerticalAlignment.CENTER
@@ -54,10 +54,77 @@ class ExPageSetup(ApiExampleBase):
         self.assertEqual(aw.PageVerticalAlignment.TOP, doc.sections[1].page_setup.vertical_alignment)
 
     def test_different_first_page_header_footer(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        for different_first_page_header_footer in [False, True]:
+            #ExStart
+            #ExFor:PageSetup.different_first_page_header_footer
+            #ExSummary:Shows how to enable or disable primary headers/footers.
+            doc = aw.Document()
+            builder = aw.DocumentBuilder(doc=doc)
+            # Below are two types of header/footers.
+            # 1 -  The "First" header/footer, which appears on the first page of the section.
+            builder.move_to_header_footer(aw.HeaderFooterType.HEADER_FIRST)
+            builder.writeln("First page header.")
+            builder.move_to_header_footer(aw.HeaderFooterType.FOOTER_FIRST)
+            builder.writeln("First page footer.")
+            # 2 -  The "Primary" header/footer, which appears on every page in the section.
+            # We can override the primary header/footer by a first and an even page header/footer.
+            builder.move_to_header_footer(aw.HeaderFooterType.HEADER_PRIMARY)
+            builder.writeln("Primary header.")
+            builder.move_to_header_footer(aw.HeaderFooterType.FOOTER_PRIMARY)
+            builder.writeln("Primary footer.")
+            builder.move_to_section(0)
+            builder.writeln("Page 1.")
+            builder.insert_break(aw.BreakType.PAGE_BREAK)
+            builder.writeln("Page 2.")
+            builder.insert_break(aw.BreakType.PAGE_BREAK)
+            builder.writeln("Page 3.")
+            # Each section has a "PageSetup" object that specifies page appearance-related properties
+            # such as orientation, size, and borders.
+            # Set the "DifferentFirstPageHeaderFooter" property to "true" to apply the first header/footer to the first page.
+            # Set the "DifferentFirstPageHeaderFooter" property to "false"
+            # to make the first page display the primary header/footer.
+            builder.page_setup.different_first_page_header_footer = different_first_page_header_footer
+            doc.save(file_name=ARTIFACTS_DIR + "PageSetup.DifferentFirstPageHeaderFooter.docx")
+            #ExEnd
+            doc = aw.Document(file_name=ARTIFACTS_DIR + "PageSetup.DifferentFirstPageHeaderFooter.docx")
+            self.assertEqual(different_first_page_header_footer, doc.first_section.page_setup.different_first_page_header_footer)
 
     def test_odd_and_even_pages_header_footer(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        for odd_and_even_pages_header_footer in [False, True]:
+            #ExStart
+            #ExFor:PageSetup.odd_and_even_pages_header_footer
+            #ExSummary:Shows how to enable or disable even page headers/footers.
+            doc = aw.Document()
+            builder = aw.DocumentBuilder(doc=doc)
+            # Below are two types of header/footers.
+            # 1 -  The "Primary" header/footer, which appears on every page in the section.
+            # We can override the primary header/footer by a first and an even page header/footer.
+            builder.move_to_header_footer(aw.HeaderFooterType.HEADER_PRIMARY)
+            builder.writeln("Primary header.")
+            builder.move_to_header_footer(aw.HeaderFooterType.FOOTER_PRIMARY)
+            builder.writeln("Primary footer.")
+            # 2 -  The "Even" header/footer, which appears on every even page of this section.
+            builder.move_to_header_footer(aw.HeaderFooterType.HEADER_EVEN)
+            builder.writeln("Even page header.")
+            builder.move_to_header_footer(aw.HeaderFooterType.FOOTER_EVEN)
+            builder.writeln("Even page footer.")
+            builder.move_to_section(0)
+            builder.writeln("Page 1.")
+            builder.insert_break(aw.BreakType.PAGE_BREAK)
+            builder.writeln("Page 2.")
+            builder.insert_break(aw.BreakType.PAGE_BREAK)
+            builder.writeln("Page 3.")
+            # Each section has a "PageSetup" object that specifies page appearance-related properties
+            # such as orientation, size, and borders.
+            # Set the "OddAndEvenPagesHeaderFooter" property to "true"
+            # to display the even page header/footer on even pages.
+            # Set the "OddAndEvenPagesHeaderFooter" property to "false"
+            # to display the primary header/footer on even pages.
+            builder.page_setup.odd_and_even_pages_header_footer = odd_and_even_pages_header_footer
+            doc.save(file_name=ARTIFACTS_DIR + "PageSetup.OddAndEvenPagesHeaderFooter.docx")
+            #ExEnd
+            doc = aw.Document(file_name=ARTIFACTS_DIR + "PageSetup.OddAndEvenPagesHeaderFooter.docx")
+            self.assertEqual(odd_and_even_pages_header_footer, doc.first_section.page_setup.odd_and_even_pages_header_footer)
 
     def test_characters_per_line(self):
         #ExStart
@@ -66,7 +133,7 @@ class ExPageSetup(ApiExampleBase):
         #ExFor:SectionLayoutMode
         #ExSummary:Shows how to specify a for the number of characters that each line may have.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         # Enable pitching, and then use it to set the number of characters per line in this section.
         builder.page_setup.layout_mode = aw.SectionLayoutMode.GRID
         builder.page_setup.characters_per_line = 10
@@ -88,7 +155,7 @@ class ExPageSetup(ApiExampleBase):
         #ExFor:SectionLayoutMode
         #ExSummary:Shows how to specify a limit for the number of lines that each page may have.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         # Enable pitching, and then use it to set the number of lines per page in this section.
         # A large enough font size will push some lines down onto the next page to avoid overlapping characters.
         builder.page_setup.layout_mode = aw.SectionLayoutMode.LINE_GRID
@@ -114,7 +181,7 @@ class ExPageSetup(ApiExampleBase):
         #ExFor:Document.sections
         #ExSummary:Shows how to specify how a new section separates itself from the previous.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         builder.writeln("This text is in section 1.")
         # Section break types determine how a new section separates itself from the previous section.
         # Below are five types of section breaks.
@@ -165,7 +232,7 @@ class ExPageSetup(ApiExampleBase):
         #ExFor:PageSetup.footer_distance
         #ExSummary:Shows how to adjust paper size, orientation, margins, along with other settings for a section.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         builder.page_setup.paper_size = aw.PaperSize.LEGAL
         builder.page_setup.orientation = aw.Orientation.LANDSCAPE
         builder.page_setup.top_margin = aw.ConvertUtil.inch_to_point(1)
@@ -195,7 +262,7 @@ class ExPageSetup(ApiExampleBase):
         #ExFor:PageSetup.paper_size
         #ExSummary:Shows how to set page sizes.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         # We can change the current page's size to a pre-defined size
         # by using the "PaperSize" property of this section's PageSetup object.
         builder.page_setup.paper_size = aw.PaperSize.TABLOID
@@ -241,7 +308,7 @@ class ExPageSetup(ApiExampleBase):
         #ExFor:TextColumn.space_after
         #ExSummary:Shows how to create unevenly spaced columns.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         page_setup = builder.page_setup
         columns = page_setup.text_columns
         columns.evenly_spaced = False
@@ -271,7 +338,27 @@ class ExPageSetup(ApiExampleBase):
         self.assertEqual(0, page_setup.text_columns[1].space_after)
 
     def test_vertical_line_between_columns(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        for line_between in [False, True]:
+            #ExStart
+            #ExFor:TextColumnCollection.line_between
+            #ExSummary:Shows how to separate columns with a vertical line.
+            doc = aw.Document()
+            builder = aw.DocumentBuilder(doc=doc)
+            # Configure the current section's PageSetup object to divide the text into several columns.
+            # Set the "LineBetween" property to "true" to put a dividing line between columns.
+            # Set the "LineBetween" property to "false" to leave the space between columns blank.
+            columns = builder.page_setup.text_columns
+            columns.line_between = line_between
+            columns.set_count(3)
+            builder.writeln("Column 1.")
+            builder.insert_break(aw.BreakType.COLUMN_BREAK)
+            builder.writeln("Column 2.")
+            builder.insert_break(aw.BreakType.COLUMN_BREAK)
+            builder.writeln("Column 3.")
+            doc.save(file_name=ARTIFACTS_DIR + "PageSetup.VerticalLineBetweenColumns.docx")
+            #ExEnd
+            doc = aw.Document(file_name=ARTIFACTS_DIR + "PageSetup.VerticalLineBetweenColumns.docx")
+            self.assertEqual(line_between, doc.first_section.page_setup.text_columns.line_between)
 
     def test_line_numbers(self):
         #ExStart
@@ -283,7 +370,7 @@ class ExPageSetup(ApiExampleBase):
         #ExFor:LineNumberRestartMode
         #ExSummary:Shows how to enable line numbering for a section.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         # We can use the section's PageSetup object to display numbers to the left of the section's text lines.
         # This is the same behavior as a List object,
         # but it covers the entire section and does not modify the text in any way.
@@ -381,7 +468,7 @@ class ExPageSetup(ApiExampleBase):
         #ExFor:DocumentBuilder.insert_field(str,str)
         #ExSummary:Shows how to set up page numbering in a section.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         builder.writeln("Section 1, page 1.")
         builder.insert_break(aw.BreakType.PAGE_BREAK)
         builder.writeln("Section 1, page 2.")
@@ -437,7 +524,7 @@ class ExPageSetup(ApiExampleBase):
         #ExFor:PageSetup.footnote_options
         #ExSummary:Shows how to configure options affecting footnotes/endnotes in a section.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         builder.write("Hello world!")
         builder.insert_footnote(footnote_type=aw.notes.FootnoteType.FOOTNOTE, footnote_text="Footnote reference text.")
         # Configure all footnotes in the first section to restart the numbering from 1
@@ -467,7 +554,30 @@ class ExPageSetup(ApiExampleBase):
         self.assertEqual(1, endnote_options.start_number)
 
     def test_bidi(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        for reverse_columns in [False, True]:
+            #ExStart
+            #ExFor:PageSetup.bidi
+            #ExSummary:Shows how to set the order of text columns in a section.
+            doc = aw.Document()
+            page_setup = doc.sections[0].page_setup
+            page_setup.text_columns.set_count(3)
+            builder = aw.DocumentBuilder(doc=doc)
+            builder.write("Column 1.")
+            builder.insert_break(aw.BreakType.COLUMN_BREAK)
+            builder.write("Column 2.")
+            builder.insert_break(aw.BreakType.COLUMN_BREAK)
+            builder.write("Column 3.")
+            # Set the "Bidi" property to "true" to arrange the columns starting from the page's right side.
+            # The order of the columns will match the direction of the right-to-left text.
+            # Set the "Bidi" property to "false" to arrange the columns starting from the page's left side.
+            # The order of the columns will match the direction of the left-to-right text.
+            page_setup.bidi = reverse_columns
+            doc.save(file_name=ARTIFACTS_DIR + "PageSetup.Bidi.docx")
+            #ExEnd
+            doc = aw.Document(file_name=ARTIFACTS_DIR + "PageSetup.Bidi.docx")
+            page_setup = doc.first_section.page_setup
+            self.assertEqual(3, page_setup.text_columns.count)
+            self.assertEqual(reverse_columns, page_setup.bidi)
 
     def test_page_border(self):
         #ExStart
@@ -475,7 +585,7 @@ class ExPageSetup(ApiExampleBase):
         #ExFor:PageSetup.border_surrounds_header
         #ExSummary:Shows how to apply a border to the page and header/footer.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         builder.writeln("Hello world! This is the main body text.")
         builder.move_to_header_footer(aw.HeaderFooterType.HEADER_PRIMARY)
         builder.write("This is the header.")
@@ -507,7 +617,7 @@ class ExPageSetup(ApiExampleBase):
         #ExSummary:Shows how to set gutter margins.
         doc = aw.Document()
         # Insert text that spans several pages.
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         i = 0
         while i < 6:
             builder.write("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " + "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.")
@@ -541,7 +651,7 @@ class ExPageSetup(ApiExampleBase):
         #ExSummary:Shows how to configure a document that can be printed as a book fold.
         doc = aw.Document()
         # Insert text that spans 16 pages.
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         builder.writeln("My Booklet:")
         i = 0
         while i < 15:
@@ -567,7 +677,7 @@ class ExPageSetup(ApiExampleBase):
         #ExFor:PageSetup.text_orientation
         #ExSummary:Shows how to set text orientation.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         builder.writeln("Hello world!")
         # Set the "TextOrientation" property to "TextOrientation.Upward" to rotate all the text 90 degrees
         # to the right so that all left-to-right text now goes top-to-bottom.

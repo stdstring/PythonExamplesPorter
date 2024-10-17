@@ -33,7 +33,7 @@ class ExDocumentProperties(ApiExampleBase):
         #ExFor:BuiltInDocumentProperties.title
         #ExSummary:Shows how to work with built-in document properties in the "Description" category.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         properties = doc.built_in_document_properties
         # Below are four built-in document properties that have fields that can display their values in the document body.
         # 1 -  "Author" property, which we can display using an AUTHOR field:
@@ -85,7 +85,7 @@ class ExDocumentProperties(ApiExampleBase):
         #ExFor:BuiltInDocumentProperties.hyperlink_base
         #ExSummary:Shows how to store the base part of a hyperlink in the document's properties.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         # Insert a relative hyperlink to a document in the local file system named "Document.docx".
         # Clicking on the link in Microsoft Word will open the designated document, if it is available.
         builder.insert_hyperlink("Relative hyperlink", "Document.docx", False)
@@ -150,7 +150,7 @@ class ExDocumentProperties(ApiExampleBase):
         #ExFor:DocumentProperty.link_source
         #ExSummary:Shows how to link a custom document property to a bookmark.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         builder.start_bookmark("MyBookmark")
         builder.write("Hello world!")
         builder.end_bookmark("MyBookmark")

@@ -10,6 +10,9 @@
 import aspose.words as aw
 import aspose.words.digitalsignatures
 import aspose.words.saving
+import aspose.words.settings
+import datetime
+import system_helper
 import unittest
 from api_example_base import ApiExampleBase, ARTIFACTS_DIR, MY_DIR
 
@@ -23,7 +26,7 @@ class ExXpsSaveOptions(ApiExampleBase):
         #ExFor:XpsSaveOptions.save_format
         #ExSummary:Shows how to limit the headings' level that will appear in the outline of a saved XPS document.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         # Insert headings that can serve as TOC entries of levels 1, 2, and then 3.
         builder.paragraph_format.style_identifier = aw.StyleIdentifier.HEADING1
         self.assertTrue(builder.paragraph_format.is_heading)
@@ -47,10 +50,32 @@ class ExXpsSaveOptions(ApiExampleBase):
         #ExEnd
 
     def test_book_fold(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        for render_text_as_book_fold in [False, True]:
+            #ExStart
+            #ExFor:XpsSaveOptions.__init__(SaveFormat)
+            #ExFor:XpsSaveOptions.use_book_fold_printing_settings
+            #ExSummary:Shows how to save a document to the XPS format in the form of a book fold.
+            doc = aw.Document(file_name=MY_DIR + "Paragraphs.docx")
+            # Create an "XpsSaveOptions" object that we can pass to the document's "Save" method
+            # to modify how that method converts the document to .XPS.
+            xps_options = aw.saving.XpsSaveOptions(aw.SaveFormat.XPS)
+            # Set the "UseBookFoldPrintingSettings" property to "true" to arrange the contents
+            # in the output XPS in a way that helps us use it to make a booklet.
+            # Set the "UseBookFoldPrintingSettings" property to "false" to render the XPS normally.
+            xps_options.use_book_fold_printing_settings = render_text_as_book_fold
+            # If we are rendering the document as a booklet, we must set the "MultiplePages"
+            # properties of the page setup objects of all sections to "MultiplePagesType.BookFoldPrinting".
+            if render_text_as_book_fold:
+                for s in doc.sections:
+                    s = s.as_section()
+                    s.page_setup.multiple_pages = aw.settings.MultiplePagesType.BOOK_FOLD_PRINTING
+            # Once we print this document, we can turn it into a booklet by stacking the pages
+            # to come out of the printer and folding down the middle.
+            doc.save(file_name=ARTIFACTS_DIR + "XpsSaveOptions.BookFold.xps", save_options=xps_options)
+            #ExEnd
 
     def test_optimize_output(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        raise NotImplementedError("Unsupported expression: ConditionalExpression")
 
     def test_export_exact_pages(self):
         #ExStart
@@ -58,7 +83,7 @@ class ExXpsSaveOptions(ApiExampleBase):
         #ExFor:PageSet.__init__(List[int])
         #ExSummary:Shows how to extract pages based on exact page indices.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         # Add five pages to the document.
         i = 1
         while i < 6:
@@ -75,4 +100,18 @@ class ExXpsSaveOptions(ApiExampleBase):
         #ExEnd
 
     def test_xps_digital_signature(self):
-        raise NotImplementedError("Forbidden object initializer")
+        #ExStart:XpsDigitalSignature
+        #ExFor:XpsSaveOptions.digital_signature_details
+        #ExSummary:Shows how to sign XPS document.
+        doc = aw.Document(file_name=MY_DIR + "Document.docx")
+        certificate_holder = aw.digitalsignatures.CertificateHolder.create(file_name=MY_DIR + "morzal.pfx", password="aw")
+        options = aw.digitalsignatures.SignOptions()
+        options.sign_time = datetime.datetime.now()
+        options.comments = "Some comments"
+        digital_signature_details = aw.saving.DigitalSignatureDetails(certificate_holder, options)
+        save_options = aw.saving.XpsSaveOptions()
+        save_options.digital_signature_details = digital_signature_details
+        self.assertEqual(certificate_holder, digital_signature_details.certificate_holder)
+        self.assertEqual("Some comments", digital_signature_details.sign_options.comments)
+        doc.save(file_name=ARTIFACTS_DIR + "XpsSaveOptions.XpsDigitalSignature.docx", save_options=save_options)
+        #ExEnd:XpsDigitalSignature

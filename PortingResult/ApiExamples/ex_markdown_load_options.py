@@ -7,3 +7,6 @@ from api_example_base import ApiExampleBase
 class ExMarkdownLoadOptions(ApiExampleBase):
     def test_preserve_empty_lines(self):
         raise NotImplementedError("Unsupported statement type: UsingStatement")
+
+    def test_import_underline_formatting(self):
+        raise NotImplementedError("Unsupported statement type: UsingStatement")

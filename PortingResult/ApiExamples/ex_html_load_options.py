@@ -9,6 +9,7 @@
 
 import aspose.words as aw
 import aspose.words.digitalsignatures
+import aspose.words.drawing
 import aspose.words.loading
 import datetime
 import unittest
@@ -17,7 +18,7 @@ from api_example_base import ApiExampleBase, ARTIFACTS_DIR, IMAGE_DIR, MY_DIR
 
 class ExHtmlLoadOptions(ApiExampleBase):
     def test_support_vml(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_encrypted_html(self):
         #ExStart
@@ -50,10 +51,10 @@ class ExHtmlLoadOptions(ApiExampleBase):
         raise NotImplementedError("Unsupported target type System.Text.Encoding")
 
     def test_ignore_noscript_elements(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        raise NotImplementedError("Unsupported target type System.Text.Encoding")
 
     def test_block_import(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        raise NotImplementedError("Unsupported target type System.Text.Encoding")
 
     def test_font_face_rules(self):
         #ExStart:FontFaceRules

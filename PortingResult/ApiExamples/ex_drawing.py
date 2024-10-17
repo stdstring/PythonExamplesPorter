@@ -27,7 +27,7 @@ class ExDrawing(ApiExampleBase):
         #ExFor:ImageType
         #ExSummary:Shows how to add an image to a shape and check its type.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         img_shape = builder.insert_image(file_name=IMAGE_DIR + "Logo.jpg")
         self.assertEqual(aw.drawing.ImageType.JPEG, img_shape.image_data.image_type)
         #ExEnd
@@ -68,7 +68,7 @@ class ExDrawing(ApiExampleBase):
         #ExFor:LayoutFlow
         #ExSummary:Shows how to add text to a text box, and change its orientation
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         textbox = aw.drawing.Shape(doc, aw.drawing.ShapeType.TEXT_BOX)
         textbox.width = 100
         textbox.height = 100

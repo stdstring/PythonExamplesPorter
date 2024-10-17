@@ -26,7 +26,7 @@ class ExShape(ApiExampleBase):
         raise NotImplementedError("Unsupported target type System.IO.File")
 
     def test_font(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_rotate(self):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
@@ -101,14 +101,37 @@ class ExShape(ApiExampleBase):
         self.assertEqual(aspose.pydrawing.Point(-250, -250), group.coord_origin)
 
     def test_anchor_locked(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        for anchor_locked in [False, True]:
+            #ExStart
+            #ExFor:ShapeBase.anchor_locked
+            #ExSummary:Shows how to lock or unlock a shape's paragraph anchor.
+            doc = aw.Document()
+            builder = aw.DocumentBuilder(doc=doc)
+            builder.writeln("Hello world!")
+            builder.write("Our shape will have an anchor attached to this paragraph.")
+            shape = builder.insert_shape(shape_type=aw.drawing.ShapeType.RECTANGLE, width=200, height=160)
+            shape.wrap_type = aw.drawing.WrapType.NONE
+            builder.insert_break(aw.BreakType.PARAGRAPH_BREAK)
+            builder.writeln("Hello again!")
+            # Set the "AnchorLocked" property to "true" to prevent the shape's anchor
+            # from moving when moving the shape in Microsoft Word.
+            # Set the "AnchorLocked" property to "false" to allow any movement of the shape
+            # to also move its anchor to any other paragraph that the shape ends up close to.
+            shape.anchor_locked = anchor_locked
+            # If the shape does not have a visible anchor symbol to its left,
+            # we will need to enable visible anchors via "Options" -> "Display" -> "Object Anchors".
+            doc.save(file_name=ARTIFACTS_DIR + "Shape.AnchorLocked.docx")
+            #ExEnd
+            doc = aw.Document(file_name=ARTIFACTS_DIR + "Shape.AnchorLocked.docx")
+            shape = doc.get_child(aw.NodeType.SHAPE, 0, True).as_shape()
+            self.assertEqual(anchor_locked, shape.anchor_locked)
 
     def test_delete_all_shapes(self):
         #ExStart
         #ExFor:Shape
         #ExSummary:Shows how to delete all shapes from a document.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         # Insert two shapes along with a group shape with another shape inside it.
         builder.insert_shape(shape_type=aw.drawing.ShapeType.RECTANGLE, width=400, height=200)
         builder.insert_shape(shape_type=aw.drawing.ShapeType.STAR, width=300, height=300)
@@ -156,7 +179,7 @@ class ExShape(ApiExampleBase):
         #ExFor:TextureAlignment
         #ExSummary:Shows how to fill and tiling the texture inside the shape.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         shape = builder.insert_shape(shape_type=aw.drawing.ShapeType.RECTANGLE, width=80, height=80)
         # Apply texture alignment to the shape fill.
         shape.fill.preset_textured(aw.drawing.PresetTexture.CANVAS)
@@ -186,7 +209,7 @@ class ExShape(ApiExampleBase):
         #ExFor:GradientVariant
         #ExSummary:Shows how to fill a shape with a gradients.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         shape = builder.insert_shape(shape_type=aw.drawing.ShapeType.RECTANGLE, width=80, height=80)
         # Apply One-color gradient fill to the shape with ForeColor of gradient fill.
         shape.fill.one_color_gradient(color=aspose.pydrawing.Color.red, style=aw.drawing.GradientStyle.HORIZONTAL, variant=aw.drawing.GradientVariant.VARIANT2, degree=0.1)
@@ -244,7 +267,7 @@ class ExShape(ApiExampleBase):
         #ExFor:GradientStop.remove
         #ExSummary:Shows how to add gradient stops to the gradient fill.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         shape = builder.insert_shape(shape_type=aw.drawing.ShapeType.RECTANGLE, width=80, height=80)
         shape.fill.two_color_gradient(color1=aspose.pydrawing.Color.green, color2=aspose.pydrawing.Color.red, style=aw.drawing.GradientStyle.HORIZONTAL, variant=aw.drawing.GradientVariant.VARIANT2)
         # Get gradient stops collection.
@@ -314,7 +337,7 @@ class ExShape(ApiExampleBase):
         #ExFor:Fill.back_tint_and_shade
         #ExSummary:Shows how to set theme color for foreground/background shape color.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         shape = builder.insert_shape(shape_type=aw.drawing.ShapeType.ROUND_RECTANGLE, width=80, height=80)
         fill = shape.fill
         fill.fore_theme_color = aw.themes.ThemeColor.DARK1
@@ -455,7 +478,26 @@ class ExShape(ApiExampleBase):
         self.assertEqual(aw.math.OfficeMathJustification.CENTER, office_math.justification)
 
     def test_aspect_ratio(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        for lock_aspect_ratio in [True, False]:
+            #ExStart
+            #ExFor:ShapeBase.aspect_ratio_locked
+            #ExSummary:Shows how to lock/unlock a shape's aspect ratio.
+            doc = aw.Document()
+            builder = aw.DocumentBuilder(doc=doc)
+            # Insert a shape. If we open this document in Microsoft Word, we can left click the shape to reveal
+            # eight sizing handles around its perimeter, which we can click and drag to change its size.
+            shape = builder.insert_image(file_name=IMAGE_DIR + "Logo.jpg")
+            # Set the "AspectRatioLocked" property to "true" to preserve the shape's aspect ratio
+            # when using any of the four diagonal sizing handles, which change both the image's height and width.
+            # Using any orthogonal sizing handles that either change the height or width will still change the aspect ratio.
+            # Set the "AspectRatioLocked" property to "false" to allow us to
+            # freely change the image's aspect ratio with all sizing handles.
+            shape.aspect_ratio_locked = lock_aspect_ratio
+            doc.save(file_name=ARTIFACTS_DIR + "Shape.AspectRatio.docx")
+            #ExEnd
+            doc = aw.Document(file_name=ARTIFACTS_DIR + "Shape.AspectRatio.docx")
+            shape = doc.get_child(aw.NodeType.SHAPE, 0, True).as_shape()
+            self.assertEqual(lock_aspect_ratio, shape.aspect_ratio_locked)
 
     def test_markup_language_by_default(self):
         #ExStart
@@ -463,14 +505,26 @@ class ExShape(ApiExampleBase):
         #ExFor:ShapeBase.size_in_points
         #ExSummary:Shows how to verify a shape's size and markup language.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         shape = builder.insert_image(file_name=IMAGE_DIR + "Transparent background logo.png")
         self.assertEqual(aw.drawing.ShapeMarkupLanguage.DML, shape.markup_language)
         self.assertEqual(aspose.pydrawing.SizeF(300, 300), shape.size_in_points)
         #ExEnd
 
     def test_markup_language_for_different_ms_word_versions(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        for ms_word_version, shape_markup_language in [(aw.settings.MsWordVersion.WORD2000, aw.drawing.ShapeMarkupLanguage.VML),
+                                                       (aw.settings.MsWordVersion.WORD2002, aw.drawing.ShapeMarkupLanguage.VML),
+                                                       (aw.settings.MsWordVersion.WORD2003, aw.drawing.ShapeMarkupLanguage.VML),
+                                                       (aw.settings.MsWordVersion.WORD2007, aw.drawing.ShapeMarkupLanguage.VML),
+                                                       (aw.settings.MsWordVersion.WORD2010, aw.drawing.ShapeMarkupLanguage.DML),
+                                                       (aw.settings.MsWordVersion.WORD2013, aw.drawing.ShapeMarkupLanguage.DML),
+                                                       (aw.settings.MsWordVersion.WORD2016, aw.drawing.ShapeMarkupLanguage.DML)]:
+            doc = aw.Document()
+            doc.compatibility_options.optimize_for(ms_word_version)
+            builder = aw.DocumentBuilder(doc=doc)
+            builder.insert_image(file_name=IMAGE_DIR + "Transparent background logo.png")
+            for shape in doc.get_child_nodes(aw.NodeType.SHAPE, True).of_type():
+                self.assertEqual(shape_markup_language, shape.markup_language)
 
     def test_stroke(self):
         #ExStart
@@ -483,7 +537,7 @@ class ExShape(ApiExampleBase):
         #ExFor:ShapeLineStyle
         #ExSummary:Shows how change stroke properties.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         shape = builder.insert_shape(shape_type=aw.drawing.ShapeType.RECTANGLE, horz_pos=aw.drawing.RelativeHorizontalPosition.LEFT_MARGIN, left=100, vert_pos=aw.drawing.RelativeVerticalPosition.TOP_MARGIN, top=100, width=200, height=200, wrap_type=aw.drawing.WrapType.NONE)
         # Basic shapes, such as the rectangle, have two visible parts.
         # 1 -  The fill, which applies to the area within the outline of the shape:
@@ -514,7 +568,7 @@ class ExShape(ApiExampleBase):
 
     def test_insert_ole_object_as_html_file(self):
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         builder.insert_ole_object(file_name="http://www.aspose.com", prog_id="htmlfile", is_linked=True, as_icon=False, presentation=None)
         doc.save(file_name=ARTIFACTS_DIR + "Shape.InsertOleObjectAsHtmlFile.docx")
 
@@ -523,7 +577,7 @@ class ExShape(ApiExampleBase):
 
     def test_resize(self):
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         shape = builder.insert_shape(shape_type=aw.drawing.ShapeType.RECTANGLE, width=200, height=300)
         shape.height = 300
         shape.width = 500
@@ -534,7 +588,41 @@ class ExShape(ApiExampleBase):
         raise NotImplementedError("Unsupported target type System.String")
 
     def test_is_layout_in_cell(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        for is_layout_in_cell in [False, True]:
+            #ExStart
+            #ExFor:ShapeBase.is_layout_in_cell
+            #ExSummary:Shows how to determine how to display a shape in a table cell.
+            doc = aw.Document()
+            builder = aw.DocumentBuilder(doc=doc)
+            table = builder.start_table()
+            builder.insert_cell()
+            builder.insert_cell()
+            builder.end_table()
+            table_style = doc.styles.add(aw.StyleType.TABLE, "MyTableStyle1").as_table_style()
+            table_style.bottom_padding = 20
+            table_style.left_padding = 10
+            table_style.right_padding = 10
+            table_style.top_padding = 20
+            table_style.borders.color = aspose.pydrawing.Color.black
+            table_style.borders.line_style = aw.LineStyle.SINGLE
+            table.style = table_style
+            builder.move_to(table.first_row.first_cell.first_paragraph)
+            shape = builder.insert_shape(shape_type=aw.drawing.ShapeType.RECTANGLE, horz_pos=aw.drawing.RelativeHorizontalPosition.LEFT_MARGIN, left=50, vert_pos=aw.drawing.RelativeVerticalPosition.TOP_MARGIN, top=100, width=100, height=100, wrap_type=aw.drawing.WrapType.NONE)
+            # Set the "IsLayoutInCell" property to "true" to display the shape as an inline element inside the cell's paragraph.
+            # The coordinate origin that will determine the shape's location will be the top left corner of the shape's cell.
+            # If we re-size the cell, the shape will move to maintain the same position starting from the cell's top left.
+            # Set the "IsLayoutInCell" property to "false" to display the shape as an independent floating shape.
+            # The coordinate origin that will determine the shape's location will be the top left corner of the page,
+            # and the shape will not respond to any re-sizing of its cell.
+            shape.is_layout_in_cell = is_layout_in_cell
+            # We can only apply the "IsLayoutInCell" property to floating shapes.
+            shape.wrap_type = aw.drawing.WrapType.NONE
+            doc.save(file_name=ARTIFACTS_DIR + "Shape.LayoutInTableCell.docx")
+            #ExEnd
+            doc = aw.Document(file_name=ARTIFACTS_DIR + "Shape.LayoutInTableCell.docx")
+            table = doc.first_section.body.tables[0]
+            shape = table.first_row.first_cell.get_child(aw.NodeType.SHAPE, 0, True).as_shape()
+            self.assertEqual(is_layout_in_cell, shape.is_layout_in_cell)
 
     def test_shape_insertion(self):
         raise NotImplementedError("Unsupported target type System.Collections.Generic.IEnumerable")
@@ -543,7 +631,7 @@ class ExShape(ApiExampleBase):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_text_box_layout_flow(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_text_box_fit_shape_to_text(self):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
@@ -552,11 +640,11 @@ class ExShape(ApiExampleBase):
         raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_text_box_contents_wrap_mode(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_text_box_shape_type(self):
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         # Set compatibility options to correctly using of VerticalAnchor property.
         doc.compatibility_options.optimize_for(aw.settings.MsWordVersion.WORD2016)
         text_box_shape = builder.insert_shape(shape_type=aw.drawing.ShapeType.TEXT_BOX, width=100, height=100)
@@ -571,7 +659,7 @@ class ExShape(ApiExampleBase):
         raise NotImplementedError("Unsupported target type System.Collections.Generic.IEnumerable")
 
     def test_vertical_anchor(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        raise NotImplementedError("Unsupported type: ApiExamples.TestUtil")
 
     def test_insert_text_paths(self):
         raise NotImplementedError("ignored method body")
@@ -648,7 +736,7 @@ class ExShape(ApiExampleBase):
         # That's why our value has changed to 'false'.
         shape.alternative_text = "Alternative text."
         self.assertFalse(shape.is_decorative)
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         builder.move_to_document_end()
         # Create a new shape as decorative.
         shape = builder.insert_shape(shape_type=aw.drawing.ShapeType.RECTANGLE, width=100, height=100)
@@ -678,7 +766,7 @@ class ExShape(ApiExampleBase):
         #ExFor:TextBox.no_text_rotation
         #ExSummary:Shows how to disable text rotation when the shape is rotate.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         shape = builder.insert_shape(shape_type=aw.drawing.ShapeType.ELLIPSE, width=20, height=20)
         shape.text_box.no_text_rotation = True
         doc.save(file_name=ARTIFACTS_DIR + "Shape.NoTextRotation.docx")
@@ -699,7 +787,7 @@ class ExShape(ApiExampleBase):
         #ExFor:RelativeVerticalSize
         #ExSummary:Shows how to set relative size and position.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         # Adding a simple shape with absolute size and position.
         shape = builder.insert_shape(shape_type=aw.drawing.ShapeType.RECTANGLE, width=100, height=40)
         # Set WrapType to WrapType.None since Inline shapes are automatically converted to absolute units.
@@ -756,7 +844,7 @@ class ExShape(ApiExampleBase):
         #ExFor:ImageData.fit_image_to_shape
         #ExSummary:Shows hot to fit the image data to Shape frame.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         # Insert an image shape and leave its orientation in its default state.
         shape = builder.insert_shape(shape_type=aw.drawing.ShapeType.RECTANGLE, width=300, height=450)
         shape.image_data.set_image(file_name=IMAGE_DIR + "Barcode.png")
@@ -770,7 +858,7 @@ class ExShape(ApiExampleBase):
         #ExFor:Stroke.fore_tint_and_shade
         #ExSummary:Shows how to set fore theme color and tint and shade.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         shape = builder.insert_shape(shape_type=aw.drawing.ShapeType.TEXT_BOX, width=100, height=40)
         stroke = shape.stroke
         stroke.fore_theme_color = aw.themes.ThemeColor.DARK1
@@ -992,3 +1080,31 @@ class ExShape(ApiExampleBase):
         self.assertEqual(True, check_box_control.checked)
         self.assertEqual(aw.drawing.ole.Forms2OleControlType.CHECK_BOX, check_box_control.type)
         #ExEnd:CheckedCheckBox
+
+    def test_insert_group_shape(self):
+        #ExStart:InsertGroupShape
+        #ExFor:DocumentBuilder.insert_group_shape(float,float,float,float,List[Shape])
+        #ExFor:DocumentBuilder.insert_group_shape(List[Shape])
+        #ExSummary:Shows how to insert DML group shape.
+        doc = aw.Document()
+        builder = aw.DocumentBuilder(doc=doc)
+        shape1 = builder.insert_shape(shape_type=aw.drawing.ShapeType.RECTANGLE, width=200, height=250)
+        shape1.left = 20
+        shape1.top = 20
+        shape1.stroke.color = aspose.pydrawing.Color.red
+        shape2 = builder.insert_shape(shape_type=aw.drawing.ShapeType.ELLIPSE, width=150, height=200)
+        shape2.left = 40
+        shape2.top = 50
+        shape2.stroke.color = aspose.pydrawing.Color.green
+        # Dimensions for the new GroupShape node.
+        left = 10
+        top = 10
+        width = 200
+        height = 300
+        # Insert GroupShape node for the specified size which is inserted into the specified position.
+        group_shape1 = builder.insert_group_shape(left=left, top=top, width=width, height=height, shapes=[shape1, shape2])
+        # Insert GroupShape node which position and dimension will be calculated automatically.
+        shape3 = shape1.clone(True).as_shape()
+        group_shape2 = builder.insert_group_shape(shapes=[shape3])
+        doc.save(file_name=ARTIFACTS_DIR + "Shape.InsertGroupShape.docx")
+        #ExEnd:InsertGroupShape
