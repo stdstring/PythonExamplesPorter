@@ -5,7 +5,6 @@ using PythonExamplesPorterApp.Common;
 using PythonExamplesPorterApp.DestStorage;
 using PythonExamplesPorterApp.Expressions;
 using PythonExamplesPorterApp.Utils;
-using System.Xml.Linq;
 
 namespace PythonExamplesPorterApp.Converter
 {
@@ -29,14 +28,30 @@ namespace PythonExamplesPorterApp.Converter
             {
                 if (attribute.ArgumentList == null)
                     continue;
-                IReadOnlyList<AttributeArgumentSyntax> arguments = attribute.ArgumentList.Arguments;
-                if (arguments.Any(argument => argument.NameColon != null))
+                Int32 usableArgumentCount = 0;
+                Boolean hasUnsupportedProperties = false;
+                Boolean hasNamedArguments = false;
+                foreach (AttributeArgumentSyntax argument in attribute.ArgumentList.Arguments)
+                {
+                    hasNamedArguments = argument.NameColon != null;
+                    if (argument.NameEquals != null)
+                        hasUnsupportedProperties = !IgnoredProperties.Contains(argument.NameEquals.Name.ToFullString().Trim());
+                    else
+                        ++usableArgumentCount;
+                }
+                if (hasUnsupportedProperties)
+                {
+                    _appData.Logger.LogError($"Bad {methodName} method: unsupported properties in NUnit.Framework.TestCaseAttribute attribute");
+                    _methodStorage.SetError("unsupported properties in NUnit.Framework.TestCaseAttribute attribute");
+                    return false;
+                }
+                if (hasNamedArguments)
                 {
                     _appData.Logger.LogError($"Bad {methodName} method: unsupported usage of argument's names in NUnit.Framework.TestCaseAttribute attribute");
                     _methodStorage.SetError("unsupported usage of argument's names in NUnit.Framework.TestCaseAttribute attribute");
                     return false;
                 }
-                if ((arguments.Count > parameters.Count) && !isLastParams)
+                if ((usableArgumentCount > parameters.Count) && !isLastParams)
                 {
                     _appData.Logger.LogError($"Bad {methodName} method: bad NUnit.Framework.TestCaseAttribute attribute's arguments count");
                     _methodStorage.SetError("bad NUnit.Framework.TestCaseAttribute attribute's arguments count");
@@ -77,15 +92,21 @@ namespace PythonExamplesPorterApp.Converter
 
         private String[] ExtractValues(IReadOnlyList<AttributeArgumentSyntax> arguments, ExpressionConverter expressionConverter)
         {
+            AttributeArgumentSyntax[] usedArguments = arguments.Where(argument => argument.NameEquals == null).ToArray();
+            return ExtractValuesImpl(usedArguments, expressionConverter);
+        }
+
+        private String[] ExtractValuesImpl(AttributeArgumentSyntax[] arguments, ExpressionConverter expressionConverter)
+        {
             IReadOnlyList<ParameterSyntax> parameters = _node.ParameterList.Parameters;
             Boolean isLastParams = parameters.Last().Modifiers.Any(modifier => modifier.IsKind(SyntaxKind.ParamsKeyword));
             String[] values = new String[parameters.Count];
             Int32 usualParametersCount = parameters.Count - (isLastParams ? 1 : 0);
             for (Int32 parameterIndex = 0; parameterIndex < usualParametersCount; ++parameterIndex)
             {
-                if ((parameterIndex >= arguments.Count) && (parameters[parameterIndex].Default == null))
+                if ((parameterIndex >= arguments.Length) && (parameters[parameterIndex].Default == null))
                     throw new UnsupportedSyntaxException("Bad NUnit.Framework.TestCaseAttribute attribute's arguments count");
-                ExpressionSyntax expression = parameterIndex < arguments.Count ? arguments[parameterIndex].Expression : parameters[parameterIndex].Default!.Value;
+                ExpressionSyntax expression = parameterIndex < arguments.Length ? arguments[parameterIndex].Expression : parameters[parameterIndex].Default!.Value;
                 ConvertResult expressionResult = expressionConverter.Convert(expression);
                 if (!expressionResult.AfterResults.IsEmpty())
                     throw new UnsupportedSyntaxException("Unexpected attribute's value conversion result");
@@ -97,10 +118,10 @@ namespace PythonExamplesPorterApp.Converter
             return values;
         }
 
-        private String ExtractParamsValue(IReadOnlyList<AttributeArgumentSyntax> arguments, Int32 argumentIndex, ExpressionConverter expressionConverter)
+        private String ExtractParamsValue(AttributeArgumentSyntax[] arguments, Int32 argumentIndex, ExpressionConverter expressionConverter)
         {
             IList<String> values = new List<String>();
-            for (; argumentIndex < arguments.Count; ++argumentIndex)
+            for (; argumentIndex < arguments.Length; ++argumentIndex)
             {
                 ConvertResult expressionResult = expressionConverter.Convert(arguments[argumentIndex].Expression);
                 if (!expressionResult.AfterResults.IsEmpty())
@@ -135,5 +156,6 @@ namespace PythonExamplesPorterApp.Converter
         private readonly MethodDeclarationSyntax _node;
         private readonly IMethodSymbol _currentMethod;
         private readonly MethodStorage _methodStorage;
+        private static readonly ISet<String> IgnoredProperties = new HashSet<String>(new[]{"Category", "Description"});
     }
 }
