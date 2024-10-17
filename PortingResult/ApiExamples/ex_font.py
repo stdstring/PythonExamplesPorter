@@ -85,10 +85,39 @@ class ExFont(ApiExampleBase):
         self.assertFalse(doc.font_infos.save_subset_fonts)
 
     def test_font_info_collection(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        for embed_all_fonts in [False, True]:
+            #ExStart
+            #ExFor:FontInfoCollection
+            #ExFor:DocumentBase.font_infos
+            #ExFor:FontInfoCollection.embed_true_type_fonts
+            #ExFor:FontInfoCollection.embed_system_fonts
+            #ExFor:FontInfoCollection.save_subset_fonts
+            #ExSummary:Shows how to save a document with embedded TrueType fonts.
+            doc = aw.Document(file_name=MY_DIR + "Document.docx")
+            font_infos = doc.font_infos
+            font_infos.embed_true_type_fonts = embed_all_fonts
+            font_infos.embed_system_fonts = embed_all_fonts
+            font_infos.save_subset_fonts = embed_all_fonts
+            doc.save(file_name=ARTIFACTS_DIR + "Font.FontInfoCollection.docx")
+            #ExEnd
+            tested_file_length = system_helper.io.FileInfo(ARTIFACTS_DIR + "Font.FontInfoCollection.docx").length()
+            if embed_all_fonts:
+                self.assertTrue(tested_file_length < 28000)
+            else:
+                self.assertTrue(tested_file_length < 13000)
 
     def test_work_with_embedded_fonts(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        for embed_true_type_fonts, embed_system_fonts, save_subset_fonts in [(True, False, False),
+                                                                             (True, True, False),
+                                                                             (True, True, True),
+                                                                             (True, False, True),
+                                                                             (False, False, False)]:
+            doc = aw.Document(file_name=MY_DIR + "Document.docx")
+            font_infos = doc.font_infos
+            font_infos.embed_true_type_fonts = embed_true_type_fonts
+            font_infos.embed_system_fonts = embed_system_fonts
+            font_infos.save_subset_fonts = save_subset_fonts
+            doc.save(file_name=ARTIFACTS_DIR + "Font.WorkWithEmbeddedFonts.docx")
 
     def test_strike_through(self):
         #ExStart
@@ -164,7 +193,7 @@ class ExFont(ApiExampleBase):
         #ExFor:Font.spacing
         #ExSummary:Shows how to set horizontal scaling and spacing for characters.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         # Add run of text and increase character width to 150%.
         builder.font.scaling = 150
         builder.writeln("Wide characters")
@@ -192,7 +221,7 @@ class ExFont(ApiExampleBase):
         #ExFor:Font.italic
         #ExSummary:Shows how to write italicized text using a document builder.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         builder.font.size = 36
         builder.font.italic = True
         builder.writeln("Hello world!")
@@ -209,7 +238,7 @@ class ExFont(ApiExampleBase):
         #ExFor:Font.engrave
         #ExSummary:Shows how to apply engraving/embossing effects to text.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         builder.font.size = 36
         builder.font.color = aspose.pydrawing.Color.light_blue
         # Below are two ways of using shadows to apply a 3D-like effect to the text.
@@ -237,7 +266,7 @@ class ExFont(ApiExampleBase):
         #ExFor:Font.shadow
         #ExSummary:Shows how to create a run of text formatted with a shadow.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         # Set the Shadow flag to apply an offset shadow effect,
         # making it look like the letters are floating above the page.
         builder.font.shadow = True
@@ -255,7 +284,7 @@ class ExFont(ApiExampleBase):
         #ExFor:Font.outline
         #ExSummary:Shows how to create a run of text formatted as outline.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         # Set the Outline flag to change the text's fill color to white and
         # leave a thin outline around each character in the original color of the text.
         builder.font.outline = True
@@ -274,7 +303,7 @@ class ExFont(ApiExampleBase):
         #ExFor:Font.hidden
         #ExSummary:Shows how to create a run of hidden text.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         # With the Hidden flag set to true, any text that we create using this Font object will be invisible in the document.
         # We will not see or highlight hidden text unless we enable the "Hidden text" option
         # found in Microsoft Word via "File" -> "Options" -> "Display". The text will still be there,
@@ -295,7 +324,7 @@ class ExFont(ApiExampleBase):
         #ExFor:Font.kerning
         #ExSummary:Shows how to specify the font size at which kerning begins to take effect.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         builder.font.name = "Arial Black"
         # Set the builder's font size, and minimum size at which kerning will take effect.
         # The font size falls below the kerning threshold, so the run bellow will not have kerning.
@@ -324,7 +353,7 @@ class ExFont(ApiExampleBase):
         #ExFor:Font.no_proofing
         #ExSummary:Shows how to prevent text from being spell checked by Microsoft Word.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         # Normally, Microsoft Word emphasizes spelling errors with a jagged red underline.
         # We can un-set the "NoProofing" flag to create a portion of text that
         # bypasses the spell checker while completely disabling it.
@@ -346,7 +375,7 @@ class ExFont(ApiExampleBase):
         #ExFor:Font.underline_color
         #ExSummary:Shows how to configure the style and color of a text underline.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         builder.font.underline = aw.Underline.DOTTED
         builder.font.underline_color = aspose.pydrawing.Color.red
         builder.writeln("Underlined text.")
@@ -363,7 +392,7 @@ class ExFont(ApiExampleBase):
         #ExFor:Font.complex_script
         #ExSummary:Shows how to add text that is always treated as complex script.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         builder.font.complex_script = True
         builder.writeln("Text treated as complex script.")
         doc.save(file_name=ARTIFACTS_DIR + "Font.ComplexScript.docx")
@@ -379,7 +408,7 @@ class ExFont(ApiExampleBase):
         #ExFor:Font.text_effect
         #ExSummary:Shows how to apply a visual effect to a run.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         builder.font.size = 36
         builder.font.text_effect = aw.TextEffect.SPARKLE_TEXT
         builder.writeln("Text with a sparkle effect.")
@@ -399,7 +428,7 @@ class ExFont(ApiExampleBase):
         #ExFor:Shading.background_tint_and_shade
         #ExSummary:Shows how to set foreground and background colors for shading texture.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         shading = doc.first_section.body.first_paragraph.paragraph_format.shading
         shading.texture = aw.TextureIndex.TEXTURE_12PT5_PERCENT
         shading.foreground_pattern_theme_color = aw.themes.ThemeColor.DARK1
@@ -425,7 +454,7 @@ class ExFont(ApiExampleBase):
         #ExFor:Font.shading
         #ExSummary:Shows how to apply shading to text created by a document builder.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         builder.font.color = aspose.pydrawing.Color.white
         # One way to make the text created using our white font color visible
         # is to apply a background shading effect.
@@ -456,7 +485,7 @@ class ExFont(ApiExampleBase):
         #ExFor:Font.name_other
         #ExSummary:Shows how Microsoft Word can combine two different fonts in one run.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         # Suppose a run that we use the builder to insert while using this font configuration
         # contains characters within the ASCII characters' range. In that case,
         # it will display those characters using this font.
@@ -485,7 +514,7 @@ class ExFont(ApiExampleBase):
         #ExFor:StyleIdentifier
         #ExSummary:Shows how to change the style of existing text.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         # Below are two ways of referencing styles.
         # 1 -  Using the style name:
         builder.font.style_name = "Emphasis"
@@ -537,7 +566,7 @@ class ExFont(ApiExampleBase):
         #ExFor:Font.style
         #ExSummary:Applies a double underline to all runs in a document that are formatted with custom character styles.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         # Insert a custom style and apply it to text created using a document builder.
         style = doc.styles.add(aw.StyleType.CHARACTER, "MyStyle")
         style.font.color = aspose.pydrawing.Color.red
@@ -567,7 +596,7 @@ class ExFont(ApiExampleBase):
         #ExFor:Font.auto_color
         #ExSummary:Shows how to improve readability by automatically selecting text color based on the brightness of its background.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         # If a run's Font object does not specify text color, it will automatically
         # select either black or white depending on the background color's color.
         self.assertEqual(aspose.pydrawing.Color.empty().to_argb(), builder.font.color.to_argb())
@@ -640,7 +669,7 @@ class ExFont(ApiExampleBase):
         #ExFor:Font.line_spacing
         #ExSummary:Shows how to get a font's line spacing, in points.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         # Set different fonts for the DocumentBuilder and verify their line spacing.
         builder.font.name = "Calibri"
         self.assertEqual(14.6484375, builder.font.line_spacing)
@@ -666,7 +695,25 @@ class ExFont(ApiExampleBase):
         raise NotImplementedError("Unsupported target type System.IO.Directory")
 
     def test_set_emphasis_mark(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        for emphasis_mark in [aw.EmphasisMark.NONE,
+                              aw.EmphasisMark.OVER_COMMA,
+                              aw.EmphasisMark.OVER_SOLID_CIRCLE,
+                              aw.EmphasisMark.OVER_WHITE_CIRCLE,
+                              aw.EmphasisMark.UNDER_SOLID_CIRCLE]:
+            #ExStart
+            #ExFor:EmphasisMark
+            #ExFor:Font.emphasis_mark
+            #ExSummary:Shows how to add additional character rendered above/below the glyph-character.
+            builder = aw.DocumentBuilder()
+            # Possible types of emphasis mark:
+            # https:#apireference.aspose.com/words/net/aspose.words/emphasismark
+            builder.font.emphasis_mark = emphasis_mark
+            builder.write("Emphasis text")
+            builder.writeln()
+            builder.font.clear_formatting()
+            builder.write("Simple text")
+            builder.document.save(file_name=ARTIFACTS_DIR + "Fonts.SetEmphasisMark.docx")
+            #ExEnd
 
     def test_theme_fonts_colors(self):
         #ExStart
@@ -743,7 +790,7 @@ class ExFont(ApiExampleBase):
         #ExFor:ThemeColor
         #ExSummary:Shows how to create and use themed style.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         builder.writeln()
         # Create some style with theme font properties.
         style = doc.styles.add(aw.StyleType.PARAGRAPH, "ThemedStyle")

@@ -8,6 +8,7 @@
 #####################################
 
 import aspose.words as aw
+import aspose.words.layout
 import unittest
 from api_example_base import ApiExampleBase, ARTIFACTS_DIR, MY_DIR
 
@@ -33,7 +34,34 @@ class ExParagraphFormat(ApiExampleBase):
         self.assertTrue(format.hanging_punctuation)
 
     def test_drop_cap(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        for drop_cap_position in [aw.DropCapPosition.MARGIN,
+                                  aw.DropCapPosition.NORMAL,
+                                  aw.DropCapPosition.NONE]:
+            #ExStart
+            #ExFor:DropCapPosition
+            #ExSummary:Shows how to create a drop cap.
+            doc = aw.Document()
+            builder = aw.DocumentBuilder(doc=doc)
+            # Insert one paragraph with a large letter that the text in the second and third paragraphs begins with.
+            builder.font.size = 54
+            builder.writeln("L")
+            builder.font.size = 18
+            builder.writeln("orem ipsum dolor sit amet, consectetur adipiscing elit, " + "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ")
+            builder.writeln("Ut enim ad minim veniam, quis nostrud exercitation " + "ullamco laboris nisi ut aliquip ex ea commodo consequat.")
+            # Currently, the second and third paragraphs will appear underneath the first.
+            # We can convert the first paragraph as a drop cap for the other paragraphs via its "ParagraphFormat" object.
+            # Set the "DropCapPosition" property to "DropCapPosition.Margin" to place the drop cap
+            # outside the left-hand side page margin if our text is left-to-right.
+            # Set the "DropCapPosition" property to "DropCapPosition.Normal" to place the drop cap within the page margins
+            # and to wrap the rest of the text around it.
+            # "DropCapPosition.None" is the default state for all paragraphs.
+            format = doc.first_section.body.first_paragraph.paragraph_format
+            format.drop_cap_position = drop_cap_position
+            doc.save(file_name=ARTIFACTS_DIR + "ParagraphFormat.DropCap.docx")
+            #ExEnd
+            doc = aw.Document(file_name=ARTIFACTS_DIR + "ParagraphFormat.DropCap.docx")
+            self.assertEqual(drop_cap_position, doc.first_section.body.paragraphs[0].paragraph_format.drop_cap_position)
+            self.assertEqual(aw.DropCapPosition.NONE, doc.first_section.body.paragraphs[1].paragraph_format.drop_cap_position)
 
     def test_line_spacing(self):
         #ExStart
@@ -42,7 +70,7 @@ class ExParagraphFormat(ApiExampleBase):
         #ExFor:LineSpacingRule
         #ExSummary:Shows how to work with line spacing.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         # Below are three line spacing rules that we can define using the
         # paragraph's "LineSpacingRule" property to configure spacing between paragraphs.
         # 1 -  Set a minimum amount of spacing.
@@ -82,10 +110,76 @@ class ExParagraphFormat(ApiExampleBase):
         self.assertEqual(18, paragraphs[5].paragraph_format.line_spacing)
 
     def test_paragraph_spacing_auto(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        for auto_spacing in [False, True]:
+            #ExStart
+            #ExFor:ParagraphFormat.space_after
+            #ExFor:ParagraphFormat.space_after_auto
+            #ExFor:ParagraphFormat.space_before
+            #ExFor:ParagraphFormat.space_before_auto
+            #ExSummary:Shows how to set automatic paragraph spacing.
+            doc = aw.Document()
+            builder = aw.DocumentBuilder(doc=doc)
+            # Apply a large amount of spacing before and after paragraphs that this builder will create.
+            builder.paragraph_format.space_before = 24
+            builder.paragraph_format.space_after = 24
+            # Set these flags to "true" to apply automatic spacing,
+            # effectively ignoring the spacing in the properties we set above.
+            # Leave them as "false" will apply our custom paragraph spacing.
+            builder.paragraph_format.space_after_auto = auto_spacing
+            builder.paragraph_format.space_before_auto = auto_spacing
+            # Insert two paragraphs that will have spacing above and below them and save the document.
+            builder.writeln("Paragraph 1.")
+            builder.writeln("Paragraph 2.")
+            doc.save(file_name=ARTIFACTS_DIR + "ParagraphFormat.ParagraphSpacingAuto.docx")
+            #ExEnd
+            doc = aw.Document(file_name=ARTIFACTS_DIR + "ParagraphFormat.ParagraphSpacingAuto.docx")
+            format = doc.first_section.body.paragraphs[0].paragraph_format
+            self.assertEqual(24, format.space_before)
+            self.assertEqual(24, format.space_after)
+            self.assertEqual(auto_spacing, format.space_after_auto)
+            self.assertEqual(auto_spacing, format.space_before_auto)
+            format = doc.first_section.body.paragraphs[1].paragraph_format
+            self.assertEqual(24, format.space_before)
+            self.assertEqual(24, format.space_after)
+            self.assertEqual(auto_spacing, format.space_after_auto)
+            self.assertEqual(auto_spacing, format.space_before_auto)
 
     def test_paragraph_spacing_same_style(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        for no_space_between_paragraphs_of_same_style in [False, True]:
+            #ExStart
+            #ExFor:ParagraphFormat.space_after
+            #ExFor:ParagraphFormat.space_before
+            #ExFor:ParagraphFormat.no_space_between_paragraphs_of_same_style
+            #ExSummary:Shows how to apply no spacing between paragraphs with the same style.
+            doc = aw.Document()
+            builder = aw.DocumentBuilder(doc=doc)
+            # Apply a large amount of spacing before and after paragraphs that this builder will create.
+            builder.paragraph_format.space_before = 24
+            builder.paragraph_format.space_after = 24
+            # Set the "NoSpaceBetweenParagraphsOfSameStyle" flag to "true" to apply
+            # no spacing between paragraphs with the same style, which will group similar paragraphs.
+            # Leave the "NoSpaceBetweenParagraphsOfSameStyle" flag as "false"
+            # to evenly apply spacing to every paragraph.
+            builder.paragraph_format.no_space_between_paragraphs_of_same_style = no_space_between_paragraphs_of_same_style
+            builder.paragraph_format.style = doc.styles.get_by_name("Normal")
+            builder.writeln(f"Paragraph in the \"{builder.paragraph_format.style.name}\" style.")
+            builder.writeln(f"Paragraph in the \"{builder.paragraph_format.style.name}\" style.")
+            builder.writeln(f"Paragraph in the \"{builder.paragraph_format.style.name}\" style.")
+            builder.paragraph_format.style = doc.styles.get_by_name("Quote")
+            builder.writeln(f"Paragraph in the \"{builder.paragraph_format.style.name}\" style.")
+            builder.writeln(f"Paragraph in the \"{builder.paragraph_format.style.name}\" style.")
+            builder.paragraph_format.style = doc.styles.get_by_name("Normal")
+            builder.writeln(f"Paragraph in the \"{builder.paragraph_format.style.name}\" style.")
+            builder.writeln(f"Paragraph in the \"{builder.paragraph_format.style.name}\" style.")
+            doc.save(file_name=ARTIFACTS_DIR + "ParagraphFormat.ParagraphSpacingSameStyle.docx")
+            #ExEnd
+            doc = aw.Document(file_name=ARTIFACTS_DIR + "ParagraphFormat.ParagraphSpacingSameStyle.docx")
+            for paragraph in doc.first_section.body.paragraphs:
+                paragraph = paragraph.as_paragraph()
+                format = paragraph.paragraph_format
+                self.assertEqual(24, format.space_before)
+                self.assertEqual(24, format.space_after)
+                self.assertEqual(no_space_between_paragraphs_of_same_style, format.no_space_between_paragraphs_of_same_style)
 
     def test_paragraph_outline_level(self):
         #ExStart
@@ -93,7 +187,7 @@ class ExParagraphFormat(ApiExampleBase):
         #ExFor:OutlineLevel
         #ExSummary:Shows how to configure paragraph outline levels to create collapsible text.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         # Each paragraph has an OutlineLevel, which could be any number from 1 to 9, or at the default "BodyText" value.
         # Setting the property to one of the numbered values will show an arrow to the left
         # of the beginning of the paragraph.
@@ -122,17 +216,66 @@ class ExParagraphFormat(ApiExampleBase):
         self.assertEqual(aw.OutlineLevel.BODY_TEXT, paragraphs[4].paragraph_format.outline_level)
 
     def test_page_break_before(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        for page_break_before in [False, True]:
+            #ExStart
+            #ExFor:ParagraphFormat.page_break_before
+            #ExSummary:Shows how to create paragraphs with page breaks at the beginning.
+            doc = aw.Document()
+            builder = aw.DocumentBuilder(doc=doc)
+            # Set this flag to "true" to apply a page break to each paragraph's beginning
+            # that the document builder will create under this ParagraphFormat configuration.
+            # The first paragraph will not receive a page break.
+            # Leave this flag as "false" to start each new paragraph on the same page
+            # as the previous, provided there is sufficient space.
+            builder.paragraph_format.page_break_before = page_break_before
+            builder.writeln("Paragraph 1.")
+            builder.writeln("Paragraph 2.")
+            layout_collector = aw.layout.LayoutCollector(doc)
+            paragraphs = doc.first_section.body.paragraphs
+            if page_break_before:
+                self.assertEqual(1, layout_collector.get_start_page_index(paragraphs[0]))
+                self.assertEqual(2, layout_collector.get_start_page_index(paragraphs[1]))
+            else:
+                self.assertEqual(1, layout_collector.get_start_page_index(paragraphs[0]))
+                self.assertEqual(1, layout_collector.get_start_page_index(paragraphs[1]))
+            doc.save(file_name=ARTIFACTS_DIR + "ParagraphFormat.PageBreakBefore.docx")
+            #ExEnd
+            doc = aw.Document(file_name=ARTIFACTS_DIR + "ParagraphFormat.PageBreakBefore.docx")
+            paragraphs = doc.first_section.body.paragraphs
+            self.assertEqual(page_break_before, paragraphs[0].paragraph_format.page_break_before)
+            self.assertEqual(page_break_before, paragraphs[1].paragraph_format.page_break_before)
 
     def test_widow_control(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        for widow_control in [False, True]:
+            #ExStart
+            #ExFor:ParagraphFormat.widow_control
+            #ExSummary:Shows how to enable widow/orphan control for a paragraph.
+            doc = aw.Document()
+            builder = aw.DocumentBuilder(doc=doc)
+            # When we write the text that does not fit onto one page, one line may spill over onto the next page.
+            # The single line that ends up on the next page is called an "Orphan",
+            # and the previous line where the orphan broke off is called a "Widow".
+            # We can fix orphans and widows by rearranging text via font size, spacing, or page margins.
+            # If we wish to preserve our document's dimensions, we can set this flag to "true"
+            # to push widows onto the same page as their respective orphans.
+            # Leave this flag as "false" will leave widow/orphan pairs in text.
+            # Every paragraph has this setting accessible in Microsoft Word via Home -> Paragraph -> Paragraph Settings
+            # (button on bottom right hand corner of "Paragraph" tab) -> "Widow/Orphan control".
+            builder.paragraph_format.widow_control = widow_control
+            # Insert text that produces an orphan and a widow.
+            builder.font.size = 68
+            builder.write("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " + "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.")
+            doc.save(file_name=ARTIFACTS_DIR + "ParagraphFormat.WidowControl.docx")
+            #ExEnd
+            doc = aw.Document(file_name=ARTIFACTS_DIR + "ParagraphFormat.WidowControl.docx")
+            self.assertEqual(widow_control, doc.first_section.body.paragraphs[0].paragraph_format.widow_control)
 
     def test_lines_to_drop(self):
         #ExStart
         #ExFor:ParagraphFormat.lines_to_drop
         #ExSummary:Shows how to set the size of a drop cap.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         # Modify the "LinesToDrop" property to designate a paragraph as a drop cap,
         # which will turn it into a large capital letter that will decorate the next paragraph.
         # Give this property a value of 4 to give the drop cap the height of four text lines.
@@ -150,7 +293,22 @@ class ExParagraphFormat(ApiExampleBase):
         self.assertEqual(0, paragraphs[1].paragraph_format.lines_to_drop)
 
     def test_suppress_hyphens(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        for suppress_auto_hyphens in [False, True]:
+            #ExStart
+            #ExFor:ParagraphFormat.suppress_auto_hyphens
+            #ExSummary:Shows how to suppress hyphenation for a paragraph.
+            aw.Hyphenation.register_dictionary(language="de-CH", file_name=MY_DIR + "hyph_de_CH.dic")
+            self.assertTrue(aw.Hyphenation.is_dictionary_registered("de-CH"))
+            # Open a document containing text with a locale matching that of our dictionary.
+            # When we save this document to a fixed page save format, its text will have hyphenation.
+            doc = aw.Document(file_name=MY_DIR + "German text.docx")
+            # We can set the "SuppressAutoHyphens" property to "true" to disable hyphenation
+            # for a specific paragraph while keeping it enabled for the rest of the document.
+            # The default value for this property is "false",
+            # which means every paragraph by default uses hyphenation if any is available.
+            doc.first_section.body.first_paragraph.paragraph_format.suppress_auto_hyphens = suppress_auto_hyphens
+            doc.save(file_name=ARTIFACTS_DIR + "ParagraphFormat.SuppressHyphens.pdf")
+            #ExEnd
 
     def test_paragraph_spacing_and_indents(self):
         raise NotImplementedError("Unsupported type: ApiExamples.DocumentHelper")

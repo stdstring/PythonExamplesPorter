@@ -25,7 +25,7 @@ class ExFontSettings(ApiExampleBase):
         aw.fonts.FontSettings.default_instance.substitution_settings.default_font_substitution.default_font_name = "Courier New"
         self.assertTrue(aw.fonts.FontSettings.default_instance.substitution_settings.default_font_substitution.enabled)
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         builder.font.name = "Non-existent font"
         builder.write("Hello world!")
         # This document does not have a FontSettings configuration. When we render the document,
@@ -80,10 +80,10 @@ class ExFontSettings(ApiExampleBase):
         #ExEnd
 
     def test_set_fonts_folder(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        raise NotImplementedError("Unsupported member target type - Aspose.Words.Fonts.FontSourceBase[] for expression: originalFontSources")
 
     def test_set_fonts_folders(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        raise NotImplementedError("Unsupported member target type - Aspose.Words.Fonts.FontSourceBase[] for expression: originalFontSources")
 
     def test_add_font_source(self):
         raise NotImplementedError("Unsupported member target type - Aspose.Words.Fonts.FontSourceBase[] for expression: originalFontSources")
@@ -194,7 +194,7 @@ class ExFontSettings(ApiExampleBase):
         default_font_substitution_rule.default_font_name = "Courier New"
         # Using a document builder, add some text in a font that we do not have to see the substitution take place,
         # and then render the result in a PDF.
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         builder.font.name = "Missing Font"
         builder.writeln("Line written in a missing font, which will be substituted with Courier New.")
         doc.save(file_name=ARTIFACTS_DIR + "FontSettings.DefaultFontSubstitutionRule.pdf")

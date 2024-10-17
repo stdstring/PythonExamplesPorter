@@ -36,7 +36,7 @@ class ExStructuredDocumentTag(ApiExampleBase):
         #ExFor:SdtType
         #ExSummary:Shows how to work with styles for content control elements.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         # Below are two ways to apply a style from the document to a structured document tag.
         # 1 -  Apply a style object from the document's style collection:
         quote_style = doc.styles.get_by_style_identifier(aw.StyleIdentifier.QUOTE)
@@ -101,7 +101,7 @@ class ExStructuredDocumentTag(ApiExampleBase):
         # Set the "Appearance" property to "SdtAppearance.Tags" to show tags around content.
         # By default structured document tag shows as BoundingBox.
         tag.appearance = aw.markup.SdtAppearance.TAGS
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         builder.insert_node(tag)
         # Insert a clone of our structured document tag in a new paragraph.
         tag_clone = tag.clone(True).as_structured_document_tag()
@@ -123,10 +123,54 @@ class ExStructuredDocumentTag(ApiExampleBase):
         self.assertEqual(aw.markup.SdtAppearance.TAGS, tag.appearance)
 
     def test_is_temporary(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        raise NotImplementedError("Unsupported expression: SimpleLambdaExpression")
 
     def test_placeholder_building_block(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        for is_showing_placeholder_text in [False, True]:
+            #ExStart
+            #ExFor:StructuredDocumentTag.is_showing_placeholder_text
+            #ExFor:IStructuredDocumentTag.is_showing_placeholder_text
+            #ExFor:StructuredDocumentTag.placeholder
+            #ExFor:StructuredDocumentTag.placeholder_name
+            #ExFor:IStructuredDocumentTag.placeholder
+            #ExFor:IStructuredDocumentTag.placeholder_name
+            #ExSummary:Shows how to use a building block's contents as a custom placeholder text for a structured document tag.
+            doc = aw.Document()
+            # Insert a plain text structured document tag of the "PlainText" type, which will function as a text box.
+            # The contents that it will display by default are a "Click here to enter text." prompt.
+            tag = aw.markup.StructuredDocumentTag(doc, aw.markup.SdtType.PLAIN_TEXT, aw.markup.MarkupLevel.INLINE)
+            # We can get the tag to display the contents of a building block instead of the default text.
+            # First, add a building block with contents to the glossary document.
+            glossary_doc = doc.glossary_document
+            substitute_block = aw.buildingblocks.BuildingBlock(glossary_doc)
+            substitute_block.name = "Custom Placeholder"
+            substitute_block.append_child(aw.Section(glossary_doc))
+            substitute_block.first_section.append_child(aw.Body(glossary_doc))
+            substitute_block.first_section.body.append_paragraph("Custom placeholder text.")
+            glossary_doc.append_child(substitute_block)
+            # Then, use the structured document tag's "PlaceholderName" property to reference that building block by name.
+            tag.placeholder_name = "Custom Placeholder"
+            # If "PlaceholderName" refers to an existing block in the parent document's glossary document,
+            # we will be able to verify the building block via the "Placeholder" property.
+            self.assertEqual(substitute_block, tag.placeholder)
+            # Set the "IsShowingPlaceholderText" property to "true" to treat the
+            # structured document tag's current contents as placeholder text.
+            # This means that clicking on the text box in Microsoft Word will immediately highlight all the tag's contents.
+            # Set the "IsShowingPlaceholderText" property to "false" to get the
+            # structured document tag to treat its contents as text that a user has already entered.
+            # Clicking on this text in Microsoft Word will place the blinking cursor at the clicked location.
+            tag.is_showing_placeholder_text = is_showing_placeholder_text
+            builder = aw.DocumentBuilder(doc=doc)
+            builder.insert_node(tag)
+            doc.save(file_name=ARTIFACTS_DIR + "StructuredDocumentTag.PlaceholderBuildingBlock.docx")
+            #ExEnd
+            doc = aw.Document(file_name=ARTIFACTS_DIR + "StructuredDocumentTag.PlaceholderBuildingBlock.docx")
+            tag = doc.get_child(aw.NodeType.STRUCTURED_DOCUMENT_TAG, 0, True).as_structured_document_tag()
+            substitute_block = doc.glossary_document.get_child(aw.NodeType.BUILDING_BLOCK, 0, True).as_building_block()
+            self.assertEqual("Custom Placeholder", substitute_block.name)
+            self.assertEqual(is_showing_placeholder_text, tag.is_showing_placeholder_text)
+            self.assertEqual(substitute_block, tag.placeholder)
+            self.assertEqual(substitute_block.name, tag.placeholder_name)
 
     def test_lock(self):
         #ExStart
@@ -136,7 +180,7 @@ class ExStructuredDocumentTag(ApiExampleBase):
         #ExFor:IStructuredDocumentTag.lock_contents
         #ExSummary:Shows how to apply editing restrictions to structured document tags.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         # Insert a plain text structured document tag, which acts as a text box that prompts the user to fill it in.
         tag = aw.markup.StructuredDocumentTag(doc, aw.markup.SdtType.PLAIN_TEXT, aw.markup.MarkupLevel.INLINE)
         # Set the "LockContents" property to "true" to prohibit the user from editing this text box's contents.
@@ -406,7 +450,7 @@ class ExStructuredDocumentTag(ApiExampleBase):
         #ExFor:SdtType
         #ExSummary:Shows how to create group structured document tag at the Row level.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         table = builder.start_table()
         # Create a Group structured document tag at the Row level.
         group_sdt = aw.markup.StructuredDocumentTag(doc, aw.markup.SdtType.GROUP, aw.markup.MarkupLevel.ROW)
@@ -454,7 +498,7 @@ class ExStructuredDocumentTag(ApiExampleBase):
         paragraph = doc.first_section.body.first_paragraph
         paragraph.append_child(sdt)
         # Create a Citation field.
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         builder.move_to_paragraph(0, -1)
         builder.insert_field(field_code="""CITATION Ath22 \\l 1033 """, field_value="(John Lennon, 2022)")
         # Move the field to the structured document tag.
@@ -487,3 +531,19 @@ class ExStructuredDocumentTag(ApiExampleBase):
         if tag.appearance == aw.markup.SdtAppearance.HIDDEN:
             tag.appearance = aw.markup.SdtAppearance.TAGS
         #ExEnd:Appearance
+
+    def test_insert_structured_document_tag(self):
+        #ExStart:InsertStructuredDocumentTag
+        #ExFor:DocumentBuilder.insert_structured_document_tag(SdtType)
+        #ExSummary:Shows how to simply insert structured document tag.
+        doc = aw.Document(file_name=MY_DIR + "Rendering.docx")
+        builder = aw.DocumentBuilder(doc=doc)
+        builder.move_to(doc.first_section.body.paragraphs[3])
+        # Note, that only following StructuredDocumentTag types are allowed for insertion:
+        # SdtType.PlainText, SdtType.RichText, SdtType.Checkbox, SdtType.DropDownList,
+        # SdtType.ComboBox, SdtType.Picture, SdtType.Date.
+        # Markup level of inserted StructuredDocumentTag will be detected automatically and depends on position being inserted at.
+        # Added StructuredDocumentTag will inherit paragraph and font formatting from cursor position.
+        sdt_plain = builder.insert_structured_document_tag(aw.markup.SdtType.PLAIN_TEXT)
+        doc.save(file_name=ARTIFACTS_DIR + "StructuredDocumentTag.InsertStructuredDocumentTag.docx")
+        #ExEnd:InsertStructuredDocumentTag

@@ -7,9 +7,11 @@
 # "as is", without warranty of any kind, either expressed or implied.
 #####################################
 
-from api_example_base import ApiExampleBase
+import aspose.words as aw
+import aspose.words.loading
+from api_example_base import ApiExampleBase, MY_DIR
 
 
 class ExRtfLoadOptions(ApiExampleBase):
     def test_recognize_utf_8_text(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        raise NotImplementedError("Unsupported expression: ConditionalExpression")

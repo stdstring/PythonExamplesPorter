@@ -15,10 +15,10 @@ from api_example_base import ApiExampleBase, MY_DIR
 
 class ExTxtLoadOptions(ApiExampleBase):
     def test_detect_numbering_with_whitespaces(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        raise NotImplementedError("Unsupported target type System.Text.Encoding")
 
     def test_trail_spaces(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        raise NotImplementedError("Unsupported target type System.Text.Encoding")
 
     def test_detect_document_direction(self):
         #ExStart

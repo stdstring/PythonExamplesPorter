@@ -27,7 +27,7 @@ class ExDocumentBuilderImages(ApiExampleBase):
         #ExFor:DocumentBuilder.insert_image(str)
         #ExSummary:Shows how to determine which image will be inserted.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         builder.insert_image(file_name=IMAGE_DIR + "Scalable Vector Graphics.svg")
         # Aspose.Words insert SVG image to the document as PNG with svgBlip extension
         # that contains the original vector SVG image representation.

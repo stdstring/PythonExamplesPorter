@@ -23,7 +23,7 @@ class ExSection(ApiExampleBase):
         #ExFor:Section.protected_for_forms
         #ExSummary:Shows how to turn off protection for a section.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         builder.writeln("Section 1. Hello world!")
         builder.insert_break(aw.BreakType.SECTION_BREAK_NEW_PAGE)
         builder.writeln("Section 2. Hello again!")
@@ -49,7 +49,7 @@ class ExSection(ApiExampleBase):
         #ExFor:NodeCollection.remove_at(int)
         #ExSummary:Shows how to add and remove sections in a document.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         builder.write("Section 1")
         builder.insert_break(aw.BreakType.SECTION_BREAK_NEW_PAGE)
         builder.write("Section 2")
@@ -74,7 +74,7 @@ class ExSection(ApiExampleBase):
         # which contains child nodes that we can edit.
         self.assertEqual(1, doc.sections.count)
         # Use a document builder to add text to the first section.
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         builder.writeln("Hello world!")
         # Create a second section by inserting a section break.
         builder.insert_break(aw.BreakType.SECTION_BREAK_NEW_PAGE)
@@ -227,7 +227,7 @@ class ExSection(ApiExampleBase):
         #ExFor:Section.prepend_content
         #ExSummary:Shows how to append the contents of a section to another section.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         builder.write("Section 1")
         builder.insert_break(aw.BreakType.SECTION_BREAK_NEW_PAGE)
         builder.write("Section 2")
@@ -251,7 +251,7 @@ class ExSection(ApiExampleBase):
         #ExFor:Section.clear_content
         #ExSummary:Shows how to clear the contents of a section.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         builder.write("Hello world!")
         self.assertEqual("Hello world!", doc.get_text().strip())
         self.assertEqual(1, doc.first_section.body.paragraphs.count)
@@ -268,7 +268,7 @@ class ExSection(ApiExampleBase):
         #ExSummary:Shows how to clear the contents of all headers and footers in a section.
         doc = aw.Document()
         self.assertEqual(0, doc.first_section.headers_footers.count)
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         builder.move_to_header_footer(aw.HeaderFooterType.HEADER_PRIMARY)
         builder.writeln("This is the primary header.")
         builder.move_to_header_footer(aw.HeaderFooterType.FOOTER_PRIMARY)
@@ -289,7 +289,7 @@ class ExSection(ApiExampleBase):
         #ExFor:Section.delete_header_footer_shapes
         #ExSummary:Shows how to remove all shapes from all headers footers in a section.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         # Create a primary header with a shape.
         builder.move_to_header_footer(aw.HeaderFooterType.HEADER_PRIMARY)
         builder.insert_shape(shape_type=aw.drawing.ShapeType.RECTANGLE, width=100, height=100)
@@ -324,7 +324,7 @@ class ExSection(ApiExampleBase):
 
     def test_modify_page_setup_in_all_sections(self):
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         builder.write("Section 1")
         builder.insert_break(aw.BreakType.SECTION_BREAK_NEW_PAGE)
         builder.write("Section 2")

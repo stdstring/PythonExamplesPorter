@@ -142,7 +142,7 @@ class ExDocument(ApiExampleBase):
         raise NotImplementedError("Unsupported expression: ParenthesizedLambdaExpression")
 
     def test_import_list(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        raise NotImplementedError("Unsupported expression: ConditionalExpression")
 
     def test_keep_source_numbering_same_list_ids(self):
         #ExStart
@@ -197,9 +197,9 @@ class ExDocument(ApiExampleBase):
         #ExSummary:Shows how to adjust sentence and word spacing automatically.
         src_doc = aw.Document()
         dst_doc = aw.Document()
-        builder = aw.DocumentBuilder(src_doc)
+        builder = aw.DocumentBuilder(doc=src_doc)
         builder.write("Dolor sit amet.")
-        builder = aw.DocumentBuilder(dst_doc)
+        builder = aw.DocumentBuilder(doc=dst_doc)
         builder.write("Lorem ipsum.")
         options = aw.ImportFormatOptions()
         options.adjust_sentence_and_word_spacing = True
@@ -244,7 +244,7 @@ class ExDocument(ApiExampleBase):
         #ExFor:Document.clone
         #ExSummary:Shows how to deep clone a document.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         builder.write("Hello world!")
         # Cloning will produce a new document with the same contents as the original,
         # but with a unique copy of each of the original document's nodes.
@@ -259,7 +259,7 @@ class ExDocument(ApiExampleBase):
         #ExFor:Node.__str__(SaveFormat)
         #ExSummary:Shows the difference between calling the GetText and ToString methods on a node.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         builder.insert_field(field_code="MERGEFIELD Field")
         # GetText will retrieve the visible text as well as field codes and special characters.
         self.assertEqual("\u0013MERGEFIELD Field\u0014«Field»\u0015", doc.get_text().strip())
@@ -284,7 +284,7 @@ class ExDocument(ApiExampleBase):
         # We have not encrypted the document in any way, and we do not need the password to open and edit it programmatically.
         protected_doc = aw.Document(file_name=ARTIFACTS_DIR + "Document.Protect.docx")
         self.assertEqual(aw.ProtectionType.READ_ONLY, protected_doc.protection_type)
-        builder = aw.DocumentBuilder(protected_doc)
+        builder = aw.DocumentBuilder(doc=protected_doc)
         builder.writeln("Text added to a protected document.")
         self.assertEqual("Text added to a protected document.", protected_doc.range.text.strip()) #ExSkip
         # There are two ways of removing protection from a document.
@@ -345,7 +345,7 @@ class ExDocument(ApiExampleBase):
         #ExFor:Document.page_count
         #ExSummary:Shows how to count the number of pages in the document.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         builder.write("Page 1")
         builder.insert_break(aw.BreakType.PAGE_BREAK)
         builder.write("Page 2")
@@ -369,7 +369,7 @@ class ExDocument(ApiExampleBase):
         #ExFor:BuiltInDocumentProperties.lines
         #ExSummary:Shows how to update all list labels in a document.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         builder.writeln("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " + "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.")
         builder.write("Ut enim ad minim veniam, " + "quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.")
         # Aspose.Words does not track document metrics like these in real time.
@@ -431,7 +431,7 @@ class ExDocument(ApiExampleBase):
         #ExFor:ThumbnailGeneratingOptions.thumbnail_size
         #ExSummary:Shows how to update a document's thumbnail.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         builder.writeln("Hello world!")
         builder.insert_image(file_name=IMAGE_DIR + "Logo.jpg")
         # There are two ways of setting a thumbnail image when saving a document to .epub.
@@ -482,7 +482,7 @@ class ExDocument(ApiExampleBase):
         # which means that the four styles we added are currently unused.
         self.assertEqual(8, doc.styles.count)
         # Apply a custom character style, and then a custom list style. Doing so will mark the styles as "used".
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         builder.font.style = doc.styles.get_by_name("MyParagraphStyle1")
         builder.writeln("Hello world!")
         list = doc.lists.add(list_style=doc.styles.get_by_name("MyListStyle1"))
@@ -546,7 +546,7 @@ class ExDocument(ApiExampleBase):
         #ExFor:Range.normalize_field_types
         #ExSummary:Shows how to get the keep a field's type up to date with its field code.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         field = builder.insert_field(field_code="DATE", field_value=None)
         # Aspose.Words automatically detects field types based on field codes.
         self.assertEqual(aw.fields.FieldType.FIELD_DATE, field.type)
@@ -570,10 +570,40 @@ class ExDocument(ApiExampleBase):
         #ExEnd
 
     def test_layout_options_hidden_text(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        for show_hidden_text in [False, True]:
+            #ExStart
+            #ExFor:Document.layout_options
+            #ExFor:LayoutOptions
+            #ExFor:LayoutOptions.show_hidden_text
+            #ExSummary:Shows how to hide text in a rendered output document.
+            doc = aw.Document()
+            builder = aw.DocumentBuilder(doc=doc)
+            self.assertFalse(doc.layout_options.show_hidden_text) #ExSkip
+            # Insert hidden text, then specify whether we wish to omit it from a rendered document.
+            builder.writeln("This text is not hidden.")
+            builder.font.hidden = True
+            builder.writeln("This text is hidden.")
+            doc.layout_options.show_hidden_text = show_hidden_text
+            doc.save(file_name=ARTIFACTS_DIR + "Document.LayoutOptionsHiddenText.pdf")
+            #ExEnd
 
     def test_layout_options_paragraph_marks(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        for show_paragraph_marks in [False, True]:
+            #ExStart
+            #ExFor:Document.layout_options
+            #ExFor:LayoutOptions
+            #ExFor:LayoutOptions.show_paragraph_marks
+            #ExSummary:Shows how to show paragraph marks in a rendered output document.
+            doc = aw.Document()
+            builder = aw.DocumentBuilder(doc=doc)
+            self.assertFalse(doc.layout_options.show_paragraph_marks) #ExSkip
+            # Add some paragraphs, then enable paragraph marks to show the ends of paragraphs
+            # with a pilcrow (¶) symbol when we render the document.
+            builder.writeln("Hello world!")
+            builder.writeln("Hello again!")
+            doc.layout_options.show_paragraph_marks = show_paragraph_marks
+            doc.save(file_name=ARTIFACTS_DIR + "Document.LayoutOptionsParagraphMarks.pdf")
+            #ExEnd
 
     def test_update_page_layout(self):
         #ExStart
@@ -602,7 +632,19 @@ class ExDocument(ApiExampleBase):
         raise NotImplementedError("Unsupported call of method named TestDocPackageCustomParts")
 
     def test_shade_form_data(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        for use_grey_shading in [False, True]:
+            #ExStart
+            #ExFor:Document.shade_form_data
+            #ExSummary:Shows how to apply gray shading to form fields.
+            doc = aw.Document()
+            builder = aw.DocumentBuilder(doc=doc)
+            self.assertTrue(doc.shade_form_data) #ExSkip
+            builder.write("Hello world! ")
+            builder.insert_text_input("My form field", aw.fields.TextFormFieldType.REGULAR, "", "Text contents of form field, which are shaded in grey by default.", 0)
+            # We can turn the grey shading off, so the bookmarked text will blend in with the other text.
+            doc.shade_form_data = use_grey_shading
+            doc.save(file_name=ARTIFACTS_DIR + "Document.ShadeFormData.docx")
+            #ExEnd
 
     def test_versions_count(self):
         #ExStart
@@ -626,7 +668,7 @@ class ExDocument(ApiExampleBase):
         #ExFor:WriteProtection.validate_password(str)
         #ExSummary:Shows how to protect a document with a password.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         builder.writeln("Hello world! This document is protected.")
         self.assertFalse(doc.write_protection.is_write_protected) #ExSkip
         self.assertFalse(doc.write_protection.read_only_recommended) #ExSkip
@@ -639,7 +681,7 @@ class ExDocument(ApiExampleBase):
         doc.save(file_name=ARTIFACTS_DIR + "Document.WriteProtection.docx")
         doc = aw.Document(file_name=ARTIFACTS_DIR + "Document.WriteProtection.docx")
         self.assertTrue(doc.write_protection.is_write_protected)
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         builder.move_to_document_end()
         builder.writeln("Writing text in a protected document.")
         self.assertEqual("Hello world! This document is protected." + "\rWriting text in a protected document.", doc.get_text().strip())
@@ -649,7 +691,30 @@ class ExDocument(ApiExampleBase):
         self.assertFalse(doc.write_protection.validate_password("wrongpassword"))
 
     def test_remove_personal_information(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        for save_without_personal_info in [False, True]:
+            #ExStart
+            #ExFor:Document.remove_personal_information
+            #ExSummary:Shows how to enable the removal of personal information during a manual save.
+            doc = aw.Document()
+            builder = aw.DocumentBuilder(doc=doc)
+            # Insert some content with personal information.
+            doc.built_in_document_properties.author = "John Doe"
+            doc.built_in_document_properties.company = "Placeholder Inc."
+            doc.start_track_revisions(author=doc.built_in_document_properties.author, date_time=datetime.datetime.now())
+            builder.write("Hello world!")
+            doc.stop_track_revisions()
+            # This flag is equivalent to File -> Options -> Trust Center -> Trust Center Settings... ->
+            # Privacy Options -> "Remove personal information from file properties on save" in Microsoft Word.
+            doc.remove_personal_information = save_without_personal_info
+            # This option will not take effect during a save operation made using Aspose.Words.
+            # Personal data will be removed from our document with the flag set when we save it manually using Microsoft Word.
+            doc.save(file_name=ARTIFACTS_DIR + "Document.RemovePersonalInformation.docx")
+            doc = aw.Document(file_name=ARTIFACTS_DIR + "Document.RemovePersonalInformation.docx")
+            self.assertEqual(save_without_personal_info, doc.remove_personal_information)
+            self.assertEqual("John Doe", doc.built_in_document_properties.author)
+            self.assertEqual("Placeholder Inc.", doc.built_in_document_properties.company)
+            self.assertEqual("John Doe", doc.revisions[0].author)
+            #ExEnd
 
     def test_show_comments(self):
         #ExStart
@@ -657,7 +722,7 @@ class ExDocument(ApiExampleBase):
         #ExFor:CommentDisplayMode
         #ExSummary:Shows how to show comments when saving a document to a rendered format.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         builder.write("Hello world!")
         comment = aw.Comment(doc=doc, author="John Doe", initial="J.D.", date_time=datetime.datetime.now())
         comment.set_text("My comment.")
@@ -731,7 +796,7 @@ class ExDocument(ApiExampleBase):
         #ExFor:SaveOutputParameters.content_type
         #ExSummary:Shows how to access output parameters of a document's save operation.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         builder.writeln("Hello world!")
         # After we save a document, we can access the Internet Media Type (MIME type) of the newly created output document.
         parameters = doc.save(file_name=ARTIFACTS_DIR + "Document.SaveOutputParameters.doc")
@@ -762,7 +827,7 @@ class ExDocument(ApiExampleBase):
 
     def test_epub_cover(self):
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         builder.writeln("Hello world!")
         # When saving to .epub, some Microsoft Word document properties convert to .epub metadata.
         doc.built_in_document_properties.author = "John Doe"
@@ -813,7 +878,26 @@ class ExDocument(ApiExampleBase):
         raise NotImplementedError("Unsupported target type System.Drawing.Image")
 
     def test_spelling_and_grammar_errors(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        for show_errors in [False, True]:
+            #ExStart
+            #ExFor:Document.show_grammatical_errors
+            #ExFor:Document.show_spelling_errors
+            #ExSummary:Shows how to show/hide errors in the document.
+            doc = aw.Document()
+            builder = aw.DocumentBuilder(doc=doc)
+            # Insert two sentences with mistakes that would be picked up
+            # by the spelling and grammar checkers in Microsoft Word.
+            builder.writeln("There is a speling error in this sentence.")
+            builder.writeln("Their is a grammatical error in this sentence.")
+            # If these options are enabled, then spelling errors will be underlined
+            # in the output document by a jagged red line, and a double blue line will highlight grammatical mistakes.
+            doc.show_grammatical_errors = show_errors
+            doc.show_spelling_errors = show_errors
+            doc.save(file_name=ARTIFACTS_DIR + "Document.SpellingAndGrammarErrors.docx")
+            #ExEnd
+            doc = aw.Document(file_name=ARTIFACTS_DIR + "Document.SpellingAndGrammarErrors.docx")
+            self.assertEqual(show_errors, doc.show_grammatical_errors)
+            self.assertEqual(show_errors, doc.show_spelling_errors)
 
     def test_ignore_printer_metrics(self):
         #ExStart
@@ -836,14 +920,28 @@ class ExDocument(ApiExampleBase):
         self.assertEqual(doc.page_count, 2)
 
     def test_spelling_or_grammar(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        for check_spelling_grammar in [True, False]:
+            #ExStart
+            #ExFor:Document.spelling_checked
+            #ExFor:Document.grammar_checked
+            #ExSummary:Shows how to set spelling or grammar verifying.
+            doc = aw.Document()
+            # The string with spelling errors.
+            doc.first_section.body.first_paragraph.runs.add(aw.Run(doc=doc, text="The speeling in this documentz is all broked."))
+            # Spelling/Grammar check start if we set properties to false.
+            # We can see all errors in Microsoft Word via Review -> Spelling & Grammar.
+            # Note that Microsoft Word does not start grammar/spell check automatically for DOC and RTF document format.
+            doc.spelling_checked = check_spelling_grammar
+            doc.grammar_checked = check_spelling_grammar
+            doc.save(file_name=ARTIFACTS_DIR + "Document.SpellingOrGrammar.docx")
+            #ExEnd
 
     def test_allow_embedding_post_script_fonts(self):
         #ExStart
         #ExFor:SaveOptions.allow_embedding_post_script_fonts
         #ExSummary:Shows how to save the document with PostScript font.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         builder.font.name = "PostScriptFont"
         builder.writeln("Some text with PostScript font.")
         # Load the font with PostScript to use in the document.
@@ -888,7 +986,7 @@ class ExDocument(ApiExampleBase):
         #ExFor:DocumentBuilder.current_structured_document_tag
         #ExSummary:Shows how to move cursor of DocumentBuilder inside a structured document tag.
         doc = aw.Document(file_name=MY_DIR + "Structured document tags.docx")
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         # There is a several ways to move the cursor:
         # 1 -  Move to the first character of structured document tag by index.
         builder.move_to_structured_document_tag(structured_document_tag_index=1, character_index=1)
@@ -910,7 +1008,7 @@ class ExDocument(ApiExampleBase):
         #ExFor:Document.include_textboxes_footnotes_endnotes_in_stat
         #ExSummary: Shows how to include or exclude textboxes, footnotes and endnotes from word count statistics.
         doc = aw.Document()
-        builder = aw.DocumentBuilder(doc)
+        builder = aw.DocumentBuilder(doc=doc)
         builder.writeln("Lorem ipsum")
         builder.insert_footnote(footnote_type=aw.notes.FootnoteType.FOOTNOTE, footnote_text="sit amet")
         # By default option is set to 'false'.
@@ -949,7 +1047,7 @@ class ExDocument(ApiExampleBase):
         raise NotImplementedError("Unsupported target type System.String")
 
     def test_save_document_to_stream(self):
-        raise NotImplementedError("Unsupported NUnit.Framework.TestCaseAttribute attributes")
+        raise NotImplementedError("Unsupported statement type: UsingStatement")
 
     def test_has_macros(self):
         #ExStart:HasMacros
